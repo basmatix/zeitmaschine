@@ -24,7 +24,15 @@ public:
 
     }
 
-    QMap< QString, Thing >   m_texts;
+    void createNewItem( const std::string &caption )
+    {
+
+    }
+
+//    QMutex      m_mutex;
+//    QMutexLocker monitor( &m_mutex );
+
+    std::map< std::string, Thing > m_things;
 };
 
 #endif
