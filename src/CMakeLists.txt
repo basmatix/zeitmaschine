@@ -51,9 +51,12 @@ file( GLOB ${PROJECT_NAME}_files
     *.cpp
 )
 
+add_subdirectory( submodules/json-cpp-cmake )
+
 include_directories(
-    ${CMAKE_CURRENT_BINARY_DIR}
-    ${CMAKE_CURRENT_SOURCE_DIR}
+    "${CMAKE_CURRENT_BINARY_DIR}"
+    "${CMAKE_CURRENT_SOURCE_DIR}"
+    "${CMAKE_CURRENT_SOURCE_DIR}/submodules/json-cpp/include"
 )
 
 add_executable(
@@ -67,5 +70,6 @@ target_link_libraries(
     ${PROJECT_NAME}
     ${QT_LIBRARIES}
     ${ADDITIONAL_LIBRARIES}
+    json-cpp
 )
 
