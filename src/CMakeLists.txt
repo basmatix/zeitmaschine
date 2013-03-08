@@ -52,11 +52,13 @@ file( GLOB ${PROJECT_NAME}_files
 )
 
 add_subdirectory( submodules/json-cpp-cmake )
+add_subdirectory( submodules/yaml-cpp )
 
 include_directories(
     "${CMAKE_CURRENT_BINARY_DIR}"
     "${CMAKE_CURRENT_SOURCE_DIR}"
     "${CMAKE_CURRENT_SOURCE_DIR}/submodules/json-cpp/include"
+    "${CMAKE_CURRENT_SOURCE_DIR}/submodules/yaml-cpp/include"
 )
 
 add_executable(
@@ -70,6 +72,7 @@ target_link_libraries(
     ${PROJECT_NAME}
     ${QT_LIBRARIES}
     ${ADDITIONAL_LIBRARIES}
-    json-cpp
+    #yaml-cppjson-cpp
+    yaml-cpp
 )
 

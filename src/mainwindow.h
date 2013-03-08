@@ -80,7 +80,7 @@ private:
     {   tracemessage( __FUNCTION__ );
         // this method is being called automatically by Qt
 
-        m_model.save( "flow.json" );
+        m_model.save( "flow.yaml" );
     }
 
     void dump()
