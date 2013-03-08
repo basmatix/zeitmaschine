@@ -21,6 +21,8 @@
 #include <stdio.h>
 #include <assert.h>
 
+class QListWidgetItem;
+
 
 inline void tracemessage( const char * a_format, ... )
 {
@@ -52,14 +54,29 @@ public:
 
         m_ui->setupUi( this );
 
+        m_model.load("flow.yaml");
+
+        updateUi();
     }
 
     virtual ~MainWindow()
     {
         delete m_ui;
+
     }
 
 private:
+
+    void updateUi()
+    {
+        BOOST_FOREACH(const Model::FlowModelMapType::value_type& i, m_model.m_things)
+        {
+            //m_ui->lwTask->addItem( QString().fromStdString( i.second->m_caption ) );
+            QTreeWidgetItem *item = new QTreeWidgetItem();
+            item->setText(0, QString::fromStdString(i.second->m_caption));
+            m_ui->twTask->addTopLevelItem( item );
+        }
+    }
 
     void exportToFs()
     {   tracemessage( __FUNCTION__ );
@@ -81,11 +98,9 @@ private:
         // this method is being called automatically by Qt
 
         m_model.save( "flow.yaml" );
+
     }
 
-    void dump()
-    {
-    }
 
 private slots:
 
@@ -94,9 +109,23 @@ private slots:
         // this method is being called automatically by Qt
 
         m_model.createNewItem( m_ui->leCommand->text().toStdString() );
-        m_ui->lwTask->addItem( m_ui->leCommand->text() );
+        QTreeWidgetItem *item = new QTreeWidgetItem();
+        item->setText(0,m_ui->leCommand->text());
+        m_ui->twTask->addTopLevelItem( item );
         m_ui->leCommand->setText("");
     }
+
+    void on_twTask_clicked( const QModelIndex &index )
+    {
+
+    }
+
+    void on_pbDelete_clicked()
+    {   tracemessage( __FUNCTION__ );
+
+        //QMutexLocker monitor( &m_mutex );
+    }
+
 
     void update()
     {   tracemessage( __FUNCTION__ );

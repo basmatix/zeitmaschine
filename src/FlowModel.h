@@ -21,11 +21,15 @@ public:
 
 class Model
 {
+public:
     typedef std::map<  std::string, Thing * > FlowModelMapType;
     //    QMutex      m_mutex;
     //    QMutexLocker monitor( &m_mutex );
 
+
     FlowModelMapType m_things;
+
+private:
 
     // returns 16x8 bit
     static inline std::string generateUid()
@@ -35,8 +39,8 @@ class Model
         l_return.resize(16);
         for( int i = 0; i < 16; ++i )
         {
-            const char *l_characters="0123456789abcdef";
-            l_return[i] = l_characters[rand()%16];
+            const char *l_characters = "0123456789abcdef";
+            l_return[i] = l_characters[ rand() % 16 ];
         }
         return l_return;
     }
