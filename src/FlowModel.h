@@ -2,6 +2,7 @@
 #define FLOWMODEL_H
 
 #include <map>
+#include <set>
 #include <fstream>
 #include <string>
 #include <yaml-cpp/yaml.h>
@@ -16,7 +17,18 @@ public:
     {
     }
 
+    void addAttribute( const std::string &attribute )
+    {
+        m_attributes.insert( attribute );
+    }
+
+    bool hasAttribute( const std::string &attribute ) const
+    {
+        return m_attributes.find( attribute ) != m_attributes.end();
+    }
+
     std::string m_caption;
+    std::set< std::string > m_attributes;
 };
 
 class Model
@@ -97,11 +109,30 @@ public:
         l_fout << std::endl;
     }
 
-    void createNewItem( const std::string &caption )
+    std::string createNewItem( const std::string &caption )
     {
         std::string l_new_key = generateUid();
         Thing *l_new_thing = new Thing( caption );
         m_things[ l_new_key ] = l_new_thing;
+        return l_new_key;
+    }
+
+    void addAttribute( const std::string &uid, const std::string &attribute )
+    {
+        FlowModelMapType::iterator l_item_it( m_things.find( uid ) );
+
+        assert( l_item_it != m_things.end() );
+
+        l_item_it->second->addAttribute( attribute );
+    }
+
+    std::string getCaption( const std::string &uid )
+    {
+        FlowModelMapType::iterator l_item_it( m_things.find( uid ) );
+
+        assert( l_item_it != m_things.end() );
+
+        return l_item_it->second->m_caption;
     }
 };
 

@@ -19,6 +19,7 @@
 
 #include <stdarg.h>
 #include <stdio.h>
+#include <iostream>
 #include <assert.h>
 
 class QListWidgetItem;
@@ -45,6 +46,12 @@ private:
     Ui_window  *m_ui;
     Model       m_model;
 
+    QTreeWidgetItem *m_liToday;
+    QTreeWidgetItem *m_liInbox;
+    QTreeWidgetItem *m_liProjects;
+    QTreeWidgetItem *m_liContexts;
+
+    QMap< std::string, QTreeWidgetItem *> m_thing_item_map;
 public:
 
     explicit MainWindow(QWidget *parent = 0)
@@ -55,6 +62,22 @@ public:
         m_ui->setupUi( this );
 
         m_model.load("flow.yaml");
+
+        m_liToday = new QTreeWidgetItem();
+        m_liToday->setText( 0, "today");
+        m_ui->twTask->addTopLevelItem( m_liToday );
+
+        m_liInbox = new QTreeWidgetItem();
+        m_liInbox->setText( 0, "inbox");
+        m_ui->twTask->addTopLevelItem( m_liInbox );
+
+        m_liProjects = new QTreeWidgetItem();
+        m_liProjects->setText( 0, "projects");
+        m_ui->twTask->addTopLevelItem( m_liProjects );
+
+        m_liProjects = new QTreeWidgetItem();
+        m_liProjects->setText( 0, "context");
+        m_ui->twTask->addTopLevelItem( m_liProjects );
 
         updateUi();
     }
@@ -67,14 +90,22 @@ public:
 
 private:
 
+    void addListItem( const std::string uid )
+    {
+        QTreeWidgetItem *l_item = new QTreeWidgetItem();
+        l_item->setText( 0, QString::fromStdString( m_model.getCaption( uid ) ));
+        m_ui->twTask->addTopLevelItem( l_item );
+
+        m_thing_item_map[uid] = l_item;
+    }
+
     void updateUi()
     {
         BOOST_FOREACH(const Model::FlowModelMapType::value_type& i, m_model.m_things)
         {
-            //m_ui->lwTask->addItem( QString().fromStdString( i.second->m_caption ) );
-            QTreeWidgetItem *item = new QTreeWidgetItem();
-            item->setText(0, QString::fromStdString(i.second->m_caption));
-            m_ui->twTask->addTopLevelItem( item );
+            addListItem( i.first );
+
+            tracemessage( "setup '%s' caption = '%s'", i.first.c_str(), i.second->m_caption.c_str() );
         }
     }
 
@@ -98,7 +129,6 @@ private:
         // this method is being called automatically by Qt
 
         m_model.save( "flow.yaml" );
-
     }
 
 
@@ -108,16 +138,31 @@ private slots:
     {   tracemessage( __FUNCTION__ );
         // this method is being called automatically by Qt
 
-        m_model.createNewItem( m_ui->leCommand->text().toStdString() );
-        QTreeWidgetItem *item = new QTreeWidgetItem();
-        item->setText(0,m_ui->leCommand->text());
-        m_ui->twTask->addTopLevelItem( item );
+        std::string l_item_uid = m_model.createNewItem( m_ui->leCommand->text().toStdString() );
+        QTreeWidgetItem *m_item = new QTreeWidgetItem();
+
+        m_item->setText(0,m_ui->leCommand->text());
+        m_liInbox->addChild( m_item );
+
+        m_model.addAttribute( l_item_uid, "gtd_item_unhandled" );
+
         m_ui->leCommand->setText("");
     }
 
-    void on_twTask_clicked( const QModelIndex &index )
-    {
+    void on_twTask_itemActivated( QTreeWidgetItem *item, int )
+    {   tracemessage( __FUNCTION__ );
+        //std::cout << index. << std::endl;;
+        //m_ui->twTask->currentItemChanged();
+    }
 
+    void on_twTask_currentItemChanged( QTreeWidgetItem *before, QTreeWidgetItem *after )
+    {   tracemessage( __FUNCTION__ );
+        //std::cout << index. << std::endl;;
+    }
+
+    void on_twTask_clicked( const QModelIndex &index )
+    {   tracemessage( __FUNCTION__ );
+        //std::cout << index. << std::endl;;
     }
 
     void on_pbDelete_clicked()
@@ -126,17 +171,10 @@ private slots:
         //QMutexLocker monitor( &m_mutex );
     }
 
-
     void update()
     {   tracemessage( __FUNCTION__ );
         //m_ui->lblTask->setText( QString().sprintf("%d",m_model.getCurrentTaskDuration()) );
         //tracemessage( "%d",m_model.getCurrentTaskDuration() );
-    }
-
-    void on_lwTask_currentTextChanged ( const QString & currentText )
-    {   tracemessage( __FUNCTION__ );
-        // this method is being called automatically by Qt
-
     }
 
     void on_leCommand_textChanged ( const QString & text )
@@ -145,64 +183,42 @@ private slots:
 
     }
 
-    void on_pbAdd_clicked()
-    {   tracemessage( __FUNCTION__ );
-
-    }
-
-    void on_pbClose_clicked()
-    {   tracemessage( __FUNCTION__ );
-
-        //QMutexLocker monitor( &m_mutex );
-    }
 
 #if 1
-    void on_lwTask_clicked ( const QModelIndex & index )
-    {    tracemessage( __FUNCTION__ );
-    }
 
-    void on_lwTask_currentItemChanged ( QListWidgetItem * current, QListWidgetItem * previous )
+
+    void on_twTask_itemActivated ( QListWidgetItem * item )
     {
         tracemessage( __FUNCTION__ );
     }
 
-    void on_lwTask_currentRowChanged ( int currentRow )
+    void on_twTask_itemChanged ( QListWidgetItem * item )
     {
         tracemessage( __FUNCTION__ );
     }
 
-    void on_lwTask_itemActivated ( QListWidgetItem * item )
+    void on_twTask_itemClicked ( QListWidgetItem * item )
     {
         tracemessage( __FUNCTION__ );
     }
 
-    void on_lwTask_itemChanged ( QListWidgetItem * item )
-    {
-        tracemessage( __FUNCTION__ );
-    }
-
-    void on_lwTask_itemClicked ( QListWidgetItem * item )
-    {
-        tracemessage( __FUNCTION__ );
-    }
-
-    void on_lwTask_itemDoubleClicked ( QListWidgetItem * item )
+    void on_twTask_itemDoubleClicked ( QListWidgetItem * item )
     {
         tracemessage( __FUNCTION__ );
         //m_model.
     }
 
-    void on_lwTask_itemEntered ( QListWidgetItem * item )
+    void on_twTask_itemEntered ( QListWidgetItem * item )
     {
         tracemessage( __FUNCTION__ );
     }
 
-    void on_lwTask_itemPressed ( QListWidgetItem * item )
+    void on_twTask_itemPressed ( QListWidgetItem * item )
     {
         tracemessage( __FUNCTION__ );
     }
 
-    void on_lwTask_itemSelectionChanged ()
+    void on_twTask_itemSelectionChanged ()
     {
         tracemessage( __FUNCTION__ );
     }

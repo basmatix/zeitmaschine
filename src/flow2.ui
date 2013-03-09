@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>flow2 - egotrack - mindstr</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
@@ -26,6 +26,9 @@
           </item>
           <item>
            <widget class="QTreeWidget" name="twTask">
+            <attribute name="headerVisible">
+             <bool>false</bool>
+            </attribute>
             <column>
              <property name="text">
               <string notr="true">1</string>
@@ -38,35 +41,35 @@
         <item>
          <layout class="QVBoxLayout" name="verticalLayout_2">
           <item>
-           <widget class="QPushButton" name="pushButton_2">
+           <widget class="QPushButton" name="pbMakeAction">
             <property name="text">
              <string>m action</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="pushButton">
+           <widget class="QPushButton" name="pbMakeProject">
             <property name="text">
              <string>m project</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="pushButton_5">
+           <widget class="QPushButton" name="pbMakeContext">
             <property name="text">
              <string>m context</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="pushButton_4">
+           <widget class="QPushButton" name="pbMakeGroup">
             <property name="text">
              <string>m group</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="pushButton_3">
+           <widget class="QPushButton" name="pbDelete">
             <property name="text">
              <string>delete</string>
             </property>
