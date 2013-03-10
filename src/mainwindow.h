@@ -45,21 +45,24 @@ private:
 
     Ui_window  *m_ui;
     Model       m_model;
+    std::string m_selected_item;
 
     QTreeWidgetItem *m_liToday;
     QTreeWidgetItem *m_liInbox;
     QTreeWidgetItem *m_liProjects;
     QTreeWidgetItem *m_liContexts;
 
-    QMap< std::string, QTreeWidgetItem *> m_thing_item_map;
+    //QMap< std::string, QTreeWidgetItem *> m_thing_item_map;
+    QMap< QTreeWidgetItem *, std::string > m_item_thing_map;
     std::string m_filename;
 
 public:
 
     explicit MainWindow(QWidget *parent = 0)
-        : QMainWindow   ( parent )
-        , m_ui          ( new Ui_window )
-        , m_filename    ( ".flow2/export.yaml" )
+        : QMainWindow    ( parent )
+        , m_ui           ( new Ui_window )
+        , m_filename     ( ".flow2/export.yaml" )
+        , m_selected_item( "" )
     {   tracemessage( __FUNCTION__ );
 
         m_ui->setupUi( this );
@@ -102,12 +105,13 @@ private:
             m_liInbox->addChild( l_item );
         }
 
-        m_thing_item_map[uid] = l_item;
+        //m_thing_item_map[uid] = l_item;
+        m_item_thing_map[ l_item ] = uid;
     }
 
     void updateUi()
     {
-        BOOST_FOREACH(const Model::FlowModelMapType::value_type& i, m_model.m_things)
+        BOOST_FOREACH(const Model::FlowModelMapType::value_type& i, m_model.things() )
         {
             addListItem( i.first );
 
@@ -159,9 +163,21 @@ private slots:
         //m_ui->twTask->currentItemChanged();
     }
 
-    void on_twTask_currentItemChanged( QTreeWidgetItem *before, QTreeWidgetItem *after )
+    void on_twTask_currentItemChanged( QTreeWidgetItem *current, QTreeWidgetItem *previous )
     {   tracemessage( __FUNCTION__ );
-        //std::cout << index. << std::endl;;
+
+        if( m_item_thing_map.contains( current ) )
+        {
+            m_selected_item = m_item_thing_map[ current ];
+            tracemessage( "clicked on item %s (%s)",
+                          m_selected_item.c_str(),
+                          m_model.getCaption( m_selected_item ).c_str()  );
+
+        }
+        else
+        {
+            m_selected_item = "";
+        }
     }
 
     void on_twTask_clicked( const QModelIndex &index )

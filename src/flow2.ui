@@ -41,6 +41,13 @@
         <item>
          <layout class="QVBoxLayout" name="verticalLayout_2">
           <item>
+           <widget class="QPushButton" name="pbClose">
+            <property name="text">
+             <string>close</string>
+            </property>
+           </widget>
+          </item>
+          <item>
            <widget class="QPushButton" name="pbMakeAction">
             <property name="text">
              <string>m action</string>

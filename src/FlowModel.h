@@ -8,41 +8,62 @@
 #include <yaml-cpp/yaml.h>
 #include <boost/foreach.hpp>
 #include <boost/filesystem.hpp>
+#include <boost/date_time.hpp>
 
-class Thing
-{
-public:
-
-    Thing( const std::string &caption)
-        : m_caption   ( caption )
-    {
-    }
-
-    void addAttribute( const std::string &attribute )
-    {
-        m_attributes.insert( attribute );
-    }
-
-    bool hasAttribute( const std::string &attribute ) const
-    {
-        return m_attributes.find( attribute ) != m_attributes.end();
-    }
-
-    std::string m_caption;
-    std::set< std::string > m_attributes;
-};
+// [X] addValue
+// [X] hide Thing
+// [X] add creation time
+// [ ] enable done
+// [ ] enable delete
+// [ ] model equality operator
+// [ ] test with equality operator
 
 class Model
 {
 public:
+    class Thing
+    {
+    public:
+
+        Thing( const std::string &caption)
+            : m_caption   ( caption )
+        {
+        }
+
+        void addAttribute( const std::string &attribute )
+        {
+            m_attributes.insert( attribute );
+        }
+
+        void addValue( const std::string &name, const std::string &value )
+        {
+            m_string_values[ name ] = value;
+        }
+
+        bool hasAttribute( const std::string &attribute ) const
+        {
+            return m_attributes.find( attribute ) != m_attributes.end();
+        }
+
+        std::string m_caption;
+        std::set< std::string > m_attributes;
+
+        typedef std::map< std::string, std::string > string_value_map_type;
+
+        string_value_map_type m_string_values;
+    };
+
     typedef std::map<  std::string, Thing * > FlowModelMapType;
-    //    QMutex      m_mutex;
-    //    QMutexLocker monitor( &m_mutex );
 
 
-    FlowModelMapType m_things;
+    const FlowModelMapType & things() const
+    {
+        return m_things;
+    }
 
 private:
+
+    FlowModelMapType m_things;
 
     // returns 16x8 bit
     static inline std::string generateUid()
@@ -86,10 +107,12 @@ public:
 
         BOOST_FOREACH( YAML::Node n, l_import )
         {
-            assert( n["uid"] );
+            //std::cout << n.Tag() << std::endl;
+            //std::cout << n.Scalar() << std::endl;
+            //assert( n["uid"] );
             assert( n["caption"] );
-
-            std::string l_uid =     n["uid"    ].as< std::string >();
+            //std::string l_uid =     n["uid"    ].as< std::string >();
+            std::string l_uid =     n.Tag();
             std::string l_caption = n["caption"].as< std::string >();
 
             Thing *l_new_thing = new Thing( l_caption );
@@ -104,6 +127,17 @@ public:
                     l_new_thing->m_attributes.insert( *a );
                 }
             }
+            if( n["string_values"] )
+            {
+                l_new_thing->m_string_values =
+                    n["string_values"].as< Thing::string_value_map_type >();
+
+                BOOST_FOREACH( const Thing::string_value_map_type::value_type &a, l_new_thing->m_string_values )
+                {
+                    std::cout << a.first << ": " << a.second << std::endl;
+                }
+            }
+
             m_things[ l_uid ] = l_new_thing;
         }
     }
@@ -123,39 +157,58 @@ public:
 
         std::ofstream l_fout( filename.c_str() );
 
-        if( ! m_things.empty() )
+        assert( l_fout.is_open() );
+
+        if( m_things.empty() )
         {
-            YAML::Node l_export_root;
+            return;
+        }
 
-            BOOST_FOREACH(const FlowModelMapType::value_type& i, m_things)
+        YAML::Node l_export_root;
+
+        BOOST_FOREACH(const FlowModelMapType::value_type& i, m_things)
+        {
+            YAML::Node l_export_item;
+            //l_export_item["uid"    ] = i.first;
+            l_export_item["caption"] = i.second->m_caption;
+
+            if( ! i.second->m_attributes.empty() )
             {
-                YAML::Node l_export_item;
-                l_export_item["uid"    ] = i.first;
-                l_export_item["caption"] = i.second->m_caption;
-
-                if( ! i.second->m_attributes.empty() )
+                std::vector< std::string > v;
+                BOOST_FOREACH( const std::string &a, i.second->m_attributes)
                 {
-                    std::vector< std::string > v;
-                    BOOST_FOREACH( const std::string &a, i.second->m_attributes)
-                    {
-                        v.push_back( a );
-                    }
-
-                    l_export_item["attributes"] = v;
+                    v.push_back( a );
                 }
 
-                l_export_root.push_back( l_export_item );
+                l_export_item["attributes"] = v;
             }
 
-            l_fout << l_export_root;
+            if( ! i.second->m_string_values.empty() )
+            {
+                l_export_item[ "string_values" ] = i.second->m_string_values;
+            }
+            l_export_item.SetTag( i.first );
+            l_export_root.push_back( l_export_item );
         }
-        l_fout << std::endl;
+
+        try
+        {
+            l_fout << l_export_root;
+            l_fout << std::endl;
+        }
+        catch( ... )
+        {
+            std::cerr << "writing failed" << std::endl;
+        }
     }
 
     std::string createNewItem( const std::string &caption )
     {
         std::string l_new_key = generateUid();
         Thing *l_new_thing = new Thing( caption );
+        l_new_thing->addValue( "global_time_created", time_stamp() );
+        //l_new_thing->addValue( "test_name", "test_value" );
+
         m_things[ l_new_key ] = l_new_thing;
         return l_new_key;
     }
@@ -185,6 +238,12 @@ public:
         assert( l_item_it != m_things.end() );
 
         return l_item_it->second->hasAttribute( attribute );
+    }
+
+    static std::string time_stamp()
+    {
+        return boost::posix_time::to_iso_extended_string(
+                    boost::posix_time::microsec_clock::local_time());
     }
 };
 
