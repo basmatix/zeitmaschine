@@ -2,6 +2,20 @@ project( flow2 )
 
 cmake_minimum_required(VERSION 2.8)
 
+find_package(
+        Boost 1.47
+    COMPONENTS
+        filesystem
+        serialization
+        system
+        thread
+        program_options
+        iostreams
+        date_time
+        regex
+    REQUIRED
+  )
+
 find_package( Qt4 REQUIRED )
 #SET( QT_USE_QTXML TRUE)
 #SET( QT_USE_QTNETWORK TRUE)
@@ -72,6 +86,7 @@ target_link_libraries(
     ${PROJECT_NAME}
     ${QT_LIBRARIES}
     ${ADDITIONAL_LIBRARIES}
+    ${Boost_LIBRARIES}
     #yaml-cppjson-cpp
     yaml-cpp
 )

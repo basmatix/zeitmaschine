@@ -52,16 +52,19 @@ private:
     QTreeWidgetItem *m_liContexts;
 
     QMap< std::string, QTreeWidgetItem *> m_thing_item_map;
+    std::string m_filename;
+
 public:
 
     explicit MainWindow(QWidget *parent = 0)
         : QMainWindow   ( parent )
         , m_ui          ( new Ui_window )
+        , m_filename    ( ".flow2/export.yaml" )
     {   tracemessage( __FUNCTION__ );
 
         m_ui->setupUi( this );
 
-        m_model.load("flow.yaml");
+        m_model.load( m_filename );
 
         m_liToday = new QTreeWidgetItem();
         m_liToday->setText( 0, "today");
@@ -94,7 +97,10 @@ private:
     {
         QTreeWidgetItem *l_item = new QTreeWidgetItem();
         l_item->setText( 0, QString::fromStdString( m_model.getCaption( uid ) ));
-        m_ui->twTask->addTopLevelItem( l_item );
+        if( m_model.hasAttribute( uid, "gtd_item_unhandled" ) )
+        {
+            m_liInbox->addChild( l_item );
+        }
 
         m_thing_item_map[uid] = l_item;
     }
@@ -128,7 +134,7 @@ private:
     {   tracemessage( __FUNCTION__ );
         // this method is being called automatically by Qt
 
-        m_model.save( "flow.yaml" );
+        m_model.save( m_filename );
     }
 
 
@@ -139,12 +145,10 @@ private slots:
         // this method is being called automatically by Qt
 
         std::string l_item_uid = m_model.createNewItem( m_ui->leCommand->text().toStdString() );
-        QTreeWidgetItem *m_item = new QTreeWidgetItem();
-
-        m_item->setText(0,m_ui->leCommand->text());
-        m_liInbox->addChild( m_item );
 
         m_model.addAttribute( l_item_uid, "gtd_item_unhandled" );
+
+        addListItem( l_item_uid );
 
         m_ui->leCommand->setText("");
     }

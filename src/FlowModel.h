@@ -7,6 +7,7 @@
 #include <string>
 #include <yaml-cpp/yaml.h>
 #include <boost/foreach.hpp>
+#include <boost/filesystem.hpp>
 
 class Thing
 {
@@ -77,6 +78,10 @@ public:
     {
         clear();
 
+        if( ! boost::filesystem::exists( filename ) )
+        {
+            return;
+        }
         YAML::Node l_import = YAML::LoadFile(filename);
 
         BOOST_FOREACH( YAML::Node n, l_import )
@@ -88,24 +93,62 @@ public:
             std::string l_caption = n["caption"].as< std::string >();
 
             Thing *l_new_thing = new Thing( l_caption );
+            if( n["attributes"] )
+            {
+                std::vector< std::string > l_attributes =
+                        n["attributes"].as< std::vector< std::string > >();
+                for( std::vector< std::string >::const_iterator
+                     a  = l_attributes.begin();
+                     a != l_attributes.end(); ++ a )
+                {
+                    l_new_thing->m_attributes.insert( *a );
+                }
+            }
             m_things[ l_uid ] = l_new_thing;
         }
     }
 
     void save( const std::string &filename )
     {
-        YAML::Node l_export_root;
+        std::string l_dir = filename.substr( 0, filename.find_last_of("/") );
 
-        BOOST_FOREACH(const FlowModelMapType::value_type& i, m_things)
+        try
         {
-            YAML::Node l_export_item;
-            l_export_item["uid"    ] = i.first;
-            l_export_item["caption"] = i.second->m_caption;
-            l_export_root.push_back( l_export_item );
+            boost::filesystem::create_directory( l_dir );
+        }
+        catch( ... )
+        {
+            //error
         }
 
         std::ofstream l_fout( filename.c_str() );
-        l_fout << l_export_root;
+
+        if( ! m_things.empty() )
+        {
+            YAML::Node l_export_root;
+
+            BOOST_FOREACH(const FlowModelMapType::value_type& i, m_things)
+            {
+                YAML::Node l_export_item;
+                l_export_item["uid"    ] = i.first;
+                l_export_item["caption"] = i.second->m_caption;
+
+                if( ! i.second->m_attributes.empty() )
+                {
+                    std::vector< std::string > v;
+                    BOOST_FOREACH( const std::string &a, i.second->m_attributes)
+                    {
+                        v.push_back( a );
+                    }
+
+                    l_export_item["attributes"] = v;
+                }
+
+                l_export_root.push_back( l_export_item );
+            }
+
+            l_fout << l_export_root;
+        }
         l_fout << std::endl;
     }
 
@@ -133,6 +176,15 @@ public:
         assert( l_item_it != m_things.end() );
 
         return l_item_it->second->m_caption;
+    }
+
+    bool hasAttribute( const std::string uid, const std::string attribute )
+    {
+        FlowModelMapType::iterator l_item_it( m_things.find( uid ) );
+
+        assert( l_item_it != m_things.end() );
+
+        return l_item_it->second->hasAttribute( attribute );
     }
 };
 
