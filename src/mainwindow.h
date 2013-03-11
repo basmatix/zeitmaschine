@@ -212,11 +212,11 @@ private slots:
         m_model.setValue( m_selected_thing, "gtd_time_done", m_model.time_stamp() );
 
 
-        // NOTE: this is magic - don't touch! why does m_selected_twItem
+        // NOTE: this is black magic - don't touch! why does m_selected_twItem
         //       get set to NULL on removeChild()?!
         QTreeWidgetItem *l_uselessCopy( m_selected_twItem );
-        QTreeWidgetItem *l_groupingItem(m_selected_twItem->parent());
-        l_groupingItem->removeChild(l_uselessCopy);
+        QTreeWidgetItem *l_groupingItem( m_selected_twItem->parent() );
+        l_groupingItem->removeChild( l_uselessCopy );
         m_liDone->addChild( l_uselessCopy );
 
         m_selected_thing = "";
@@ -237,8 +237,10 @@ private slots:
         m_selected_thing = "";
 
         m_item_thing_map.erase( m_item_thing_map.find( m_selected_twItem ));
+
+        // dont alter m_selected_thing or m_selected_twItem after this
+        // deletion since they get set there synchronously
         delete m_selected_twItem;
-        m_selected_twItem = NULL;
     }
 
     void update()
