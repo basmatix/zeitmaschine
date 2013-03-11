@@ -45,24 +45,26 @@ private:
 
     Ui_window  *m_ui;
     Model       m_model;
-    std::string m_selected_item;
+    std::string m_selected_thing;
+    QTreeWidgetItem *m_selected_twItem;
 
     QTreeWidgetItem *m_liToday;
     QTreeWidgetItem *m_liInbox;
     QTreeWidgetItem *m_liProjects;
     QTreeWidgetItem *m_liContexts;
+    QTreeWidgetItem *m_liDone;
 
-    //QMap< std::string, QTreeWidgetItem *> m_thing_item_map;
     QMap< QTreeWidgetItem *, std::string > m_item_thing_map;
     std::string m_filename;
 
 public:
 
     explicit MainWindow(QWidget *parent = 0)
-        : QMainWindow    ( parent )
-        , m_ui           ( new Ui_window )
-        , m_filename     ( ".flow2/export.yaml" )
-        , m_selected_item( "" )
+        : QMainWindow       ( parent )
+        , m_ui              ( new Ui_window )
+        , m_filename        ( ".flow2/export.yaml" )
+        , m_selected_thing  ( "" )
+        , m_selected_twItem ( NULL )
     {   tracemessage( __FUNCTION__ );
 
         m_ui->setupUi( this );
@@ -76,6 +78,7 @@ public:
         m_liInbox = new QTreeWidgetItem();
         m_liInbox->setText( 0, "inbox");
         m_ui->twTask->addTopLevelItem( m_liInbox );
+        m_liInbox->setExpanded( true );
 
         m_liProjects = new QTreeWidgetItem();
         m_liProjects->setText( 0, "projects");
@@ -84,6 +87,10 @@ public:
         m_liProjects = new QTreeWidgetItem();
         m_liProjects->setText( 0, "context");
         m_ui->twTask->addTopLevelItem( m_liProjects );
+
+        m_liDone = new QTreeWidgetItem();
+        m_liDone->setText( 0, "done");
+        m_ui->twTask->addTopLevelItem( m_liDone );
 
         updateUi();
     }
@@ -104,8 +111,11 @@ private:
         {
             m_liInbox->addChild( l_item );
         }
+        if( m_model.hasAttribute( uid, "gtd_item_done" ) )
+        {
+            m_liDone->addChild( l_item );
+        }
 
-        //m_thing_item_map[uid] = l_item;
         m_item_thing_map[ l_item ] = uid;
     }
 
@@ -168,15 +178,17 @@ private slots:
 
         if( m_item_thing_map.contains( current ) )
         {
-            m_selected_item = m_item_thing_map[ current ];
+            m_selected_twItem = current;
+            m_selected_thing = m_item_thing_map[ m_selected_twItem ];
             tracemessage( "clicked on item %s (%s)",
-                          m_selected_item.c_str(),
-                          m_model.getCaption( m_selected_item ).c_str()  );
+                          m_selected_thing.c_str(),
+                          m_model.getCaption( m_selected_thing ).c_str()  );
 
         }
         else
         {
-            m_selected_item = "";
+            m_selected_thing = "";
+            m_selected_twItem = NULL;
         }
     }
 
@@ -185,10 +197,48 @@ private slots:
         //std::cout << index. << std::endl;;
     }
 
+    void on_pbClose_clicked()
+    {   tracemessage( __FUNCTION__ );
+
+        //QMutexLocker monitor( &m_mutex );
+        if( m_selected_thing == "" ) return;
+
+        tracemessage( "set item to DONE: %s (%s)",
+                      m_selected_thing.c_str(),
+                      m_model.getCaption( m_selected_thing ).c_str()  );
+
+        m_model.removeAttribute( m_selected_thing, "gtd_item_unhandled" );
+        m_model.addAttribute( m_selected_thing, "gtd_item_done" );
+        m_model.setValue( m_selected_thing, "gtd_time_done", m_model.time_stamp() );
+
+
+        // NOTE: this is magic - don't touch! why does m_selected_twItem
+        //       get set to NULL on removeChild()?!
+        QTreeWidgetItem *l_uselessCopy( m_selected_twItem );
+        QTreeWidgetItem *l_groupingItem(m_selected_twItem->parent());
+        l_groupingItem->removeChild(l_uselessCopy);
+        m_liDone->addChild( l_uselessCopy );
+
+        m_selected_thing = "";
+        m_selected_twItem = NULL;
+    }
+
     void on_pbDelete_clicked()
     {   tracemessage( __FUNCTION__ );
 
         //QMutexLocker monitor( &m_mutex );
+        if( m_selected_thing == "" ) return;
+
+        tracemessage( "erase item: %s (%s)",
+                      m_selected_thing.c_str(),
+                      m_model.getCaption( m_selected_thing ).c_str()  );
+
+        m_model.eraseItem( m_selected_thing );
+        m_selected_thing = "";
+
+        m_item_thing_map.erase( m_item_thing_map.find( m_selected_twItem ));
+        delete m_selected_twItem;
+        m_selected_twItem = NULL;
     }
 
     void update()
@@ -200,50 +250,16 @@ private slots:
     void on_leCommand_textChanged ( const QString & text )
     {   tracemessage( __FUNCTION__ );
         // this method is being called automatically by Qt
-
     }
-
 
 #if 1
-
-
-    void on_twTask_itemActivated ( QListWidgetItem * item )
-    {
-        tracemessage( __FUNCTION__ );
-    }
-
-    void on_twTask_itemChanged ( QListWidgetItem * item )
-    {
-        tracemessage( __FUNCTION__ );
-    }
-
-    void on_twTask_itemClicked ( QListWidgetItem * item )
-    {
-        tracemessage( __FUNCTION__ );
-    }
-
-    void on_twTask_itemDoubleClicked ( QListWidgetItem * item )
-    {
-        tracemessage( __FUNCTION__ );
-        //m_model.
-    }
-
-    void on_twTask_itemEntered ( QListWidgetItem * item )
-    {
-        tracemessage( __FUNCTION__ );
-    }
-
-    void on_twTask_itemPressed ( QListWidgetItem * item )
-    {
-        tracemessage( __FUNCTION__ );
-    }
 
     void on_twTask_itemSelectionChanged ()
     {
         tracemessage( __FUNCTION__ );
     }
 
-    void on_leCommand_cursorPositionChanged ( int , int )
+    void on_leCommand_cursorPositionChanged ( int, int )
     {
         tracemessage( __FUNCTION__ );
     }

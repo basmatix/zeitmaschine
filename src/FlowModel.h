@@ -13,7 +13,7 @@
 // [X] addValue
 // [X] hide Thing
 // [X] add creation time
-// [ ] enable done
+// [X] enable done
 // [ ] enable delete
 // [ ] model equality operator
 // [ ] test with equality operator
@@ -33,6 +33,19 @@ public:
         void addAttribute( const std::string &attribute )
         {
             m_attributes.insert( attribute );
+        }
+
+        bool removeAttribute( const std::string &attribute )
+        {
+            if( m_attributes.find( attribute ) == m_attributes.end() )
+            {
+                return false;
+            }
+            else
+            {
+                m_attributes.erase( attribute );
+                return true;
+            }
         }
 
         void addValue( const std::string &name, const std::string &value )
@@ -132,7 +145,9 @@ public:
                 l_new_thing->m_string_values =
                     n["string_values"].as< Thing::string_value_map_type >();
 
-                BOOST_FOREACH( const Thing::string_value_map_type::value_type &a, l_new_thing->m_string_values )
+                BOOST_FOREACH(
+                    const Thing::string_value_map_type::value_type &a,
+                    l_new_thing->m_string_values )
                 {
                     std::cout << a.first << ": " << a.second << std::endl;
                 }
@@ -213,6 +228,15 @@ public:
         return l_new_key;
     }
 
+    void eraseItem( const std::string &uid )
+    {
+        FlowModelMapType::iterator l_item_it( m_things.find( uid ) );
+
+        assert( l_item_it != m_things.end() );
+
+        m_things.erase( l_item_it );
+    }
+
     void addAttribute( const std::string &uid, const std::string &attribute )
     {
         FlowModelMapType::iterator l_item_it( m_things.find( uid ) );
@@ -220,6 +244,24 @@ public:
         assert( l_item_it != m_things.end() );
 
         l_item_it->second->addAttribute( attribute );
+    }
+
+    bool removeAttribute( const std::string &uid, const std::string &attribute )
+    {
+        FlowModelMapType::iterator l_item_it( m_things.find( uid ) );
+
+        assert( l_item_it != m_things.end() );
+
+        return l_item_it->second->removeAttribute( attribute );
+    }
+
+    void setValue( const std::string &uid, const std::string &name, const std::string &value )
+    {
+        FlowModelMapType::iterator l_item_it( m_things.find( uid ) );
+
+        assert( l_item_it != m_things.end() );
+
+        l_item_it->second->addValue( name, value    );
     }
 
     std::string getCaption( const std::string &uid )
