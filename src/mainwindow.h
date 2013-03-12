@@ -71,30 +71,45 @@ public:
 
         m_model.load( m_filename );
 
+
         m_liToday = new QTreeWidgetItem();
-        m_liToday->setText( 0, "today");
+        m_liToday->setText( 0, "TODAY");
         m_ui->twTask->addTopLevelItem( m_liToday );
         m_liToday->setExpanded( true );
 
+        QBrush b = m_liToday->foreground(0);
+        b.setColor( Qt::darkBlue );
+
+        m_liToday->setForeground( 0, b );
+        m_liToday->setBackgroundColor( 0, Qt::lightGray );
+
         m_liInbox = new QTreeWidgetItem();
-        m_liInbox->setText( 0, "inbox");
+        m_liInbox->setText( 0, "INBOX");
         m_ui->twTask->addTopLevelItem( m_liInbox );
         m_liInbox->setExpanded( true );
+        m_liInbox->setForeground( 0, b );
+        m_liInbox->setBackgroundColor( 0, Qt::lightGray );
 
         m_liProjects = new QTreeWidgetItem();
-        m_liProjects->setText( 0, "projects");
+        m_liProjects->setText( 0, "PROJECTS");
         m_ui->twTask->addTopLevelItem( m_liProjects );
         m_liProjects->setExpanded( true );
+        m_liProjects->setForeground( 0, b );
+        m_liProjects->setBackgroundColor( 0, Qt::lightGray );
 
         m_liContexts = new QTreeWidgetItem();
-        m_liContexts->setText( 0, "context");
+        m_liContexts->setText( 0, "CONTEXT");
         m_ui->twTask->addTopLevelItem( m_liContexts );
         m_liContexts->setExpanded( true );
+        m_liContexts->setForeground( 0, b );
+        m_liContexts->setBackgroundColor( 0, Qt::lightGray );
 
         m_liDone = new QTreeWidgetItem();
-        m_liDone->setText( 0, "done");
+        m_liDone->setText( 0, "DONE");
         m_ui->twTask->addTopLevelItem( m_liDone );
         m_liDone->setExpanded( false );
+        m_liDone->setForeground( 0, b );
+        m_liDone->setBackgroundColor( 0, Qt::lightGray );
 
         updateUi();
     }
@@ -102,7 +117,6 @@ public:
     virtual ~MainWindow()
     {
         delete m_ui;
-
     }
 
 private:
