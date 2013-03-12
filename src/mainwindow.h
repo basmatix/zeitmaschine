@@ -74,6 +74,7 @@ public:
         m_liToday = new QTreeWidgetItem();
         m_liToday->setText( 0, "today");
         m_ui->twTask->addTopLevelItem( m_liToday );
+        m_liToday->setExpanded( true );
 
         m_liInbox = new QTreeWidgetItem();
         m_liInbox->setText( 0, "inbox");
@@ -83,14 +84,17 @@ public:
         m_liProjects = new QTreeWidgetItem();
         m_liProjects->setText( 0, "projects");
         m_ui->twTask->addTopLevelItem( m_liProjects );
+        m_liProjects->setExpanded( true );
 
-        m_liProjects = new QTreeWidgetItem();
-        m_liProjects->setText( 0, "context");
-        m_ui->twTask->addTopLevelItem( m_liProjects );
+        m_liContexts = new QTreeWidgetItem();
+        m_liContexts->setText( 0, "context");
+        m_ui->twTask->addTopLevelItem( m_liContexts );
+        m_liContexts->setExpanded( true );
 
         m_liDone = new QTreeWidgetItem();
         m_liDone->setText( 0, "done");
         m_ui->twTask->addTopLevelItem( m_liDone );
+        m_liDone->setExpanded( false );
 
         updateUi();
     }
@@ -110,6 +114,10 @@ private:
         if( m_model.hasAttribute( uid, "gtd_item_unhandled" ) )
         {
             m_liInbox->addChild( l_item );
+        }
+        if( m_model.hasAttribute( uid, "gtd_project" ) )
+        {
+            m_liProjects->addChild( l_item );
         }
         if( m_model.hasAttribute( uid, "gtd_item_done" ) )
         {
@@ -241,6 +249,27 @@ private slots:
         // dont alter m_selected_thing or m_selected_twItem after this
         // deletion since they get set there synchronously
         delete m_selected_twItem;
+    }
+
+    void on_pbMakeProject_clicked()
+    {   tracemessage( __FUNCTION__ );
+
+        std::string l_project_name =  m_ui->leCommand->text().trimmed().toStdString();
+
+        if( l_project_name == "" )
+        {
+
+        }
+        else
+        {
+            std::string l_item_uid = m_model.createNewItem( l_project_name );
+
+            m_model.addAttribute( l_item_uid, "gtd_project" );
+
+            addListItem( l_item_uid );
+
+            m_ui->leCommand->setText("");
+        }
     }
 
     void update()

@@ -14,6 +14,7 @@
 // [X] hide Thing
 // [X] add creation time
 // [X] enable done
+// [ ] create project from item
 // [ ] enable delete
 // [ ] model equality operator
 // [ ] test with equality operator
