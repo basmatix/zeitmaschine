@@ -268,18 +268,27 @@ public:
         l_item_it->second->addValue( name, value    );
     }
 
-    std::string getCaption( const std::string &uid )
+    void setCaption( const std::string &uid, const std::string &caption )
     {
         FlowModelMapType::iterator l_item_it( m_things.find( uid ) );
+
+        assert( l_item_it != m_things.end() );
+
+        l_item_it->second->m_caption = caption;
+    }
+
+    const std::string & getCaption( const std::string &uid ) const
+    {
+        FlowModelMapType::const_iterator l_item_it( m_things.find( uid ) );
 
         assert( l_item_it != m_things.end() );
 
         return l_item_it->second->m_caption;
     }
 
-    bool hasAttribute( const std::string uid, const std::string attribute )
+    bool hasAttribute( const std::string uid, const std::string attribute ) const
     {
-        FlowModelMapType::iterator l_item_it( m_things.find( uid ) );
+        FlowModelMapType::const_iterator l_item_it( m_things.find( uid ) );
 
         assert( l_item_it != m_things.end() );
 

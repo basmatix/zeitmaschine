@@ -43,9 +43,9 @@ class MainWindow
 
 private:
 
-    Ui_window  *m_ui;
-    Model       m_model;
-    std::string m_selected_thing;
+    Ui_window       *m_ui;
+    Model            m_model;
+    std::string      m_selected_thing;
     QTreeWidgetItem *m_selected_twItem;
 
     QTreeWidgetItem *m_liToday;
@@ -55,7 +55,7 @@ private:
     QTreeWidgetItem *m_liDone;
 
     QMap< QTreeWidgetItem *, std::string > m_item_thing_map;
-    std::string m_filename;
+    std::string      m_filename;
 
 public:
 
@@ -82,6 +82,8 @@ public:
 
         m_liToday->setForeground( 0, b );
         m_liToday->setBackgroundColor( 0, Qt::lightGray );
+
+
 
         m_liInbox = new QTreeWidgetItem();
         m_liInbox->setText( 0, "INBOX");
@@ -124,6 +126,7 @@ private:
     void addListItem( const std::string uid )
     {
         QTreeWidgetItem *l_item = new QTreeWidgetItem();
+
         l_item->setText( 0, QString::fromStdString( m_model.getCaption( uid ) ));
         if( m_model.hasAttribute( uid, "gtd_item_unhandled" ) )
         {
@@ -137,6 +140,10 @@ private:
         {
             m_liDone->addChild( l_item );
         }
+
+        Qt::ItemFlags f = l_item->flags();
+        f |= Qt::ItemIsEditable;
+        l_item->setFlags( f );
 
         m_item_thing_map[ l_item ] = uid;
     }
@@ -213,11 +220,44 @@ private slots:
             m_selected_twItem = NULL;
         }
     }
-
+    /*
     void on_twTask_clicked( const QModelIndex &index )
     {   tracemessage( __FUNCTION__ );
         //std::cout << index. << std::endl;;
     }
+    */
+
+    void on_twTask_itemChanged( QTreeWidgetItem *item )
+    {   tracemessage( __FUNCTION__ );
+
+        if( m_item_thing_map.contains( item ) )
+        {
+
+            std::string l_thing = m_item_thing_map[ item ];
+            std::string l_new_caption = item->text(0).toStdString();
+            tracemessage( "changing item text from '%s' to '%s'",
+                          m_model.getCaption( l_thing ).c_str(),
+                          l_new_caption.c_str() );
+            m_model.setCaption( l_thing, l_new_caption );
+        }
+    }
+
+    /*
+    void on_twTask_doubleClicked( const QModelIndex &index )
+    {   tracemessage( __FUNCTION__ );
+        //std::cout << index. << std::endl;;
+
+        //m_ui->twTask->edit(index);
+
+    }
+    */
+    /*
+    void on_twTask_itemDoubleClicked( QTreeWidgetItem *item, int column )
+    {   tracemessage( __FUNCTION__ );
+        //std::cout << index. << std::endl;;
+
+    }
+    */
 
     void on_pbClose_clicked()
     {   tracemessage( __FUNCTION__ );
