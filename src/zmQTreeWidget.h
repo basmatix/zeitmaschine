@@ -17,6 +17,7 @@ public:
     explicit zmQTreeWidget(QWidget *parent = 0)
         : QTreeWidget       ( parent )
     {
+        setAcceptDrops( true );
     }
 
     virtual ~zmQTreeWidget()
