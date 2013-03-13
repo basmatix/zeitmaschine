@@ -49,7 +49,7 @@
           <item>
            <widget class="QPushButton" name="pbClose">
             <property name="text">
-             <string>close</string>
+             <string>done</string>
             </property>
            </widget>
           </item>

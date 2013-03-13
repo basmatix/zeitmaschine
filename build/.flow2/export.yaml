@@ -1,0 +1,127 @@
+- !<0512fd52738e81b6>
+  attributes:
+    - gtd_item_unhandled
+  caption: Vorschlag für nächste Aktion geben
+  string_values:
+    global_time_created: 2013-03-13T08:16:55.007919
+- !<165f478b240e74a3>
+  string_values:
+    global_time_created: 2013-03-13T08:15:13.298517
+  caption: Model-operator= zum Testen verwenden
+  attributes:
+    - gtd_item_unhandled
+- !<1dc1d191b993e17f>
+  caption: Verknüpfungen unter Dateien ermöglichen
+  attributes:
+    - gtd_item_unhandled
+  string_values:
+    global_time_created: 2013-03-13T08:14:04.998726
+- !<1e223855d2cf5d93>
+  string_values:
+    global_time_created: 2013-03-13T08:13:44.829694
+  caption: Kontext-Dateien speichern
+  attributes:
+    - gtd_item_unhandled
+- !<33e204487c6fd159>
+  caption: Items nach GTD überführen
+  attributes:
+    - gtd_item_unhandled
+  string_values:
+    global_time_created: 2013-03-13T08:17:42.554631
+- !<3d174926d2546f70>
+  caption: GTD boost-frei machen (Android)
+  attributes:
+    - gtd_item_unhandled
+  string_values:
+    global_time_created: 2013-03-13T08:15:33.115617
+- !<4d41ee297bc5c34c>
+  caption: Sync-Mechanismus für Android finden
+  attributes:
+    - gtd_item_unhandled
+  string_values:
+    global_time_created: 2013-03-13T08:14:35.688533
+- !<4d6a0f931b79009e>
+  caption: Speichern beim Bearbeiten
+  attributes:
+    - gtd_item_unhandled
+  string_values:
+    global_time_created: 2013-03-13T08:11:54.184357
+- !<573c58936fb97114>
+  caption: p1
+  attributes:
+    - gtd_project
+  string_values:
+    global_time_created: 2013-03-12T23:08:12.250498
+- !<99051bad4dc41d82>
+  caption: GTD-Layer einführen
+  attributes:
+    - gtd_item_unhandled
+  string_values:
+    global_time_created: 2013-03-13T08:15:19.730823
+- !<9b39bccc74574e50>
+  caption: Drag&Drop manipulation
+  attributes:
+    - gtd_item_unhandled
+  string_values:
+    global_time_created: 2013-03-13T08:12:46.610628
+- !<a63959f368275f3b>
+  caption: Geschenk für Mama und Armin
+  attributes:
+    - gtd_item_unhandled
+  string_values:
+    global_time_created: 2013-03-11T22:42:24.653776
+- !<c5fdc7b5c93e0414>
+  caption: Model-operator= bauen
+  attributes:
+    - gtd_item_unhandled
+  string_values:
+    global_time_created: 2013-03-13T08:15:03.169982
+- !<cc5e156225d7120a>
+  caption: Beginn/Ende-Zeiten tracken
+  attributes:
+    - gtd_item_unhandled
+  string_values:
+    global_time_created: 2013-03-13T08:13:03.899562
+- !<cdc3791400dace2c>
+  caption: GTD-Konform werden
+  attributes:
+    - gtd_item_unhandled
+  string_values:
+    global_time_created: 2013-03-13T08:17:06.440632
+- !<ce6525081cfb5c59>
+  caption: Items umbenennen
+  attributes:
+    - gtd_item_done
+  string_values:
+    global_time_created: 2013-03-13T08:12:02.088587
+    gtd_time_done: 2013-03-13T22:01:49.940226
+- !<d3fa86b079b50dc5>
+  caption: "Qt-Bug umschiffen: komisches edit-Verhalten"
+  attributes:
+    - gtd_item_unhandled
+  string_values:
+    global_time_created: 2013-03-13T09:34:46.920632
+- !<e1d5be9be76a5879>
+  caption: mehrere GTD-export files gleichzeitig verwalten können (über Attribute verwaltet)
+  attributes:
+    - gtd_item_unhandled
+  string_values:
+    global_time_created: 2013-03-13T08:18:31.077205
+- !<e43900584af88584>
+  caption: Kontext-Texte speichern
+  attributes:
+    - gtd_item_unhandled
+  string_values:
+    global_time_created: 2013-03-13T08:13:22.748611
+- !<eb2679ddd7f9ab17>
+  caption: Nodes nach Zeit sortieren
+  attributes:
+    - gtd_item_unhandled
+  string_values:
+    global_time_created: 2013-03-13T08:16:38.215025
+- !<f913168e95de2713>
+  caption: android-client bauen
+  attributes:
+    - gtd_item_unhandled
+  string_values:
+    global_time_created: 2013-03-13T08:14:24.895912
