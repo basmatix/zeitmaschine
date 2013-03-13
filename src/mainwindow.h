@@ -267,8 +267,7 @@ private slots:
 
     void on_pbMakeProject_clicked()
     {   tracemessage( __FUNCTION__ );
-
-        std::string l_project_name =  m_ui->leCommand->text().trimmed().toStdString();
+        std::string l_project_name = m_ui->leCommand->text().trimmed().toStdString();
 
         if( l_project_name == "" )
         {
@@ -276,6 +275,9 @@ private slots:
         }
         else
         {
+            tracemessage( "create project '%s' from magic line",
+                          l_project_name.c_str() );
+
             std::string l_item_uid = m_model.createNewItem( l_project_name );
 
             m_model.addAttribute( l_item_uid, "gtd_project" );

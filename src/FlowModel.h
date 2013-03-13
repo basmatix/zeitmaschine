@@ -14,8 +14,14 @@
 // [X] hide Thing
 // [X] add creation time
 // [X] enable done
+// [X] enable delete
+// [X] create projects
 // [ ] create project from item
-// [ ] enable delete
+// [ ] save on modify
+// [ ] track drag/drop
+// [ ] track begin/end of projects
+// [ ] rename items
+// [ ] save notes
 // [ ] model equality operator
 // [ ] test with equality operator
 
@@ -121,11 +127,8 @@ public:
 
         BOOST_FOREACH( YAML::Node n, l_import )
         {
-            //std::cout << n.Tag() << std::endl;
-            //std::cout << n.Scalar() << std::endl;
-            //assert( n["uid"] );
             assert( n["caption"] );
-            //std::string l_uid =     n["uid"    ].as< std::string >();
+
             std::string l_uid =     n.Tag();
             std::string l_caption = n["caption"].as< std::string >();
 
