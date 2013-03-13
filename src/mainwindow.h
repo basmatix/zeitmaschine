@@ -3,7 +3,7 @@
 
 #include "ui_flow2.h"
 
-#include "FlowModel.h"
+#include "zmModel.h"
 
 #include <map>
 #include <QtGui/QMainWindow>
@@ -71,19 +71,15 @@ public:
 
         m_model.load( m_filename );
 
-
         m_liToday = new QTreeWidgetItem();
         m_liToday->setText( 0, "TODAY");
         m_ui->twTask->addTopLevelItem( m_liToday );
         m_liToday->setExpanded( true );
-
+        // should be an independent object of course
         QBrush b = m_liToday->foreground(0);
         b.setColor( Qt::darkBlue );
-
         m_liToday->setForeground( 0, b );
         m_liToday->setBackgroundColor( 0, Qt::lightGray );
-
-
 
         m_liInbox = new QTreeWidgetItem();
         m_liInbox->setText( 0, "INBOX");

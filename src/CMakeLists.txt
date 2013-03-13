@@ -1,4 +1,4 @@
-project( flow2 )
+project( zeitmaschine )
 
 cmake_minimum_required(VERSION 2.8)
 
@@ -57,6 +57,7 @@ qt4_wrap_ui( ${PROJECT_NAME}_UIS
 # list all class files which implement Q_OBJECT
 qt4_wrap_cpp( ${PROJECT_NAME}_MOCS
     mainwindow.h
+    zmQTreeWidget.h
 )
 
 file( GLOB ${PROJECT_NAME}_files
