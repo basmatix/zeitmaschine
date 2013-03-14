@@ -69,7 +69,7 @@ public:
 
         m_ui->setupUi( this );
 
-        m_model.load( m_filename );
+        importFromFs();
 
         m_liToday = new QTreeWidgetItem();
         m_liToday->setText( 0, "TODAY");
@@ -157,11 +157,13 @@ private:
     void exportToFs()
     {   tracemessage( __FUNCTION__ );
 
+        m_model.save( m_filename );
     }
 
     void importFromFs()
     {   tracemessage( __FUNCTION__ );
 
+        m_model.load( m_filename );
     }
 
     void updateGui()
@@ -173,7 +175,7 @@ private:
     {   tracemessage( __FUNCTION__ );
         // this method is being called automatically by Qt
 
-        m_model.save( m_filename );
+        exportToFs();
     }
 
 
@@ -190,6 +192,8 @@ private slots:
         addListItem( l_item_uid );
 
         m_ui->leCommand->setText("");
+
+        exportToFs();
     }
 
     void on_twTask_itemActivated( QTreeWidgetItem *item, int )
@@ -235,6 +239,8 @@ private slots:
                           m_model.getCaption( l_thing ).c_str(),
                           l_new_caption.c_str() );
             m_model.setCaption( l_thing, l_new_caption );
+
+            exportToFs();
         }
     }
 
@@ -279,6 +285,8 @@ private slots:
 
         m_selected_thing = "";
         m_selected_twItem = NULL;
+
+        exportToFs();
     }
 
     void on_pbDelete_clicked()
@@ -299,6 +307,8 @@ private slots:
         // dont alter m_selected_thing or m_selected_twItem after this
         // deletion since they get set there synchronously
         delete m_selected_twItem;
+
+        exportToFs();
     }
 
     void on_pbMakeProject_clicked()
@@ -321,6 +331,8 @@ private slots:
             addListItem( l_item_uid );
 
             m_ui->leCommand->setText("");
+
+            exportToFs();
         }
     }
 
