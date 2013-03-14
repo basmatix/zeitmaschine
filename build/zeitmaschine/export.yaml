@@ -1,27 +1,27 @@
 - !<0512fd52738e81b6>
-  caption: Vorschlag für nächste Aktion geben
   attributes:
     - gtd_item_unhandled
+  caption: Vorschlag für nächste Aktion geben
   string_values:
     global_time_created: 2013-03-13T08:16:55.007919
 - !<165f478b240e74a3>
-  string_values:
-    global_time_created: 2013-03-13T08:15:13.298517
+  caption: Model-operator= zum Testen verwenden
   attributes:
     - gtd_item_unhandled
-  caption: Model-operator= zum Testen verwenden
+  string_values:
+    global_time_created: 2013-03-13T08:15:13.298517
 - !<1dc1d191b993e17f>
-  caption: Verknüpfungen unter Dateien ermöglichen
   string_values:
     global_time_created: 2013-03-13T08:14:04.998726
+  caption: Verknüpfungen unter Dateien ermöglichen
   attributes:
     - gtd_item_unhandled
 - !<1e223855d2cf5d93>
   caption: Kontext-Dateien speichern
-  string_values:
-    global_time_created: 2013-03-13T08:13:44.829694
   attributes:
     - gtd_item_unhandled
+  string_values:
+    global_time_created: 2013-03-13T08:13:44.829694
 - !<33e204487c6fd159>
   caption: Items nach GTD überführen
   attributes:
@@ -35,35 +35,41 @@
   attributes:
     - gtd_item_unhandled
 - !<4d41ee297bc5c34c>
-  string_values:
-    global_time_created: 2013-03-13T08:14:35.688533
   caption: Sync-Mechanismus für Android finden
   attributes:
     - gtd_item_unhandled
-- !<4d6a0f931b79009e>
   string_values:
-    global_time_created: 2013-03-13T08:11:54.184357
+    global_time_created: 2013-03-13T08:14:35.688533
+- !<4d6a0f931b79009e>
   caption: Speichern beim Bearbeiten
   attributes:
     - gtd_item_unhandled
-- !<573c58936fb97114>
   string_values:
-    global_time_created: 2013-03-12T23:08:12.250498
+    global_time_created: 2013-03-13T08:11:54.184357
+- !<573c58936fb97114>
   caption: p1
   attributes:
     - gtd_project
-- !<99051bad4dc41d82>
   string_values:
-    global_time_created: 2013-03-13T08:15:19.730823
+    global_time_created: 2013-03-12T23:08:12.250498
+- !<99051bad4dc41d82>
   caption: GTD-Layer einführen
   attributes:
     - gtd_item_unhandled
+  string_values:
+    global_time_created: 2013-03-13T08:15:19.730823
 - !<9b39bccc74574e50>
   caption: Drag&Drop manipulation
   attributes:
     - gtd_item_unhandled
   string_values:
     global_time_created: 2013-03-13T08:12:46.610628
+- !<ad46330484d4a1d8>
+  caption: encoding klarziehen
+  attributes:
+    - gtd_item_unhandled
+  string_values:
+    global_time_created: 2013-03-14T13:22:38.735396
 - !<baa2c977d941e438>
   caption: YSbox Anschluss ermöglichen
   attributes:

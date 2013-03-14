@@ -26,7 +26,7 @@ public:
 
     void dropEvent ( QDropEvent * event )
     {
-        const QMimeData* mime_data = event->mimeData();
+        //const QMimeData* mime_data = event->mimeData();
 
         /*
         if(!mime_data->hasFormat("application/mytype"))

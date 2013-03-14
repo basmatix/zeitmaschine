@@ -51,7 +51,7 @@ if( NOT MSVC )
 endif()
 
 qt4_wrap_ui( ${PROJECT_NAME}_UIS
-    flow2.ui
+    zeitmaschine.ui
 )
 
 # list all class files which implement Q_OBJECT
@@ -76,15 +76,13 @@ include_directories(
     "${CMAKE_CURRENT_SOURCE_DIR}/submodules/yaml-cpp/include"
 )
 
-add_executable(
-    ${PROJECT_NAME}
+add_executable( zm
     ${${PROJECT_NAME}_files}
     ${${PROJECT_NAME}_MOCS}
     ${${PROJECT_NAME}_UIS}
 )
 
-target_link_libraries(
-    ${PROJECT_NAME}
+target_link_libraries( zm
     ${QT_LIBRARIES}
     ${ADDITIONAL_LIBRARIES}
     ${Boost_LIBRARIES}

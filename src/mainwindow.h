@@ -1,9 +1,9 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include "ui_flow2.h"
+#include "ui_zeitmaschine.h"
 
-#include "zmModel.h"
+#include "zmGtdModel.h"
 
 #include <map>
 #include <QtGui/QMainWindow>
@@ -44,7 +44,7 @@ class MainWindow
 private:
 
     Ui_window       *m_ui;
-    Model            m_model;
+    zmGtdModel       m_model;
     std::string      m_selected_thing;
     QTreeWidgetItem *m_selected_twItem;
 
@@ -62,7 +62,7 @@ public:
     explicit MainWindow(QWidget *parent = 0)
         : QMainWindow       ( parent )
         , m_ui              ( new Ui_window )
-        , m_filename        ( ".flow2/export.yaml" )
+        , m_filename        ( "zeitmaschine/export.yaml" )
         , m_selected_thing  ( "" )
         , m_selected_twItem ( NULL )
     {   tracemessage( __FUNCTION__ );
@@ -146,7 +146,7 @@ private:
 
     void updateUi()
     {
-        BOOST_FOREACH(const Model::FlowModelMapType::value_type& i, m_model.things() )
+        BOOST_FOREACH(const ThingsModel::ThingsModelMapType::value_type& i, m_model.things() )
         {
             addListItem( i.first );
 
@@ -178,7 +178,6 @@ private:
         exportToFs();
     }
 
-
 private slots:
 
     void on_leCommand_returnPressed ()
@@ -196,14 +195,8 @@ private slots:
         exportToFs();
     }
 
-    void on_twTask_itemActivated( QTreeWidgetItem *item, int )
-    {   tracemessage( __FUNCTION__ );
-        //std::cout << index. << std::endl;;
-        //m_ui->twTask->currentItemChanged();
-    }
-
     void on_twTask_currentItemChanged( QTreeWidgetItem *current, QTreeWidgetItem *previous )
-    {   tracemessage( __FUNCTION__ );
+    {   //tracemessage( __FUNCTION__ );
 
         if( m_item_thing_map.contains( current ) )
         {
@@ -220,12 +213,6 @@ private slots:
             m_selected_twItem = NULL;
         }
     }
-    /*
-    void on_twTask_clicked( const QModelIndex &index )
-    {   tracemessage( __FUNCTION__ );
-        //std::cout << index. << std::endl;;
-    }
-    */
 
     void on_twTask_itemChanged( QTreeWidgetItem *item )
     {   tracemessage( __FUNCTION__ );
@@ -244,9 +231,9 @@ private slots:
         }
     }
 
-
     void on_twTask_itemDropped( QTreeWidgetItem *item, QTreeWidgetItem *target )
-    {   tracemessage( __FUNCTION__ );
+    {   //tracemessage( __FUNCTION__ );
+
         if( !m_item_thing_map.contains( item ) )
         {
             return;
@@ -255,29 +242,16 @@ private slots:
         {
             return;
         }
+
         std::string l_source = m_item_thing_map[ item ];
         std::string l_target = m_item_thing_map[ target ];
-        tracemessage( "drag '%s' to '%s'",
+
+        tracemessage( "dragged '%s' to '%s'",
                       m_model.getCaption( l_source ).c_str(),
                       m_model.getCaption( l_target ).c_str() );
-    }
 
-    /*
-    void on_twTask_doubleClicked( const QModelIndex &index )
-    {   tracemessage( __FUNCTION__ );
-        //std::cout << index. << std::endl;;
-
-        //m_ui->twTask->edit(index);
 
     }
-    */
-    /*
-    void on_twTask_itemDoubleClicked( QTreeWidgetItem *item, int column )
-    {   tracemessage( __FUNCTION__ );
-        //std::cout << index. << std::endl;;
-
-    }
-    */
 
     void on_pbClose_clicked()
     {   tracemessage( __FUNCTION__ );
@@ -291,7 +265,7 @@ private slots:
 
         m_model.removeAttribute( m_selected_thing, "gtd_item_unhandled" );
         m_model.addAttribute( m_selected_thing, "gtd_item_done" );
-        m_model.setValue( m_selected_thing, "gtd_time_done", m_model.time_stamp() );
+        m_model.setValue( m_selected_thing, "gtd_time_done", ThingsModel::time_stamp() );
 
 
         // NOTE: this is black magic - don't touch! why does m_selected_twItem
@@ -354,6 +328,33 @@ private slots:
         }
     }
 
+
+#if 0
+    void on_twTask_itemActivated( QTreeWidgetItem *item, int )
+    {   tracemessage( __FUNCTION__ );
+        //std::cout << index. << std::endl;;
+        //m_ui->twTask->currentItemChanged();
+    }
+
+    void on_twTask_clicked( const QModelIndex &index )
+    {   tracemessage( __FUNCTION__ );
+        //std::cout << index. << std::endl;;
+    }
+
+    void on_twTask_doubleClicked( const QModelIndex &index )
+    {   tracemessage( __FUNCTION__ );
+        //std::cout << index. << std::endl;;
+
+        //m_ui->twTask->edit(index);
+
+    }
+
+    void on_twTask_itemDoubleClicked( QTreeWidgetItem *item, int column )
+    {   tracemessage( __FUNCTION__ );
+        //std::cout << index. << std::endl;;
+
+    }
+
     void update()
     {   tracemessage( __FUNCTION__ );
         //m_ui->lblTask->setText( QString().sprintf("%d",m_model.getCurrentTaskDuration()) );
@@ -365,16 +366,12 @@ private slots:
         // this method is being called automatically by Qt
     }
 
-#if 1
-
     void on_twTask_itemSelectionChanged ()
-    {
-        tracemessage( __FUNCTION__ );
+    {   tracemessage( __FUNCTION__ );
     }
 
     void on_leCommand_cursorPositionChanged ( int, int )
-    {
-        tracemessage( __FUNCTION__ );
+    {   tracemessage( __FUNCTION__ );
     }
 
     void on_leCommand_editingFinished ()

@@ -10,22 +10,7 @@
 #include <boost/filesystem.hpp>
 #include <boost/date_time.hpp>
 
-// [X] addValue
-// [X] hide Thing
-// [X] add creation time
-// [X] enable done
-// [X] enable delete
-// [X] create projects
-// [ ] create project from item
-// [ ] save on modify
-// [ ] track drag/drop
-// [ ] track begin/end of projects
-// [ ] rename items
-// [ ] save notes
-// [ ] model equality operator
-// [ ] test with equality operator
-
-class Model
+class ThingsModel
 {
 public:
     class Thing
@@ -73,17 +58,17 @@ public:
         string_value_map_type m_string_values;
     };
 
-    typedef std::map<  std::string, Thing * > FlowModelMapType;
+    typedef std::map<  std::string, Thing * > ThingsModelMapType;
 
 
-    const FlowModelMapType & things() const
+    const ThingsModelMapType & things() const
     {
         return m_things;
     }
 
 private:
 
-    FlowModelMapType m_things;
+    ThingsModelMapType m_things;
 
     // returns 16x8 bit
     static inline std::string generateUid()
@@ -101,7 +86,7 @@ private:
 
     void clear()
     {
-        BOOST_FOREACH(const FlowModelMapType::value_type& i, m_things)
+        BOOST_FOREACH(const ThingsModelMapType::value_type& i, m_things)
         {
             delete i.second;
         }
@@ -185,7 +170,7 @@ public:
 
         YAML::Node l_export_root;
 
-        BOOST_FOREACH(const FlowModelMapType::value_type& i, m_things)
+        BOOST_FOREACH(const ThingsModelMapType::value_type& i, m_things)
         {
             YAML::Node l_export_item;
             //l_export_item["uid"    ] = i.first;
@@ -226,7 +211,6 @@ public:
         std::string l_new_key = generateUid();
         Thing *l_new_thing = new Thing( caption );
         l_new_thing->addValue( "global_time_created", time_stamp() );
-        //l_new_thing->addValue( "test_name", "test_value" );
 
         m_things[ l_new_key ] = l_new_thing;
         return l_new_key;
@@ -234,7 +218,7 @@ public:
 
     void eraseItem( const std::string &uid )
     {
-        FlowModelMapType::iterator l_item_it( m_things.find( uid ) );
+        ThingsModelMapType::iterator l_item_it( m_things.find( uid ) );
 
         assert( l_item_it != m_things.end() );
 
@@ -243,7 +227,7 @@ public:
 
     void addAttribute( const std::string &uid, const std::string &attribute )
     {
-        FlowModelMapType::iterator l_item_it( m_things.find( uid ) );
+        ThingsModelMapType::iterator l_item_it( m_things.find( uid ) );
 
         assert( l_item_it != m_things.end() );
 
@@ -252,7 +236,7 @@ public:
 
     bool removeAttribute( const std::string &uid, const std::string &attribute )
     {
-        FlowModelMapType::iterator l_item_it( m_things.find( uid ) );
+        ThingsModelMapType::iterator l_item_it( m_things.find( uid ) );
 
         assert( l_item_it != m_things.end() );
 
@@ -261,7 +245,7 @@ public:
 
     void setValue( const std::string &uid, const std::string &name, const std::string &value )
     {
-        FlowModelMapType::iterator l_item_it( m_things.find( uid ) );
+        ThingsModelMapType::iterator l_item_it( m_things.find( uid ) );
 
         assert( l_item_it != m_things.end() );
 
@@ -270,7 +254,7 @@ public:
 
     void setCaption( const std::string &uid, const std::string &caption )
     {
-        FlowModelMapType::iterator l_item_it( m_things.find( uid ) );
+        ThingsModelMapType::iterator l_item_it( m_things.find( uid ) );
 
         assert( l_item_it != m_things.end() );
 
@@ -279,7 +263,7 @@ public:
 
     const std::string & getCaption( const std::string &uid ) const
     {
-        FlowModelMapType::const_iterator l_item_it( m_things.find( uid ) );
+        ThingsModelMapType::const_iterator l_item_it( m_things.find( uid ) );
 
         assert( l_item_it != m_things.end() );
 
@@ -288,7 +272,7 @@ public:
 
     bool hasAttribute( const std::string uid, const std::string attribute ) const
     {
-        FlowModelMapType::const_iterator l_item_it( m_things.find( uid ) );
+        ThingsModelMapType::const_iterator l_item_it( m_things.find( uid ) );
 
         assert( l_item_it != m_things.end() );
 
