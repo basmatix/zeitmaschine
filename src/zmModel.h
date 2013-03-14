@@ -45,6 +45,20 @@ public:
             m_string_values[ name ] = value;
         }
 
+        bool hasValue( const std::string &name ) const
+        {
+            return m_string_values.find( name ) != m_string_values.end();
+        }
+
+        std::string getValue( const std::string &name ) const
+        {
+            string_value_map_type::const_iterator i
+                    = m_string_values.find( name );
+            assert( i != m_string_values.end() );
+
+            return i->second;
+        }
+
         bool hasAttribute( const std::string &attribute ) const
         {
             return m_attributes.find( attribute ) != m_attributes.end();
@@ -249,7 +263,16 @@ public:
 
         assert( l_item_it != m_things.end() );
 
-        l_item_it->second->addValue( name, value    );
+        l_item_it->second->addValue( name, value );
+    }
+
+    std::string getValue( const std::string &uid, const std::string &name ) const
+    {
+        ThingsModelMapType::const_iterator l_item_it( m_things.find( uid ) );
+
+        assert( l_item_it != m_things.end() );
+
+        return l_item_it->second->getValue( name );
     }
 
     void setCaption( const std::string &uid, const std::string &caption )

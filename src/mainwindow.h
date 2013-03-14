@@ -54,7 +54,8 @@ private:
     QTreeWidgetItem *m_liContexts;
     QTreeWidgetItem *m_liDone;
 
-    QMap< QTreeWidgetItem *, std::string > m_item_thing_map;
+    QMap< QTreeWidgetItem *, std::string > m_lwitem_thing_map;
+    QMap< std::string, QTreeWidgetItem * > m_thing_lwitem_map;
     std::string      m_filename;
 
 public:
@@ -137,20 +138,40 @@ private:
             m_liDone->addChild( l_item );
         }
 
+        if( m_model.isTaskItem( uid ) )
+        {
+            std::string l_parentProject = m_model.getParentProject( uid );
+
+            QTreeWidgetItem *l_project = m_thing_lwitem_map[l_parentProject];
+
+            l_project->addChild( l_item );
+        }
+
         Qt::ItemFlags f = l_item->flags();
         f |= Qt::ItemIsEditable;
         l_item->setFlags( f );
 
-        m_item_thing_map[ l_item ] = uid;
+        m_lwitem_thing_map[ l_item ] = uid;
+        m_thing_lwitem_map[ uid ] = l_item;
     }
 
     void updateUi()
     {
-        BOOST_FOREACH(const ThingsModel::ThingsModelMapType::value_type& i, m_model.things() )
-        {
-            addListItem( i.first );
+        /// enforce list filling order by now..
 
-            tracemessage( "setup '%s' caption = '%s'", i.first.c_str(), i.second->m_caption.c_str() );
+        BOOST_FOREACH( const std::string& p, m_model.getProjectItems() )
+        {
+            addListItem( p );
+        }
+
+        BOOST_FOREACH( const std::string& t, m_model.getTaskItems() )
+        {
+            addListItem( t );
+        }
+
+        BOOST_FOREACH( const std::string& i, m_model.getInboxItems() )
+        {
+            addListItem( i );
         }
     }
 
@@ -198,10 +219,10 @@ private slots:
     void on_twTask_currentItemChanged( QTreeWidgetItem *current, QTreeWidgetItem *previous )
     {   //tracemessage( __FUNCTION__ );
 
-        if( m_item_thing_map.contains( current ) )
+        if( m_lwitem_thing_map.contains( current ) )
         {
             m_selected_twItem = current;
-            m_selected_thing = m_item_thing_map[ m_selected_twItem ];
+            m_selected_thing = m_lwitem_thing_map[ m_selected_twItem ];
             tracemessage( "clicked on item %s (%s)",
                           m_selected_thing.c_str(),
                           m_model.getCaption( m_selected_thing ).c_str()  );
@@ -217,10 +238,10 @@ private slots:
     void on_twTask_itemChanged( QTreeWidgetItem *item )
     {   tracemessage( __FUNCTION__ );
 
-        if( m_item_thing_map.contains( item ) )
+        if( m_lwitem_thing_map.contains( item ) )
         {
 
-            std::string l_thing = m_item_thing_map[ item ];
+            std::string l_thing = m_lwitem_thing_map[ item ];
             std::string l_new_caption = item->text(0).toStdString();
             tracemessage( "changing item text from '%s' to '%s'",
                           m_model.getCaption( l_thing ).c_str(),
@@ -234,26 +255,34 @@ private slots:
     void on_twTask_itemDropped( QTreeWidgetItem *item, QTreeWidgetItem *target )
     {   //tracemessage( __FUNCTION__ );
 
-        if( !m_item_thing_map.contains( item ) )
+        if( !m_lwitem_thing_map.contains( item ) )
         {
             return;
         }
-        if( !m_item_thing_map.contains( target ) )
+        if( !m_lwitem_thing_map.contains( target ) )
         {
             return;
         }
 
-        std::string l_source = m_item_thing_map[ item ];
-        std::string l_target = m_item_thing_map[ target ];
+        std::string l_source = m_lwitem_thing_map[ item ];
+        std::string l_target = m_lwitem_thing_map[ target ];
 
         tracemessage( "dragged '%s' to '%s'",
                       m_model.getCaption( l_source ).c_str(),
                       m_model.getCaption( l_target ).c_str() );
 
         if( m_model.isInboxItem( l_source )
-         && m_model.isProjectItem( l_source ) )
+         && m_model.isProjectItem( l_target ) )
         {
             m_model.registerItemAsTask( l_source, l_target );
+
+            // NOTE: this is black magic - don't touch! why does m_selected_twItem
+            //       get set to NULL on removeChild()?!
+            QTreeWidgetItem *l_uselessCopy( item );
+            QTreeWidgetItem *l_groupingItem( item->parent() );
+            l_groupingItem->removeChild( l_uselessCopy );
+            target->addChild( l_uselessCopy );
+
         }
     }
 
@@ -293,9 +322,10 @@ private slots:
                       m_model.getCaption( m_selected_thing ).c_str()  );
 
         m_model.eraseItem( m_selected_thing );
+        m_thing_lwitem_map.erase( m_thing_lwitem_map.find( m_selected_thing ) );
         m_selected_thing = "";
 
-        m_item_thing_map.erase( m_item_thing_map.find( m_selected_twItem ));
+        m_lwitem_thing_map.erase( m_lwitem_thing_map.find( m_selected_twItem ));
 
         // dont alter m_selected_thing or m_selected_twItem after this
         // deletion since they get set there synchronously

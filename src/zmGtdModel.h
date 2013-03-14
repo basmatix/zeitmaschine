@@ -15,11 +15,50 @@ public:
     void registerItemAsTask( const std::string &task_item, const std::string &project_item )
     {
         assert( isInboxItem( task_item ) );
-        assert( isProject( project_item ) );
+        assert( isProjectItem( project_item ) );
 
         m_things_model.removeAttribute( task_item, "gtd_item_unhandled" );
         m_things_model.addAttribute( task_item, "gtd_task" );
         m_things_model.setValue( task_item, "gtd_parent_project", project_item );
+    }
+
+    std::list< std::string > getInboxItems()
+    {
+        std::list< std::string > l_return;
+
+        BOOST_FOREACH(const ThingsModel::ThingsModelMapType::value_type& i, m_things_model.things() )
+        {
+            if( isInboxItem( i.first ))
+            l_return.push_back( i.first );
+        }
+
+        return l_return;
+    }
+
+    std::list< std::string > getTaskItems()
+    {
+        std::list< std::string > l_return;
+
+        BOOST_FOREACH(const ThingsModel::ThingsModelMapType::value_type& i, m_things_model.things() )
+        {
+            if( isTaskItem( i.first ))
+            l_return.push_back( i.first );
+        }
+
+        return l_return;
+    }
+
+    std::list< std::string > getProjectItems()
+    {
+        std::list< std::string > l_return;
+
+        BOOST_FOREACH(const ThingsModel::ThingsModelMapType::value_type& i, m_things_model.things() )
+        {
+            if( isProjectItem( i.first ))
+            l_return.push_back( i.first );
+        }
+
+        return l_return;
     }
 
     void setDone( const std::string &task_item )
@@ -34,7 +73,7 @@ public:
                     task_item, "gtd_time_done", ThingsModel::time_stamp() );
     }
 
-    bool isTask( const std::string &item )
+    bool isTaskItem( const std::string &item )
     {
         return m_things_model.hasAttribute( item, "gtd_task" );
     }
@@ -49,14 +88,17 @@ public:
         return m_things_model.hasAttribute( item, "gtd_project" );
     }
 
-    bool isProject( const std::string &item ) const
-    {
-        return m_things_model.hasAttribute( item, "gtd_item_unhandled" );
-    }
-
     bool isDone( const std::string &task_item ) const
     {
         return m_things_model.hasAttribute( task_item, "gtd_item_done" );
+    }
+
+    std::string getParentProject( const std::string &task_item )
+    {
+        assert( isTaskItem( task_item ) );
+        assert( hasValue( task_item, "gtd_parent_project" ) );
+
+        return m_things_model.getValue( task_item, "gtd_parent_project" );
     }
 
     std::string createProject( const std::string &project_name )
@@ -121,6 +163,16 @@ public:
     bool hasAttribute( const std::string uid, const std::string attribute ) const
     {
         return m_things_model.hasAttribute( uid, attribute );
+    }
+
+    bool hasValue( const std::string uid, const std::string attribute ) const
+    {
+        return m_things_model.hasAttribute( uid, attribute );
+    }
+
+    std::string getValue( const std::string uid, const std::string name ) const
+    {
+        return m_things_model.getValue( uid, name );
     }
 };
 
