@@ -1,9 +1,9 @@
 - !<04a842e656639b07>
-  string_values:
-    global_time_created: 2013-03-14T16:48:26.036303
-  caption: "\"brain stack\" ermï¿½glichen"
   attributes:
     - gtd_item_unhandled
+  caption: "\"brain stack\" ermï¿½glichen"
+  string_values:
+    global_time_created: 2013-03-14T16:48:26.036303
 - !<0512fd52738e81b6>
   caption: Vorschlag für nächste Aktion geben
   attributes:
@@ -11,17 +11,17 @@
   string_values:
     global_time_created: 2013-03-13T08:16:55.007919
 - !<165f478b240e74a3>
+  caption: Model-operator= zum Testen verwenden
   attributes:
     - gtd_item_unhandled
   string_values:
     global_time_created: 2013-03-13T08:15:13.298517
-  caption: Model-operator= zum Testen verwenden
 - !<1dc1d191b993e17f>
+  string_values:
+    global_time_created: 2013-03-13T08:14:04.998726
   caption: Verknüpfungen unter Dateien ermöglichen
   attributes:
     - gtd_item_unhandled
-  string_values:
-    global_time_created: 2013-03-13T08:14:04.998726
 - !<1e223855d2cf5d93>
   caption: Kontext-Dateien speichern
   attributes:
@@ -101,11 +101,11 @@
   string_values:
     global_time_created: 2013-03-13T08:15:03.169982
 - !<cc5e156225d7120a>
+  string_values:
+    global_time_created: 2013-03-13T08:13:03.899562
   caption: Beginn/Ende-Zeiten tracken
   attributes:
     - gtd_item_unhandled
-  string_values:
-    global_time_created: 2013-03-13T08:13:03.899562
 - !<cdc3791400dace2c>
   caption: GTD-Konform werden
   attributes:

@@ -302,6 +302,15 @@ public:
         return l_item_it->second->hasAttribute( attribute );
     }
 
+    bool hasValue( const std::string uid, const std::string name ) const
+    {
+        ThingsModelMapType::const_iterator l_item_it( m_things.find( uid ) );
+
+        assert( l_item_it != m_things.end() );
+
+        return l_item_it->second->hasValue( name );
+    }
+
     static std::string time_stamp()
     {
         return boost::posix_time::to_iso_extended_string(

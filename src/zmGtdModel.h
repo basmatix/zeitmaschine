@@ -165,9 +165,9 @@ public:
         return m_things_model.hasAttribute( uid, attribute );
     }
 
-    bool hasValue( const std::string uid, const std::string attribute ) const
+    bool hasValue( const std::string uid, const std::string name ) const
     {
-        return m_things_model.hasAttribute( uid, attribute );
+        return m_things_model.hasValue( uid, name );
     }
 
     std::string getValue( const std::string uid, const std::string name ) const

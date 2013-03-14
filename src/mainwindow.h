@@ -125,20 +125,23 @@ private:
         QTreeWidgetItem *l_item = new QTreeWidgetItem();
 
         l_item->setText( 0, QString::fromStdString( m_model.getCaption( uid ) ));
-        if( m_model.isInboxItem( uid ) )
-        {
-            m_liInbox->addChild( l_item );
-        }
-        if( m_model.isProjectItem( uid ) )
-        {
-            m_liProjects->addChild( l_item );
-        }
+
         if( m_model.isDone( uid ) )
         {
             m_liDone->addChild( l_item );
         }
 
-        if( m_model.isTaskItem( uid ) )
+        else if( m_model.isInboxItem( uid ) )
+        {
+            m_liInbox->addChild( l_item );
+        }
+
+        else if( m_model.isProjectItem( uid ) )
+        {
+            m_liProjects->addChild( l_item );
+        }
+
+        else if( m_model.isTaskItem( uid ) )
         {
             std::string l_parentProject = m_model.getParentProject( uid );
 
@@ -147,9 +150,7 @@ private:
             l_project->addChild( l_item );
         }
 
-        Qt::ItemFlags f = l_item->flags();
-        f |= Qt::ItemIsEditable;
-        l_item->setFlags( f );
+        l_item->setFlags( l_item->flags() | Qt::ItemIsEditable );
 
         m_lwitem_thing_map[ l_item ] = uid;
         m_thing_lwitem_map[ uid ] = l_item;
@@ -219,6 +220,12 @@ private slots:
     void on_twTask_currentItemChanged( QTreeWidgetItem *current, QTreeWidgetItem *previous )
     {   //tracemessage( __FUNCTION__ );
 
+        if( m_lwitem_thing_map.contains( previous ) )
+        {
+            std::string l_previous_thing = m_lwitem_thing_map[ previous ];
+            m_model.setValue( l_previous_thing, "gtd_item_note", m_ui->teNotes->toPlainText().toStdString() );
+        }
+
         if( m_lwitem_thing_map.contains( current ) )
         {
             m_selected_twItem = current;
@@ -226,6 +233,10 @@ private slots:
             tracemessage( "clicked on item %s (%s)",
                           m_selected_thing.c_str(),
                           m_model.getCaption( m_selected_thing ).c_str()  );
+            if( m_model.hasValue( m_selected_thing, "gtd_item_note" ))
+            {
+
+            }
 
         }
         else
@@ -236,11 +247,10 @@ private slots:
     }
 
     void on_twTask_itemChanged( QTreeWidgetItem *item )
-    {   tracemessage( __FUNCTION__ );
+    {   //tracemessage( __FUNCTION__ );
 
         if( m_lwitem_thing_map.contains( item ) )
         {
-
             std::string l_thing = m_lwitem_thing_map[ item ];
             std::string l_new_caption = item->text(0).toStdString();
             tracemessage( "changing item text from '%s' to '%s'",
