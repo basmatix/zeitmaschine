@@ -7,6 +7,70 @@ class zmGtdModel
 {
     ThingsModel m_things_model;
 
+///
+/// GTD specific interface
+///
+public:
+
+    void registerItemAsTask( const std::string &task_item, const std::string &project_item )
+    {
+        assert( isInboxItem( task_item ) );
+        assert( isProject( project_item ) );
+
+        m_things_model.removeAttribute( task_item, "gtd_item_unhandled" );
+        m_things_model.addAttribute( task_item, "gtd_task" );
+        m_things_model.setValue( task_item, "gtd_parent_project", project_item );
+    }
+
+    void setDone( const std::string &task_item )
+    {
+        m_things_model.removeAttribute(
+                    task_item, "gtd_item_unhandled" );
+
+        m_things_model.addAttribute(
+                    task_item, "gtd_item_done" );
+
+        m_things_model.setValue(
+                    task_item, "gtd_time_done", ThingsModel::time_stamp() );
+    }
+
+    bool isTask( const std::string &item )
+    {
+        return m_things_model.hasAttribute( item, "gtd_task" );
+    }
+
+    bool isInboxItem( const std::string &item ) const
+    {
+        return m_things_model.hasAttribute( item, "gtd_item_unhandled" );
+    }
+
+    bool isProjectItem( const std::string &item ) const
+    {
+        return m_things_model.hasAttribute( item, "gtd_project" );
+    }
+
+    bool isProject( const std::string &item ) const
+    {
+        return m_things_model.hasAttribute( item, "gtd_item_unhandled" );
+    }
+
+    bool isDone( const std::string &task_item ) const
+    {
+        return m_things_model.hasAttribute( task_item, "gtd_item_done" );
+    }
+
+    std::string createProject( const std::string &project_name )
+    {
+        std::string l_item_uid = m_things_model.createNewItem( project_name );
+
+        m_things_model.addAttribute( l_item_uid, "gtd_project" );
+
+        return l_item_uid;
+    }
+
+///
+/// low level interface - to be vanished
+///
 public:
 
     const ThingsModel::ThingsModelMapType & things() const
@@ -37,11 +101,6 @@ public:
     void addAttribute( const std::string &uid, const std::string &attribute )
     {
         return m_things_model.addAttribute( uid, attribute );
-    }
-
-    bool removeAttribute( const std::string &uid, const std::string &attribute )
-    {
-        return m_things_model.removeAttribute( uid, attribute );
     }
 
     void setValue( const std::string &uid, const std::string &name, const std::string &value )

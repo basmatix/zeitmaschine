@@ -124,15 +124,15 @@ private:
         QTreeWidgetItem *l_item = new QTreeWidgetItem();
 
         l_item->setText( 0, QString::fromStdString( m_model.getCaption( uid ) ));
-        if( m_model.hasAttribute( uid, "gtd_item_unhandled" ) )
+        if( m_model.isInboxItem( uid ) )
         {
             m_liInbox->addChild( l_item );
         }
-        if( m_model.hasAttribute( uid, "gtd_project" ) )
+        if( m_model.isProjectItem( uid ) )
         {
             m_liProjects->addChild( l_item );
         }
-        if( m_model.hasAttribute( uid, "gtd_item_done" ) )
+        if( m_model.isDone( uid ) )
         {
             m_liDone->addChild( l_item );
         }
@@ -250,7 +250,11 @@ private slots:
                       m_model.getCaption( l_source ).c_str(),
                       m_model.getCaption( l_target ).c_str() );
 
-
+        if( m_model.isInboxItem( l_source )
+         && m_model.isProjectItem( l_source ) )
+        {
+            m_model.registerItemAsTask( l_source, l_target );
+        }
     }
 
     void on_pbClose_clicked()
@@ -263,10 +267,7 @@ private slots:
                       m_selected_thing.c_str(),
                       m_model.getCaption( m_selected_thing ).c_str()  );
 
-        m_model.removeAttribute( m_selected_thing, "gtd_item_unhandled" );
-        m_model.addAttribute( m_selected_thing, "gtd_item_done" );
-        m_model.setValue( m_selected_thing, "gtd_time_done", ThingsModel::time_stamp() );
-
+        m_model.setDone( m_selected_thing );
 
         // NOTE: this is black magic - don't touch! why does m_selected_twItem
         //       get set to NULL on removeChild()?!
@@ -316,9 +317,7 @@ private slots:
             tracemessage( "create project '%s' from magic line",
                           l_project_name.c_str() );
 
-            std::string l_item_uid = m_model.createNewItem( l_project_name );
-
-            m_model.addAttribute( l_item_uid, "gtd_project" );
+            std::string l_item_uid = m_model.createProject( l_project_name );
 
             addListItem( l_item_uid );
 

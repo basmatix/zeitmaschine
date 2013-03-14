@@ -1,21 +1,27 @@
+- !<04a842e656639b07>
+  string_values:
+    global_time_created: 2013-03-14T16:48:26.036303
+  caption: "\"brain stack\" ermï¿½glichen"
+  attributes:
+    - gtd_item_unhandled
 - !<0512fd52738e81b6>
   attributes:
     - gtd_item_unhandled
-  caption: Vorschlag für nächste Aktion geben
   string_values:
     global_time_created: 2013-03-13T08:16:55.007919
+  caption: Vorschlag für nächste Aktion geben
 - !<165f478b240e74a3>
+  string_values:
+    global_time_created: 2013-03-13T08:15:13.298517
   caption: Model-operator= zum Testen verwenden
   attributes:
     - gtd_item_unhandled
-  string_values:
-    global_time_created: 2013-03-13T08:15:13.298517
 - !<1dc1d191b993e17f>
-  string_values:
-    global_time_created: 2013-03-13T08:14:04.998726
   caption: Verknüpfungen unter Dateien ermöglichen
   attributes:
     - gtd_item_unhandled
+  string_values:
+    global_time_created: 2013-03-13T08:14:04.998726
 - !<1e223855d2cf5d93>
   caption: Kontext-Dateien speichern
   attributes:
@@ -29,11 +35,11 @@
   string_values:
     global_time_created: 2013-03-13T08:17:42.554631
 - !<3d174926d2546f70>
-  string_values:
-    global_time_created: 2013-03-13T08:15:33.115617
   caption: GTD boost-frei machen (Android)
   attributes:
     - gtd_item_unhandled
+  string_values:
+    global_time_created: 2013-03-13T08:15:33.115617
 - !<4d41ee297bc5c34c>
   caption: Sync-Mechanismus für Android finden
   attributes:
@@ -52,6 +58,12 @@
     - gtd_project
   string_values:
     global_time_created: 2013-03-12T23:08:12.250498
+- !<74ab2fb0c455f1ae>
+  caption: Groups haben ein "after" attribut um z.b. "phase1" und "phase2" in zeitliche korrelation zu bringen
+  attributes:
+    - gtd_item_unhandled
+  string_values:
+    global_time_created: 2013-03-14T15:39:37.246621
 - !<99051bad4dc41d82>
   caption: GTD-Layer einführen
   attributes:
@@ -125,9 +137,15 @@
     - gtd_item_unhandled
   string_values:
     global_time_created: 2013-03-13T08:16:38.215025
-- !<f913168e95de2713>
-  caption: android-client bauen
+- !<f433a091bea20385>
+  caption: Windows compiliert
   attributes:
     - gtd_item_unhandled
   string_values:
+    global_time_created: 2013-03-14T15:38:40.518222
+- !<f913168e95de2713>
+  string_values:
     global_time_created: 2013-03-13T08:14:24.895912
+  caption: android-client bauen
+  attributes:
+    - gtd_item_unhandled
