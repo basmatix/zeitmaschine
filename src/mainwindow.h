@@ -244,6 +244,24 @@ private slots:
         }
     }
 
+
+    void on_twTask_itemDropped( QTreeWidgetItem *item, QTreeWidgetItem *target )
+    {   tracemessage( __FUNCTION__ );
+        if( !m_item_thing_map.contains( item ) )
+        {
+            return;
+        }
+        if( !m_item_thing_map.contains( target ) )
+        {
+            return;
+        }
+        std::string l_source = m_item_thing_map[ item ];
+        std::string l_target = m_item_thing_map[ target ];
+        tracemessage( "drag '%s' to '%s'",
+                      m_model.getCaption( l_source ).c_str(),
+                      m_model.getCaption( l_target ).c_str() );
+    }
+
     /*
     void on_twTask_doubleClicked( const QModelIndex &index )
     {   tracemessage( __FUNCTION__ );
