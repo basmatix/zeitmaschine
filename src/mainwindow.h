@@ -24,7 +24,6 @@
 
 class QListWidgetItem;
 
-
 inline void tracemessage( const char * a_format, ... )
 {
     char l_buffer[1024];
@@ -222,22 +221,29 @@ private slots:
 
         if( m_lwitem_thing_map.contains( previous ) )
         {
+            /// if there has been selected - save it's note
+
             std::string l_previous_thing = m_lwitem_thing_map[ previous ];
             m_model.setValue( l_previous_thing, "gtd_item_note", m_ui->teNotes->toPlainText().toStdString() );
         }
 
+        m_ui->teNotes->setText( "" );
+
         if( m_lwitem_thing_map.contains( current ) )
         {
+
             m_selected_twItem = current;
             m_selected_thing = m_lwitem_thing_map[ m_selected_twItem ];
             tracemessage( "clicked on item %s (%s)",
                           m_selected_thing.c_str(),
                           m_model.getCaption( m_selected_thing ).c_str()  );
+
             if( m_model.hasValue( m_selected_thing, "gtd_item_note" ))
             {
-
+                QString l_note_text = QString::fromStdString(
+                            m_model.getValue( m_selected_thing, "gtd_item_note" ) );
+                m_ui->teNotes->setText( l_note_text );
             }
-
         }
         else
         {
