@@ -2,6 +2,8 @@ project( zeitmaschine )
 
 cmake_minimum_required(VERSION 2.8)
 
+enable_testing()
+
 find_package(
         Boost 1.47
     COMPONENTS
@@ -66,7 +68,6 @@ file( GLOB ${PROJECT_NAME}_files
     *.cpp
 )
 
-add_subdirectory( submodules/json-cpp-cmake )
 add_subdirectory( submodules/yaml-cpp )
 
 include_directories(
@@ -90,3 +91,12 @@ target_link_libraries( zm
     yaml-cpp
 )
 
+add_executable( test_things test/test_things.cpp )
+
+target_link_libraries( test_things
+    ${Boost_LIBRARIES}
+    yaml-cpp
+)
+
+add_test( empty-db-on-load         ${CMAKE_CURRENT_BINARY_DIR}/test_things empty-db-on-load )
+add_test( things-change-while-open ${CMAKE_CURRENT_BINARY_DIR}/test_things change-while-open )

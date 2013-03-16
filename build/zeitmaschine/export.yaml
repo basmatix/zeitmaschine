@@ -6,12 +6,12 @@
     global_time_created: 2013-03-14T16:48:26.036303
     gtd_item_note: brain
 - !<0512fd52738e81b6>
+  caption: Vorschlag für nächste Aktion geben
   attributes:
     - gtd_item_unhandled
   string_values:
     global_time_created: 2013-03-13T08:16:55.007919
     gtd_item_note: test
-  caption: Vorschlag für nächste Aktion geben
 - !<165f478b240e74a3>
   caption: Model-operator= zum Testen verwenden
   attributes:
@@ -56,23 +56,35 @@
   string_values:
     global_time_created: 2013-03-13T08:11:54.184357
 - !<573c58936fb97114>
+  string_values:
+    global_time_created: 2013-03-12T23:08:12.250498
   caption: p1
   attributes:
     - gtd_project
-  string_values:
-    global_time_created: 2013-03-12T23:08:12.250498
 - !<60ee2a07206332d6>
-  string_values:
-    global_time_created: 2013-03-14T18:35:13.239280
   caption: beim Exportieren Ordnung erzwingen (macht diffs unproblematischer)
   attributes:
     - gtd_item_unhandled
+  string_values:
+    global_time_created: 2013-03-14T18:35:13.239280
+- !<6214e35f0e3e3813>
+  caption: Runtime-Konflikte / Merge on save lösen
+  attributes:
+    - gtd_item_unhandled
+  string_values:
+    global_time_created: 2013-03-15T22:40:08.355364
 - !<74ab2fb0c455f1ae>
   caption: Groups haben ein "after" attribut um z.b. "phase1" und "phase2" in zeitliche korrelation zu bringen
   attributes:
     - gtd_item_unhandled
   string_values:
     global_time_created: 2013-03-14T15:39:37.246621
+- !<87ceff4a6a501ab7>
+  caption: unit tests einführen
+  attributes:
+    - gtd_item_unhandled
+  string_values:
+    global_time_created: 2013-03-16T07:40:33.900368
 - !<99051bad4dc41d82>
   caption: GTD-Layer einführen
   attributes:
@@ -92,11 +104,11 @@
   string_values:
     global_time_created: 2013-03-14T13:22:38.735396
 - !<baa2c977d941e438>
+  string_values:
+    global_time_created: 2013-03-13T22:22:16.938815
   caption: YSbox Anschluss ermöglichen
   attributes:
     - gtd_item_unhandled
-  string_values:
-    global_time_created: 2013-03-13T22:22:16.938815
 - !<c5fdc7b5c93e0414>
   caption: Model-operator= bauen
   attributes:

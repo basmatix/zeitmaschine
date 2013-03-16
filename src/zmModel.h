@@ -162,17 +162,20 @@ public:
 
     void save( const std::string &filename )
     {
-        std::string l_dir = filename.substr( 0, filename.find_last_of("/") );
-
-        try
+        if( filename.find_last_of("/") != std::string::npos )
         {
-            boost::filesystem::create_directory( l_dir );
-        }
-        catch( ... )
-        {
-            //error
-        }
+            std::string l_dir = filename.substr( 0, filename.find_last_of("/") );
 
+            try
+            {
+                boost::filesystem::create_directory( l_dir );
+            }
+            catch( ... )
+            {
+                //error
+            }
+
+        }
         std::ofstream l_fout( filename.c_str() );
 
         assert( l_fout.is_open() );
@@ -228,6 +231,13 @@ public:
 
         m_things[ l_new_key ] = l_new_thing;
         return l_new_key;
+    }
+
+    bool hasItem( const std::string &uid ) const
+    {
+        ThingsModelMapType::const_iterator l_item_it( m_things.find( uid ) );
+
+        return l_item_it != m_things.end();
     }
 
     void eraseItem( const std::string &uid )
