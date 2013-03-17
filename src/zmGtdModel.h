@@ -140,6 +140,11 @@ public:
         return m_things_model.eraseItem( uid );
     }
 
+    bool itemContentMatchesString( const std::string &uid, const std::string &searchString ) const
+    {
+        return m_things_model.itemContentMatchesString( uid, searchString );
+    }
+
     void addAttribute( const std::string &uid, const std::string &attribute )
     {
         return m_things_model.addAttribute( uid, attribute );

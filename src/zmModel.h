@@ -6,6 +6,8 @@
 #include <fstream>
 #include <string>
 #include <yaml-cpp/yaml.h>
+
+#include <algorithm>
 #include <boost/foreach.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/date_time.hpp>
@@ -64,6 +66,35 @@ public:
             return m_attributes.find( attribute ) != m_attributes.end();
         }
 
+        bool contentMatchesString( const std::string &searchString ) const
+        {
+            std::string l_searchStringLower( searchString );
+            /*
+            std::transform(
+                        searchString.begin(),
+                        searchString.end(),
+                        l_searchStringLower.begin(), std::tolower );
+            */
+            if( m_caption.find(searchString) != std::string::npos )
+            {
+                return true;
+            }
+            return false;
+        }
+
+        bool equals( const Thing & other )
+        {
+            if( m_caption != other.m_caption )
+            {
+                return false;
+            }
+            if( m_attributes != other.m_attributes )
+            {
+                return false;
+            }
+            return true;
+        }
+
         std::string m_caption;
         std::set< std::string > m_attributes;
 
@@ -72,7 +103,7 @@ public:
         string_value_map_type m_string_values;
     };
 
-    typedef std::map<  std::string, Thing * > ThingsModelMapType;
+    typedef std::map< std::string, Thing * > ThingsModelMapType;
 
 
     const ThingsModelMapType & things() const
@@ -83,40 +114,15 @@ public:
 private:
 
     ThingsModelMapType m_things;
+    ThingsModelMapType m_thingsOnLoad;
 
-    // returns 16x8 bit
-    static inline std::string generateUid()
-    {
-        std::string l_return;
-        l_return.reserve(16);
-        l_return.resize(16);
-        for( int i = 0; i < 16; ++i )
-        {
-            const char *l_characters = "0123456789abcdef";
-            l_return[i] = l_characters[ rand() % 16 ];
-        }
-        return l_return;
-    }
-
-    void clear()
-    {
-        BOOST_FOREACH(const ThingsModelMapType::value_type& i, m_things)
-        {
-            delete i.second;
-        }
-        m_things.clear();
-    }
 
 public:
 
-    void setModelFolder()
-    {
-
-    }
-
     void load( const std::string &filename )
     {
-        clear();
+        clear( m_things );
+        clear( m_thingsOnLoad );
 
         if( ! boost::filesystem::exists( filename ) )
         {
@@ -124,40 +130,31 @@ public:
         }
         YAML::Node l_import = YAML::LoadFile(filename);
 
-        BOOST_FOREACH( YAML::Node n, l_import )
+        yamlToThingsMap( l_import, m_things );
+        yamlToThingsMap( l_import, m_thingsOnLoad );
+    }
+
+    bool equals( const ThingsModelMapType &thingsMap, const ThingsModelMapType &thingsMapOther )
+    {
+        if( thingsMap.size() != thingsMapOther.size() )
         {
-            assert( n["caption"] );
-
-            std::string l_uid =     n.Tag();
-            std::string l_caption = n["caption"].as< std::string >();
-
-            Thing *l_new_thing = new Thing( l_caption );
-            if( n["attributes"] )
-            {
-                std::vector< std::string > l_attributes =
-                        n["attributes"].as< std::vector< std::string > >();
-                for( std::vector< std::string >::const_iterator
-                     a  = l_attributes.begin();
-                     a != l_attributes.end(); ++ a )
-                {
-                    l_new_thing->m_attributes.insert( *a );
-                }
-            }
-            if( n["string_values"] )
-            {
-                l_new_thing->m_string_values =
-                    n["string_values"].as< Thing::string_value_map_type >();
-
-                BOOST_FOREACH(
-                    const Thing::string_value_map_type::value_type &a,
-                    l_new_thing->m_string_values )
-                {
-                    std::cout << a.first << ": " << a.second << std::endl;
-                }
-            }
-
-            m_things[ l_uid ] = l_new_thing;
+            return false;
         }
+        for( ThingsModelMapType::const_iterator
+             i  = thingsMap.begin();
+             i != thingsMap.end(); ++i )
+        {
+            ThingsModelMapType::const_iterator l_mirrorThing = thingsMapOther.find( i->first );
+            if( l_mirrorThing == thingsMapOther.end() )
+            {
+                return false;
+            }
+            if( !i->second->equals( *l_mirrorThing->second ) )
+            {
+                return false;
+            }
+        }
+        return true;
     }
 
     void save( const std::string &filename )
@@ -321,10 +318,82 @@ public:
         return l_item_it->second->hasValue( name );
     }
 
+    bool itemContentMatchesString( const std::string &uid, const std::string &searchString ) const
+    {
+        ThingsModelMapType::const_iterator l_item_it( m_things.find( uid ) );
+
+        assert( l_item_it != m_things.end() );
+
+        return l_item_it->second->contentMatchesString( searchString );
+    }
+
     static std::string time_stamp()
     {
         return boost::posix_time::to_iso_extended_string(
                     boost::posix_time::microsec_clock::local_time());
+    }
+
+private:
+
+    // returns 16x8 bit
+    static inline std::string generateUid()
+    {
+        std::string l_return;
+        l_return.reserve(16);
+        l_return.resize(16);
+        for( int i = 0; i < 16; ++i )
+        {
+            const char *l_characters = "0123456789abcdef";
+            l_return[i] = l_characters[ rand() % 16 ];
+        }
+        return l_return;
+    }
+
+    static void clear( ThingsModelMapType &thingsMap )
+    {
+        BOOST_FOREACH(const ThingsModelMapType::value_type& i, thingsMap)
+        {
+            delete i.second;
+        }
+        thingsMap.clear();
+    }
+
+    static void yamlToThingsMap( YAML::Node yamlNode, ThingsModelMapType &thingsMap )
+    {
+        BOOST_FOREACH( YAML::Node n, yamlNode )
+        {
+            assert( n["caption"] );
+
+            std::string l_uid =     n.Tag();
+            std::string l_caption = n["caption"].as< std::string >();
+
+            Thing *l_new_thing = new Thing( l_caption );
+            if( n["attributes"] )
+            {
+                std::vector< std::string > l_attributes =
+                        n["attributes"].as< std::vector< std::string > >();
+                for( std::vector< std::string >::const_iterator
+                     a  = l_attributes.begin();
+                     a != l_attributes.end(); ++ a )
+                {
+                    l_new_thing->m_attributes.insert( *a );
+                }
+            }
+            if( n["string_values"] )
+            {
+                l_new_thing->m_string_values =
+                    n["string_values"].as< Thing::string_value_map_type >();
+
+                BOOST_FOREACH(
+                    const Thing::string_value_map_type::value_type &a,
+                    l_new_thing->m_string_values )
+                {
+                    std::cout << a.first << ": " << a.second << std::endl;
+                }
+            }
+
+            thingsMap[ l_uid ] = l_new_thing;
+        }
     }
 };
 

@@ -373,6 +373,19 @@ private slots:
         }
     }
 
+    void on_leCommand_textChanged ( const QString & text )
+    {   tracemessage( __FUNCTION__ );
+        // this method is being called automatically by Qt
+        std::string l_search_string = text.toLower().toStdString();
+        for( QMap< std::string, QTreeWidgetItem * >::iterator
+             i  = m_thing_lwitem_map.begin();
+             i != m_thing_lwitem_map.end(); ++i )
+        {
+            bool l_search_string_matches = m_model.itemContentMatchesString(
+                        i.key(), l_search_string );
+            i.value()->setHidden( ! l_search_string_matches );
+        }
+    }
 
 #if 0
     void on_twTask_itemActivated( QTreeWidgetItem *item, int )
@@ -391,7 +404,6 @@ private slots:
         //std::cout << index. << std::endl;;
 
         //m_ui->twTask->edit(index);
-
     }
 
     void on_twTask_itemDoubleClicked( QTreeWidgetItem *item, int column )
@@ -406,10 +418,6 @@ private slots:
         //tracemessage( "%d",m_model.getCurrentTaskDuration() );
     }
 
-    void on_leCommand_textChanged ( const QString & text )
-    {   tracemessage( __FUNCTION__ );
-        // this method is being called automatically by Qt
-    }
 
     void on_twTask_itemSelectionChanged ()
     {   tracemessage( __FUNCTION__ );
