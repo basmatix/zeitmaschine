@@ -66,18 +66,32 @@ public:
             return m_attributes.find( attribute ) != m_attributes.end();
         }
 
+        static bool stringFind(const std::string &bigString, const std::string &pattern  )
+        {
+            std::string l_tmpBigString(bigString);
+
+            std::transform(
+                        l_tmpBigString.begin(),
+                        l_tmpBigString.end(),
+                        l_tmpBigString.begin(), ::tolower );
+
+            return l_tmpBigString.find(pattern) != std::string::npos;
+        }
+
         bool contentMatchesString( const std::string &searchString ) const
         {
-            std::string l_searchStringLower( searchString );
-            /*
-            std::transform(
-                        searchString.begin(),
-                        searchString.end(),
-                        l_searchStringLower.begin(), std::tolower );
-            */
-            if( m_caption.find(searchString) != std::string::npos )
+            if( stringFind( m_caption, searchString ) )
             {
                 return true;
+            }
+            for( string_value_map_type::const_iterator
+                 i  = m_string_values.begin();
+                 i != m_string_values.end(); ++i )
+            {
+                if( stringFind( i->second, searchString ) )
+                {
+                    return true;
+                }
             }
             return false;
         }
