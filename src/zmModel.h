@@ -11,6 +11,7 @@
 #include <boost/foreach.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/date_time.hpp>
+#include <boost/functional/hash.hpp>
 
 class ThingsModel
 {
@@ -109,6 +110,30 @@ public:
             return true;
         }
 
+        std::string getHash( ) const
+        {
+            std::stringstream l_stream;
+            boost::hash<std::string> string_hash;
+            l_stream << string_hash( m_caption );
+
+            /// sorted!!
+
+            for( string_value_map_type::const_iterator
+                 i  = m_string_values.begin();
+                 i != m_string_values.end(); ++i )
+            {
+                l_stream << string_hash( i->second );
+            }
+            for( string_value_map_type::const_iterator
+                 i  = m_attributes.begin();
+                 i != m_attributes.end(); ++i )
+            {
+                l_stream << string_hash( i->second );
+            }
+            return l_stream.str();
+        }
+
+
         std::string m_caption;
         std::set< std::string > m_attributes;
 
@@ -124,6 +149,7 @@ public:
     {
         return m_things;
     }
+
 
 private:
 
@@ -203,6 +229,7 @@ public:
             YAML::Node l_export_item;
             //l_export_item["uid"    ] = i.first;
             l_export_item["caption"] = i.second->m_caption;
+            l_export_item["hash"] = i.second->getHash();
 
             if( ! i.second->m_attributes.empty() )
             {
