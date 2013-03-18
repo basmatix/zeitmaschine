@@ -125,6 +125,10 @@ private:
 
         l_item->setText( 0, QString::fromStdString( m_model.getCaption( uid ) ));
 
+        tracemessage( "adding item %s to list (%s)",
+                      uid.c_str(),
+                      m_model.getCaption( uid ).c_str()  );
+
         if( m_model.isDone( uid ) )
         {
             m_liDone->addChild( l_item );

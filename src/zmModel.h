@@ -116,19 +116,22 @@ public:
             boost::hash<std::string> string_hash;
             l_stream << string_hash( m_caption );
 
-            /// sorted!!
+            /// important: enforce predictable order!
 
+            /// maps should be sorted by key anyway..
             for( string_value_map_type::const_iterator
                  i  = m_string_values.begin();
                  i != m_string_values.end(); ++i )
             {
                 l_stream << string_hash( i->second );
             }
-            for( string_value_map_type::const_iterator
+
+            /// and fortunately this is true for sets, too
+            for( std::set< std::string >::const_iterator
                  i  = m_attributes.begin();
                  i != m_attributes.end(); ++i )
             {
-                l_stream << string_hash( i->second );
+                l_stream << string_hash( *i );
             }
             return l_stream.str();
         }
@@ -432,6 +435,12 @@ private:
                     std::cout << a.first << ": " << a.second << std::endl;
                 }
             }
+
+            if( n["hash"] )
+            {
+                assert( n["hash"].as< std::string >() == l_new_thing->getHash() );
+            }
+            assert( l_new_thing->hasValue("global_time_created") );
 
             thingsMap[ l_uid ] = l_new_thing;
         }
