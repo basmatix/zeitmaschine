@@ -1,7 +1,7 @@
 - !<04a842e656639b07>
+  caption: "\"brain stack\" ermï¿½glichen"
   attributes:
     - gtd_item_unhandled
-  caption: "\"brain stack\" ermï¿½glichen"
   string_values:
     gtd_item_note: brain
     global_time_created: 2013-03-14T16:48:26.036303
@@ -20,17 +20,17 @@
     global_time_created: 2013-03-13T08:15:13.298517
     gtd_item_note: ""
 - !<1dc1d191b993e17f>
-  caption: Verknüpfungen unter Dateien ermöglichen
-  attributes:
-    - gtd_item_unhandled
   string_values:
     global_time_created: 2013-03-13T08:14:04.998726
+  attributes:
+    - gtd_item_unhandled
+  caption: Verknüpfungen unter Dateien ermöglichen
 - !<1e223855d2cf5d93>
+  string_values:
+    global_time_created: 2013-03-13T08:13:44.829694
   caption: Kontext-Dateien speichern
   attributes:
     - gtd_item_unhandled
-  string_values:
-    global_time_created: 2013-03-13T08:13:44.829694
 - !<33e204487c6fd159>
   caption: Items nach GTD überführen
   attributes:
@@ -43,12 +43,18 @@
     - gtd_item_unhandled
   string_values:
     global_time_created: 2013-03-13T08:15:33.115617
-- !<4d41ee297bc5c34c>
+- !<441a045c65d325c8>
+  caption: items speichern eine checksumme um merge-fehler aufzudecken
+  attributes:
+    - gtd_item_unhandled
   string_values:
-    global_time_created: 2013-03-13T08:14:35.688533
+    global_time_created: 2013-03-18T12:48:30.358876
+- !<4d41ee297bc5c34c>
   caption: Sync-Mechanismus für Android finden
   attributes:
     - gtd_item_unhandled
+  string_values:
+    global_time_created: 2013-03-13T08:14:35.688533
 - !<4d6a0f931b79009e>
   caption: Speichern beim Bearbeiten
   attributes:
@@ -73,6 +79,12 @@
     - gtd_item_unhandled
   string_values:
     global_time_created: 2013-03-15T22:40:08.355364
+- !<62782dee7ba6ba82>
+  caption: beim laden auf created_time überprüfen
+  attributes:
+    - gtd_item_unhandled
+  string_values:
+    global_time_created: 2013-03-18T18:21:16.973285
 - !<74ab2fb0c455f1ae>
   caption: Groups haben ein "after" attribut um z.b. "phase1" und "phase2" in zeitliche korrelation zu bringen
   attributes:
@@ -103,6 +115,12 @@
     - gtd_item_unhandled
   string_values:
     global_time_created: 2013-03-14T13:22:38.735396
+- !<ae47b48e3470b842>
+  caption: "Collaboration: bei aktivitï¿½t in einem Task durch andere wird dieses hervorgehoben"
+  attributes:
+    - gtd_item_unhandled
+  string_values:
+    global_time_created: 2013-03-18T12:47:32.750278
 - !<baa2c977d941e438>
   caption: YSbox Anschluss ermöglichen
   attributes:
@@ -140,6 +158,12 @@
     - gtd_item_unhandled
   string_values:
     global_time_created: 2013-03-13T09:34:46.920632
+- !<d4109d9404ded1a1>
+  caption: beim hinzufügen von items wird der note-text geadded
+  attributes:
+    - gtd_item_unhandled
+  string_values:
+    global_time_created: 2013-03-18T12:48:53.015026
 - !<e1d5be9be76a5879>
   caption: mehrere GTD-export files gleichzeitig verwalten können (über Attribute verwaltet)
   attributes:
