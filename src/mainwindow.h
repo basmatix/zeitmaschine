@@ -16,6 +16,7 @@
 #include <QtCore/QList>
 #include <QtCore/QPair>
 #include <QtCore/QTimer>
+#include <QtGui/QMessageBox>
 
 #include <stdarg.h>
 #include <stdio.h>
@@ -375,6 +376,18 @@ private slots:
 
             exportToFs();
         }
+    }
+
+    void on_pbOrder_clicked()
+    {
+        std::string l_taskUid = m_model.orderATask();
+
+        if( l_taskUid == "" )
+        {
+            return;
+        }
+        QString l_taskCaption = QString::fromStdString( m_model.getCaption( l_taskUid ) );
+        QMessageBox::information( this, "just do it!", l_taskCaption );
     }
 
     void on_leCommand_textChanged ( const QString & text )

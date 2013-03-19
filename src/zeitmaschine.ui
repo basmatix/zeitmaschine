@@ -13,6 +13,10 @@
   <property name="windowTitle">
    <string>zeitmaschine</string>
   </property>
+  <property name="windowIcon">
+   <iconset>
+    <normaloff>timemachine.svg</normaloff>timemachine.svg</iconset>
+  </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
     <item row="0" column="0">
@@ -44,8 +48,22 @@
           </item>
          </layout>
         </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <property name="leftMargin">
+         <number>0</number>
+        </property>
         <item>
          <layout class="QVBoxLayout" name="verticalLayout_2">
+          <item>
+           <widget class="QPushButton" name="pbOrder">
+            <property name="text">
+             <string>order a task</string>
+            </property>
+           </widget>
+          </item>
           <item>
            <widget class="QPushButton" name="pbClose">
             <property name="text">
@@ -69,6 +87,9 @@
           </item>
           <item>
            <widget class="QPushButton" name="pbMakeContext">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
             <property name="text">
              <string>m context</string>
             </property>
@@ -76,6 +97,9 @@
           </item>
           <item>
            <widget class="QPushButton" name="pbMakeGroup">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
             <property name="text">
              <string>m group</string>
             </property>
@@ -90,10 +114,10 @@
           </item>
          </layout>
         </item>
+        <item>
+         <widget class="QTextEdit" name="teNotes"/>
+        </item>
        </layout>
-      </item>
-      <item>
-       <widget class="QTextEdit" name="teNotes"/>
       </item>
      </layout>
     </item>

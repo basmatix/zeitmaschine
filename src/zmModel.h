@@ -13,6 +13,9 @@
 #include <boost/date_time.hpp>
 #include <boost/functional/hash.hpp>
 
+// info regarding string encoding:
+//    http://code.google.com/p/yaml-cpp/wiki/Strings
+
 class ThingsModel
 {
 public:
@@ -230,9 +233,8 @@ public:
         BOOST_FOREACH(const ThingsModelMapType::value_type& i, m_things)
         {
             YAML::Node l_export_item;
-            //l_export_item["uid"    ] = i.first;
             l_export_item["caption"] = i.second->m_caption;
-            l_export_item["hash"] = i.second->getHash();
+            l_export_item["hash1"] = i.second->getHash();
 
             if( ! i.second->m_attributes.empty() )
             {
@@ -436,9 +438,9 @@ private:
                 }
             }
 
-            if( n["hash"] )
+            if( n["hash1"] )
             {
-                assert( n["hash"].as< std::string >() == l_new_thing->getHash() );
+                assert( n["hash1"].as< std::string >() == l_new_thing->getHash() );
             }
             assert( l_new_thing->hasValue("global_time_created") );
 

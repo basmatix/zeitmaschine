@@ -22,7 +22,7 @@ public:
         m_things_model.setValue( task_item, "gtd_parent_project", project_item );
     }
 
-    std::list< std::string > getInboxItems()
+    std::list< std::string > getInboxItems() const
     {
         std::list< std::string > l_return;
 
@@ -35,7 +35,7 @@ public:
         return l_return;
     }
 
-    std::list< std::string > getTaskItems()
+    std::list< std::string > getTaskItems() const
     {
         std::list< std::string > l_return;
 
@@ -48,7 +48,7 @@ public:
         return l_return;
     }
 
-    std::list< std::string > getProjectItems()
+    std::list< std::string > getProjectItems() const
     {
         std::list< std::string > l_return;
 
@@ -73,7 +73,7 @@ public:
                     task_item, "gtd_time_done", ThingsModel::time_stamp() );
     }
 
-    bool isTaskItem( const std::string &item )
+    bool isTaskItem( const std::string &item ) const
     {
         return m_things_model.hasAttribute( item, "gtd_task" );
     }
@@ -108,6 +108,22 @@ public:
         m_things_model.addAttribute( l_item_uid, "gtd_project" );
 
         return l_item_uid;
+    }
+
+    std::string orderATask() const
+    {
+        std::list< std::string > l_possibleTasks = getTaskItems();
+
+        int taskId = rand() % l_possibleTasks.size();
+
+        std::list< std::string >::const_iterator it = l_possibleTasks.begin();
+
+        for( int i = 0; i < taskId; ++i )
+        {
+            ++it;
+        }
+
+        return *it;
     }
 
 ///
