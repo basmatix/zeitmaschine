@@ -1,83 +1,83 @@
 - !<04a842e656639b07>
   caption: "\"brain stack\" ermï¿½glichen"
+  hash1: 130931406646390390657459514638216416731460825760345510191758774251974716132
   string_values:
     global_time_created: 2013-03-14T16:48:26.036303
     gtd_item_note: brain
   attributes:
     - gtd_item_unhandled
-  hash1: 130931406646390390657459514638216416731460825760345510191758774251974716132
 - !<0512fd52738e81b6>
-  caption: Vorschlag für nächste Aktion geben
+  hash1: 1129458467889205255291357226803213460507062463316610181758774251974716132
   attributes:
     - gtd_item_unhandled
+  caption: Vorschlag für nächste Aktion geben
   string_values:
     global_time_created: 2013-03-13T08:16:55.007919
     gtd_item_note: test
-  hash1: 1129458467889205255291357226803213460507062463316610181758774251974716132
 - !<165f478b240e74a3>
   caption: Model-operator= zum Testen verwenden
+  hash1: 17676736518022610385768368425107503487201758774251974716132
+  attributes:
+    - gtd_item_unhandled
   string_values:
     global_time_created: 2013-03-13T08:15:13.298517
     gtd_item_note: ""
-  attributes:
-    - gtd_item_unhandled
-  hash1: 17676736518022610385768368425107503487201758774251974716132
 - !<1dc1d191b993e17f>
+  string_values:
+    gtd_item_note: ""
+    global_time_created: 2013-03-13T08:14:04.998726
   caption: Verknüpfungen unter Dateien ermöglichen
   attributes:
     - gtd_item_unhandled
   hash1: 165098708955835020421034289599690758728801758774251974716132
-  string_values:
-    gtd_item_note: ""
-    global_time_created: 2013-03-13T08:14:04.998726
 - !<1e223855d2cf5d93>
   hash1: 17970730272947164318731355706524717609301758774251974716132
   attributes:
     - gtd_item_unhandled
+  caption: Kontext-Dateien speichern
   string_values:
     global_time_created: 2013-03-13T08:13:44.829694
     gtd_item_note: ""
-  caption: Kontext-Dateien speichern
 - !<33e204487c6fd159>
-  caption: Items nach GTD überführen
-  hash1: 6856122281176460048145650913911692048871758774251974716132
   attributes:
     - gtd_item_unhandled
   string_values:
     global_time_created: 2013-03-13T08:17:42.554631
+  caption: Items nach GTD überführen
+  hash1: 6856122281176460048145650913911692048871758774251974716132
 - !<3d174926d2546f70>
-  hash1: 15116053261537327366134158836706122232991758774251974716132
   attributes:
     - gtd_item_unhandled
   string_values:
     global_time_created: 2013-03-13T08:15:33.115617
   caption: GTD boost-frei machen (Android)
+  hash1: 15116053261537327366134158836706122232991758774251974716132
 - !<441a045c65d325c8>
-  caption: items speichern eine checksumme um merge-fehler aufzudecken
-  hash1: 1010528449409465807612421521455926966434069052884559591244983762767301519685777
   attributes:
     - gtd_item_done
   string_values:
+    global_time_created: 2013-03-18T12:48:30.358876
     gtd_item_note: ""
     gtd_time_done: 2013-03-18T23:12:52.909893
-    global_time_created: 2013-03-18T12:48:30.358876
+  caption: items speichern eine checksumme um merge-fehler aufzudecken
+  hash1: 1010528449409465807612421521455926966434069052884559591244983762767301519685777
 - !<4d41ee297bc5c34c>
+  string_values:
+    global_time_created: 2013-03-13T08:14:35.688533
+    gtd_item_note: ""
+  caption: Sync-Mechanismus für Android finden
   hash1: 5738007102634582261069986785064721725301758774251974716132
   attributes:
     - gtd_item_unhandled
-  string_values:
-    gtd_item_note: ""
-    global_time_created: 2013-03-13T08:14:35.688533
-  caption: Sync-Mechanismus für Android finden
 - !<4d6a0f931b79009e>
-  caption: Speichern beim Bearbeiten
   hash1: 15085868116074234395950732285887912450066359154405033366483762767301519685777
   attributes:
     - gtd_item_done
+  caption: Speichern beim Bearbeiten
   string_values:
+    gtd_time_done: 2013-03-18T23:12:59.774752
     global_time_created: 2013-03-13T08:11:54.184357
     gtd_item_note: ""
-    gtd_time_done: 2013-03-18T23:12:59.774752
 - !<573c58936fb97114>
   caption: p1
   hash1: 175247759517126469817750569746508368085240360104704
@@ -91,17 +91,17 @@
   attributes:
     - gtd_item_done
   string_values:
-    global_time_created: 2013-03-14T18:35:13.239280
     gtd_item_note: ""
     gtd_time_done: 2013-03-18T23:13:17.631932
+    global_time_created: 2013-03-14T18:35:13.239280
 - !<6214e35f0e3e3813>
   caption: Runtime-Konflikte / Merge on save lösen
   hash1: 76307716111240519361014637361636881329601758774251974716132
   attributes:
     - gtd_item_unhandled
   string_values:
-    global_time_created: 2013-03-15T22:40:08.355364
     gtd_item_note: ""
+    global_time_created: 2013-03-15T22:40:08.355364
 - !<62782dee7ba6ba82>
   caption: beim laden auf created_time überprüfen
   hash1: 6244021507340337808125451754610763195630138992516102528541303762767301519685777
