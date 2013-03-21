@@ -201,6 +201,8 @@ private slots:
 
         std::string l_item_uid = m_model.createNewInboxItem( m_ui->leCommand->text().toStdString() );
 
+        m_model.setNote( l_item_uid, m_ui->teNotes->toPlainText().toStdString() );
+
         addListItem( l_item_uid );
 
         m_ui->leCommand->setText("");
