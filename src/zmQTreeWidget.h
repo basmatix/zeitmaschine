@@ -24,6 +24,14 @@ public:
     {
     }
 
+    void unselect()
+    {
+        foreach(QTreeWidgetItem* item, selectedItems() )
+        {
+            item->setSelected( false );
+        }
+    }
+
     void dropEvent ( QDropEvent * event )
     {
         //const QMimeData* mime_data = event->mimeData();

@@ -395,11 +395,12 @@ private slots:
         if( m_selected_thing != "" )
         {
             m_model.setNote( m_selected_thing, m_ui->teNotes->toPlainText().toStdString() );
+            m_ui->teNotes->setText( "" );
             assert( m_selected_twItem == m_thing_lwitem_map[m_selected_thing] );
         }
         m_selected_thing = "";
         m_selected_twItem = NULL;
-        m_ui->teNotes->setText( "" );
+        m_ui->twTask->unselect();
     }
 
 #if 0
