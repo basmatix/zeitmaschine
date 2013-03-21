@@ -2,6 +2,7 @@
 #define ZMGTDMODEL_H
 
 #include <zmModel.h>
+#include "zmTrace.h"
 
 class zmGtdModel
 {
@@ -11,6 +12,42 @@ class zmGtdModel
 /// GTD specific interface
 ///
 public:
+
+    std::string createNewInboxItem( const std::string &caption )
+    {
+        std::string l_item_uid = m_things_model.createNewItem( caption );
+        tracemessage( "GTD: new inbox item %s: '%s'",
+                      caption.c_str(),
+                      l_item_uid .c_str() );
+
+        m_things_model.addAttribute( l_item_uid, "gtd_item_unhandled" );
+
+        return l_item_uid;
+    }
+
+    std::string getNote( const std::string &uid ) const
+    {
+        if( uid == "" ) return "";
+
+        if( m_things_model.hasValue( uid, "gtd_item_note" ))
+        {
+            return m_things_model.getValue( uid, "gtd_item_note" );
+        }
+        else
+        {
+            return "";
+        }
+    }
+
+    void setNote( const std::string &uid, const std::string &value )
+    {
+        tracemessage( "GTD: setting note for item %s (%s): '%s'",
+                      uid.c_str(),
+                      m_things_model.getCaption( uid ).c_str(),
+                      value.c_str() );
+
+        m_things_model.setValue( uid, "gtd_item_note", value );
+    }
 
     void registerItemAsTask( const std::string &task_item, const std::string &project_item )
     {
@@ -96,7 +133,7 @@ public:
     std::string getParentProject( const std::string &task_item )
     {
         assert( isTaskItem( task_item ) );
-        assert( hasValue( task_item, "gtd_parent_project" ) );
+        assert( m_things_model.hasValue( task_item, "gtd_parent_project" ) );
 
         return m_things_model.getValue( task_item, "gtd_parent_project" );
     }
@@ -131,9 +168,14 @@ public:
 ///
 public:
 
-    const ThingsModel::ThingsModelMapType & things() const
+    const std::string & getCaption( const std::string &uid ) const
     {
-        return m_things_model.things();
+        return m_things_model.getCaption( uid );
+    }
+
+    void setCaption( const std::string &uid, const std::string &caption )
+    {
+        return m_things_model.setCaption( uid, caption );
     }
 
     void load( const std::string &filename )
@@ -146,11 +188,6 @@ public:
         return m_things_model.save( filename );
     }
 
-    std::string createNewItem( const std::string &caption )
-    {
-        return m_things_model.createNewItem( caption );
-    }
-
     void eraseItem( const std::string &uid )
     {
         return m_things_model.eraseItem( uid );
@@ -159,41 +196,6 @@ public:
     bool itemContentMatchesString( const std::string &uid, const std::string &searchString ) const
     {
         return m_things_model.itemContentMatchesString( uid, searchString );
-    }
-
-    void addAttribute( const std::string &uid, const std::string &attribute )
-    {
-        return m_things_model.addAttribute( uid, attribute );
-    }
-
-    void setValue( const std::string &uid, const std::string &name, const std::string &value )
-    {
-        return m_things_model.setValue( uid, name, value );
-    }
-
-    void setCaption( const std::string &uid, const std::string &caption )
-    {
-        return m_things_model.setCaption( uid, caption );
-    }
-
-    const std::string & getCaption( const std::string &uid ) const
-    {
-        return m_things_model.getCaption( uid );
-    }
-
-    bool hasAttribute( const std::string uid, const std::string attribute ) const
-    {
-        return m_things_model.hasAttribute( uid, attribute );
-    }
-
-    bool hasValue( const std::string uid, const std::string name ) const
-    {
-        return m_things_model.hasValue( uid, name );
-    }
-
-    std::string getValue( const std::string uid, const std::string name ) const
-    {
-        return m_things_model.getValue( uid, name );
     }
 };
 

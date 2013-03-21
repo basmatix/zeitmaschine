@@ -5,6 +5,8 @@
 
 #include "zmGtdModel.h"
 
+#include "zmTrace.h"
+
 #include <map>
 #include <QtGui/QMainWindow>
 #include <QtCore/QFile>
@@ -18,23 +20,10 @@
 #include <QtCore/QTimer>
 #include <QtGui/QMessageBox>
 
-#include <stdarg.h>
-#include <stdio.h>
 #include <iostream>
 #include <assert.h>
 
 class QListWidgetItem;
-
-inline void tracemessage( const char * a_format, ... )
-{
-    char l_buffer[1024];
-    va_list l_args;
-    va_start (l_args, a_format);
-    vsprintf ( l_buffer, a_format, l_args );
-    va_end( l_args );
-    printf( "%s\n", l_buffer );
-    fflush( stdout );
-}
 
 class MainWindow
         : public QMainWindow
@@ -210,9 +199,7 @@ private slots:
     {   tracemessage( __FUNCTION__ );
         // this method is being called automatically by Qt
 
-        std::string l_item_uid = m_model.createNewItem( m_ui->leCommand->text().toStdString() );
-
-        m_model.addAttribute( l_item_uid, "gtd_item_unhandled" );
+        std::string l_item_uid = m_model.createNewInboxItem( m_ui->leCommand->text().toStdString() );
 
         addListItem( l_item_uid );
 
@@ -227,9 +214,13 @@ private slots:
         if( m_lwitem_thing_map.contains( previous ) )
         {
             /// if there has been selected - save it's note
-
             std::string l_previous_thing = m_lwitem_thing_map[ previous ];
-            m_model.setValue( l_previous_thing, "gtd_item_note", m_ui->teNotes->toPlainText().toStdString() );
+
+            //assert( l_previous_thing == m_selected_thing );
+            if( previous == m_selected_twItem )
+            {
+                m_model.setNote( l_previous_thing, m_ui->teNotes->toPlainText().toStdString() );
+            }
         }
 
         m_ui->teNotes->setText( "" );
@@ -242,19 +233,15 @@ private slots:
             tracemessage( "clicked on item %s (%s)",
                           m_selected_thing.c_str(),
                           m_model.getCaption( m_selected_thing ).c_str()  );
-
-            if( m_model.hasValue( m_selected_thing, "gtd_item_note" ))
-            {
-                QString l_note_text = QString::fromStdString(
-                            m_model.getValue( m_selected_thing, "gtd_item_note" ) );
-                m_ui->teNotes->setText( l_note_text );
-            }
         }
         else
         {
             m_selected_thing = "";
             m_selected_twItem = NULL;
         }
+
+        m_ui->teNotes->setText( QString::fromStdString(
+                    m_model.getNote( m_selected_thing ) ) );
     }
 
     void on_twTask_itemChanged( QTreeWidgetItem *item )
@@ -386,6 +373,7 @@ private slots:
         {
             return;
         }
+
         QString l_taskCaption = QString::fromStdString( m_model.getCaption( l_taskUid ) );
         QMessageBox::information( this, "just do it!", l_taskCaption );
     }
@@ -402,6 +390,16 @@ private slots:
                         i.key(), l_search_string );
             i.value()->setHidden( ! l_search_string_matches );
         }
+
+        /// eventually current note save
+        if( m_selected_thing != "" )
+        {
+            m_model.setNote( m_selected_thing, m_ui->teNotes->toPlainText().toStdString() );
+            assert( m_selected_twItem == m_thing_lwitem_map[m_selected_thing] );
+        }
+        m_selected_thing = "";
+        m_selected_twItem = NULL;
+        m_ui->teNotes->setText( "" );
     }
 
 #if 0
