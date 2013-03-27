@@ -6,7 +6,7 @@
 
 #include "ui_zeitmaschine.h"
 
-#include "zmGtdModel.h"
+#include "zmQtGtdModel.h"
 
 #include "zmTrace.h"
 
@@ -37,7 +37,7 @@ private:
 
     Ui_window       *m_ui;
 
-    zmGtdModel       m_model;
+    zmQtGtdModel     m_model;
     std::string      m_filename;
 
     std::string      m_selected_thing;
@@ -118,14 +118,11 @@ private:
     {
         QTreeWidgetItem *l_item = new QTreeWidgetItem();
 
-        QString l_qcaption = QString::fromUtf8(
-                    m_model.getCaption( uid ).c_str() );
-
-        l_item->setText( 0, l_qcaption );
+        l_item->setText( 0, m_model.getCaption( uid ) );
 
         tracemessage( "adding item %s to list (%s)",
                       uid.c_str(),
-                      m_model.getCaption( uid ).c_str()  );
+                      m_model.getCaption( uid ).toAscii().constData()  );
 
         if( m_model.isDone( uid ) )
         {
@@ -207,13 +204,9 @@ private slots:
     {   tracemessage( __FUNCTION__ );
         // this method is being called automatically by Qt
 
-        std::string l_caption( m_ui->leCommand->text().toUtf8().constData() );
+        std::string l_item_uid = m_model.createNewInboxItem( m_ui->leCommand->text() );
 
-        std::string l_note( m_ui->teNotes->toPlainText().toUtf8().constData() );
-
-        std::string l_item_uid = m_model.createNewInboxItem( l_caption );
-
-        m_model.setNote( l_item_uid, l_note );
+        m_model.setNote( l_item_uid, m_ui->teNotes->toPlainText() );
 
         addListItem( l_item_uid );
 
@@ -233,7 +226,7 @@ private slots:
             //assert( l_previous_thing == m_selected_thing );
             if( previous == m_selected_twItem )
             {
-                m_model.setNote( l_previous_thing, m_ui->teNotes->toPlainText().toUtf8().constData() );
+                m_model.setNote( l_previous_thing, m_ui->teNotes->toPlainText() );
             }
         }
 
@@ -246,7 +239,7 @@ private slots:
             m_selected_thing = m_lwitem_thing_map[ m_selected_twItem ];
             tracemessage( "clicked on item %s (%s)",
                           m_selected_thing.c_str(),
-                          m_model.getCaption( m_selected_thing ).c_str()  );
+                          m_model.getCaption( m_selected_thing ).toAscii().constData()  );
         }
         else
         {
@@ -254,8 +247,7 @@ private slots:
             m_selected_twItem = NULL;
         }
 
-        m_ui->teNotes->setText( QString::fromUtf8(
-                    m_model.getNote( m_selected_thing ).c_str() ) );
+        m_ui->teNotes->setText( m_model.getNote( m_selected_thing ) );
     }
 
     void on_twTask_itemChanged( QTreeWidgetItem *item )
@@ -264,10 +256,11 @@ private slots:
         if( m_lwitem_thing_map.contains( item ) )
         {
             std::string l_thing = m_lwitem_thing_map[ item ];
-            std::string l_new_caption = item->text(0).toUtf8().constData();
+            QString l_new_caption = item->text(0);
+
             tracemessage( "changing item text from '%s' to '%s'",
-                          m_model.getCaption( l_thing ).c_str(),
-                          l_new_caption.c_str() );
+                          m_model.getCaption( l_thing ).toAscii().constData(),
+                          l_new_caption.toAscii().constData() );
             m_model.setCaption( l_thing, l_new_caption );
 
             exportToFs();
@@ -290,8 +283,8 @@ private slots:
         std::string l_target = m_lwitem_thing_map[ target ];
 
         tracemessage( "dragged '%s' to '%s'",
-                      m_model.getCaption( l_source ).c_str(),
-                      m_model.getCaption( l_target ).c_str() );
+                      m_model.getCaption( l_source ).toAscii().constData(),
+                      m_model.getCaption( l_target ).toAscii().constData() );
 
         if( m_model.isInboxItem( l_source )
          && m_model.isProjectItem( l_target ) )
@@ -316,7 +309,7 @@ private slots:
 
         tracemessage( "set item to DONE: %s (%s)",
                       m_selected_thing.c_str(),
-                      m_model.getCaption( m_selected_thing ).c_str()  );
+                      m_model.getCaption( m_selected_thing ).toAscii().constData()  );
 
         m_model.setDone( m_selected_thing );
 
@@ -341,7 +334,7 @@ private slots:
 
         tracemessage( "erase item: %s (%s)",
                       m_selected_thing.c_str(),
-                      m_model.getCaption( m_selected_thing ).c_str()  );
+                      m_model.getCaption( m_selected_thing ).toAscii().constData()  );
 
         m_model.eraseItem( m_selected_thing );
         m_thing_lwitem_map.erase( m_thing_lwitem_map.find( m_selected_thing ) );
@@ -358,7 +351,7 @@ private slots:
 
     void on_pbMakeProject_clicked()
     {   tracemessage( __FUNCTION__ );
-        std::string l_project_name = m_ui->leCommand->text().trimmed().toUtf8().constData();
+        QString l_project_name = m_ui->leCommand->text();
 
         if( l_project_name == "" )
         {
@@ -367,7 +360,7 @@ private slots:
         else
         {
             tracemessage( "create project '%s' from magic line",
-                          l_project_name.c_str() );
+                          l_project_name.toAscii().constData() );
 
             std::string l_item_uid = m_model.createProject( l_project_name );
 
@@ -388,14 +381,14 @@ private slots:
             return;
         }
 
-        QString l_taskCaption = QString::fromUtf8( m_model.getCaption( l_taskUid ).c_str() );
+        QString l_taskCaption = m_model.getCaption( l_taskUid );
         QMessageBox::information( this, "just do it!", l_taskCaption );
     }
 
     void on_leCommand_textChanged ( const QString & text )
     {   tracemessage( __FUNCTION__ );
         // this method is being called automatically by Qt
-        std::string l_search_string = text.toLower().toUtf8().constData();
+        QString l_search_string = text.toLower();
         for( QMap< std::string, QTreeWidgetItem * >::iterator
              i  = m_thing_lwitem_map.begin();
              i != m_thing_lwitem_map.end(); ++i )
@@ -408,7 +401,7 @@ private slots:
         /// eventually current note save
         if( m_selected_thing != "" )
         {
-            m_model.setNote( m_selected_thing, m_ui->teNotes->toPlainText().toUtf8().constData() );
+            m_model.setNote( m_selected_thing, m_ui->teNotes->toPlainText() );
             m_ui->teNotes->setText( "" );
             assert( m_selected_twItem == m_thing_lwitem_map[m_selected_thing] );
         }
