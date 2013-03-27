@@ -15,13 +15,13 @@
   caption: Vorschlag für nächste Aktion geben
   hash1: 112945846788920525529135722680321346050169971951795712339101758774251974716132
 - !<165f478b240e74a3>
-  string_values:
-    global_time_created: 2013-03-13T08:15:13.298517
-    gtd_item_note: model operator zum testen verwenden
+  caption: Model-operator= zum Testen verwenden
   hash1: 17676736518022610385768368425107503487212799093283039209301758774251974716132
   attributes:
     - gtd_item_unhandled
-  caption: Model-operator= zum Testen verwenden
+  string_values:
+    global_time_created: 2013-03-13T08:15:13.298517
+    gtd_item_note: model operator zum testen verwenden
 - !<1dc1d191b993e17f>
   caption: Verknüpfungen unter Dateien ermöglichen
   hash1: 165098708955835020421034289599690758728868070357232841467451758774251974716132
@@ -31,46 +31,46 @@
     global_time_created: 2013-03-13T08:14:04.998726
     gtd_item_note: versuch
 - !<1e223855d2cf5d93>
+  caption: Kontext-Dateien speichern
+  hash1: 17970730272947164318731355706524717609301758774251974716132
   attributes:
     - gtd_item_unhandled
   string_values:
-    global_time_created: 2013-03-13T08:13:44.829694
     gtd_item_note: ""
-  caption: Kontext-Dateien speichern
-  hash1: 17970730272947164318731355706524717609301758774251974716132
+    global_time_created: 2013-03-13T08:13:44.829694
 - !<33e204487c6fd159>
   caption: Items nach GTD überführen
   hash1: 68561222811764600481456509139116920488701758774251974716132
   attributes:
     - gtd_item_unhandled
   string_values:
-    gtd_item_note: ""
     global_time_created: 2013-03-13T08:17:42.554631
+    gtd_item_note: ""
 - !<3d174926d2546f70>
   caption: GTD boost-frei machen (Android)
   hash1: 151160532615373273661341588367061222329901758774251974716132
   attributes:
     - gtd_item_unhandled
   string_values:
-    gtd_item_note: ""
     global_time_created: 2013-03-13T08:15:33.115617
+    gtd_item_note: ""
 - !<441a045c65d325c8>
+  caption: items speichern eine checksumme um merge-fehler aufzudecken
+  hash1: 1010528449409465807612421521455926966434069052884559591244983762767301519685777
   attributes:
     - gtd_item_done
   string_values:
-    gtd_time_done: 2013-03-18T23:12:52.909893
     global_time_created: 2013-03-18T12:48:30.358876
     gtd_item_note: ""
-  caption: items speichern eine checksumme um merge-fehler aufzudecken
-  hash1: 1010528449409465807612421521455926966434069052884559591244983762767301519685777
+    gtd_time_done: 2013-03-18T23:12:52.909893
 - !<4d41ee297bc5c34c>
+  caption: Sync-Mechanismus für Android finden
+  hash1: 5738007102634582261069986785064721725301758774251974716132
   attributes:
     - gtd_item_unhandled
   string_values:
     global_time_created: 2013-03-13T08:14:35.688533
     gtd_item_note: ""
-  caption: Sync-Mechanismus für Android finden
-  hash1: 5738007102634582261069986785064721725301758774251974716132
 - !<4d6a0f931b79009e>
   caption: Speichern beim Bearbeiten
   hash1: 15085868116074234395950732285887912450066359154405033366483762767301519685777
@@ -110,9 +110,9 @@
   attributes:
     - gtd_item_done
   string_values:
-    gtd_time_done: 2013-03-18T23:13:22.368169
     global_time_created: 2013-03-18T18:21:16.973285
     gtd_item_note: ""
+    gtd_time_done: 2013-03-18T23:13:22.368169
 - !<74ab2fb0c455f1ae>
   caption: Groups haben ein "after" attribut um z.b. "phase1" und "phase2" in zeitliche korrelation zu bringen
   hash1: 31715146433117386471184722217258305331501758774251974716132
@@ -179,13 +179,21 @@
   string_values:
     global_time_created: 2013-03-13T08:15:03.169982
     gtd_item_note: ""
+- !<c890ad0ac3797090>
+  caption: Ã¼
+  hash1: 175247773608869073530277241143101758774251974716132
+  attributes:
+    - gtd_item_unhandled
+  string_values:
+    global_time_created: 2013-03-21T22:50:34.470902
+    gtd_item_note: ""
 - !<cc5e156225d7120a>
+  caption: Beginn/Ende-Zeiten tracken
   hash1: 128665298675885802703989431378626382241758774251974716132
   attributes:
     - gtd_item_unhandled
   string_values:
     global_time_created: 2013-03-13T08:13:03.899562
-  caption: Beginn/Ende-Zeiten tracken
 - !<cdc3791400dace2c>
   caption: GTD-Konform werden
   hash1: 15659539259057648708681283019419051776101758774251974716132
@@ -211,13 +219,13 @@
     global_time_created: 2013-03-13T09:34:46.920632
     gtd_item_note: ""
 - !<d4109d9404ded1a1>
-  string_values:
-    global_time_created: 2013-03-18T12:48:53.015026
-    gtd_item_note: ""
   caption: beim hinzufügen von items wird der note-text geadded
   hash1: 92795689887894214091241434907675231865901758774251974716132
   attributes:
     - gtd_item_unhandled
+  string_values:
+    global_time_created: 2013-03-18T12:48:53.015026
+    gtd_item_note: ""
 - !<e1d5be9be76a5879>
   caption: mehrere GTD-export files gleichzeitig verwalten können (über Attribute verwaltet)
   hash1: 905552498177246057667981387663731931581758774251974716132

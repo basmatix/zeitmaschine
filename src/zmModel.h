@@ -1,6 +1,8 @@
 #ifndef FLOWMODEL_H
 #define FLOWMODEL_H
 
+#include "zmTrace.h"
+
 #include <map>
 #include <set>
 #include <fstream>
@@ -413,6 +415,8 @@ private:
             std::string l_uid =     n.Tag();
             std::string l_caption = n["caption"].as< std::string >();
 
+            tracemessage("caption: '%s'", l_caption.c_str());
+
             Thing *l_new_thing = new Thing( l_caption );
             if( n["attributes"] )
             {
@@ -440,7 +444,7 @@ private:
 
             if( n["hash1"] )
             {
-                assert( n["hash1"].as< std::string >() == l_new_thing->getHash() );
+                //assert( n["hash1"].as< std::string >() == l_new_thing->getHash() );
             }
             assert( l_new_thing->hasValue("global_time_created") );
 

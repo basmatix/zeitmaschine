@@ -33,7 +33,10 @@ class MainWindow
 private:
 
     Ui_window       *m_ui;
+
     zmGtdModel       m_model;
+    std::string      m_filename;
+
     std::string      m_selected_thing;
     QTreeWidgetItem *m_selected_twItem;
 
@@ -45,7 +48,6 @@ private:
 
     QMap< QTreeWidgetItem *, std::string > m_lwitem_thing_map;
     QMap< std::string, QTreeWidgetItem * > m_thing_lwitem_map;
-    std::string      m_filename;
 
 public:
 
@@ -113,7 +115,12 @@ private:
     {
         QTreeWidgetItem *l_item = new QTreeWidgetItem();
 
-        l_item->setText( 0, QString::fromStdString( m_model.getCaption( uid ) ));
+        std::string l_caption = m_model.getCaption( uid );
+        const char *l_test = l_caption.c_str();
+
+        QString l_qcaption = QString::fromUtf8( l_test );
+        //const char *l_test2 = l_qcaption.data();
+        l_item->setText( 0, l_qcaption );
 
         tracemessage( "adding item %s to list (%s)",
                       uid.c_str(),
@@ -199,7 +206,9 @@ private slots:
     {   tracemessage( __FUNCTION__ );
         // this method is being called automatically by Qt
 
-        std::string l_item_uid = m_model.createNewInboxItem( m_ui->leCommand->text().toStdString() );
+        const char *test1 = m_ui->leCommand->text().toUtf8().constData();
+        std::string l_caption( m_ui->leCommand->text().toUtf8().constData() );
+        std::string l_item_uid = m_model.createNewInboxItem( l_caption );
 
         m_model.setNote( l_item_uid, m_ui->teNotes->toPlainText().toStdString() );
 
@@ -252,7 +261,7 @@ private slots:
         if( m_lwitem_thing_map.contains( item ) )
         {
             std::string l_thing = m_lwitem_thing_map[ item ];
-            std::string l_new_caption = item->text(0).toStdString();
+            std::string l_new_caption = item->text(0).toUtf8().constData();
             tracemessage( "changing item text from '%s' to '%s'",
                           m_model.getCaption( l_thing ).c_str(),
                           l_new_caption.c_str() );
@@ -346,7 +355,7 @@ private slots:
 
     void on_pbMakeProject_clicked()
     {   tracemessage( __FUNCTION__ );
-        std::string l_project_name = m_ui->leCommand->text().trimmed().toStdString();
+        std::string l_project_name = m_ui->leCommand->text().trimmed().toUtf8().constData();
 
         if( l_project_name == "" )
         {
