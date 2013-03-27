@@ -452,7 +452,7 @@ private:
 
             if( n["hash1"] )
             {
-                //assert( n["hash1"].as< std::string >() == l_new_thing->getHash() );
+                assert( n["hash1"].as< std::string >() == l_new_thing->getHash() );
             }
             assert( l_new_thing->hasValue("global_time_created") );
 
