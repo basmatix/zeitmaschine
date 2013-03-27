@@ -183,7 +183,21 @@ public:
 
     void load( const std::string &filename )
     {
-        return m_things_model.load( filename );
+        m_things_model.load( filename );
+        size_t l_total_items = m_things_model.getItemCount();
+        size_t l_inbox_items = getInboxItems().size();
+        size_t l_task_items = getTaskItems().size();
+        size_t l_project_items = getProjectItems().size();
+        size_t l_done_items = 0;
+
+        tracemessage( "total items:........ %d", l_total_items );
+        tracemessage( "gtd items:.......... %d",
+                      l_inbox_items + l_project_items + l_task_items);
+        tracemessage( " gtd inbox items:... %d", l_inbox_items );
+        tracemessage( " gtd project items:. %d", l_project_items );
+        tracemessage( " gtd task items:.... %d", l_task_items );
+        tracemessage( " gtd items done:     %d", l_done_items );
+
     }
 
     void save( const std::string &filename )
