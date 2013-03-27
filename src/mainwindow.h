@@ -1,3 +1,6 @@
+/// copyright (C) 2013 Frans Fürst
+/// -*- coding: utf-8 -*-
+
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
@@ -115,11 +118,9 @@ private:
     {
         QTreeWidgetItem *l_item = new QTreeWidgetItem();
 
-        std::string l_caption = m_model.getCaption( uid );
-        const char *l_test = l_caption.c_str();
+        QString l_qcaption = QString::fromUtf8(
+                    m_model.getCaption( uid ).c_str() );
 
-        QString l_qcaption = QString::fromUtf8( l_test );
-        //const char *l_test2 = l_qcaption.data();
         l_item->setText( 0, l_qcaption );
 
         tracemessage( "adding item %s to list (%s)",
@@ -206,11 +207,13 @@ private slots:
     {   tracemessage( __FUNCTION__ );
         // this method is being called automatically by Qt
 
-        const char *test1 = m_ui->leCommand->text().toUtf8().constData();
         std::string l_caption( m_ui->leCommand->text().toUtf8().constData() );
+
+        std::string l_note( m_ui->teNotes->toPlainText().toUtf8().constData() );
+
         std::string l_item_uid = m_model.createNewInboxItem( l_caption );
 
-        m_model.setNote( l_item_uid, m_ui->teNotes->toPlainText().toStdString() );
+        m_model.setNote( l_item_uid, l_note );
 
         addListItem( l_item_uid );
 
@@ -230,7 +233,7 @@ private slots:
             //assert( l_previous_thing == m_selected_thing );
             if( previous == m_selected_twItem )
             {
-                m_model.setNote( l_previous_thing, m_ui->teNotes->toPlainText().toStdString() );
+                m_model.setNote( l_previous_thing, m_ui->teNotes->toPlainText().toUtf8().constData() );
             }
         }
 
@@ -251,8 +254,8 @@ private slots:
             m_selected_twItem = NULL;
         }
 
-        m_ui->teNotes->setText( QString::fromStdString(
-                    m_model.getNote( m_selected_thing ) ) );
+        m_ui->teNotes->setText( QString::fromUtf8(
+                    m_model.getNote( m_selected_thing ).c_str() ) );
     }
 
     void on_twTask_itemChanged( QTreeWidgetItem *item )
@@ -385,14 +388,14 @@ private slots:
             return;
         }
 
-        QString l_taskCaption = QString::fromStdString( m_model.getCaption( l_taskUid ) );
+        QString l_taskCaption = QString::fromUtf8( m_model.getCaption( l_taskUid ).c_str() );
         QMessageBox::information( this, "just do it!", l_taskCaption );
     }
 
     void on_leCommand_textChanged ( const QString & text )
     {   tracemessage( __FUNCTION__ );
         // this method is being called automatically by Qt
-        std::string l_search_string = text.toLower().toStdString();
+        std::string l_search_string = text.toLower().toUtf8().constData();
         for( QMap< std::string, QTreeWidgetItem * >::iterator
              i  = m_thing_lwitem_map.begin();
              i != m_thing_lwitem_map.end(); ++i )
@@ -405,7 +408,7 @@ private slots:
         /// eventually current note save
         if( m_selected_thing != "" )
         {
-            m_model.setNote( m_selected_thing, m_ui->teNotes->toPlainText().toStdString() );
+            m_model.setNote( m_selected_thing, m_ui->teNotes->toPlainText().toUtf8().constData() );
             m_ui->teNotes->setText( "" );
             assert( m_selected_twItem == m_thing_lwitem_map[m_selected_thing] );
         }

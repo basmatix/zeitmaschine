@@ -1,35 +1,35 @@
 - !<04a842e656639b07>
-  caption: "\"brain stack\" ermï¿½glichen"
-  hash1: 130931406646390390657459514638216416731460825760345510191758774251974716132
+  caption: "\"brain stack\" ermÃ¶glichen"
+  hash1: 21570867019188149337459514638216416731460825760345510191758774251974716132
   attributes:
     - gtd_item_unhandled
   string_values:
-    global_time_created: 2013-03-14T16:48:26.036303
     gtd_item_note: brain
+    global_time_created: 2013-03-14T16:48:26.036303
 - !<0512fd52738e81b6>
+  hash1: 1501644202435881422091357226803213460507062463316610181758774251974716132
+  attributes:
+    - gtd_item_unhandled
   string_values:
     global_time_created: 2013-03-13T08:16:55.007919
     gtd_item_note: test
-  caption: Vorschlag für nächste Aktion geben
-  hash1: 1129458467889205255291357226803213460507062463316610181758774251974716132
-  attributes:
-    - gtd_item_unhandled
+  caption: Vorschlag fÃ¼r nÃ¤chste Aktion geben
 - !<165f478b240e74a3>
+  string_values:
+    global_time_created: 2013-03-13T08:15:13.298517
+    gtd_item_note: model operator zum testen verwenden
   caption: Model-operator= zum Testen verwenden
   hash1: 17676736518022610385768368425107503487212799093283039209301758774251974716132
   attributes:
     - gtd_item_unhandled
-  string_values:
-    global_time_created: 2013-03-13T08:15:13.298517
-    gtd_item_note: model operator zum testen verwenden
 - !<1dc1d191b993e17f>
-  caption: Verknüpfungen unter Dateien ermöglichen
-  hash1: 165098708955835020421034289599690758728868070357232841467451758774251974716132
-  attributes:
-    - gtd_item_unhandled
   string_values:
     global_time_created: 2013-03-13T08:14:04.998726
     gtd_item_note: versuch
+  caption: VerknÃ¼pfungen unter Dateien ermÃ¶glichen
+  hash1: 50411973406590351811034289599690758728868070357232841467451758774251974716132
+  attributes:
+    - gtd_item_unhandled
 - !<1e223855d2cf5d93>
   caption: Kontext-Dateien speichern
   hash1: 17970730272947164318731355706524717609301758774251974716132
@@ -39,13 +39,13 @@
     global_time_created: 2013-03-13T08:13:44.829694
     gtd_item_note: ""
 - !<33e204487c6fd159>
-  caption: Items nach GTD überführen
-  hash1: 68561222811764600481456509139116920488701758774251974716132
   attributes:
     - gtd_item_unhandled
   string_values:
     global_time_created: 2013-03-13T08:17:42.554631
     gtd_item_note: ""
+  caption: Items nach GTD Ã¼berfÃ¼hren
+  hash1: 33001535729271941951456509139116920488701758774251974716132
 - !<3d174926d2546f70>
   caption: GTD boost-frei machen (Android)
   hash1: 151160532615373273661341588367061222329901758774251974716132
@@ -55,24 +55,23 @@
     global_time_created: 2013-03-13T08:15:33.115617
     gtd_item_note: ""
 - !<441a045c65d325c8>
-  caption: items speichern eine checksumme um merge-fehler aufzudecken
-  hash1: 1010528449409465807612421521455926966434069052884559591244983762767301519685777
   attributes:
     - gtd_item_done
   string_values:
     global_time_created: 2013-03-18T12:48:30.358876
     gtd_item_note: ""
     gtd_time_done: 2013-03-18T23:12:52.909893
+  caption: items speichern eine checksumme um merge-fehler aufzudecken
+  hash1: 1010528449409465807612421521455926966434069052884559591244983762767301519685777
 - !<4d41ee297bc5c34c>
-  caption: Sync-Mechanismus für Android finden
-  hash1: 5738007102634582261069986785064721725301758774251974716132
+  caption: Sync-Mechanismus fÃ¼r Android finden
+  hash1: 175939370238809437891069986785064721725301758774251974716132
   attributes:
     - gtd_item_unhandled
   string_values:
     global_time_created: 2013-03-13T08:14:35.688533
     gtd_item_note: ""
 - !<4d6a0f931b79009e>
-  caption: Speichern beim Bearbeiten
   hash1: 15085868116074234395950732285887912450066359154405033366483762767301519685777
   attributes:
     - gtd_item_done
@@ -80,13 +79,15 @@
     global_time_created: 2013-03-13T08:11:54.184357
     gtd_item_note: ""
     gtd_time_done: 2013-03-18T23:12:59.774752
+  caption: Speichern beim Bearbeiten
 - !<573c58936fb97114>
   caption: p1
-  hash1: 175247759517126469817750569746508368085240360104704
   attributes:
     - gtd_project
+  hash1: 1752477595171264698177505697465008368085240360104704
   string_values:
     global_time_created: 2013-03-12T23:08:12.250498
+    gtd_item_note: ""
 - !<60ee2a07206332d6>
   caption: beim Exportieren Ordnung erzwingen (macht diffs unproblematischer)
   hash1: 454142514606617247883234446638930343650139045958825407952993762767301519685777
@@ -97,22 +98,22 @@
     gtd_item_note: ""
     gtd_time_done: 2013-03-18T23:13:17.631932
 - !<6214e35f0e3e3813>
-  caption: Runtime-Konflikte / Merge on save lösen
-  hash1: 76307716111240519361014637361636881329601758774251974716132
+  caption: Runtime-Konflikte / Merge on save lÃ¶sen
+  hash1: 180199942679978299061014637361636881329601758774251974716132
   attributes:
     - gtd_item_unhandled
   string_values:
     global_time_created: 2013-03-15T22:40:08.355364
     gtd_item_note: ""
 - !<62782dee7ba6ba82>
-  caption: beim laden auf created_time überprüfen
-  hash1: 6244021507340337808125451754610763195630138992516102528541303762767301519685777
-  attributes:
-    - gtd_item_done
   string_values:
     global_time_created: 2013-03-18T18:21:16.973285
     gtd_item_note: ""
     gtd_time_done: 2013-03-18T23:13:22.368169
+  caption: beim laden auf created_time überprüfen
+  hash1: 6244021507340337808125451754610763195630138992516102528541303762767301519685777
+  attributes:
+    - gtd_item_done
 - !<74ab2fb0c455f1ae>
   caption: Groups haben ein "after" attribut um z.b. "phase1" und "phase2" in zeitliche korrelation zu bringen
   hash1: 31715146433117386471184722217258305331501758774251974716132
@@ -127,9 +128,9 @@
   attributes:
     - gtd_item_done
   string_values:
+    global_time_created: 2013-03-16T07:40:33.900368
     gtd_item_note: ""
     gtd_time_done: 2013-03-18T23:13:27.432613
-    global_time_created: 2013-03-16T07:40:33.900368
 - !<99051bad4dc41d82>
   caption: GTD-Layer einführen
   hash1: 13795613902507265737155858007057784856300138384691493489033333762767301519685777
@@ -157,15 +158,16 @@
     global_time_created: 2013-03-14T13:22:38.735396
     gtd_item_note: ""
 - !<ae47b48e3470b842>
-  caption: "Collaboration: bei aktivitï¿½t in einem Task durch andere wird dieses hervorgehoben"
-  hash1: 729534019989693107760126130071598936461758774251974716132
+  caption: "Collaboration: bei aktivitÃ¤t in einem Task durch andere wird dieses hervorgehoben"
+  hash1: 90003687976765054601261300715989364601758774251974716132
   attributes:
     - gtd_item_unhandled
   string_values:
     global_time_created: 2013-03-18T12:47:32.750278
+    gtd_item_note: ""
 - !<baa2c977d941e438>
-  caption: YSbox Anschluss ermöglichen
-  hash1: 141689902583571410661529463412834501803801758774251974716132
+  caption: YSbox Anschluss ermÃ¶glichen
+  hash1: 152644386420526264321529463412834501803801758774251974716132
   attributes:
     - gtd_item_unhandled
   string_values:
@@ -181,11 +183,12 @@
     gtd_item_note: ""
 - !<cc5e156225d7120a>
   caption: Beginn/Ende-Zeiten tracken
-  hash1: 128665298675885802703989431378626382241758774251974716132
+  hash1: 1286652986758858027039894313786263822401758774251974716132
   attributes:
     - gtd_item_unhandled
   string_values:
     global_time_created: 2013-03-13T08:13:03.899562
+    gtd_item_note: ""
 - !<cdc3791400dace2c>
   caption: GTD-Konform werden
   hash1: 15659539259057648708681283019419051776101758774251974716132
@@ -211,27 +214,29 @@
     global_time_created: 2013-03-13T09:34:46.920632
     gtd_item_note: ""
 - !<d4109d9404ded1a1>
-  caption: beim hinzufügen von items wird der note-text geadded
-  hash1: 92795689887894214091241434907675231865901758774251974716132
+  caption: beim hinzufÃ¼gen von items wird der note-text geadded
+  hash1: 180892766800367138511241434907675231865901758774251974716132
   attributes:
     - gtd_item_unhandled
   string_values:
     global_time_created: 2013-03-18T12:48:53.015026
     gtd_item_note: ""
 - !<e1d5be9be76a5879>
-  caption: mehrere GTD-export files gleichzeitig verwalten können (über Attribute verwaltet)
-  hash1: 905552498177246057667981387663731931581758774251974716132
+  caption: mehrere GTD-export files gleichzeitig verwalten kÃ¶nnen (Ã¼ber Attribute verwaltet)
+  hash1: 7572680735844106660679813876637319315801758774251974716132
   attributes:
     - gtd_item_unhandled
   string_values:
     global_time_created: 2013-03-13T08:18:31.077205
+    gtd_item_note: ""
 - !<e24914f69d2659c7>
-  caption: Done-Items wieder einfügen
-  hash1: 42323390029035308417983010834081770941758774251974716132
+  caption: Done-Items wieder einfÃ¼gen
+  hash1: 8989052255320547901179830108340817709401758774251974716132
   attributes:
     - gtd_item_unhandled
   string_values:
     global_time_created: 2013-03-18T09:02:54.197319
+    gtd_item_note: ""
 - !<e43900584af88584>
   caption: Kontext-Texte speichern
   hash1: 11621678104482593199732843157374908887301758774251974716132
