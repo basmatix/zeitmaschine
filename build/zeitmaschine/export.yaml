@@ -7,13 +7,13 @@
     global_time_created: 2013-03-14T16:48:26.036303
     gtd_item_note: brain
 - !<0512fd52738e81b6>
-  attributes:
-    - gtd_item_unhandled
   string_values:
     global_time_created: 2013-03-13T08:16:55.007919
-    gtd_item_note: test1234
+    gtd_item_note: test
   caption: Vorschlag für nächste Aktion geben
-  hash1: 112945846788920525529135722680321346050169971951795712339101758774251974716132
+  hash1: 1129458467889205255291357226803213460507062463316610181758774251974716132
+  attributes:
+    - gtd_item_unhandled
 - !<165f478b240e74a3>
   caption: Model-operator= zum Testen verwenden
   hash1: 17676736518022610385768368425107503487212799093283039209301758774251974716132
@@ -36,8 +36,8 @@
   attributes:
     - gtd_item_unhandled
   string_values:
-    gtd_item_note: ""
     global_time_created: 2013-03-13T08:13:44.829694
+    gtd_item_note: ""
 - !<33e204487c6fd159>
   caption: Items nach GTD überführen
   hash1: 68561222811764600481456509139116920488701758774251974716132
@@ -127,9 +127,9 @@
   attributes:
     - gtd_item_done
   string_values:
-    global_time_created: 2013-03-16T07:40:33.900368
     gtd_item_note: ""
     gtd_time_done: 2013-03-18T23:13:27.432613
+    global_time_created: 2013-03-16T07:40:33.900368
 - !<99051bad4dc41d82>
   caption: GTD-Layer einführen
   hash1: 13795613902507265737155858007057784856300138384691493489033333762767301519685777
@@ -179,14 +179,6 @@
   string_values:
     global_time_created: 2013-03-13T08:15:03.169982
     gtd_item_note: ""
-- !<c890ad0ac3797090>
-  caption: Ã¼
-  hash1: 175247773608869073530277241143101758774251974716132
-  attributes:
-    - gtd_item_unhandled
-  string_values:
-    global_time_created: 2013-03-21T22:50:34.470902
-    gtd_item_note: ""
 - !<cc5e156225d7120a>
   caption: Beginn/Ende-Zeiten tracken
   hash1: 128665298675885802703989431378626382241758774251974716132
@@ -233,6 +225,13 @@
     - gtd_item_unhandled
   string_values:
     global_time_created: 2013-03-13T08:18:31.077205
+- !<e24914f69d2659c7>
+  caption: Done-Items wieder einfügen
+  hash1: 42323390029035308417983010834081770941758774251974716132
+  attributes:
+    - gtd_item_unhandled
+  string_values:
+    global_time_created: 2013-03-18T09:02:54.197319
 - !<e43900584af88584>
   caption: Kontext-Texte speichern
   hash1: 11621678104482593199732843157374908887301758774251974716132
