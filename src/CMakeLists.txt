@@ -1,3 +1,6 @@
+# copyright (C) 2013 Frans Fürst
+# -*- coding: utf-8 -*-
+
 project( zeitmaschine )
 
 cmake_minimum_required(VERSION 2.8)

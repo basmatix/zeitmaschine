@@ -1,5 +1,10 @@
+/// copyright (C) 2013 Frans Fürst
+/// -*- coding: utf-8 -*-
+
 #ifndef FLOWMODEL_H
 #define FLOWMODEL_H
+
+#include "zmTrace.h"
 
 #include <map>
 #include <set>
@@ -412,6 +417,8 @@ private:
 
             std::string l_uid =     n.Tag();
             std::string l_caption = n["caption"].as< std::string >();
+
+            tracemessage("caption: '%s'", l_caption.c_str());
 
             Thing *l_new_thing = new Thing( l_caption );
             if( n["attributes"] )

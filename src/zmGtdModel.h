@@ -1,3 +1,6 @@
+/// copyright (C) 2013 Frans Fürst
+/// -*- coding: utf-8 -*-
+
 #ifndef ZMGTDMODEL_H
 #define ZMGTDMODEL_H
 

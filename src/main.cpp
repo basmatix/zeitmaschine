@@ -1,3 +1,6 @@
+/// copyright (C) 2013 Frans Fürst
+/// -*- coding: utf-8 -*-
+
 #include <QtGui/QApplication>
 #include "mainwindow.h"
 

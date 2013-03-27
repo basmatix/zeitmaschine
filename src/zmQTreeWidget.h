@@ -1,3 +1,6 @@
+/// copyright (C) 2013 Frans Fürst
+/// -*- coding: utf-8 -*-
+
 #ifndef ZMQTREEWIDGET_H
 #define ZMQTREEWIDGET_H
 
