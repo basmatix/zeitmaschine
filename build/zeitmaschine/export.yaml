@@ -87,6 +87,14 @@
     - gtd_project
   string_values:
     global_time_created: 2013-03-12T23:08:12.250498
+- !<500cb5a9185286a8>
+  string_values:
+    global_time_created: 2013-03-19T10:48:02.721512
+    gtd_item_note: ""
+  caption: Android-Client bereitstellen
+  hash1: 993775386414115288884635668838785363208368085240360104704
+  attributes:
+    - gtd_project
 - !<60ee2a07206332d6>
   caption: beim Exportieren Ordnung erzwingen (macht diffs unproblematischer)
   hash1: 454142514606617247883234446638930343650139045958825407952993762767301519685777
@@ -218,6 +226,13 @@
   hash1: 92795689887894214091241434907675231865901758774251974716132
   attributes:
     - gtd_item_unhandled
+- !<db5eb7f57dd454fb>
+  caption: wiederkehrende aktionen ermöglichen
+  hash1: 8493478761728314889147870727049221638021758774251974716132
+  attributes:
+    - gtd_item_unhandled
+  string_values:
+    global_time_created: 2013-03-19T14:48:30.520787
 - !<e1d5be9be76a5879>
   caption: mehrere GTD-export files gleichzeitig verwalten können (über Attribute verwaltet)
   hash1: 905552498177246057667981387663731931581758774251974716132
@@ -242,6 +257,14 @@
     global_time_created: 2013-03-13T08:16:38.215025
     gtd_item_note: ""
     gtd_time_done: 2013-03-18T23:14:02.682694
+- !<ed957b5decec1018>
+  caption: import/export-Ordner auf kommandozeile lesen
+  hash1: 1419123043792929746513977943463194110501758774251974716132
+  attributes:
+    - gtd_item_unhandled
+  string_values:
+    global_time_created: 2013-03-19T10:40:40.776098
+    gtd_item_note: ""
 - !<f433a091bea20385>
   caption: Windows compiliert
   hash1: 7890453409169572490670433219956497772701758774251974716132
