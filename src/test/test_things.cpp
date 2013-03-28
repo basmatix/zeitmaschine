@@ -4,6 +4,7 @@
 
 bool change_while_open();
 bool empty_db_on_load();
+bool output_node();
 
 int main( int arg_n, char **arg_v )
 {
@@ -20,6 +21,9 @@ int main( int arg_n, char **arg_v )
 
     if( l_test_identifier == "change-while-open" )
         return change_while_open() ? 0 : 1;
+
+    if( l_test_identifier == "output-node" )
+        return output_node() ? 0 : 1;
 
     std::cerr << "unknown test specifier: '" << l_test_identifier << "'" << std::endl;
     return 3;
@@ -64,4 +68,38 @@ bool change_while_open()
             l_m3.hasItem( l_item1 )  && l_m3.hasItem( l_item2 );
 
     return l_everythings_there;
+}
+
+bool output_node()
+{
+    std::ofstream l_fout( "testfile.yaml" );
+    YAML::Emitter out(l_fout);
+
+    // main sequence
+    out << YAML::BeginSeq;
+
+        out << YAML::VerbatimTag("048d5cb69c066bea");
+
+        out << YAML::BeginMap;
+            out << YAML::Key << "StringValues";
+            out << YAML::Value;
+                out << YAML::BeginMap;
+                    out << YAML::Key << "position";
+                    out << YAML::Value << "3B";
+                out << YAML::EndMap;
+        out << YAML::EndMap;
+
+        out << YAML::Key << "attributes";
+        out << YAML::Value ;
+        out << YAML::BeginSeq;
+        out << "eins";
+        out << "zwei";
+        out << YAML::EndSeq;
+
+    out << YAML::VerbatimTag("abcuniquedef2");
+
+    out << YAML::EndSeq;
+    l_fout << std::endl;
+
+    return true;
 }

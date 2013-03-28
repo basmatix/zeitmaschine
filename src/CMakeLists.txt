@@ -103,3 +103,4 @@ target_link_libraries( test_things
 
 add_test( empty-db-on-load         ${CMAKE_CURRENT_BINARY_DIR}/test_things empty-db-on-load )
 add_test( things-change-while-open ${CMAKE_CURRENT_BINARY_DIR}/test_things change-while-open )
+add_test( output-node              ${CMAKE_CURRENT_BINARY_DIR}/test_things output-node )

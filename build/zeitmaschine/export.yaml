@@ -1,35 +1,35 @@
 - !<048d5cb69c066bea>
+  caption: zeitabschätzung unterbringen
   hash1: 117105722383422346231732219836831701576201758774251974716132
+  attributes:
+    - gtd_item_unhandled
   string_values:
     global_time_created: 2013-03-27T15:09:48.023310
     gtd_item_note: ""
-  caption: zeitabschätzung unterbringen
+- !<04a842e656639b07>
+  caption: "\"brain stack\" ermöglichen"
+  hash1: 21570867019188149337459514638216416731460825760345510191758774251974716132
   attributes:
     - gtd_item_unhandled
-- !<04a842e656639b07>
   string_values:
     global_time_created: 2013-03-14T16:48:26.036303
     gtd_item_note: brain
-  hash1: 21570867019188149337459514638216416731460825760345510191758774251974716132
-  caption: "\"brain stack\" ermöglichen"
-  attributes:
-    - gtd_item_unhandled
 - !<0512fd52738e81b6>
   caption: Vorschlag für nächste Aktion geben
+  hash1: 1501644202435881422091357226803213460507062463316610181758774251974716132
   attributes:
     - gtd_item_unhandled
-  hash1: 1501644202435881422091357226803213460507062463316610181758774251974716132
   string_values:
     global_time_created: 2013-03-13T08:16:55.007919
     gtd_item_note: test
 - !<165f478b240e74a3>
-  string_values:
-    global_time_created: 2013-03-13T08:15:13.298517
-    gtd_item_note: model operator zum testen verwenden
   caption: Model-operator= zum Testen verwenden
   hash1: 17676736518022610385768368425107503487212799093283039209301758774251974716132
   attributes:
     - gtd_item_unhandled
+  string_values:
+    global_time_created: 2013-03-13T08:15:13.298517
+    gtd_item_note: model operator zum testen verwenden
 - !<1dc1d191b993e17f>
   caption: Verknüpfungen unter Dateien ermöglichen
   hash1: 50411973406590351811034289599690758728868070357232841467451758774251974716132
@@ -41,19 +41,19 @@
 - !<1e223855d2cf5d93>
   caption: Kontext-Dateien speichern
   hash1: 17970730272947164318731355706524717609301758774251974716132
+  attributes:
+    - gtd_item_unhandled
   string_values:
     global_time_created: 2013-03-13T08:13:44.829694
     gtd_item_note: ""
-  attributes:
-    - gtd_item_unhandled
 - !<29f28a754e8ed341>
+  caption: bei Tracking/Done Zeitabschätzung vergleichen
   hash1: 61253976919792406241218969658631707713601758774251974716132
   attributes:
     - gtd_item_unhandled
   string_values:
     global_time_created: 2013-03-27T15:10:28.431585
     gtd_item_note: ""
-  caption: bei Tracking/Done Zeitabschätzung vergleichen
 - !<33e204487c6fd159>
   caption: Items nach GTD überführen
   hash1: 33001535729271941951456509139116920488701758774251974716132
@@ -68,25 +68,25 @@
   attributes:
     - gtd_item_unhandled
   string_values:
-    gtd_item_note: ""
     global_time_created: 2013-03-13T08:15:33.115617
+    gtd_item_note: ""
 - !<441a045c65d325c8>
   caption: items speichern eine checksumme um merge-fehler aufzudecken
   hash1: 1010528449409465807612421521455926966434069052884559591244983762767301519685777
   attributes:
     - gtd_item_done
   string_values:
-    gtd_time_done: 2013-03-18T23:12:52.909893
     global_time_created: 2013-03-18T12:48:30.358876
     gtd_item_note: ""
+    gtd_time_done: 2013-03-18T23:12:52.909893
 - !<4d41ee297bc5c34c>
   caption: Sync-Mechanismus für Android finden
   hash1: 175939370238809437891069986785064721725301758774251974716132
   attributes:
     - gtd_item_unhandled
   string_values:
-    gtd_item_note: ""
     global_time_created: 2013-03-13T08:14:35.688533
+    gtd_item_note: ""
 - !<4d6a0f931b79009e>
   caption: Speichern beim Bearbeiten
   hash1: 15085868116074234395950732285887912450066359154405033366483762767301519685777
@@ -97,13 +97,13 @@
     gtd_item_note: ""
     gtd_time_done: 2013-03-18T23:12:59.774752
 - !<500cb5a9185286a8>
-  string_values:
-    global_time_created: 2013-03-19T10:48:02.721512
-    gtd_item_note: ""
   caption: Android-Client bereitstellen
   hash1: 993775386414115288884635668838785363208368085240360104704
   attributes:
     - gtd_project
+  string_values:
+    global_time_created: 2013-03-19T10:48:02.721512
+    gtd_item_note: ""
 - !<573c58936fb97114>
   caption: p1
   hash1: 1752477595171264698177505697465008368085240360104704
@@ -113,22 +113,22 @@
     global_time_created: 2013-03-12T23:08:12.250498
     gtd_item_note: ""
 - !<60ee2a07206332d6>
+  caption: beim Exportieren Ordnung erzwingen (macht diffs unproblematischer)
+  hash1: 454142514606617247883234446638930343650139045958825407952993762767301519685777
   attributes:
     - gtd_item_done
   string_values:
     global_time_created: 2013-03-14T18:35:13.239280
     gtd_item_note: ""
     gtd_time_done: 2013-03-18T23:13:17.631932
-  caption: beim Exportieren Ordnung erzwingen (macht diffs unproblematischer)
-  hash1: 454142514606617247883234446638930343650139045958825407952993762767301519685777
 - !<6214e35f0e3e3813>
-  string_values:
-    global_time_created: 2013-03-15T22:40:08.355364
-    gtd_item_note: ""
   caption: Runtime-Konflikte / Merge on save lösen
   hash1: 180199942679978299061014637361636881329601758774251974716132
   attributes:
     - gtd_item_unhandled
+  string_values:
+    global_time_created: 2013-03-15T22:40:08.355364
+    gtd_item_note: ""
 - !<62782dee7ba6ba82>
   caption: beim laden auf created_time �berpr�fen
   hash1: 6244021507340337808125451754610763195630138992516102528541303762767301519685777
@@ -178,9 +178,9 @@
   attributes:
     - gtd_item_done
   string_values:
-    gtd_time_done: 2013-03-18T23:13:37.473124
     global_time_created: 2013-03-13T08:12:46.610628
     gtd_item_note: ""
+    gtd_time_done: 2013-03-18T23:13:37.473124
 - !<ad46330484d4a1d8>
   caption: encoding klarziehen
   hash1: 2930912006446946298379327238905222641001758774251974716132
@@ -198,13 +198,13 @@
     global_time_created: 2013-03-18T12:47:32.750278
     gtd_item_note: ""
 - !<baa2c977d941e438>
+  caption: YSbox Anschluss ermöglichen
   hash1: 152644386420526264321529463412834501803801758774251974716132
   attributes:
     - gtd_item_unhandled
   string_values:
     global_time_created: 2013-03-13T22:22:16.938815
     gtd_item_note: ""
-  caption: YSbox Anschluss ermöglichen
 - !<bbf929d790aaecfe>
   caption: +1 für tasks
   hash1: 172736754903265052721290484895352271541701758774251974716132

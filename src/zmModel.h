@@ -233,36 +233,47 @@ public:
             return;
         }
 
-        YAML::Node l_export_root;
+        //YAML::Node l_export_root;
+        YAML::Emitter l_yaml_emitter( l_fout );
+
+        l_yaml_emitter << YAML::BeginSeq;
 
         BOOST_FOREACH(const ThingsModelMapType::value_type& i, m_things)
         {
-            YAML::Node l_export_item;
-            l_export_item["caption"] = i.second->m_caption;
-            l_export_item["hash1"] = i.second->getHash();
+            l_yaml_emitter << YAML::VerbatimTag(i.first);
+            l_yaml_emitter << YAML::BeginMap;
+
+            l_yaml_emitter << YAML::Key << "caption";
+            l_yaml_emitter << YAML::Value << i.second->m_caption;
+
+            l_yaml_emitter << YAML::Key << "hash1";
+            l_yaml_emitter << YAML::Value << i.second->getHash();
 
             if( ! i.second->m_attributes.empty() )
             {
+                l_yaml_emitter << YAML::Key << "attributes";
+                l_yaml_emitter << YAML::Value;
+                l_yaml_emitter << YAML::BeginSeq;
                 std::vector< std::string > v;
                 BOOST_FOREACH( const std::string &a, i.second->m_attributes)
                 {
-                    v.push_back( a );
+                    l_yaml_emitter << a;
                 }
-
-                l_export_item["attributes"] = v;
+                l_yaml_emitter << YAML::EndSeq;
             }
 
             if( ! i.second->m_string_values.empty() )
             {
-                l_export_item[ "string_values" ] = i.second->m_string_values;
+                l_yaml_emitter << YAML::Key << "string_values";
+                l_yaml_emitter << YAML::Value;
+                l_yaml_emitter << i.second->m_string_values;
             }
-            l_export_item.SetTag( i.first );
-            l_export_root.push_back( l_export_item );
+            l_yaml_emitter << YAML::EndMap;
         }
+        l_yaml_emitter << YAML::EndSeq;
 
         try
         {
-            l_fout << l_export_root;
             l_fout << std::endl;
         }
         catch( ... )
