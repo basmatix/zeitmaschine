@@ -128,14 +128,6 @@
   string_values:
     global_time_created: 2013-03-19T10:48:02.721512
     gtd_item_note: ""
-- !<573c58936fb97114>
-  caption: p1
-  hash1: 1752477595171264698177505697465008368085240360104704
-  attributes:
-    - gtd_project
-  string_values:
-    global_time_created: 2013-03-12T23:08:12.250498
-    gtd_item_note: ""
 - !<60ee2a07206332d6>
   caption: beim Exportieren Ordnung erzwingen (macht diffs unproblematischer)
   hash1: 454142514606617247883234446638930343650139045958825407952993762767301519685777
@@ -254,6 +246,14 @@
   string_values:
     global_time_created: 2013-03-13T08:15:03.169982
     gtd_item_note: ""
+- !<c6a5c9a21b10091e>
+  caption: Subitems von Groups/Projects/Contexts handlen, wenn diese gelöscht werden
+  hash1: 91500438385921672211449651131315045148401758774251974716132
+  attributes:
+    - gtd_item_unhandled
+  string_values:
+    global_time_created: 2013-03-29T17:49:09.621891
+    gtd_item_note: ""
 - !<cc5e156225d7120a>
   caption: Beginn/Ende-Zeiten tracken
   hash1: 1286652986758858027039894313786263822401758774251974716132
@@ -368,11 +368,3 @@
   string_values:
     global_time_created: 2013-03-14T15:38:40.518222
     gtd_item_note: ""
-- !<f913168e95de2713>
-  caption: android-client bauen
-  hash1: 99405092189776387731093964428596836718556712660464262441916998091438055673123
-  attributes:
-    - gtd_task
-  string_values:
-    global_time_created: 2013-03-13T08:14:24.895912
-    gtd_parent_project: 573c58936fb97114

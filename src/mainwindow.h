@@ -38,7 +38,6 @@ private:
     Ui_window       *m_ui;
 
     zmQtGtdModel     m_model;
-    std::string      m_filename;
 
     std::string      m_selected_thing;
     QTreeWidgetItem *m_selected_twItem;
@@ -57,7 +56,6 @@ public:
     explicit MainWindow(QWidget *parent = 0)
         : QMainWindow       ( parent )
         , m_ui              ( new Ui_window )
-        , m_filename        ( "zeitmaschine/export.yaml" )
         , m_selected_thing  ( "" )
         , m_selected_twItem ( NULL )
     {   tracemessage( __FUNCTION__ );
@@ -143,6 +141,7 @@ private:
         {
             std::string l_parentProject = m_model.getParentProject( uid );
 
+            // todo: make sure l_project exists
             QTreeWidgetItem *l_project = m_thing_lwitem_map[l_parentProject];
 
             l_project->addChild( l_item );
@@ -174,16 +173,10 @@ private:
         }
     }
 
-    void exportToFs()
-    {   tracemessage( __FUNCTION__ );
-
-        m_model.save( m_filename );
-    }
-
     void importFromFs()
     {   tracemessage( __FUNCTION__ );
 
-        m_model.load( m_filename );
+        m_model.load();
     }
 
     void updateGui()
@@ -195,7 +188,7 @@ private:
     {   tracemessage( __FUNCTION__ );
         // this method is being called automatically by Qt
 
-        exportToFs();
+        //exportToFs();
     }
 
 private slots:
@@ -208,8 +201,6 @@ private slots:
         addListItem( l_item_uid );
 
         m_ui->leCommand->setText("");
-
-        exportToFs();
     }
 
     void on_pbAddInboxItem_clicked()
@@ -274,7 +265,6 @@ private slots:
                           l_new_caption.toAscii().constData() );
             m_model.setCaption( l_thing, l_new_caption );
 
-            exportToFs();
         }
     }
 
@@ -333,8 +323,6 @@ private slots:
 
         m_selected_thing = "";
         m_selected_twItem = NULL;
-
-        exportToFs();
     }
 
     void on_pbDelete_clicked()
@@ -356,8 +344,6 @@ private slots:
         // dont alter m_selected_thing or m_selected_twItem after this
         // deletion since they get set there synchronously
         delete m_selected_twItem;
-
-        exportToFs();
     }
 
     void on_pbMakeProject_clicked()
@@ -407,8 +393,56 @@ private slots:
             addListItem( l_item_uid );
 
             m_ui->leCommand->setText("");
+        }
+    }
 
-            exportToFs();
+    void on_pbMakeAction_clicked()
+    {   tracemessage( __FUNCTION__ );
+
+        QString l_project_name = m_ui->leCommand->text();
+
+        /// if no name for a new item has been given cast an inbox item
+        if( l_project_name == "" )
+        {
+            if( m_selected_thing == "" )
+            {
+                /// error
+            }
+            assert( m_lwitem_thing_map[m_selected_twItem] == m_selected_thing );
+            assert( m_thing_lwitem_map[m_selected_thing] == m_selected_twItem );
+            if( m_model.isInboxItem( m_selected_thing ))
+            {
+                tracemessage( "turn item into project: %s (%s)",
+                              m_selected_thing.c_str(),
+                              m_model.getCaption( m_selected_thing ).toAscii().constData()  );
+
+                m_model.castToProject( m_selected_thing );
+
+                // NOTE: this is black magic - don't touch! why does m_selected_twItem
+                //       get set to NULL on removeChild()?!
+                QTreeWidgetItem *l_uselessCopy( m_selected_twItem );
+                QTreeWidgetItem *l_groupingItem( m_selected_twItem->parent() );
+                l_groupingItem->removeChild( l_uselessCopy );
+                m_liProjects->addChild( l_uselessCopy );
+
+                m_selected_thing = "";
+                m_selected_twItem = NULL;
+            }
+            else
+            {
+                /// error
+            }
+        }
+        else
+        {
+            tracemessage( "create project '%s' from magic line",
+                          l_project_name.toAscii().constData() );
+
+            std::string l_item_uid = m_model.createProject( l_project_name );
+
+            addListItem( l_item_uid );
+
+            m_ui->leCommand->setText("");
         }
     }
 

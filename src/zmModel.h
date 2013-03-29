@@ -164,11 +164,22 @@ public:
 
 private:
 
-    ThingsModelMapType m_things;
-    ThingsModelMapType m_thingsOnLoad;
-
+    ThingsModelMapType  m_things;
+    ThingsModelMapType  m_thingsOnLoad;
+    std::string         m_filename;
 
 public:
+
+    ThingsModel()
+        : m_filename    ( "zeitmaschine/export.yaml" )
+    {
+
+    }
+
+    void load()
+    {
+        load( m_filename );
+    }
 
     void load( const std::string &filename )
     {
@@ -206,6 +217,11 @@ public:
             }
         }
         return true;
+    }
+
+    void save()
+    {
+        save( m_filename );
     }
 
     void save( const std::string &filename )
@@ -298,6 +314,9 @@ public:
         l_new_thing->addValue( "global_time_created", time_stamp() );
 
         m_things[ l_new_key ] = l_new_thing;
+
+        save();
+
         return l_new_key;
     }
 
@@ -315,6 +334,8 @@ public:
         assert( l_item_it != m_things.end() );
 
         m_things.erase( l_item_it );
+
+        save();
     }
 
     void addAttribute( const std::string &uid, const std::string &attribute )
@@ -324,6 +345,8 @@ public:
         assert( l_item_it != m_things.end() );
 
         l_item_it->second->addAttribute( attribute );
+
+        save();
     }
 
     bool removeAttribute( const std::string &uid, const std::string &attribute )
@@ -332,7 +355,11 @@ public:
 
         assert( l_item_it != m_things.end() );
 
-        return l_item_it->second->removeAttribute( attribute );
+        bool l_return = l_item_it->second->removeAttribute( attribute );
+
+        save();
+
+        return l_return;
     }
 
     void setValue( const std::string &uid, const std::string &name, const std::string &value )
@@ -342,6 +369,8 @@ public:
         assert( l_item_it != m_things.end() );
 
         l_item_it->second->addValue( name, value );
+
+        save();
     }
 
     std::string getValue( const std::string &uid, const std::string &name ) const
@@ -360,6 +389,8 @@ public:
         assert( l_item_it != m_things.end() );
 
         l_item_it->second->m_caption = caption;
+
+        save();
     }
 
     const std::string & getCaption( const std::string &uid ) const

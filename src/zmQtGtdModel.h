@@ -106,6 +106,11 @@ public:
         return m_gtd_model.setCaption( uid, caption.toUtf8().constData() );
     }
 
+    void load()
+    {
+        m_gtd_model.load();
+    }
+
     void load( const std::string &filename )
     {
         m_gtd_model.load( filename );
