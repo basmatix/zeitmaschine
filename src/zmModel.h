@@ -233,7 +233,10 @@ public:
             return;
         }
 
-        //YAML::Node l_export_root;
+        /// NOTE: we do the yaml exporting here semi manually
+        ///       because this way we can ensure consistent
+        ///       order of items between savings
+
         YAML::Emitter l_yaml_emitter( l_fout );
 
         l_yaml_emitter << YAML::BeginSeq;
@@ -266,6 +269,7 @@ public:
             {
                 l_yaml_emitter << YAML::Key << "string_values";
                 l_yaml_emitter << YAML::Value;
+                /// this list is sorted anyway
                 l_yaml_emitter << i.second->m_string_values;
             }
             l_yaml_emitter << YAML::EndMap;

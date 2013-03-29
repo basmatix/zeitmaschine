@@ -1,8 +1,8 @@
 - !<048d5cb69c066bea>
-  caption: zeitabschätzung unterbringen
-  hash1: 117105722383422346231732219836831701576201758774251974716132
+  caption: Zeitabschätzung unterbringen
+  hash1: 48993662692442418641732219836831701576208368085240360104704
   attributes:
-    - gtd_item_unhandled
+    - gtd_project
   string_values:
     global_time_created: 2013-03-27T15:09:48.023310
     gtd_item_note: ""
@@ -14,6 +14,14 @@
   string_values:
     global_time_created: 2013-03-14T16:48:26.036303
     gtd_item_note: brain
+- !<04fb9a8bef1c12d2>
+  caption: Usability
+  hash1: 16989252382989280676818222012714919759901758774251974716132
+  attributes:
+    - gtd_item_unhandled
+  string_values:
+    global_time_created: 2013-03-28T22:33:49.435303
+    gtd_item_note: ""
 - !<0512fd52738e81b6>
   caption: Vorschlag für nächste Aktion geben
   hash1: 1501644202435881422091357226803213460507062463316610181758774251974716132
@@ -22,6 +30,14 @@
   string_values:
     global_time_created: 2013-03-13T08:16:55.007919
     gtd_item_note: test
+- !<0599dbd17f0fddf7>
+  caption: Inbox Items werden nach Zeit sortiert
+  hash1: 939171003817676575615262017073046619286460825760345510191758774251974716132
+  attributes:
+    - gtd_item_unhandled
+  string_values:
+    global_time_created: 2013-03-29T17:33:57.837767
+    gtd_item_note: brain
 - !<165f478b240e74a3>
   caption: Model-operator= zum Testen verwenden
   hash1: 17676736518022610385768368425107503487212799093283039209301758774251974716132
@@ -31,8 +47,8 @@
     global_time_created: 2013-03-13T08:15:13.298517
     gtd_item_note: model operator zum testen verwenden
 - !<1dc1d191b993e17f>
-  caption: Verknüpfungen unter Dateien ermöglichen
-  hash1: 50411973406590351811034289599690758728868070357232841467451758774251974716132
+  caption: Verknüpfungen unter Items ermöglichen
+  hash1: 175891774410774381631034289599690758728868070357232841467451758774251974716132
   attributes:
     - gtd_item_unhandled
   string_values:
@@ -53,6 +69,14 @@
     - gtd_item_unhandled
   string_values:
     global_time_created: 2013-03-27T15:10:28.431585
+    gtd_item_note: ""
+- !<302bb7feccd62be2>
+  caption: Konfliktfreies I/O-Konzept bereitstellen
+  hash1: 376437493762254352593567696347188347301758774251974716132
+  attributes:
+    - gtd_item_unhandled
+  string_values:
+    global_time_created: 2013-03-28T22:18:17.444214
     gtd_item_note: ""
 - !<33e204487c6fd159>
   caption: Items nach GTD überführen
@@ -130,8 +154,8 @@
     global_time_created: 2013-03-15T22:40:08.355364
     gtd_item_note: ""
 - !<62782dee7ba6ba82>
-  caption: beim laden auf created_time �berpr�fen
-  hash1: 6244021507340337808125451754610763195630138992516102528541303762767301519685777
+  caption: beim laden auf created_time überprüfen
+  hash1: 7909490917882793405125451754610763195630138992516102528541303762767301519685777
   attributes:
     - gtd_item_done
   string_values:
@@ -155,8 +179,8 @@
     global_time_created: 2013-03-14T15:39:37.246621
     gtd_item_note: ""
 - !<87ceff4a6a501ab7>
-  caption: unit tests einf�hren
-  hash1: 1708797669670210915762791934660545245960138997941255810379543762767301519685777
+  caption: unit tests einführen
+  hash1: 758911180748977927962791934660545245960138997941255810379543762767301519685777
   attributes:
     - gtd_item_done
   string_values:
@@ -164,8 +188,8 @@
     gtd_item_note: ""
     gtd_time_done: 2013-03-18T23:13:27.432613
 - !<99051bad4dc41d82>
-  caption: GTD-Layer einf�hren
-  hash1: 13795613902507265737155858007057784856300138384691493489033333762767301519685777
+  caption: GTD-Layer einführen
+  hash1: 12945520253823163404155858007057784856300138384691493489033333762767301519685777
   attributes:
     - gtd_item_done
   string_values:
@@ -181,17 +205,26 @@
     global_time_created: 2013-03-13T08:12:46.610628
     gtd_item_note: ""
     gtd_time_done: 2013-03-18T23:13:37.473124
-- !<ad46330484d4a1d8>
-  caption: encoding klarziehen
-  hash1: 2930912006446946298379327238905222641001758774251974716132
+- !<a7003c8ee33f1466>
+  caption: Scheduler berücksichtigt Kontexte, definierte Prioritäten, +1, Dismisses, Reihenfolgen von Projekten
+  hash1: 611536361241432868862240101967982583801758774251974716132
   attributes:
     - gtd_item_unhandled
   string_values:
+    global_time_created: 2013-03-29T09:46:34.579479
+    gtd_item_note: ""
+- !<ad46330484d4a1d8>
+  caption: encoding klarziehen
+  hash1: 293091200644694629837932723890522264100123921209479655909893762767301519685777
+  attributes:
+    - gtd_item_done
+  string_values:
     global_time_created: 2013-03-14T13:22:38.735396
     gtd_item_note: ""
+    gtd_time_done: 2013-03-28T22:15:57.909564
 - !<ae47b48e3470b842>
-  caption: "Collaboration: bei aktivität in einem Task durch andere wird dieses hervorgehoben"
-  hash1: 90003687976765054601261300715989364601758774251974716132
+  caption: "Collaboration: bei Aktivität in einem Task durch andere wird dieses hervorgehoben"
+  hash1: 14709065809611460297601261300715989364601758774251974716132
   attributes:
     - gtd_item_unhandled
   string_values:
@@ -206,8 +239,8 @@
     global_time_created: 2013-03-13T22:22:16.938815
     gtd_item_note: ""
 - !<bbf929d790aaecfe>
-  caption: +1 für tasks
-  hash1: 172736754903265052721290484895352271541701758774251974716132
+  caption: +1 für Tasks
+  hash1: 172736754984120430271290484895352271541701758774251974716132
   attributes:
     - gtd_item_unhandled
   string_values:
@@ -254,12 +287,20 @@
     global_time_created: 2013-03-13T09:34:46.920632
     gtd_item_note: ""
 - !<d4109d9404ded1a1>
-  caption: beim hinzuf�gen von items wird der note-text geadded
-  hash1: 92795689887894214091241434907675231865903762767301519685777
+  caption: beim hinzufügen von items wird der note-text geadded
+  hash1: 180892766800367138511241434907675231865903762767301519685777
   attributes:
     - gtd_item_done
   string_values:
     global_time_created: 2013-03-18T12:48:53.015026
+    gtd_item_note: ""
+- !<d91cd40d18e8d047>
+  caption: Timer unterbringen (für abgesteckte Zeitslots)
+  hash1: 153065747578632466971064821858447739481701758774251974716132
+  attributes:
+    - gtd_item_unhandled
+  string_values:
+    global_time_created: 2013-03-29T10:51:31.190149
     gtd_item_note: ""
 - !<db5eb7f57dd454fb>
   caption: wiederkehrende Aktionen ermöglichen
@@ -270,6 +311,14 @@
     global_time_created: 2013-03-19T14:48:30.520787
     gtd_item_note: ""
     gtd_time_done: 2013-03-27T13:47:40.954733
+- !<db81207892d619e2>
+  caption: GTD-Phasen wie "Inbox-Aufräumen" einführen
+  hash1: 11216883447843639572578405010432876972601758774251974716132
+  attributes:
+    - gtd_item_unhandled
+  string_values:
+    global_time_created: 2013-03-28T22:35:32.768058
+    gtd_item_note: ""
 - !<e1d5be9be76a5879>
   caption: mehrere GTD-export files gleichzeitig verwalten können (über Attribute verwaltet)
   hash1: 7572680735844106660679813876637319315801758774251974716132

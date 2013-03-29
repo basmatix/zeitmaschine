@@ -51,6 +51,11 @@ public:
         return m_gtd_model.getProjectItems();
     }
 
+    void castToProject( const std::string &item )
+    {
+        m_gtd_model.castToProject( item );
+    }
+
     void setDone( const std::string &task_item )
     {
         m_gtd_model.setDone( task_item );

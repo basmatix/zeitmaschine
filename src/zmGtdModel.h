@@ -113,6 +113,13 @@ public:
                     task_item, "gtd_time_done", ThingsModel::time_stamp() );
     }
 
+    void castToProject( const std::string &item )
+    {
+        assert( isInboxItem( item ) );
+        m_things_model.removeAttribute( item, "gtd_item_unhandled" );
+        m_things_model.addAttribute( item, "gtd_project" );
+    }
+
     bool isTaskItem( const std::string &item ) const
     {
         return m_things_model.hasAttribute( item, "gtd_task" );

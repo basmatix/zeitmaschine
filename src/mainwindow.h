@@ -199,11 +199,8 @@ private:
     }
 
 private slots:
-
-    void on_leCommand_returnPressed ()
-    {   tracemessage( __FUNCTION__ );
-        // this method is being called automatically by Qt
-
+    void createInboxItemFromUiElements()
+    {
         std::string l_item_uid = m_model.createNewInboxItem( m_ui->leCommand->text() );
 
         m_model.setNote( l_item_uid, m_ui->teNotes->toPlainText() );
@@ -213,6 +210,20 @@ private slots:
         m_ui->leCommand->setText("");
 
         exportToFs();
+    }
+
+    void on_pbAddInboxItem_clicked()
+    {   //tracemessage( __FUNCTION__ );
+        // this method is being called automatically by Qt
+
+        createInboxItemFromUiElements();
+    }
+
+    void on_leCommand_returnPressed()
+    {   //tracemessage( __FUNCTION__ );
+        // this method is being called automatically by Qt
+
+        createInboxItemFromUiElements();
     }
 
     void on_twTask_currentItemChanged( QTreeWidgetItem *current, QTreeWidgetItem *previous )
@@ -351,11 +362,40 @@ private slots:
 
     void on_pbMakeProject_clicked()
     {   tracemessage( __FUNCTION__ );
+
         QString l_project_name = m_ui->leCommand->text();
 
+        /// if no name for a new item has been given cast an inbox item
         if( l_project_name == "" )
         {
+            if( m_selected_thing == "" )
+            {
+                /// error
+            }
+            assert( m_lwitem_thing_map[m_selected_twItem] == m_selected_thing );
+            assert( m_thing_lwitem_map[m_selected_thing] == m_selected_twItem );
+            if( m_model.isInboxItem( m_selected_thing ))
+            {
+                tracemessage( "turn item into project: %s (%s)",
+                              m_selected_thing.c_str(),
+                              m_model.getCaption( m_selected_thing ).toAscii().constData()  );
 
+                m_model.castToProject( m_selected_thing );
+
+                // NOTE: this is black magic - don't touch! why does m_selected_twItem
+                //       get set to NULL on removeChild()?!
+                QTreeWidgetItem *l_uselessCopy( m_selected_twItem );
+                QTreeWidgetItem *l_groupingItem( m_selected_twItem->parent() );
+                l_groupingItem->removeChild( l_uselessCopy );
+                m_liProjects->addChild( l_uselessCopy );
+
+                m_selected_thing = "";
+                m_selected_twItem = NULL;
+            }
+            else
+            {
+                /// error
+            }
         }
         else
         {
