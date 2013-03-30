@@ -32,12 +32,13 @@
     gtd_item_note: test
 - !<0599dbd17f0fddf7>
   caption: Inbox Items werden nach Zeit sortiert
-  hash1: 939171003817676575615262017073046619286460825760345510191758774251974716132
+  hash1: 9391710038176765756152620170730466192864608257603455101937186389580746557803762767301519685777
   attributes:
-    - gtd_item_unhandled
+    - gtd_item_done
   string_values:
     global_time_created: 2013-03-29T17:33:57.837767
     gtd_item_note: brain
+    gtd_time_done: 2013-03-30T12:24:12.715611
 - !<165f478b240e74a3>
   caption: Model-operator= zum Testen verwenden
   hash1: 17676736518022610385768368425107503487212799093283039209301758774251974716132
@@ -56,11 +57,19 @@
     gtd_item_note: versuch
 - !<1e223855d2cf5d93>
   caption: Kontext-Dateien speichern
-  hash1: 17970730272947164318731355706524717609301758774251974716132
+  hash1: 17970730272947164318731355706524717609308368085240360104704
   attributes:
-    - gtd_item_unhandled
+    - gtd_project
   string_values:
     global_time_created: 2013-03-13T08:13:44.829694
+    gtd_item_note: ""
+- !<1f6189cd5ad712f4>
+  caption: GTD-Plausibilitäten einführen
+  hash1: 110947534677513911721472336272820369795308368085240360104704
+  attributes:
+    - gtd_project
+  string_values:
+    global_time_created: 2013-03-30T12:22:21.873416
     gtd_item_note: ""
 - !<29f28a754e8ed341>
   caption: bei Tracking/Done Zeitabschätzung vergleichen
@@ -77,6 +86,14 @@
     - gtd_item_unhandled
   string_values:
     global_time_created: 2013-03-28T22:18:17.444214
+    gtd_item_note: ""
+- !<31a227682a0de22c>
+  caption: Itemtyp an Farbe erkennbar machen
+  hash1: 15080264516503986945167406754334960759901758774251974716132
+  attributes:
+    - gtd_item_unhandled
+  string_values:
+    global_time_created: 2013-03-30T13:27:08.807281
     gtd_item_note: ""
 - !<33e204487c6fd159>
   caption: Items nach GTD überführen
@@ -103,6 +120,14 @@
     global_time_created: 2013-03-18T12:48:30.358876
     gtd_item_note: ""
     gtd_time_done: 2013-03-18T23:12:52.909893
+- !<46f97e8c9786649d>
+  caption: QTreeView verwenden
+  hash1: 180400854469333847631238907303507045944701758774251974716132
+  attributes:
+    - gtd_item_unhandled
+  string_values:
+    global_time_created: 2013-03-30T12:57:19.688536
+    gtd_item_note: ""
 - !<4d41ee297bc5c34c>
   caption: Sync-Mechanismus für Android finden
   hash1: 175939370238809437891069986785064721725301758774251974716132
@@ -170,6 +195,14 @@
   string_values:
     global_time_created: 2013-03-14T15:39:37.246621
     gtd_item_note: ""
+- !<76aff7af97432950>
+  caption: "Bug: zwei mal \"m Project\" > Absturz"
+  hash1: 16193903983171415524271821627307850321501758774251974716132
+  attributes:
+    - gtd_item_unhandled
+  string_values:
+    global_time_created: 2013-03-30T12:55:37.026800
+    gtd_item_note: ""
 - !<87ceff4a6a501ab7>
   caption: unit tests einführen
   hash1: 758911180748977927962791934660545245960138997941255810379543762767301519685777
@@ -197,6 +230,14 @@
     global_time_created: 2013-03-13T08:12:46.610628
     gtd_item_note: ""
     gtd_time_done: 2013-03-18T23:13:37.473124
+- !<a3caa793ed707c0b>
+  caption: Gruppen unterstützen
+  hash1: 145545001198974852641824781979438598244701758774251974716132
+  attributes:
+    - gtd_item_unhandled
+  string_values:
+    global_time_created: 2013-03-30T13:00:46.147445
+    gtd_item_note: ""
 - !<a7003c8ee33f1466>
   caption: Scheduler berücksichtigt Kontexte, definierte Prioritäten, +1, Dismisses, Reihenfolgen von Projekten
   hash1: 611536361241432868862240101967982583801758774251974716132
@@ -240,9 +281,9 @@
     gtd_item_note: ""
 - !<c5fdc7b5c93e0414>
   caption: Model-operator= bauen
-  hash1: 9936353607235571643768837806921581325601758774251974716132
+  hash1: 9936353607235571643768837806921581325608368085240360104704
   attributes:
-    - gtd_item_unhandled
+    - gtd_project
   string_values:
     global_time_created: 2013-03-13T08:15:03.169982
     gtd_item_note: ""
@@ -256,12 +297,12 @@
     gtd_item_note: ""
 - !<cc5e156225d7120a>
   caption: Beginn/Ende-Zeiten tracken
-  hash1: 1286652986758858027039894313786263822401758774251974716132
+  hash1: 12866529867588580270398943137862638224172228646787657238438368085240360104704
   attributes:
-    - gtd_item_unhandled
+    - gtd_project
   string_values:
     global_time_created: 2013-03-13T08:13:03.899562
-    gtd_item_note: ""
+    gtd_item_note: "Ziel ist Time-Tracking für Projekte/Tasks\n\n* Verbrachte Zeit wird gezählt\n* zeitmaschine muss wissen, wann man sich in einem Task befindet\n"
 - !<cdc3791400dace2c>
   caption: GTD-Konform werden
   hash1: 15659539259057648708681283019419051776101758774251974716132
@@ -337,12 +378,14 @@
     gtd_item_note: ""
 - !<e43900584af88584>
   caption: Kontext-Texte speichern
-  hash1: 11621678104482593199732843157374908887301758774251974716132
+  hash1: 11621678104482593199732843157374908887301139308761035740736537627673015196857778368085240360104704
   attributes:
-    - gtd_item_unhandled
+    - gtd_item_done
+    - gtd_project
   string_values:
     global_time_created: 2013-03-13T08:13:22.748611
     gtd_item_note: ""
+    gtd_time_done: 2013-03-30T13:03:53.775315
 - !<eb2679ddd7f9ab17>
   caption: Nodes nach Zeit sortieren
   hash1: 57412403817364367369142154966122222519046751295892939783833762767301519685777

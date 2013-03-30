@@ -48,8 +48,82 @@ private:
     QTreeWidgetItem *m_liContexts;
     QTreeWidgetItem *m_liDone;
 
-    QMap< QTreeWidgetItem *, std::string > m_lwitem_thing_map;
-    QMap< std::string, QTreeWidgetItem * > m_thing_lwitem_map;
+    class WidgetItemMapper
+    {
+        QMap< std::string, zmQTreeWidgetItem * > m_thing_lwitem_map;
+        QMap< zmQTreeWidgetItem *, std::string > m_lwitem_thing_map;
+
+    public:
+
+        void add( const std::string uid, zmQTreeWidgetItem *item )
+        {
+            m_lwitem_thing_map[ item ] = uid;
+            m_thing_lwitem_map[ uid ] = item;
+        }
+
+        void erase( const std::string uid, QTreeWidgetItem *item )
+        {
+            QMap< std::string, zmQTreeWidgetItem * >::iterator l_thingToErase =
+                    m_thing_lwitem_map.find( uid );
+            QMap< zmQTreeWidgetItem *, std::string >::iterator l_itemToErase =
+                    m_lwitem_thing_map.find( (zmQTreeWidgetItem*)item );
+            assert( l_thingToErase != m_thing_lwitem_map.end() );
+            assert( l_itemToErase != m_lwitem_thing_map.end() );
+
+            assert( l_thingToErase.value() == (zmQTreeWidgetItem*)item );
+            assert( l_itemToErase.value() == uid );
+
+            m_thing_lwitem_map.erase( l_thingToErase );
+
+            m_lwitem_thing_map.erase( l_itemToErase );
+        }
+
+        bool contains( QTreeWidgetItem *item ) const
+        {
+            return m_lwitem_thing_map.find((zmQTreeWidgetItem*)item) != m_lwitem_thing_map.end();
+        }
+
+        bool contains( zmQTreeWidgetItem *item ) const
+        {
+            return m_lwitem_thing_map.find(item) != m_lwitem_thing_map.end();
+        }
+
+        zmQTreeWidgetItem * get( const std::string uid )
+        {
+            QMap< std::string, zmQTreeWidgetItem * >::iterator l_it =
+                    m_thing_lwitem_map.find( uid );
+            assert( l_it != m_thing_lwitem_map.end() );
+            return l_it.value();
+        }
+
+        std::string get( QTreeWidgetItem *item ) const
+        {
+            QMap< zmQTreeWidgetItem *, std::string >::const_iterator l_it =
+                    m_lwitem_thing_map.find( (zmQTreeWidgetItem*)item );
+            assert( l_it != m_lwitem_thing_map.end() );
+            return l_it.value();
+        }
+
+        const std::string & get( zmQTreeWidgetItem *item ) const
+        {
+            QMap< zmQTreeWidgetItem *, std::string >::const_iterator l_it =
+                    m_lwitem_thing_map.find( item );
+            assert( l_it != m_lwitem_thing_map.end() );
+            return l_it.value();
+        }
+
+        QMap< std::string, zmQTreeWidgetItem * >::iterator begin()
+        {
+            return m_thing_lwitem_map.begin();
+        }
+
+        QMap< std::string, zmQTreeWidgetItem * >::iterator end()
+        {
+            return m_thing_lwitem_map.end();
+        }
+
+    } m_widget_item_mapper;
+
 
 public:
 
@@ -116,15 +190,17 @@ private:
     {
         std::time_t l_creationTime = m_model.getCreationTime( uid );
 
-        QTreeWidgetItem *l_item = new zmQTreeWidgetItem( l_creationTime );
+        zmQTreeWidgetItem *l_item = new zmQTreeWidgetItem( l_creationTime );
 
         l_item->setText( 0, m_model.getCaption( uid ) );
         l_item->setText( 1, QString().sprintf("%ld",l_creationTime) );
 
-        tracemessage( "adding item %s / %d to list (%s)",
-                      uid.c_str(),
-                      l_creationTime,
-                      m_model.getCaption( uid ).toAscii().constData()  );
+        l_item->decorate();
+
+        //tracemessage( "adding item %s / %d to list (%s)",
+        //              uid.c_str(),
+        //              l_creationTime,
+        //              m_model.getCaption( uid ).toAscii().constData()  );
 
         if( m_model.isDone( uid ) )
         {
@@ -135,11 +211,13 @@ private:
         {
             m_liInbox->addChild( l_item );
             m_liInbox->sortChildren(0,Qt::AscendingOrder);
+            m_liInbox->setText( 0, QString().sprintf("INBOX (%d)", m_liInbox->childCount()) );
         }
 
         else if( m_model.isProjectItem( uid ) )
         {
             m_liProjects->addChild( l_item );
+            m_liProjects->setText( 0, QString().sprintf("PROJECTS (%d)", m_liProjects->childCount()) );
         }
 
         else if( m_model.isTaskItem( uid ) )
@@ -147,13 +225,12 @@ private:
             std::string l_parentProject = m_model.getParentProject( uid );
 
             // todo: make sure l_project exists
-            QTreeWidgetItem *l_project = m_thing_lwitem_map[l_parentProject];
+            zmQTreeWidgetItem *l_project = m_widget_item_mapper.get(l_parentProject);
 
             l_project->addChild( l_item );
         }
 
-        m_lwitem_thing_map[ l_item ] = uid;
-        m_thing_lwitem_map[ uid ] = l_item;
+        m_widget_item_mapper.add( uid, l_item );
     }
 
     void updateUi()
@@ -223,10 +300,10 @@ private slots:
     void on_twTask_currentItemChanged( QTreeWidgetItem *current, QTreeWidgetItem *previous )
     {   //tracemessage( __FUNCTION__ );
 
-        if( m_lwitem_thing_map.contains( previous ) )
+        if( m_widget_item_mapper.contains( previous ) )
         {
             /// if there has been selected - save it's note
-            std::string l_previous_thing = m_lwitem_thing_map[ previous ];
+            std::string l_previous_thing = m_widget_item_mapper.get( previous );
 
             //assert( l_previous_thing == m_selected_thing );
             if( previous == m_selected_twItem )
@@ -237,11 +314,11 @@ private slots:
 
         m_ui->teNotes->setText( "" );
 
-        if( m_lwitem_thing_map.contains( current ) )
+        if( m_widget_item_mapper.contains( current ) )
         {
 
             m_selected_twItem = current;
-            m_selected_thing = m_lwitem_thing_map[ m_selected_twItem ];
+            m_selected_thing = m_widget_item_mapper.get( m_selected_twItem );
             tracemessage( "clicked on item %s (%s)",
                           m_selected_thing.c_str(),
                           m_model.getCaption( m_selected_thing ).toAscii().constData()  );
@@ -258,9 +335,9 @@ private slots:
     void on_twTask_itemChanged( QTreeWidgetItem *item )
     {   //tracemessage( __FUNCTION__ );
 
-        if( m_lwitem_thing_map.contains( item ) )
+        if( m_widget_item_mapper.contains( item ) )
         {
-            std::string l_thing = m_lwitem_thing_map[ item ];
+            std::string l_thing = m_widget_item_mapper.get( item );
             QString l_new_caption = item->text(0);
 
             tracemessage( "changing item text from '%s' to '%s'",
@@ -274,17 +351,17 @@ private slots:
     void on_twTask_itemDropped( QTreeWidgetItem *item, QTreeWidgetItem *target )
     {   //tracemessage( __FUNCTION__ );
 
-        if( !m_lwitem_thing_map.contains( item ) )
+        if( !m_widget_item_mapper.contains( item ) )
         {
             return;
         }
-        if( !m_lwitem_thing_map.contains( target ) )
+        if( !m_widget_item_mapper.contains( target ) )
         {
             return;
         }
 
-        std::string l_source = m_lwitem_thing_map[ item ];
-        std::string l_target = m_lwitem_thing_map[ target ];
+        std::string l_source = m_widget_item_mapper.get( item );
+        std::string l_target = m_widget_item_mapper.get( target );
 
         tracemessage( "dragged '%s' to '%s'",
                       m_model.getCaption( l_source ).toAscii().constData(),
@@ -339,10 +416,12 @@ private slots:
                       m_model.getCaption( m_selected_thing ).toAscii().constData()  );
 
         m_model.eraseItem( m_selected_thing );
-        m_thing_lwitem_map.erase( m_thing_lwitem_map.find( m_selected_thing ) );
+        //m_thing_lwitem_map.erase( m_thing_lwitem_map.find( m_selected_thing ) );
         m_selected_thing = "";
 
-        m_lwitem_thing_map.erase( m_lwitem_thing_map.find( m_selected_twItem ));
+        //m_lwitem_thing_map.erase( m_lwitem_thing_map.find( m_selected_twItem ));
+
+        m_widget_item_mapper.erase( m_selected_thing, m_selected_twItem );
 
         // dont alter m_selected_thing or m_selected_twItem after this
         // deletion since they get set there synchronously
@@ -361,8 +440,8 @@ private slots:
             {
                 /// error
             }
-            assert( m_lwitem_thing_map[m_selected_twItem] == m_selected_thing );
-            assert( m_thing_lwitem_map[m_selected_thing] == m_selected_twItem );
+            assert( m_widget_item_mapper.get( m_selected_twItem ) == m_selected_thing );
+            assert( m_widget_item_mapper.get( m_selected_thing ) == m_selected_twItem );
             if( m_model.isInboxItem( m_selected_thing ))
             {
                 tracemessage( "turn item into project: %s (%s)",
@@ -411,8 +490,8 @@ private slots:
             {
                 /// error
             }
-            assert( m_lwitem_thing_map[m_selected_twItem] == m_selected_thing );
-            assert( m_thing_lwitem_map[m_selected_thing] == m_selected_twItem );
+            assert( m_widget_item_mapper.get( m_selected_twItem ) == m_selected_thing );
+            assert( m_widget_item_mapper.get( m_selected_thing ) == m_selected_twItem );
             if( m_model.isInboxItem( m_selected_thing ))
             {
                 tracemessage( "turn item into project: %s (%s)",
@@ -463,12 +542,12 @@ private slots:
     }
 
     void on_leCommand_textChanged ( const QString & text )
-    {   tracemessage( __FUNCTION__ );
+    {   //tracemessage( __FUNCTION__ );
         // this method is being called automatically by Qt
         QString l_search_string = text.toLower();
-        for( QMap< std::string, QTreeWidgetItem * >::iterator
-             i  = m_thing_lwitem_map.begin();
-             i != m_thing_lwitem_map.end(); ++i )
+        for( QMap< std::string, zmQTreeWidgetItem * >::iterator
+             i  = m_widget_item_mapper.begin();
+             i != m_widget_item_mapper.end(); ++i )
         {
             bool l_search_string_matches = m_model.itemContentMatchesString(
                         i.key(), l_search_string );
@@ -480,7 +559,7 @@ private slots:
         {
             m_model.setNote( m_selected_thing, m_ui->teNotes->toPlainText() );
             m_ui->teNotes->setText( "" );
-            assert( m_selected_twItem == m_thing_lwitem_map[m_selected_thing] );
+            assert( m_selected_twItem == m_widget_item_mapper.get(m_selected_thing) );
         }
         m_selected_thing = "";
         m_selected_twItem = NULL;

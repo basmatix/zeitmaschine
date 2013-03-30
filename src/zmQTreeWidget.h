@@ -31,6 +31,14 @@ public:
         return m_creationTime;
     }
 
+    void decorate()
+    {
+        QBrush b = this->foreground(0);
+        b.setColor( Qt::darkCyan );
+        this->setForeground( 0, b );
+        //m_liToday->setBackgroundColor( 0, Qt::lightGray );
+    }
+
     bool operator< (const QTreeWidgetItem &other) const
     {
         //int sortCol = 0;//treeWidget()->sortColumn();
@@ -38,9 +46,9 @@ public:
         //int otherNumber = other.text(sortCol).toInt();
         const zmQTreeWidgetItem * l_this = reinterpret_cast< const zmQTreeWidgetItem *>(this);
         const zmQTreeWidgetItem * l_that = reinterpret_cast< const zmQTreeWidgetItem *>(&other);
-        tracemessage("compare %d and %d",
-                     l_this->getCreationTime(),
-                     l_that->getCreationTime() );
+        // tracemessage("compare %d and %d",
+        //              l_this->getCreationTime(),
+        //              l_that->getCreationTime() );
         return l_this->getCreationTime() < l_that->getCreationTime();
     }
 };
