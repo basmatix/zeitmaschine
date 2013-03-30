@@ -46,14 +46,39 @@ public:
         setText( 0, m_model.getCaption( m_uid ) );
         QBrush b = foreground( 0 );
         QFont f = font( 0 );
+        //f = QFont("" , 9 , QFont::Bold );
+        b.setColor( Qt::red );
         if( m_model.isInboxItem( m_uid ) )
         {
             b.setColor( Qt::darkMagenta );
+            f.setBold( false );
+            f.setItalic( false );
         }
-        if( m_model.isProjectItem( m_uid ) )
+        if( m_model.isProjectItem( m_uid, false ) )
         {
-            b.setColor( Qt::darkCyan );
-            f = QFont("" , 9 , QFont::Bold );
+            if( m_model.getNextTask( m_uid ) != "" )
+            {
+                b.setColor( Qt::darkCyan );
+            }
+            else
+            {
+                b.setColor( Qt::darkRed );
+            }
+            f.setBold( false );
+            f.setItalic( true );
+        }
+        if( m_model.isTaskItem( m_uid, true ) )
+        {
+            b.setColor( Qt::darkBlue );
+            f.setItalic( false );
+            f.setBold( false );
+            if( m_model.getParentProject( m_uid ) != "" )
+            {
+                if( m_model.getNextTask( m_model.getParentProject( m_uid ) ) == m_uid )
+                {
+                    f.setBold( true );
+                }
+            }
         }
 
         setFont( 0, f );

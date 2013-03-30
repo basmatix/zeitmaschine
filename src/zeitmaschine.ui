@@ -47,6 +47,9 @@
           </item>
           <item>
            <widget class="zmQTreeWidget" name="twTask">
+            <property name="toolTip">
+             <string>test</string>
+            </property>
             <property name="dragEnabled">
              <bool>true</bool>
             </property>
@@ -177,6 +180,13 @@
                  </property>
                 </widget>
                </item>
+               <item>
+                <widget class="QPushButton" name="pbMakeNextAction">
+                 <property name="text">
+                  <string>next action</string>
+                 </property>
+                </widget>
+               </item>
               </layout>
              </widget>
             </item>
@@ -216,11 +226,27 @@
            </layout>
           </item>
           <item>
-           <widget class="QPushButton" name="pbDelete">
-            <property name="text">
-             <string>delete</string>
-            </property>
-           </widget>
+           <layout class="QVBoxLayout" name="verticalLayout_9">
+            <item>
+             <widget class="QWidget" name="widget_4" native="true">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <layout class="QVBoxLayout" name="verticalLayout_10">
+               <item>
+                <widget class="QPushButton" name="pbDelete">
+                 <property name="text">
+                  <string>delete</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
+           </layout>
           </item>
           <item>
            <spacer name="verticalSpacer">

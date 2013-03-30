@@ -40,7 +40,7 @@ private:
     zmQtGtdModel     m_model;
 
     std::string      m_selected_thing;
-    QTreeWidgetItem *m_selected_twItem;
+    zmQTreeWidgetItem *m_selected_twItem;
 
     QTreeWidgetItem *m_liToday;
     QTreeWidgetItem *m_liInbox;
@@ -209,13 +209,13 @@ private:
             m_liInbox->setText( 0, QString().sprintf("INBOX (%d)", m_liInbox->childCount()) );
         }
 
-        else if( m_model.isProjectItem( uid ) )
+        else if( m_model.isProjectItem( uid, true ) )
         {
             m_liProjects->addChild( l_item );
             m_liProjects->setText( 0, QString().sprintf("PROJECTS (%d)", m_liProjects->childCount()) );
         }
 
-        else if( m_model.isTaskItem( uid ) )
+        else if( m_model.isTaskItem( uid, false ) )
         {
             std::string l_parentProject = m_model.getParentProject( uid );
 
@@ -266,6 +266,13 @@ private:
         //exportToFs();
     }
 
+    void unselect()
+    {
+        m_selected_thing = "";
+        m_selected_twItem = NULL;
+        m_ui->twTask->unselect();
+    }
+
 private slots:
     void createInboxItemFromUiElements()
     {
@@ -312,7 +319,7 @@ private slots:
         if( m_widget_item_mapper.contains( current ) )
         {
 
-            m_selected_twItem = current;
+            m_selected_twItem = (zmQTreeWidgetItem *)current;
             m_selected_thing = m_widget_item_mapper.get( m_selected_twItem );
             tracemessage( "clicked on item %s (%s)",
                           m_selected_thing.c_str(),
@@ -363,17 +370,17 @@ private slots:
                       m_model.getCaption( l_target ).toAscii().constData() );
 
         if( m_model.isInboxItem( l_source )
-         && m_model.isProjectItem( l_target ) )
+         && m_model.isProjectItem( l_target, false ) )
         {
             m_model.registerItemAsTask( l_source, l_target );
 
             // NOTE: this is black magic - don't touch! why does m_selected_twItem
             //       get set to NULL on removeChild()?!
-            QTreeWidgetItem *l_uselessCopy( item );
+            zmQTreeWidgetItem *l_uselessCopy( (zmQTreeWidgetItem *)item );
             QTreeWidgetItem *l_groupingItem( item->parent() );
             l_groupingItem->removeChild( l_uselessCopy );
+            l_uselessCopy->decorate();
             target->addChild( l_uselessCopy );
-
         }
     }
 
@@ -391,13 +398,13 @@ private slots:
 
         // NOTE: this is black magic - don't touch! why does m_selected_twItem
         //       get set to NULL on removeChild()?!
-        QTreeWidgetItem *l_uselessCopy( m_selected_twItem );
+        zmQTreeWidgetItem *l_uselessCopy( m_selected_twItem );
         QTreeWidgetItem *l_groupingItem( m_selected_twItem->parent() );
         l_groupingItem->removeChild( l_uselessCopy );
+        l_uselessCopy->decorate();
         m_liDone->addChild( l_uselessCopy );
 
-        m_selected_thing = "";
-        m_selected_twItem = NULL;
+        unselect();
     }
 
     void on_pbDelete_clicked()
@@ -433,7 +440,8 @@ private slots:
         {
             if( m_selected_thing == "" )
             {
-                /// error
+                // todo: error
+                assert(false);
             }
             assert( m_widget_item_mapper.get( m_selected_twItem ) == m_selected_thing );
             assert( m_widget_item_mapper.get( m_selected_thing ) == m_selected_twItem );
@@ -447,9 +455,10 @@ private slots:
 
                 // NOTE: this is black magic - don't touch! why does m_selected_twItem
                 //       get set to NULL on removeChild()?!
-                QTreeWidgetItem *l_uselessCopy( m_selected_twItem );
+                zmQTreeWidgetItem *l_uselessCopy( m_selected_twItem );
                 QTreeWidgetItem *l_groupingItem( m_selected_twItem->parent() );
                 l_groupingItem->removeChild( l_uselessCopy );
+                l_uselessCopy->decorate();
                 m_liProjects->addChild( l_uselessCopy );
 
                 m_selected_thing = "";
@@ -457,7 +466,8 @@ private slots:
             }
             else
             {
-                /// error
+                // todo: error
+                assert(false);
             }
         }
         else
@@ -473,6 +483,44 @@ private slots:
         }
     }
 
+    void on_pbMakeNextAction_clicked()
+    {
+        if( m_selected_thing == "" )
+        {
+            // todo: error
+            assert(false);
+        }
+        assert( m_widget_item_mapper.get( m_selected_twItem ) == m_selected_thing );
+        assert( m_widget_item_mapper.get( m_selected_thing ) == m_selected_twItem );
+        if( m_model.isTaskItem( m_selected_thing, false ))
+        {
+            std::string l_parentProject = m_model.getParentProject( m_selected_thing );
+            m_model.setNextTask( l_parentProject, m_selected_thing );
+
+            std::string l_formerNextTask = m_model.getNextTask( l_parentProject );
+
+            tracemessage( "define item %s (%s) to be next item for %s (%s)",
+                          m_selected_thing.c_str(),
+                          m_model.getCaption( m_selected_thing ).toAscii().constData(),
+                          l_parentProject.c_str(),
+                          m_model.getCaption( l_parentProject ).toAscii().constData() );
+
+            m_selected_twItem->decorate();
+            m_widget_item_mapper.get( l_parentProject )->decorate();
+
+            if( l_formerNextTask != "" )
+            {
+                m_widget_item_mapper.get( l_formerNextTask )->decorate();
+            }
+            unselect();
+        }
+        else
+        {
+            // todo: error
+            assert(false);
+        }
+    }
+
     void on_pbMakeAction_clicked()
     {   tracemessage( __FUNCTION__ );
 
@@ -483,7 +531,8 @@ private slots:
         {
             if( m_selected_thing == "" )
             {
-                /// error
+                // todo: error
+                assert(false);
             }
             assert( m_widget_item_mapper.get( m_selected_twItem ) == m_selected_thing );
             assert( m_widget_item_mapper.get( m_selected_thing ) == m_selected_twItem );
@@ -497,9 +546,10 @@ private slots:
 
                 // NOTE: this is black magic - don't touch! why does m_selected_twItem
                 //       get set to NULL on removeChild()?!
-                QTreeWidgetItem *l_uselessCopy( m_selected_twItem );
+                zmQTreeWidgetItem *l_uselessCopy( m_selected_twItem );
                 QTreeWidgetItem *l_groupingItem( m_selected_twItem->parent() );
                 l_groupingItem->removeChild( l_uselessCopy );
+                l_uselessCopy->decorate();
                 m_liProjects->addChild( l_uselessCopy );
 
                 m_selected_thing = "";
@@ -507,7 +557,8 @@ private slots:
             }
             else
             {
-                /// error
+                // todo: error
+                assert(false);
             }
         }
         else
@@ -556,9 +607,7 @@ private slots:
             m_ui->teNotes->setText( "" );
             assert( m_selected_twItem == m_widget_item_mapper.get(m_selected_thing) );
         }
-        m_selected_thing = "";
-        m_selected_twItem = NULL;
-        m_ui->twTask->unselect();
+        unselect();
     }
 
 #if 0

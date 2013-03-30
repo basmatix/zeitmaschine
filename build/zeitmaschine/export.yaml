@@ -57,9 +57,9 @@
     gtd_item_note: model operator zum testen verwenden
 - !<1dc1d191b993e17f>
   caption: Verknüpfungen unter Items ermöglichen
-  hash1: 175891774410774381631034289599690758728868070357232841467451758774251974716132
+  hash1: 175891774410774381631034289599690758728868070357232841467458368085240360104704
   attributes:
-    - gtd_item_unhandled
+    - gtd_project
   string_values:
     global_time_created: 2013-03-13T08:14:04.998726
     gtd_item_note: versuch
@@ -138,12 +138,13 @@
     gtd_item_note: ""
 - !<4d41ee297bc5c34c>
   caption: Sync-Mechanismus für Android finden
-  hash1: 175939370238809437891069986785064721725301758774251974716132
+  hash1: 1759393702388094378910699867850647217253141116382534094309641022787275055206550916998091438055673123
   attributes:
-    - gtd_item_unhandled
+    - gtd_task
   string_values:
     global_time_created: 2013-03-13T08:14:35.688533
-    gtd_item_note: ""
+    gtd_item_note: http://betanews.com/2012/06/30/four-self-hosted-dropbox-like-services-businesses-can-use/
+    gtd_parent_project: 500cb5a9185286a8
 - !<4d6a0f931b79009e>
   caption: Speichern beim Bearbeiten
   hash1: 15085868116074234395950732285887912450066359154405033366483762767301519685777
@@ -155,12 +156,13 @@
     gtd_time_done: 2013-03-18T23:12:59.774752
 - !<500cb5a9185286a8>
   caption: Android-Client bereitstellen
-  hash1: 993775386414115288884635668838785363208368085240360104704
+  hash1: 9937753864141152888846356688387853632074482800311734371408368085240360104704
   attributes:
     - gtd_project
   string_values:
     global_time_created: 2013-03-19T10:48:02.721512
     gtd_item_note: ""
+    gtd_next_task: 4d41ee297bc5c34c
 - !<60ee2a07206332d6>
   caption: beim Exportieren Ordnung erzwingen (macht diffs unproblematischer)
   hash1: 454142514606617247883234446638930343650139045958825407952993762767301519685777
@@ -205,9 +207,9 @@
     gtd_item_note: ""
 - !<76aff7af97432950>
   caption: "Bug: zwei mal \"m Project\" > Absturz"
-  hash1: 16193903983171415524271821627307850321501758774251974716132
+  hash1: 16193903983171415524271821627307850321508368085240360104704
   attributes:
-    - gtd_item_unhandled
+    - gtd_project
   string_values:
     global_time_created: 2013-03-30T12:55:37.026800
     gtd_item_note: ""
@@ -295,6 +297,14 @@
   string_values:
     global_time_created: 2013-03-18T12:47:32.750278
     gtd_item_note: ""
+- !<b40a615e1596298f>
+  caption: bei Selection Sichtbarkeit von Buttons konfigurieren
+  hash1: 122072811275185300631363898351844766892501758774251974716132
+  attributes:
+    - gtd_item_unhandled
+  string_values:
+    global_time_created: 2013-03-30T20:23:46.450948
+    gtd_item_note: ""
 - !<baa2c977d941e438>
   caption: YSbox Anschluss ermöglichen
   hash1: 152644386420526264321529463412834501803801758774251974716132
@@ -366,6 +376,14 @@
     - gtd_item_done
   string_values:
     global_time_created: 2013-03-18T12:48:53.015026
+    gtd_item_note: ""
+- !<d902599ec4449bd3>
+  caption: Beim Suchen ggf. parent-items sichtbar lassen
+  hash1: 1348053408500936143124618946899606713401758774251974716132
+  attributes:
+    - gtd_item_unhandled
+  string_values:
+    global_time_created: 2013-03-30T20:22:04.981708
     gtd_item_note: ""
 - !<d91cd40d18e8d047>
   caption: Timer unterbringen (für abgesteckte Zeitslots)

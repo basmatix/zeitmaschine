@@ -55,7 +55,7 @@ public:
     void registerItemAsTask( const std::string &task_item, const std::string &project_item )
     {
         assert( isInboxItem( task_item ) );
-        assert( isProjectItem( project_item ) );
+        assert( isProjectItem( project_item, false ) );
 
         m_things_model.removeAttribute( task_item, "gtd_item_unhandled" );
         m_things_model.addAttribute( task_item, "gtd_task" );
@@ -86,8 +86,7 @@ public:
 
         BOOST_FOREACH(const ThingsModel::ThingsModelMapType::value_type& i, m_things_model.things() )
         {
-            if( isTaskItem( i.first )
-                    && (includeStandaloneTasks || !isProjectItem(  i.first ) )
+            if( isTaskItem( i.first, includeStandaloneTasks )
                     && (includeDoneItems       || !isDone(  i.first ) ) )
             {
                 l_return.push_back( i.first );
@@ -103,12 +102,12 @@ public:
 
         BOOST_FOREACH(const ThingsModel::ThingsModelMapType::value_type& i, m_things_model.things() )
         {
-            if( isProjectItem( i.first )
-                    && (includeStandaloneTasks || !isTaskItem(  i.first ) )
+            if( isProjectItem( i.first, includeStandaloneTasks )
                     && (includeDoneItems       || !isDone(  i.first ) ) )
             {
                 l_return.push_back( i.first );
-            }        }
+            }
+        }
 
         return l_return;
     }
@@ -147,8 +146,12 @@ public:
         m_things_model.addAttribute( item, "gtd_project" );
     }
 
-    bool isTaskItem( const std::string &item ) const
+    bool isTaskItem( const std::string &item, bool includeStandaloneTasks ) const
     {
+        if( !includeStandaloneTasks && m_things_model.hasAttribute( item, "gtd_project" ) )
+        {
+            return false;
+        }
         return m_things_model.hasAttribute( item, "gtd_task" );
     }
 
@@ -157,8 +160,12 @@ public:
         return m_things_model.hasAttribute( item, "gtd_item_unhandled" );
     }
 
-    bool isProjectItem( const std::string &item ) const
+    bool isProjectItem( const std::string &item, bool includeStandaloneTasks ) const
     {
+        if( !includeStandaloneTasks && m_things_model.hasAttribute( item, "gtd_task" ) )
+        {
+            return false;
+        }
         return m_things_model.hasAttribute( item, "gtd_project" );
     }
 
@@ -169,10 +176,29 @@ public:
 
     std::string getParentProject( const std::string &task_item )
     {
-        assert( isTaskItem( task_item ) );
+        assert( isTaskItem( task_item, false ) );
         assert( m_things_model.hasValue( task_item, "gtd_parent_project" ) );
 
         return m_things_model.getValue( task_item, "gtd_parent_project" );
+    }
+
+    void setNextTask( const std::string &project_item, const std::string &task_item )
+    {
+        assert( isProjectItem( project_item, false ) );
+        assert( isTaskItem( task_item, false ) );
+
+        m_things_model.setValue( project_item, "gtd_next_task", task_item );
+    }
+
+    std::string getNextTask( const std::string &task_item )
+    {
+        assert( isProjectItem( task_item, false ) );
+        if( !m_things_model.hasValue( task_item, "gtd_next_task" ) )
+        {
+            return "";
+        }
+
+        return m_things_model.getValue( task_item, "gtd_next_task" );
     }
 
     std::string createProject( const std::string &project_name )

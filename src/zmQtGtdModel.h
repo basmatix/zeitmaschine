@@ -66,9 +66,9 @@ public:
         m_gtd_model.setDone( task_item );
     }
 
-    bool isTaskItem( const std::string &item ) const
+    bool isTaskItem( const std::string &item, bool includeStandaloneTasks ) const
     {
-        return m_gtd_model.isTaskItem( item );
+        return m_gtd_model.isTaskItem( item, includeStandaloneTasks );
     }
 
     bool isInboxItem( const std::string &item ) const
@@ -76,14 +76,24 @@ public:
         return m_gtd_model.isInboxItem( item );
     }
 
-    bool isProjectItem( const std::string &item ) const
+    bool isProjectItem( const std::string &item, bool includeStandaloneTasks ) const
     {
-        return m_gtd_model.isProjectItem( item );
+        return m_gtd_model.isProjectItem( item, includeStandaloneTasks );
     }
 
     bool isDone( const std::string &task_item ) const
     {
         return m_gtd_model.isDone( task_item );
+    }
+
+    void setNextTask( const std::string &project_item, const std::string &task_item )
+    {
+        return m_gtd_model.setNextTask( project_item, task_item );
+    }
+
+    std::string getNextTask( const std::string &task_item )
+    {
+        return m_gtd_model.getNextTask( task_item );
     }
 
     std::string getParentProject( const std::string &task_item )
