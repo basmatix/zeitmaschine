@@ -492,10 +492,10 @@ private slots:
         }
         assert( m_widget_item_mapper.get( m_selected_twItem ) == m_selected_thing );
         assert( m_widget_item_mapper.get( m_selected_thing ) == m_selected_twItem );
-        if( m_model.isTaskItem( m_selected_thing, false ))
+
+        if( m_model.isTaskItem( m_selected_thing, false ) )
         {
             std::string l_parentProject = m_model.getParentProject( m_selected_thing );
-            m_model.setNextTask( l_parentProject, m_selected_thing );
 
             std::string l_formerNextTask = m_model.getNextTask( l_parentProject );
 
@@ -504,6 +504,8 @@ private slots:
                           m_model.getCaption( m_selected_thing ).toAscii().constData(),
                           l_parentProject.c_str(),
                           m_model.getCaption( l_parentProject ).toAscii().constData() );
+
+            m_model.setNextTask( l_parentProject, m_selected_thing );
 
             m_selected_twItem->decorate();
             m_widget_item_mapper.get( l_parentProject )->decorate();
