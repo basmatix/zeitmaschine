@@ -41,19 +41,19 @@ public:
         m_gtd_model.registerItemAsTask( task_item, project_item );
     }
 
-    std::list< std::string > getInboxItems() const
+    std::list< std::string > getInboxItems( bool includeDoneItems ) const
     {
-        return m_gtd_model.getInboxItems();
+        return m_gtd_model.getInboxItems( includeDoneItems );
     }
 
-    std::list< std::string > getTaskItems() const
+    std::list< std::string > getTaskItems( bool includeStandaloneTasks, bool includeDoneItems ) const
     {
-        return m_gtd_model.getTaskItems();
+        return m_gtd_model.getTaskItems( includeStandaloneTasks, includeDoneItems );
     }
 
-    std::list< std::string > getProjectItems() const
+    std::list< std::string > getProjectItems( bool includeStandaloneTasks, bool includeDoneItems ) const
     {
-        return m_gtd_model.getProjectItems();
+        return m_gtd_model.getProjectItems( includeStandaloneTasks, includeDoneItems );
     }
 
     void castToProject( const std::string &item )

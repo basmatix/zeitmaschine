@@ -238,7 +238,14 @@
          </layout>
         </item>
         <item>
-         <widget class="QTextEdit" name="teNotes"/>
+         <widget class="QTextEdit" name="teNotes">
+          <property name="font">
+           <font>
+            <family>DejaVu Sans Mono</family>
+            <italic>true</italic>
+           </font>
+          </property>
+         </widget>
         </item>
        </layout>
       </item>

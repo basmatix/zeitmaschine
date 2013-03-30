@@ -62,40 +62,67 @@ public:
         m_things_model.setValue( task_item, "gtd_parent_project", project_item );
     }
 
-    std::list< std::string > getInboxItems() const
+    std::list< std::string > getInboxItems( bool includeDoneItems ) const
     {
         std::list< std::string > l_return;
 
         BOOST_FOREACH(const ThingsModel::ThingsModelMapType::value_type& i, m_things_model.things() )
         {
-            if( isInboxItem( i.first ))
-            l_return.push_back( i.first );
+            if( isInboxItem( i.first )
+                && (includeDoneItems       || !isDone(  i.first ) ) )
+            {
+                l_return.push_back( i.first );
+            }
         }
 
         return l_return;
     }
 
-    std::list< std::string > getTaskItems() const
+    /// returns a list of UIDs pointing to GTD-Tasks. StandaloneTasks are included by default,
+    /// done items are excluded by default
+    std::list< std::string > getTaskItems( bool includeStandaloneTasks, bool includeDoneItems ) const
     {
         std::list< std::string > l_return;
 
         BOOST_FOREACH(const ThingsModel::ThingsModelMapType::value_type& i, m_things_model.things() )
         {
-            if( isTaskItem( i.first ))
-            l_return.push_back( i.first );
+            if( isTaskItem( i.first )
+                    && (includeStandaloneTasks || !isProjectItem(  i.first ) )
+                    && (includeDoneItems       || !isDone(  i.first ) ) )
+            {
+                l_return.push_back( i.first );
+            }
         }
 
         return l_return;
     }
 
-    std::list< std::string > getProjectItems() const
+    std::list< std::string > getProjectItems( bool includeStandaloneTasks, bool includeDoneItems ) const
     {
         std::list< std::string > l_return;
 
         BOOST_FOREACH(const ThingsModel::ThingsModelMapType::value_type& i, m_things_model.things() )
         {
-            if( isProjectItem( i.first ))
-            l_return.push_back( i.first );
+            if( isProjectItem( i.first )
+                    && (includeStandaloneTasks || !isTaskItem(  i.first ) )
+                    && (includeDoneItems       || !isDone(  i.first ) ) )
+            {
+                l_return.push_back( i.first );
+            }        }
+
+        return l_return;
+    }
+
+    std::list< std::string > getDoneItems() const
+    {
+        std::list< std::string > l_return;
+
+        BOOST_FOREACH(const ThingsModel::ThingsModelMapType::value_type& i, m_things_model.things() )
+        {
+            if( isDone(  i.first ) )
+            {
+                l_return.push_back( i.first );
+            }
         }
 
         return l_return;
@@ -159,7 +186,7 @@ public:
 
     std::string orderATask() const
     {
-        std::list< std::string > l_possibleTasks = getTaskItems();
+        std::list< std::string > l_possibleTasks = getTaskItems( true, false );
 
         int taskId = rand() % l_possibleTasks.size();
 
@@ -175,17 +202,28 @@ public:
 
     void print_statistics()
     {
+        std::list< std::string > l_inbox = getInboxItems( false );
+        std::list< std::string > l_tasks = getTaskItems( false, false );
+        std::list< std::string > l_projects = getProjectItems( false, false );
+        std::list< std::string > l_done = getDoneItems();
+
         size_t l_total_items = m_things_model.getItemCount();
-        size_t l_inbox_items = getInboxItems().size();
-        size_t l_task_items = getTaskItems().size();
-        size_t l_project_items = getProjectItems().size();
-        size_t l_done_items = 0;
+
+        size_t l_inbox_items = l_inbox.size();
+        size_t l_task_items = l_tasks.size();
+        size_t l_project_items = l_projects.size();
+        size_t l_done_items = l_done.size();
 
         tracemessage( "total items:........ %d", l_total_items );
         tracemessage( "gtd items:.......... %d",
-                      l_inbox_items + l_project_items + l_task_items);
+                      l_inbox_items + l_project_items + l_task_items + l_done_items );
         tracemessage( " gtd inbox items:... %d", l_inbox_items );
+
         tracemessage( " gtd project items:. %d", l_project_items );
+        BOOST_FOREACH( std::string s, l_projects )
+        {
+            tracemessage( "    %s: '%s'", s.c_str(), m_things_model.getCaption( s ).c_str() );
+        }
         tracemessage( " gtd task items:.... %d", l_task_items );
         tracemessage( " gtd items done:     %d", l_done_items );
     }

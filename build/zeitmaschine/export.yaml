@@ -1,3 +1,11 @@
+- !<01529344e9c94b0a>
+  caption: Note-Text kontinuierlich zwischenspeichern
+  hash1: 6718468973846468427517569864510282267601758774251974716132
+  attributes:
+    - gtd_item_unhandled
+  string_values:
+    global_time_created: 2013-03-30T17:03:58.920549
+    gtd_item_note: ""
 - !<048d5cb69c066bea>
   caption: Zeitabschätzung unterbringen
   hash1: 48993662692442418641732219836831701576208368085240360104704
@@ -203,6 +211,14 @@
   string_values:
     global_time_created: 2013-03-30T12:55:37.026800
     gtd_item_note: ""
+- !<7b3f0add73c9618e>
+  caption: GTD-Things-Spezifikation schreiben
+  hash1: 21120727969797246861392103022105379736673796547225535454911758774251974716132
+  attributes:
+    - gtd_item_unhandled
+  string_values:
+    global_time_created: 2013-03-30T16:24:33.347108
+    gtd_item_note: "Schichten:\n\nUI\n--\nQt-GTD\n===\nGTD\n===\nThings\n\n\ngtd_item::setDone():\n> gtd_item_unhandled: NO\n> gtd_item_done: YES\n> gtd_time_done: now()\n\nFarben:\n\nInbox \nProject \nProject ohne First Task\n        darkRed,\nStandalone Project \nTask\nTo Be Done Next Task\nDone\nContext\nGroup\nNote\n\tblack\n\tdarkGray,\ngray,\nlightGray,\n        red,\n        green,\n        blue,\n        cyan,\n        magenta,\n        yellow,\n        darkGreen,\n        darkBlue,\n        darkCyan,\n        darkMagenta,\n        darkYellow,\n"
 - !<87ceff4a6a501ab7>
   caption: unit tests einführen
   hash1: 758911180748977927962791934660545245960138997941255810379543762767301519685777
@@ -212,6 +228,14 @@
     global_time_created: 2013-03-16T07:40:33.900368
     gtd_item_note: ""
     gtd_time_done: 2013-03-18T23:13:27.432613
+- !<8a4d1eb5a649faa9>
+  caption: Tage-Gruppen einführen
+  hash1: 108721235905268612481191448676538963998101758774251974716132
+  attributes:
+    - gtd_item_unhandled
+  string_values:
+    global_time_created: 2013-03-30T18:02:07.680778
+    gtd_item_note: ""
 - !<99051bad4dc41d82>
   caption: GTD-Layer einführen
   hash1: 12945520253823163404155858007057784856300138384691493489033333762767301519685777
@@ -230,6 +254,14 @@
     global_time_created: 2013-03-13T08:12:46.610628
     gtd_item_note: ""
     gtd_time_done: 2013-03-18T23:13:37.473124
+- !<a14047a6e9f90527>
+  caption: Note-Text highlighten, zb. mit AsciiDoc
+  hash1: 12507628203342934528897153227710690132101758774251974716132
+  attributes:
+    - gtd_item_unhandled
+  string_values:
+    global_time_created: 2013-03-30T17:19:50.179964
+    gtd_item_note: ""
 - !<a3caa793ed707c0b>
   caption: Gruppen unterstützen
   hash1: 145545001198974852641824781979438598244701758774251974716132
@@ -396,8 +428,8 @@
     gtd_item_note: ""
     gtd_time_done: 2013-03-18T23:14:02.682694
 - !<ed957b5decec1018>
-  caption: import/export-Ordner auf kommandozeile lesen
-  hash1: 1419123043792929746513977943463194110501758774251974716132
+  caption: import/export-Ordner auf Kommandozeile lesen
+  hash1: 798437488857737437513977943463194110501758774251974716132
   attributes:
     - gtd_item_unhandled
   string_values:

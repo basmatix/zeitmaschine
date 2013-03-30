@@ -4,6 +4,7 @@
 #ifndef ZMQTREEWIDGET_H
 #define ZMQTREEWIDGET_H
 
+#include "zmQtGtdModel.h"
 #include "zmTrace.h"
 
 #include <QtGui/QTreeWidget>
@@ -14,12 +15,21 @@ class zmQTreeWidgetItem
         : public QTreeWidgetItem
 {
     std::time_t m_creationTime;
+    zmQtGtdModel &m_model;
+    std::string m_uid;
 
 public:
-    zmQTreeWidgetItem(  std::time_t creationTime )
-        : QTreeWidgetItem()
-        , m_creationTime( creationTime )
+
+    zmQTreeWidgetItem( zmQtGtdModel &model, const std::string &uid )
+        : QTreeWidgetItem   ()
+        , m_creationTime    ( 0 )
+        , m_model           ( model )
+        , m_uid             ( uid )
     {
+        m_creationTime = m_model.getCreationTime( uid );
+
+        setText( 1, QString().sprintf("%ld", m_creationTime ) );
+
         setFlags( flags() | Qt::ItemIsEditable );
     }
 
@@ -33,9 +43,21 @@ public:
 
     void decorate()
     {
-        QBrush b = this->foreground(0);
-        b.setColor( Qt::darkCyan );
-        this->setForeground( 0, b );
+        setText( 0, m_model.getCaption( m_uid ) );
+        QBrush b = foreground( 0 );
+        QFont f = font( 0 );
+        if( m_model.isInboxItem( m_uid ) )
+        {
+            b.setColor( Qt::darkMagenta );
+        }
+        if( m_model.isProjectItem( m_uid ) )
+        {
+            b.setColor( Qt::darkCyan );
+            f = QFont("" , 9 , QFont::Bold );
+        }
+
+        setFont( 0, f );
+        setForeground( 0, b );
         //m_liToday->setBackgroundColor( 0, Qt::lightGray );
     }
 

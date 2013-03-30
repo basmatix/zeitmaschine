@@ -188,12 +188,7 @@ private:
 
     void addListItem( const std::string uid )
     {
-        std::time_t l_creationTime = m_model.getCreationTime( uid );
-
-        zmQTreeWidgetItem *l_item = new zmQTreeWidgetItem( l_creationTime );
-
-        l_item->setText( 0, m_model.getCaption( uid ) );
-        l_item->setText( 1, QString().sprintf("%ld",l_creationTime) );
+        zmQTreeWidgetItem *l_item = new zmQTreeWidgetItem( m_model, uid );
 
         l_item->decorate();
 
@@ -237,17 +232,17 @@ private:
     {
         /// enforce list filling order by now..
 
-        BOOST_FOREACH( const std::string& p, m_model.getProjectItems() )
+        BOOST_FOREACH( const std::string& p, m_model.getProjectItems( false, false ) )
         {
             addListItem( p );
         }
 
-        BOOST_FOREACH( const std::string& t, m_model.getTaskItems() )
+        BOOST_FOREACH( const std::string& t, m_model.getTaskItems( true, false ) )
         {
             addListItem( t );
         }
 
-        BOOST_FOREACH( const std::string& i, m_model.getInboxItems() )
+        BOOST_FOREACH( const std::string& i, m_model.getInboxItems( false ) )
         {
             addListItem( i );
         }
