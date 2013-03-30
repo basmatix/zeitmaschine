@@ -26,6 +26,11 @@ public:
         return QString::fromUtf8( m_gtd_model.getNote( uid ).c_str() );
     }
 
+    std::time_t getCreationTime( const std::string &uid ) const
+    {
+        return m_gtd_model.getCreationTime( uid );
+    }
+
     void setNote( const std::string &uid, const QString &value )
     {
         m_gtd_model.setNote( uid, value.toUtf8().constData() );

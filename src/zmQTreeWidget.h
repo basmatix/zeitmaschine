@@ -4,8 +4,47 @@
 #ifndef ZMQTREEWIDGET_H
 #define ZMQTREEWIDGET_H
 
+#include "zmTrace.h"
+
 #include <QtGui/QTreeWidget>
 #include <QtGui/QDropEvent>
+#include <ctime>
+
+class zmQTreeWidgetItem
+        : public QTreeWidgetItem
+{
+    std::time_t m_creationTime;
+
+public:
+    zmQTreeWidgetItem(  std::time_t creationTime )
+        : QTreeWidgetItem()
+        , m_creationTime( creationTime )
+    {
+        setFlags( flags() | Qt::ItemIsEditable );
+    }
+
+    //zmQTreeWidgetItem(QTreeWidget *tree) : QTreeWidgetItem(tree)  {}
+    //zmQTreeWidgetItem(QTreeWidget * parent, const QStringList & strings)
+     //              : QTreeWidgetItem (parent,strings)  {}
+    std::time_t getCreationTime() const
+    {
+        return m_creationTime;
+    }
+
+    bool operator< (const QTreeWidgetItem &other) const
+    {
+        //int sortCol = 0;//treeWidget()->sortColumn();
+        //int myNumber = text(sortCol).toInt();
+        //int otherNumber = other.text(sortCol).toInt();
+        const zmQTreeWidgetItem * l_this = reinterpret_cast< const zmQTreeWidgetItem *>(this);
+        const zmQTreeWidgetItem * l_that = reinterpret_cast< const zmQTreeWidgetItem *>(&other);
+        tracemessage("compare %d and %d",
+                     l_this->getCreationTime(),
+                     l_that->getCreationTime() );
+        return l_this->getCreationTime() < l_that->getCreationTime();
+    }
+};
+
 
 class zmQTreeWidget
         : public QTreeWidget

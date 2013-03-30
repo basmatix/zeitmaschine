@@ -114,12 +114,16 @@ private:
 
     void addListItem( const std::string uid )
     {
-        QTreeWidgetItem *l_item = new QTreeWidgetItem();
+        std::time_t l_creationTime = m_model.getCreationTime( uid );
+
+        QTreeWidgetItem *l_item = new zmQTreeWidgetItem( l_creationTime );
 
         l_item->setText( 0, m_model.getCaption( uid ) );
+        l_item->setText( 1, QString().sprintf("%ld",l_creationTime) );
 
-        tracemessage( "adding item %s to list (%s)",
+        tracemessage( "adding item %s / %d to list (%s)",
                       uid.c_str(),
+                      l_creationTime,
                       m_model.getCaption( uid ).toAscii().constData()  );
 
         if( m_model.isDone( uid ) )
@@ -130,6 +134,7 @@ private:
         else if( m_model.isInboxItem( uid ) )
         {
             m_liInbox->addChild( l_item );
+            m_liInbox->sortChildren(0,Qt::AscendingOrder);
         }
 
         else if( m_model.isProjectItem( uid ) )
@@ -146,8 +151,6 @@ private:
 
             l_project->addChild( l_item );
         }
-
-        l_item->setFlags( l_item->flags() | Qt::ItemIsEditable );
 
         m_lwitem_thing_map[ l_item ] = uid;
         m_thing_lwitem_map[ uid ] = l_item;

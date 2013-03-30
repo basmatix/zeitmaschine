@@ -195,6 +195,11 @@ public:
 ///
 public:
 
+    std::time_t getCreationTime( const std::string &uid ) const
+    {
+        return m_things_model.getCreationTime( uid );
+    }
+
     const std::string & getCaption( const std::string &uid ) const
     {
         return m_things_model.getCaption( uid );
