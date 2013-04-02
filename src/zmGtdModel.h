@@ -7,6 +7,8 @@
 #include <zmModel.h>
 #include "zmTrace.h"
 
+#include <boost/lexical_cast.hpp>
+
 class zmGtdModel
 {
     ThingsModel m_things_model;
@@ -15,6 +17,16 @@ class zmGtdModel
 /// GTD specific interface
 ///
 public:
+
+    void setLocalFolder( const std::string &path )
+    {
+        m_things_model.setLocalFolder( path );
+    }
+
+    void addDomainSyncFolder( const std::string &domainName, const std::string &path )
+    {
+        m_things_model.addDomainSyncFolder( domainName, path );
+    }
 
     std::string createNewInboxItem( const std::string &caption )
     {
@@ -50,6 +62,28 @@ public:
                       value.c_str() );
 
         m_things_model.setValue( uid, "gtd_item_note", value );
+    }
+
+    void plusOne( const std::string &uid )
+    {
+        int l_importance = 0;
+        if( m_things_model.hasValue( uid, "gtd_importance" ) )
+        {
+            l_importance = boost::lexical_cast<int>( m_things_model.getValue( uid, "gtd_importance" ) );
+        }
+        l_importance += 1;
+
+        m_things_model.setValue( uid, "gtd_importance", boost::lexical_cast<std::string>(l_importance) );
+    }
+
+    int getImportance( const std::string &uid ) const
+    {
+        if( m_things_model.hasValue( uid, "gtd_importance" ) )
+        {
+            return boost::lexical_cast<int>( m_things_model.getValue( uid, "gtd_importance" ) );
+        }
+
+        return 0;
     }
 
     void registerItemAsTask( const std::string &task_item, const std::string &project_item )
@@ -274,15 +308,9 @@ public:
         return m_things_model.setCaption( uid, caption );
     }
 
-    void load()
+    void initialize()
     {
-        m_things_model.load();
-        print_statistics();
-    }
-
-    void load( const std::string &filename )
-    {
-        m_things_model.load( filename );
+        m_things_model.initialize();
         print_statistics();
     }
 

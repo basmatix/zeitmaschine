@@ -14,9 +14,10 @@
 class zmQTreeWidgetItem
         : public QTreeWidgetItem
 {
-    std::time_t m_creationTime;
-    zmQtGtdModel &m_model;
-    std::string m_uid;
+    std::time_t     m_creationTime;
+    zmQtGtdModel   &m_model;
+    std::string     m_uid;
+    int             m_importance;
 
 public:
 
@@ -25,10 +26,11 @@ public:
         , m_creationTime    ( 0 )
         , m_model           ( model )
         , m_uid             ( uid )
+        , m_importance      ( 0 )
     {
         m_creationTime = m_model.getCreationTime( uid );
 
-        setText( 1, QString().sprintf("%ld", m_creationTime ) );
+        setText( 2, QString().sprintf("%ld", m_creationTime ) );
 
         setFlags( flags() | Qt::ItemIsEditable );
     }
@@ -43,6 +45,8 @@ public:
 
     void decorate()
     {
+        m_importance = m_model.getImportance( m_uid );
+        setText( 1, QString().sprintf("%d", m_importance ) );
         setText( 0, m_model.getCaption( m_uid ) );
         QBrush b = foreground( 0 );
         QFont f = font( 0 );
@@ -106,15 +110,22 @@ class zmQTreeWidget
 {
     Q_OBJECT
 
-private:
-
-
 public:
 
     explicit zmQTreeWidget(QWidget *parent = 0)
         : QTreeWidget       ( parent )
     {
         setAcceptDrops( true );
+    }
+
+    void resizeEvent(QResizeEvent* event)
+    {
+        setColumnWidth( 0, width()-50 );
+    }
+
+    void showEvent(QShowEvent *)
+    {
+        //setColumnCount( 2 );
     }
 
     virtual ~zmQTreeWidget()

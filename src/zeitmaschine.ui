@@ -53,12 +53,20 @@
             <property name="dragEnabled">
              <bool>true</bool>
             </property>
+            <property name="columnCount">
+             <number>2</number>
+            </property>
             <attribute name="headerVisible">
              <bool>false</bool>
             </attribute>
             <column>
              <property name="text">
               <string notr="true">1</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string notr="true">2</string>
              </property>
             </column>
            </widget>
@@ -109,7 +117,7 @@
                 </widget>
                </item>
                <item>
-                <widget class="QPushButton" name="pushButton_2">
+                <widget class="QPushButton" name="pbPlusOne">
                  <property name="toolTip">
                   <string>+1 this item</string>
                  </property>
@@ -264,14 +272,28 @@
          </layout>
         </item>
         <item>
-         <widget class="QTextEdit" name="teNotes">
-          <property name="font">
-           <font>
-            <family>DejaVu Sans Mono</family>
-            <italic>true</italic>
-           </font>
+         <layout class="QVBoxLayout" name="verticalLayout_12">
+          <property name="rightMargin">
+           <number>10</number>
           </property>
-         </widget>
+          <item>
+           <widget class="QLabel" name="label">
+            <property name="text">
+             <string>TextLabel</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QTextEdit" name="teNotes">
+            <property name="font">
+             <font>
+              <family>DejaVu Sans Mono</family>
+              <italic>true</italic>
+             </font>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </item>
        </layout>
       </item>

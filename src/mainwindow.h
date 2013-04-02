@@ -12,6 +12,7 @@
 
 #include <map>
 #include <QtGui/QMainWindow>
+#include <QtCore/QDir>
 #include <QtCore/QFile>
 #include <QtCore/QMap>
 #include <QtCore/QDataStream>
@@ -35,18 +36,18 @@ class MainWindow
 
 private:
 
-    Ui_window       *m_ui;
+    Ui_window          *m_ui;
 
-    zmQtGtdModel     m_model;
+    zmQtGtdModel        m_model;
 
-    std::string      m_selected_thing;
-    zmQTreeWidgetItem *m_selected_twItem;
+    std::string         m_selected_thing;
+    zmQTreeWidgetItem  *m_selected_twItem;
 
-    QTreeWidgetItem *m_liToday;
-    QTreeWidgetItem *m_liInbox;
-    QTreeWidgetItem *m_liProjects;
-    QTreeWidgetItem *m_liContexts;
-    QTreeWidgetItem *m_liDone;
+    QTreeWidgetItem    *m_liToday;
+    QTreeWidgetItem    *m_liInbox;
+    QTreeWidgetItem    *m_liProjects;
+    QTreeWidgetItem    *m_liContexts;
+    QTreeWidgetItem    *m_liDone;
 
     class WidgetItemMapper
     {
@@ -136,7 +137,16 @@ public:
 
         m_ui->setupUi( this );
 
-        importFromFs();
+        if( QDir( QDir::currentPath() + QDir::separator() + "zeitmaschine").exists() )
+        {
+            m_model.setLocalFolder( QDir::currentPath() + QDir::separator() + "zeitmaschine" );
+        }
+        else
+        {
+            m_model.setLocalFolder( QDir::homePath() + QDir::separator() + "zeitmaschine" );
+        }
+
+        m_model.initialize();
 
         m_liToday = new QTreeWidgetItem();
         m_liToday->setText( 0, "TODAY");
@@ -246,12 +256,6 @@ private:
         {
             addListItem( i );
         }
-    }
-
-    void importFromFs()
-    {   tracemessage( __FUNCTION__ );
-
-        m_model.load();
     }
 
     void updateGui()
@@ -410,7 +414,6 @@ private slots:
     void on_pbDelete_clicked()
     {   tracemessage( __FUNCTION__ );
 
-        //QMutexLocker monitor( &m_mutex );
         if( m_selected_thing == "" ) return;
 
         tracemessage( "erase item: %s (%s)",
@@ -418,16 +421,28 @@ private slots:
                       m_model.getCaption( m_selected_thing ).toAscii().constData()  );
 
         m_model.eraseItem( m_selected_thing );
-        //m_thing_lwitem_map.erase( m_thing_lwitem_map.find( m_selected_thing ) );
-        m_selected_thing = "";
-
-        //m_lwitem_thing_map.erase( m_lwitem_thing_map.find( m_selected_twItem ));
 
         m_widget_item_mapper.erase( m_selected_thing, m_selected_twItem );
 
         // dont alter m_selected_thing or m_selected_twItem after this
         // deletion since they get set there synchronously
         delete m_selected_twItem;
+
+        unselect();
+    }
+
+
+    void on_pbPlusOne_clicked()
+    {   tracemessage( __FUNCTION__ );
+
+        if( m_selected_thing == "" ) return;
+
+        tracemessage( "plus one item %s (%s)",
+                      m_selected_thing.c_str(),
+                      m_model.getCaption( m_selected_thing ).toAscii().constData()  );
+
+        m_model.plusOne( m_selected_thing );
+        m_selected_twItem->decorate();
     }
 
     void on_pbMakeProject_clicked()
@@ -643,7 +658,6 @@ private slots:
         //tracemessage( "%d",m_model.getCurrentTaskDuration() );
     }
 
-
     void on_twTask_itemSelectionChanged ()
     {   tracemessage( __FUNCTION__ );
     }
@@ -666,6 +680,7 @@ private slots:
     {
         tracemessage( __FUNCTION__ );
     }
+
 #endif
 
 };

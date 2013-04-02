@@ -17,8 +17,6 @@
 #include <boost/filesystem.hpp>
 #include <boost/date_time.hpp>
 #include <boost/functional/hash.hpp>
-//#include "boost/date_time/posix_time/posix_time.hpp" //include all types plus i/o
-//#include "boost/date_time/posix_time/posix_time_types.hpp" //no i/o just types
 
 // info regarding string encoding:
 //    http://code.google.com/p/yaml-cpp/wiki/Strings
@@ -146,7 +144,6 @@ public:
             return l_stream.str();
         }
 
-
         std::string m_caption;
         std::set< std::string > m_attributes;
 
@@ -169,17 +166,32 @@ private:
     ThingsModelMapType  m_things;
     ThingsModelMapType  m_thingsOnLoad;
     std::string         m_filename;
+    std::string         m_localFolder;
 
 public:
 
     ThingsModel()
-        : m_filename    ( "zeitmaschine/export.yaml" )
+        : m_filename    ()
     {
-
     }
 
-    void load()
+    void setLocalFolder( const std::string &path )
     {
+        tracemessage( "privateDir: %s", path.c_str() );
+        m_localFolder = path;
+    }
+
+    void addDomainSyncFolder( const std::string &domainName, const std::string &path )
+    {
+        tracemessage( "new domain: %s %s", domainName.c_str(), path.c_str() );
+    }
+
+    void initialize()
+    {
+        std::stringstream l_ssFileName;
+        l_ssFileName << m_localFolder << "/zm-" << getUserName() << "-" << getHostName() << "-local.yaml";
+        m_filename = l_ssFileName.str();
+
         load( m_filename );
     }
 
@@ -261,8 +273,10 @@ public:
 
         BOOST_FOREACH(const ThingsModelMapType::value_type& i, m_things)
         {
-            l_yaml_emitter << YAML::VerbatimTag(i.first);
             l_yaml_emitter << YAML::BeginMap;
+
+            l_yaml_emitter << YAML::Key << "uid";
+            l_yaml_emitter << YAML::Value << i.first;
 
             l_yaml_emitter << YAML::Key << "caption";
             l_yaml_emitter << YAML::Value << i.second->m_caption;
@@ -474,6 +488,18 @@ public:
 
 private:
 
+    static std::string getHostName()
+    {
+        char l_hostname[1024];
+        gethostname(l_hostname,1024);
+        return std::string( l_hostname );
+    }
+
+    static std::string getUserName()
+    {
+        return std::string( getlogin() );
+    }
+
     static std::time_t pt_to_time_t(const boost::posix_time::ptime& pt)
     {
         boost::posix_time::ptime timet_start(boost::gregorian::date(1970,1,1));
@@ -511,7 +537,15 @@ private:
         {
             assert( n["caption"] );
 
-            std::string l_uid =     n.Tag();
+            std::string l_uid = n.Tag();
+
+            if( n["uid"] )
+            {
+                l_uid = n["uid"].as< std::string >();
+            }
+
+            assert( l_uid != "" && l_uid != "?" );
+
             std::string l_caption = n["caption"].as< std::string >();
 
             tracemessage("caption: '%s'", l_caption.c_str());

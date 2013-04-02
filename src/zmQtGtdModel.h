@@ -16,9 +16,19 @@ class zmQtGtdModel
 ///
 public:
 
+    void setLocalFolder( const QString &path )
+    {
+        m_gtd_model.setLocalFolder( path.toUtf8().constData() );
+    }
+
+    void addDomainSyncFolder( const QString &domainName, const QString &path )
+    {
+        m_gtd_model.addDomainSyncFolder( domainName.toUtf8().constData(), path.toUtf8().constData() );
+    }
+
     std::string createNewInboxItem( const QString &caption )
     {
-        return  m_gtd_model.createNewInboxItem( caption.toUtf8().constData() );
+        return m_gtd_model.createNewInboxItem( caption.toUtf8().constData() );
     }
 
     QString getNote( const std::string &uid ) const
@@ -34,6 +44,16 @@ public:
     void setNote( const std::string &uid, const QString &value )
     {
         m_gtd_model.setNote( uid, value.toUtf8().constData() );
+    }
+
+    void plusOne( const std::string &uid )
+    {
+        m_gtd_model.plusOne( uid );
+    }
+
+    int getImportance( const std::string &uid ) const
+    {
+        return m_gtd_model.getImportance( uid );
     }
 
     void registerItemAsTask( const std::string &task_item, const std::string &project_item )
@@ -121,14 +141,9 @@ public:
         return m_gtd_model.setCaption( uid, caption.toUtf8().constData() );
     }
 
-    void load()
+    void initialize()
     {
-        m_gtd_model.load();
-    }
-
-    void load( const std::string &filename )
-    {
-        m_gtd_model.load( filename );
+        m_gtd_model.initialize();
     }
 
     void save( const std::string &filename )
