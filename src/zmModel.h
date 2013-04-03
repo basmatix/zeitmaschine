@@ -323,19 +323,6 @@ public:
         return m_things.size();
     }
 
-    std::string createNewItem( const std::string &caption )
-    {
-        std::string l_new_key = generateUid();
-        Thing *l_new_thing = new Thing( caption );
-        l_new_thing->addValue( "global_time_created", time_stamp() );
-
-        m_things[ l_new_key ] = l_new_thing;
-
-        save();
-
-        return l_new_key;
-    }
-
     static std::time_t seconds_from_epoch(const std::string& a_time, const std::string& a_format )
     {
         boost::posix_time::ptime l_ptime;
@@ -376,6 +363,73 @@ public:
         ThingsModelMapType::const_iterator l_item_it( m_things.find( uid ) );
 
         return l_item_it != m_things.end();
+    }
+
+    std::string getValue( const std::string &uid, const std::string &name ) const
+    {
+        ThingsModelMapType::const_iterator l_item_it( m_things.find( uid ) );
+
+        assert( l_item_it != m_things.end() );
+
+        return l_item_it->second->getValue( name );
+    }
+
+    const std::string & getCaption( const std::string &uid ) const
+    {
+        ThingsModelMapType::const_iterator l_item_it( m_things.find( uid ) );
+
+        assert( l_item_it != m_things.end() );
+
+        return l_item_it->second->m_caption;
+    }
+
+    bool hasAttribute( const std::string uid, const std::string attribute ) const
+    {
+        ThingsModelMapType::const_iterator l_item_it( m_things.find( uid ) );
+
+        assert( l_item_it != m_things.end() );
+
+        return l_item_it->second->hasAttribute( attribute );
+    }
+
+    bool hasValue( const std::string uid, const std::string name ) const
+    {
+        ThingsModelMapType::const_iterator l_item_it( m_things.find( uid ) );
+
+        assert( l_item_it != m_things.end() );
+
+        return l_item_it->second->hasValue( name );
+    }
+
+    bool itemContentMatchesString( const std::string &uid, const std::string &searchString ) const
+    {
+        ThingsModelMapType::const_iterator l_item_it( m_things.find( uid ) );
+
+        assert( l_item_it != m_things.end() );
+
+        return l_item_it->second->contentMatchesString( searchString );
+    }
+
+    static std::string time_stamp()
+    {
+        return boost::posix_time::to_iso_extended_string(
+                    boost::posix_time::microsec_clock::local_time());
+    }
+
+/// write relevant interface
+public:
+
+    std::string createNewItem( const std::string &caption )
+    {
+        std::string l_new_key = generateUid();
+        Thing *l_new_thing = new Thing( caption );
+        l_new_thing->addValue( "global_time_created", time_stamp() );
+
+        m_things[ l_new_key ] = l_new_thing;
+
+        save();
+
+        return l_new_key;
     }
 
     void eraseItem( const std::string &uid )
@@ -424,15 +478,6 @@ public:
         save();
     }
 
-    std::string getValue( const std::string &uid, const std::string &name ) const
-    {
-        ThingsModelMapType::const_iterator l_item_it( m_things.find( uid ) );
-
-        assert( l_item_it != m_things.end() );
-
-        return l_item_it->second->getValue( name );
-    }
-
     void setCaption( const std::string &uid, const std::string &caption )
     {
         ThingsModelMapType::iterator l_item_it( m_things.find( uid ) );
@@ -442,48 +487,6 @@ public:
         l_item_it->second->m_caption = caption;
 
         save();
-    }
-
-    const std::string & getCaption( const std::string &uid ) const
-    {
-        ThingsModelMapType::const_iterator l_item_it( m_things.find( uid ) );
-
-        assert( l_item_it != m_things.end() );
-
-        return l_item_it->second->m_caption;
-    }
-
-    bool hasAttribute( const std::string uid, const std::string attribute ) const
-    {
-        ThingsModelMapType::const_iterator l_item_it( m_things.find( uid ) );
-
-        assert( l_item_it != m_things.end() );
-
-        return l_item_it->second->hasAttribute( attribute );
-    }
-
-    bool hasValue( const std::string uid, const std::string name ) const
-    {
-        ThingsModelMapType::const_iterator l_item_it( m_things.find( uid ) );
-
-        assert( l_item_it != m_things.end() );
-
-        return l_item_it->second->hasValue( name );
-    }
-
-    bool itemContentMatchesString( const std::string &uid, const std::string &searchString ) const
-    {
-        ThingsModelMapType::const_iterator l_item_it( m_things.find( uid ) );
-
-        assert( l_item_it != m_things.end() );
-
-        return l_item_it->second->contentMatchesString( searchString );
-    }
-
-    static std::string time_stamp()
-    {
-        return boost::posix_time::to_iso_extended_string(
-                    boost::posix_time::microsec_clock::local_time());
     }
 
 private:
