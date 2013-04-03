@@ -68,7 +68,7 @@ qt4_wrap_cpp( ${PROJECT_NAME}_MOCS
 file( GLOB ${PROJECT_NAME}_files
     CMakeLists.txt
     *.h
-    *.cpp
+    main.cpp
 )
 
 add_subdirectory( submodules/yaml-cpp )
@@ -94,6 +94,13 @@ target_link_libraries( zm
     yaml-cpp
 )
 
+add_executable( zmTool zmTool.cpp )
+target_link_libraries( zmTool
+    ${QT_LIBRARIES}
+    ${Boost_LIBRARIES}
+    yaml-cpp
+)
+
 add_executable( test_things test/test_things.cpp )
 
 target_link_libraries( test_things
@@ -104,3 +111,4 @@ target_link_libraries( test_things
 add_test( empty-db-on-load         ${CMAKE_CURRENT_BINARY_DIR}/test_things empty-db-on-load )
 add_test( things-change-while-open ${CMAKE_CURRENT_BINARY_DIR}/test_things change-while-open )
 add_test( output-node              ${CMAKE_CURRENT_BINARY_DIR}/test_things output-node )
+
