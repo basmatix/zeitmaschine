@@ -74,12 +74,14 @@ file( GLOB ${PROJECT_NAME}_files
 add_subdirectory( submodules/yaml-cpp )
 
 include_directories(
-    "${CMAKE_CURRENT_BINARY_DIR}"
     "${CMAKE_CURRENT_SOURCE_DIR}"
     #"${CMAKE_CURRENT_SOURCE_DIR}/submodules/json-cpp/include"
 )
 
+# generated and external headers made system so
+# we don't have to deal with their warnings
 include_directories(SYSTEM
+    "${CMAKE_CURRENT_BINARY_DIR}"
     "${CMAKE_CURRENT_SOURCE_DIR}/submodules/yaml-cpp/include"
 )
 

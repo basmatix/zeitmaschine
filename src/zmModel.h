@@ -169,12 +169,12 @@ public:
         zmJournalItem( const std::string &Uid, ChangeType Type )
             : uid   ( Uid )
             , type  ( Type )
-            , time  ( )
+            , time  ( time_stamp() )
             , key   ( )
             , value ( )
         {
-
         }
+
         std::string uid;
         ChangeType  type;
         std::string time;
@@ -190,13 +190,16 @@ public:
             :m_journal()
         {}
 
+        zmChangeSet( const std::string &journalFileName )
+            :m_journal()
+        {
+            load( journalFileName );
+        }
+
         virtual ~zmChangeSet(){}
 
         void write( const std::string &journalFileName )
         {
-            return;
-
-
             std::ofstream l_fout( journalFileName.c_str() );
 
             assert( l_fout.is_open() );
@@ -283,6 +286,21 @@ public:
 
         zmChangeSet( const zmChangeSet & );
         zmChangeSet & operator=( const zmChangeSet & );
+
+        void load( const std::string &journalFileName )
+        {
+            if( ! boost::filesystem::exists( journalFileName ) )
+            {
+                return;
+            }
+            YAML::Node l_import = YAML::LoadFile( journalFileName );
+            BOOST_FOREACH( YAML::Node n, l_import )
+            {
+                assert( n["update"] );
+                assert( n["type"] );
+                assert( n["time"] );
+            }
+        }
 
         std::vector< zmJournalItem * > m_journal;
 
