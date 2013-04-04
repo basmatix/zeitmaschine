@@ -16,6 +16,10 @@ class zmQtGtdModel
 /// maintenance interface
 public:
 
+    zmQtGtdModel()
+        : m_gtd_model()
+    {}
+
     void setLocalFolder( const QString &path )
     {
         m_gtd_model.setLocalFolder( path.toUtf8().constData() );

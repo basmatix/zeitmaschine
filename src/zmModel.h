@@ -192,9 +192,86 @@ public:
 
         virtual ~zmChangeSet(){}
 
-        void write( const std::string )
+        void write( const std::string &journalFileName )
         {
+            return;
 
+
+            std::ofstream l_fout( journalFileName.c_str() );
+
+            assert( l_fout.is_open() );
+
+            if( m_journal.empty() )
+            {
+                return;
+            }
+
+            /// NOTE: we do the yaml exporting here semi manually
+            ///       because this way we can ensure consistent
+            ///       order of items between savings
+
+            YAML::Emitter l_yaml_emitter( l_fout );
+
+            l_yaml_emitter << YAML::BeginSeq;
+
+            BOOST_FOREACH(const zmJournalItem * j, m_journal)
+            {
+                l_yaml_emitter << YAML::BeginMap;
+
+                l_yaml_emitter << YAML::Key << "update";
+                l_yaml_emitter << YAML::Value << j->uid;
+
+                l_yaml_emitter << YAML::Key << "time";
+                l_yaml_emitter << YAML::Value << j->time;
+
+                l_yaml_emitter << YAML::Key << "type";
+                switch( j->type )
+                {
+                case zmJournalItem::CreateItem:
+                    l_yaml_emitter << YAML::Value << "CreateItem";
+                    l_yaml_emitter << YAML::Key << "caption";
+                    l_yaml_emitter << YAML::Value << j->value;
+                    break;
+                case zmJournalItem::SetStringValue:
+                    l_yaml_emitter << YAML::Value << "SetStringValue";
+                    l_yaml_emitter << YAML::Key << "name";
+                    l_yaml_emitter << YAML::Value << j->key;
+                    l_yaml_emitter << YAML::Key << "value";
+                    l_yaml_emitter << YAML::Value << j->value;
+                    break;
+                case zmJournalItem::EraseItem:
+                    l_yaml_emitter << YAML::Value << "EraseItem";
+                    break;
+                case zmJournalItem::AddAttribute:
+                    l_yaml_emitter << YAML::Value << "AddAttribute";
+                    l_yaml_emitter << YAML::Key << "name";
+                    l_yaml_emitter << YAML::Value << j->key;
+                    break;
+                case zmJournalItem::RemoveAttribute:
+                    l_yaml_emitter << YAML::Value << "RemoveAttribute";
+                    l_yaml_emitter << YAML::Key << "name";
+                    l_yaml_emitter << YAML::Value << j->key;
+                    break;
+                case zmJournalItem::ChangeCaption:
+                    l_yaml_emitter << YAML::Value << "ChangeCaption";
+                    l_yaml_emitter << YAML::Key << "value";
+                    l_yaml_emitter << YAML::Value << j->value;
+                    break;
+                }
+
+
+                l_yaml_emitter << YAML::EndMap;
+            }
+            l_yaml_emitter << YAML::EndSeq;
+
+            try
+            {
+                l_fout << std::endl;
+            }
+            catch( ... )
+            {
+                std::cerr << "writing failed" << std::endl;
+            }
         }
 
         void push_back( zmJournalItem *item )

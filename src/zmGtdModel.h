@@ -16,6 +16,10 @@ class zmGtdModel
 /// maintenance interface
 public:
 
+    zmGtdModel()
+        : m_things_model()
+    {}
+
     void setLocalFolder( const std::string &path )
     {
         m_things_model.setLocalFolder( path );

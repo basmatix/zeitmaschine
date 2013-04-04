@@ -34,6 +34,9 @@ class MainWindow
 {
     Q_OBJECT
 
+    MainWindow( const MainWindow & );
+    MainWindow & operator= ( const MainWindow & );
+
 private:
 
     Ui_window          *m_ui;
@@ -55,6 +58,13 @@ private:
         QMap< zmQTreeWidgetItem *, std::string > m_lwitem_thing_map;
 
     public:
+
+        WidgetItemMapper()
+            : m_thing_lwitem_map()
+            , m_lwitem_thing_map()
+        {
+
+        }
 
         void add( const std::string uid, zmQTreeWidgetItem *item )
         {
@@ -129,10 +139,17 @@ private:
 public:
 
     explicit MainWindow(QWidget *parent = 0)
-        : QMainWindow       ( parent )
-        , m_ui              ( new Ui_window )
-        , m_selected_thing  ( "" )
-        , m_selected_twItem ( NULL )
+        : QMainWindow          ( parent )
+        , m_ui                 ( new Ui_window )
+        , m_model              ()
+        , m_selected_thing     ( "" )
+        , m_selected_twItem    ( NULL )
+        , m_liToday            ()
+        , m_liInbox            ()
+        , m_liProjects         ()
+        , m_liContexts         ()
+        , m_liDone             ()
+        , m_widget_item_mapper ()
     {   tracemessage( __FUNCTION__ );
 
         m_ui->setupUi( this );
