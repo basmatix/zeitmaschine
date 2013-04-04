@@ -13,9 +13,7 @@ class zmGtdModel
 {
     ThingsModel m_things_model;
 
-///
-/// GTD specific interface
-///
+/// maintenance interface
 public:
 
     void setLocalFolder( const std::string &path )
@@ -28,17 +26,19 @@ public:
         m_things_model.addDomainSyncFolder( domainName, path );
     }
 
-    std::string createNewInboxItem( const std::string &caption )
+    void initialize()
     {
-        std::string l_item_uid = m_things_model.createNewItem( caption );
-        tracemessage( "GTD: new inbox item %s: '%s'",
-                      caption.c_str(),
-                      l_item_uid .c_str() );
-
-        m_things_model.addAttribute( l_item_uid, "gtd_item_unhandled" );
-
-        return l_item_uid;
+        m_things_model.initialize();
+        print_statistics();
     }
+
+    void sync()
+    {
+        m_things_model.sync();
+    }
+
+/// const interface
+public:
 
     std::string getNote( const std::string &uid ) const
     {
@@ -54,28 +54,6 @@ public:
         }
     }
 
-    void setNote( const std::string &uid, const std::string &value )
-    {
-        tracemessage( "GTD: setting note for item %s (%s): '%s'",
-                      uid.c_str(),
-                      m_things_model.getCaption( uid ).c_str(),
-                      value.c_str() );
-
-        m_things_model.setValue( uid, "gtd_item_note", value );
-    }
-
-    void plusOne( const std::string &uid )
-    {
-        int l_importance = 0;
-        if( m_things_model.hasValue( uid, "gtd_importance" ) )
-        {
-            l_importance = boost::lexical_cast<int>( m_things_model.getValue( uid, "gtd_importance" ) );
-        }
-        l_importance += 1;
-
-        m_things_model.setValue( uid, "gtd_importance", boost::lexical_cast<std::string>(l_importance) );
-    }
-
     int getImportance( const std::string &uid ) const
     {
         if( m_things_model.hasValue( uid, "gtd_importance" ) )
@@ -84,16 +62,6 @@ public:
         }
 
         return 0;
-    }
-
-    void registerItemAsTask( const std::string &task_item, const std::string &project_item )
-    {
-        assert( isInboxItem( task_item ) );
-        assert( isProjectItem( project_item, false ) );
-
-        m_things_model.removeAttribute( task_item, "gtd_item_unhandled" );
-        m_things_model.addAttribute( task_item, "gtd_task" );
-        m_things_model.setValue( task_item, "gtd_parent_project", project_item );
     }
 
     std::list< std::string > getInboxItems( bool includeDoneItems ) const
@@ -161,25 +129,6 @@ public:
         return l_return;
     }
 
-    void setDone( const std::string &task_item )
-    {
-        m_things_model.removeAttribute(
-                    task_item, "gtd_item_unhandled" );
-
-        m_things_model.addAttribute(
-                    task_item, "gtd_item_done" );
-
-        m_things_model.setValue(
-                    task_item, "gtd_time_done", ThingsModel::time_stamp() );
-    }
-
-    void castToProject( const std::string &item )
-    {
-        assert( isInboxItem( item ) );
-        m_things_model.removeAttribute( item, "gtd_item_unhandled" );
-        m_things_model.addAttribute( item, "gtd_project" );
-    }
-
     bool isTaskItem( const std::string &item, bool includeStandaloneTasks ) const
     {
         if( !includeStandaloneTasks && m_things_model.hasAttribute( item, "gtd_project" ) )
@@ -208,7 +157,7 @@ public:
         return m_things_model.hasAttribute( task_item, "gtd_item_done" );
     }
 
-    std::string getParentProject( const std::string &task_item )
+    std::string getParentProject( const std::string &task_item ) const
     {
         assert( isTaskItem( task_item, false ) );
         assert( m_things_model.hasValue( task_item, "gtd_parent_project" ) );
@@ -216,15 +165,7 @@ public:
         return m_things_model.getValue( task_item, "gtd_parent_project" );
     }
 
-    void setNextTask( const std::string &project_item, const std::string &task_item )
-    {
-        assert( isProjectItem( project_item, false ) );
-        assert( isTaskItem( task_item, false ) );
-
-        m_things_model.setValue( project_item, "gtd_next_task", task_item );
-    }
-
-    std::string getNextTask( const std::string &task_item )
+    std::string getNextTask( const std::string &task_item ) const
     {
         assert( isProjectItem( task_item, false ) );
         if( !m_things_model.hasValue( task_item, "gtd_next_task" ) )
@@ -233,15 +174,6 @@ public:
         }
 
         return m_things_model.getValue( task_item, "gtd_next_task" );
-    }
-
-    std::string createProject( const std::string &project_name )
-    {
-        std::string l_item_uid = m_things_model.createNewItem( project_name );
-
-        m_things_model.addAttribute( l_item_uid, "gtd_project" );
-
-        return l_item_uid;
     }
 
     std::string orderATask() const
@@ -260,7 +192,12 @@ public:
         return *it;
     }
 
-    void print_statistics()
+    bool itemContentMatchesString( const std::string &uid, const std::string &searchString ) const
+    {
+        return m_things_model.itemContentMatchesString( uid, searchString );
+    }
+
+    void print_statistics() const
     {
         std::list< std::string > l_inbox = getInboxItems( false );
         std::list< std::string > l_tasks = getTaskItems( false, false );
@@ -288,6 +225,105 @@ public:
         tracemessage( " gtd items done:     %d", l_done_items );
     }
 
+/// save relevant interface
+public:
+
+    std::string createNewInboxItem( const std::string &caption )
+    {
+        std::string l_item_uid = m_things_model.createNewItem( caption );
+        tracemessage( "GTD: new inbox item %s: '%s'",
+                      caption.c_str(),
+                      l_item_uid .c_str() );
+
+        m_things_model.addAttribute( l_item_uid, "gtd_item_unhandled" );
+
+        m_things_model.localSave();
+
+        return l_item_uid;
+    }
+
+    void setNote( const std::string &uid, const std::string &value )
+    {
+        tracemessage( "GTD: setting note for item %s (%s): '%s'",
+                      uid.c_str(),
+                      m_things_model.getCaption( uid ).c_str(),
+                      value.c_str() );
+
+        m_things_model.setValue( uid, "gtd_item_note", value );
+
+        m_things_model.localSave();
+    }
+
+    void plusOne( const std::string &uid )
+    {
+        int l_importance = 0;
+        if( m_things_model.hasValue( uid, "gtd_importance" ) )
+        {
+            l_importance = boost::lexical_cast<int>( m_things_model.getValue( uid, "gtd_importance" ) );
+        }
+        l_importance += 1;
+
+        m_things_model.setValue( uid, "gtd_importance", boost::lexical_cast<std::string>(l_importance) );
+
+        m_things_model.localSave();
+    }
+
+    void registerItemAsTask( const std::string &task_item, const std::string &project_item )
+    {
+        assert( isInboxItem( task_item ) );
+        assert( isProjectItem( project_item, false ) );
+
+        m_things_model.removeAttribute( task_item, "gtd_item_unhandled" );
+        m_things_model.addAttribute( task_item, "gtd_task" );
+        m_things_model.setValue( task_item, "gtd_parent_project", project_item );
+
+        m_things_model.localSave();
+    }
+
+    void setDone( const std::string &task_item )
+    {
+        m_things_model.removeAttribute(
+                    task_item, "gtd_item_unhandled" );
+
+        m_things_model.addAttribute(
+                    task_item, "gtd_item_done" );
+
+        m_things_model.setValue(
+                    task_item, "gtd_time_done", ThingsModel::time_stamp() );
+
+        m_things_model.localSave();
+    }
+
+    void castToProject( const std::string &item )
+    {
+        assert( isInboxItem( item ) );
+        m_things_model.removeAttribute( item, "gtd_item_unhandled" );
+        m_things_model.addAttribute( item, "gtd_project" );
+
+        m_things_model.localSave();
+    }
+
+    void setNextTask( const std::string &project_item, const std::string &task_item )
+    {
+        assert( isProjectItem( project_item, false ) );
+        assert( isTaskItem( task_item, false ) );
+
+        m_things_model.setValue( project_item, "gtd_next_task", task_item );
+
+        m_things_model.localSave();
+    }
+
+    std::string createProject( const std::string &project_name )
+    {
+        std::string l_item_uid = m_things_model.createNewItem( project_name );
+
+        m_things_model.addAttribute( l_item_uid, "gtd_project" );
+
+        m_things_model.localSave();
+
+        return l_item_uid;
+    }
+
 ///
 /// low level interface - to be vanished
 ///
@@ -305,28 +341,21 @@ public:
 
     void setCaption( const std::string &uid, const std::string &caption )
     {
-        return m_things_model.setCaption( uid, caption );
+        m_things_model.setCaption( uid, caption );
+
+        m_things_model.localSave();
     }
 
-    void initialize()
-    {
-        m_things_model.initialize();
-        print_statistics();
-    }
-
-    void save( const std::string &filename )
-    {
-        return m_things_model.save( filename );
-    }
+    //void save( const std::string &filename )
+    //{
+    //    return m_things_model.save( filename );
+    //}
 
     void eraseItem( const std::string &uid )
     {
-        return m_things_model.eraseItem( uid );
-    }
+        m_things_model.eraseItem( uid );
 
-    bool itemContentMatchesString( const std::string &uid, const std::string &searchString ) const
-    {
-        return m_things_model.itemContentMatchesString( uid, searchString );
+        m_things_model.localSave();
     }
 };
 

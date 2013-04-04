@@ -29,7 +29,9 @@ public:
     public:
 
         Thing( const std::string &caption)
-            : m_caption   ( caption )
+            : m_caption         ( caption )
+            , m_attributes      ()
+            , m_string_values   ()
         {
         }
 
@@ -144,56 +146,152 @@ public:
             return l_stream.str();
         }
 
-        std::string m_caption;
-        std::set< std::string > m_attributes;
-
         typedef std::map< std::string, std::string > string_value_map_type;
 
-        string_value_map_type m_string_values;
+        std::string             m_caption;
+        std::set< std::string > m_attributes;
+        string_value_map_type   m_string_values;
+    };
+
+    class zmJournalItem
+    {
+    public:
+        enum ChangeType
+        {
+            CreateItem,
+            SetStringValue,
+            EraseItem,
+            AddAttribute,
+            RemoveAttribute,
+            ChangeCaption
+        };
+
+        zmJournalItem( const std::string &Uid, ChangeType Type )
+            : uid   ( Uid )
+            , type  ( Type )
+            , time  ( )
+            , key   ( )
+            , value ( )
+        {
+
+        }
+        std::string uid;
+        ChangeType  type;
+        std::string time;
+        std::string key;
+        std::string value;
+    };
+
+    class zmChangeSet
+    {
+    public:
+
+        zmChangeSet()
+            :m_journal()
+        {}
+
+        virtual ~zmChangeSet(){}
+
+        void write( const std::string )
+        {
+
+        }
+
+        void push_back( zmJournalItem *item )
+        {
+            m_journal.push_back( item );
+        }
+
+    private:
+
+        zmChangeSet( const zmChangeSet & );
+        zmChangeSet & operator=( const zmChangeSet & );
+
+        std::vector< zmJournalItem * > m_journal;
+
     };
 
     typedef std::map< std::string, Thing * > ThingsModelMapType;
-
-
-    const ThingsModelMapType & things() const
-    {
-        return m_things;
-    }
-
 
 private:
 
     ThingsModelMapType  m_things;
     ThingsModelMapType  m_thingsOnLoad;
-    std::string         m_filename;
     std::string         m_localFolder;
+    std::string         m_filename;
+    zmChangeSet         m_changeSet;
+
+    std::string         m_temporaryJournalFile;
+    bool                m_initialized;
+    bool                m_dirty;  // maybe we need more
 
 public:
 
     ThingsModel()
-        : m_filename    ()
+        : m_things              ()
+        , m_thingsOnLoad        ()
+        , m_localFolder         ()
+        , m_filename            ()
+        , m_temporaryJournalFile()
+        , m_initialized         ( false )
+        , m_dirty               ( false )
+        , m_changeSet           ()
     {
     }
 
+    /// sets the one and only local folder for configuration temorary and
+    /// snapshot files
     void setLocalFolder( const std::string &path )
     {
         tracemessage( "privateDir: %s", path.c_str() );
         m_localFolder = path;
     }
 
+    /// defines a (externally synced) folder exchange with other clients
+    /// and/or users
     void addDomainSyncFolder( const std::string &domainName, const std::string &path )
     {
         tracemessage( "new domain: %s %s", domainName.c_str(), path.c_str() );
     }
 
+    /// will initialize the model by loading the persistant state using
+    /// the given information
     void initialize()
     {
         std::stringstream l_ssFileName;
+        // eg. /path/to/zeitmaschine/zm-frans-heizluefter-local.yaml
         l_ssFileName << m_localFolder << "/zm-" << getUserName() << "-" << getHostName() << "-local.yaml";
         m_filename = l_ssFileName.str();
 
+        // eg. /path/to/zeitmaschine/zm-frans-heizluefter-temp-journal.yaml
+        std::stringstream l_ssTempJournalFile;
+        l_ssTempJournalFile << m_localFolder << "/zm-" << getUserName() << "-" << getHostName() << "-temp-journal.yaml";
+        m_temporaryJournalFile = l_ssTempJournalFile.str();
+
         load( m_filename );
+
+        m_initialized = true;
     }
+
+    /// will write recent changes to the journal file
+    void localSave()
+    {
+        /// just for debug purposes - later we will only write the journal
+        save( m_filename );
+
+        m_changeSet.write( m_temporaryJournalFile );
+    }
+
+    /// make a fulf model sync.
+    /// first load and apply new journal files in the sync folders. Then
+    /// write the local model files and make the temporary journal file
+    /// available to the sync folders and
+    void sync()
+    {
+        save( m_filename );
+    }
+
+private:
 
     void load( const std::string &filename )
     {
@@ -210,36 +308,15 @@ public:
         yamlToThingsMap( l_import, m_thingsOnLoad );
     }
 
-    bool equals( const ThingsModelMapType &thingsMap, const ThingsModelMapType &thingsMapOther )
+    void dirty()
     {
-        if( thingsMap.size() != thingsMapOther.size() )
-        {
-            return false;
-        }
-        for( ThingsModelMapType::const_iterator
-             i  = thingsMap.begin();
-             i != thingsMap.end(); ++i )
-        {
-            ThingsModelMapType::const_iterator l_mirrorThing = thingsMapOther.find( i->first );
-            if( l_mirrorThing == thingsMapOther.end() )
-            {
-                return false;
-            }
-            if( !i->second->equals( *l_mirrorThing->second ) )
-            {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    void save()
-    {
-        save( m_filename );
+        m_dirty = true;
     }
 
     void save( const std::string &filename )
     {
+        /// be careful! if( !m_dirty ) return;
+
         if( filename.find_last_of("/") != std::string::npos )
         {
             std::string l_dir = filename.substr( 0, filename.find_last_of("/") );
@@ -252,8 +329,8 @@ public:
             {
                 //error
             }
-
         }
+
         std::ofstream l_fout( filename.c_str() );
 
         assert( l_fout.is_open() );
@@ -318,31 +395,40 @@ public:
         }
     }
 
+/// const interface
+public:
+
+    const ThingsModelMapType & things() const
+    {
+        return m_things;
+    }
+
+    bool equals( const ThingsModelMapType &thingsMap, const ThingsModelMapType &thingsMapOther ) const
+    {
+        if( thingsMap.size() != thingsMapOther.size() )
+        {
+            return false;
+        }
+        for( ThingsModelMapType::const_iterator
+             i  = thingsMap.begin();
+             i != thingsMap.end(); ++i )
+        {
+            ThingsModelMapType::const_iterator l_mirrorThing = thingsMapOther.find( i->first );
+            if( l_mirrorThing == thingsMapOther.end() )
+            {
+                return false;
+            }
+            if( !i->second->equals( *l_mirrorThing->second ) )
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
     size_t getItemCount() const
     {
         return m_things.size();
-    }
-
-    static std::time_t seconds_from_epoch(const std::string& a_time, const std::string& a_format )
-    {
-        boost::posix_time::ptime l_ptime;
-
-        std::istringstream l_stringstream( a_time );
-        boost::posix_time::time_input_facet l_facet(a_format,1);
-
-        l_stringstream.imbue(std::locale(std::locale::classic(), &l_facet));
-
-        l_stringstream >> l_ptime;
-        if(l_ptime == boost::posix_time::ptime())
-        {
-            //TRACE_E(("could not parse time string"));
-            return 0;
-        }
-        // std::cout << " ptime is " << l_ptime << std::endl;
-        boost::posix_time::ptime timet_start(boost::gregorian::date(1970,1,1));
-        boost::posix_time::time_duration l_diff = l_ptime - timet_start;
-
-        return l_diff.ticks() / boost::posix_time::time_duration::rep_type::ticks_per_second;
     }
 
     std::time_t getCreationTime( const std::string &uid ) const
@@ -410,6 +496,28 @@ public:
         return l_item_it->second->contentMatchesString( searchString );
     }
 
+    static std::time_t seconds_from_epoch(const std::string& a_time, const std::string& a_format )
+    {
+        boost::posix_time::ptime l_ptime;
+
+        std::istringstream l_stringstream( a_time );
+        boost::posix_time::time_input_facet l_facet(a_format,1);
+
+        l_stringstream.imbue(std::locale(std::locale::classic(), &l_facet));
+
+        l_stringstream >> l_ptime;
+        if(l_ptime == boost::posix_time::ptime())
+        {
+            //TRACE_E(("could not parse time string"));
+            return 0;
+        }
+        // std::cout << " ptime is " << l_ptime << std::endl;
+        boost::posix_time::ptime timet_start(boost::gregorian::date(1970,1,1));
+        boost::posix_time::time_duration l_diff = l_ptime - timet_start;
+
+        return l_diff.ticks() / boost::posix_time::time_duration::rep_type::ticks_per_second;
+    }
+
     static std::string time_stamp()
     {
         return boost::posix_time::to_iso_extended_string(
@@ -423,11 +531,17 @@ public:
     {
         std::string l_new_key = generateUid();
         Thing *l_new_thing = new Thing( caption );
-        l_new_thing->addValue( "global_time_created", time_stamp() );
+        std::string l_time = time_stamp();
+        l_new_thing->addValue( "global_time_created", l_time );
 
         m_things[ l_new_key ] = l_new_thing;
 
-        save();
+        zmJournalItem *l_change = new zmJournalItem( l_new_key, zmJournalItem::CreateItem );
+        l_change->time = l_time;
+        l_change->value = caption;
+        m_changeSet.push_back( l_change );
+
+        dirty();
 
         return l_new_key;
     }
@@ -440,7 +554,10 @@ public:
 
         m_things.erase( l_item_it );
 
-        save();
+        zmJournalItem *l_change = new zmJournalItem( uid, zmJournalItem::EraseItem );
+        m_changeSet.push_back( l_change );
+
+        dirty();
     }
 
     void addAttribute( const std::string &uid, const std::string &attribute )
@@ -451,7 +568,11 @@ public:
 
         l_item_it->second->addAttribute( attribute );
 
-        save();
+        zmJournalItem *l_change = new zmJournalItem( uid, zmJournalItem::AddAttribute );
+        l_change->key = attribute;
+        m_changeSet.push_back( l_change );
+
+        dirty();
     }
 
     bool removeAttribute( const std::string &uid, const std::string &attribute )
@@ -462,7 +583,11 @@ public:
 
         bool l_return = l_item_it->second->removeAttribute( attribute );
 
-        save();
+        zmJournalItem *l_change = new zmJournalItem( uid, zmJournalItem::RemoveAttribute );
+        l_change->key = attribute;
+        m_changeSet.push_back( l_change );
+
+        dirty();
 
         return l_return;
     }
@@ -473,9 +598,15 @@ public:
 
         assert( l_item_it != m_things.end() );
 
+        zmJournalItem *l_change = new zmJournalItem( uid, zmJournalItem::SetStringValue );
+        //l_change->before = l_item_it->second->m_caption;
+        l_change->key = name;
+        l_change->value = value;
+        m_changeSet.push_back( l_change );
+
         l_item_it->second->addValue( name, value );
 
-        save();
+        dirty();
     }
 
     void setCaption( const std::string &uid, const std::string &caption )
@@ -484,9 +615,16 @@ public:
 
         assert( l_item_it != m_things.end() );
 
+        if( l_item_it->second->m_caption == caption ) return;
+
+        zmJournalItem *l_change = new zmJournalItem( uid, zmJournalItem::ChangeCaption );
+        //l_change->before = l_item_it->second->m_caption;
+        l_change->value = caption;
+        m_changeSet.push_back( l_change );
+
         l_item_it->second->m_caption = caption;
 
-        save();
+        dirty();
     }
 
 private:

@@ -267,7 +267,7 @@ private:
     {   tracemessage( __FUNCTION__ );
         // this method is being called automatically by Qt
 
-        //exportToFs();
+        m_model.sync();
     }
 
     void unselect()
@@ -278,6 +278,7 @@ private:
     }
 
 private slots:
+
     void createInboxItemFromUiElements()
     {
         std::string l_item_uid = m_model.createNewInboxItem( m_ui->leCommand->text() );

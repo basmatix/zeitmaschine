@@ -7,13 +7,13 @@
 #include <zmGtdModel.h>
 #include <QtCore/QString>
 
+/// std-c++/Qt - interface to zmGtdModel. Aims to be a
+/// fully qualified Qt model in the future
 class zmQtGtdModel
 {
     zmGtdModel m_gtd_model;
 
-///
-/// GTD specific interface
-///
+/// maintenance interface
 public:
 
     void setLocalFolder( const QString &path )
@@ -26,10 +26,25 @@ public:
         m_gtd_model.addDomainSyncFolder( domainName.toUtf8().constData(), path.toUtf8().constData() );
     }
 
-    std::string createNewInboxItem( const QString &caption )
+    void initialize()
     {
-        return m_gtd_model.createNewInboxItem( caption.toUtf8().constData() );
+        m_gtd_model.initialize();
     }
+
+    void sync()
+    {
+        m_gtd_model.sync();
+    }
+
+    // todo: eventually provide some sort of export functionality for
+    //       development purposes
+    // void save( const std::string &filename )
+    //{
+    //    m_gtd_model.save( filename );
+    //}
+
+/// const interface
+public:
 
     QString getNote( const std::string &uid ) const
     {
@@ -41,24 +56,9 @@ public:
         return m_gtd_model.getCreationTime( uid );
     }
 
-    void setNote( const std::string &uid, const QString &value )
-    {
-        m_gtd_model.setNote( uid, value.toUtf8().constData() );
-    }
-
-    void plusOne( const std::string &uid )
-    {
-        m_gtd_model.plusOne( uid );
-    }
-
     int getImportance( const std::string &uid ) const
     {
         return m_gtd_model.getImportance( uid );
-    }
-
-    void registerItemAsTask( const std::string &task_item, const std::string &project_item )
-    {
-        m_gtd_model.registerItemAsTask( task_item, project_item );
     }
 
     std::list< std::string > getInboxItems( bool includeDoneItems ) const
@@ -74,16 +74,6 @@ public:
     std::list< std::string > getProjectItems( bool includeStandaloneTasks, bool includeDoneItems ) const
     {
         return m_gtd_model.getProjectItems( includeStandaloneTasks, includeDoneItems );
-    }
-
-    void castToProject( const std::string &item )
-    {
-        m_gtd_model.castToProject( item );
-    }
-
-    void setDone( const std::string &task_item )
-    {
-        m_gtd_model.setDone( task_item );
     }
 
     bool isTaskItem( const std::string &item, bool includeStandaloneTasks ) const
@@ -106,24 +96,14 @@ public:
         return m_gtd_model.isDone( task_item );
     }
 
-    void setNextTask( const std::string &project_item, const std::string &task_item )
-    {
-        return m_gtd_model.setNextTask( project_item, task_item );
-    }
-
-    std::string getNextTask( const std::string &task_item )
+    std::string getNextTask( const std::string &task_item ) const
     {
         return m_gtd_model.getNextTask( task_item );
     }
 
-    std::string getParentProject( const std::string &task_item )
+    std::string getParentProject( const std::string &task_item ) const
     {
         return m_gtd_model.getParentProject( task_item );
-    }
-
-    std::string createProject( const QString &project_name )
-    {
-        return m_gtd_model.createProject( project_name.toUtf8().constData() );
     }
 
     std::string orderATask() const
@@ -136,29 +116,62 @@ public:
         return QString::fromUtf8( m_gtd_model.getCaption( uid ).c_str() );
     }
 
+    bool itemContentMatchesString( const std::string &uid, const QString &searchString ) const
+    {
+        return m_gtd_model.itemContentMatchesString( uid, searchString.toUtf8().constData() );
+    }
+
+/// save relevant interface
+public:
+
+    std::string createNewInboxItem( const QString &caption )
+    {
+        return m_gtd_model.createNewInboxItem( caption.toUtf8().constData() );
+    }
+
+    void setNote( const std::string &uid, const QString &value )
+    {
+        m_gtd_model.setNote( uid, value.toUtf8().constData() );
+    }
+
+    void plusOne( const std::string &uid )
+    {
+        m_gtd_model.plusOne( uid );
+    }
+
+    void registerItemAsTask( const std::string &task_item, const std::string &project_item )
+    {
+        m_gtd_model.registerItemAsTask( task_item, project_item );
+    }
+
+    void castToProject( const std::string &item )
+    {
+        m_gtd_model.castToProject( item );
+    }
+
+    void setDone( const std::string &task_item )
+    {
+        m_gtd_model.setDone( task_item );
+    }
+
+    void setNextTask( const std::string &project_item, const std::string &task_item )
+    {
+        return m_gtd_model.setNextTask( project_item, task_item );
+    }
+
+    std::string createProject( const QString &project_name )
+    {
+        return m_gtd_model.createProject( project_name.toUtf8().constData() );
+    }
+
     void setCaption( const std::string &uid, const QString &caption )
     {
         return m_gtd_model.setCaption( uid, caption.toUtf8().constData() );
     }
 
-    void initialize()
-    {
-        m_gtd_model.initialize();
-    }
-
-    void save( const std::string &filename )
-    {
-        m_gtd_model.save( filename );
-    }
-
     void eraseItem( const std::string &uid )
     {
         m_gtd_model.eraseItem( uid );
-    }
-
-    bool itemContentMatchesString( const std::string &uid, const QString &searchString ) const
-    {
-        return m_gtd_model.itemContentMatchesString( uid, searchString.toUtf8().constData() );
     }
 };
 

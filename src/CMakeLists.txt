@@ -39,7 +39,7 @@ endif()
 if( NOT MSVC )
     option( CONFIG_WEFFCPP "set warning level for real developers" ON )
     if( CONFIG_WEFFCPP )
-         #set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Weffc++" )
+         set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Weffc++" )
          set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wformat-extra-args" )
          set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wswitch" )
          set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wformat" )
@@ -76,7 +76,10 @@ add_subdirectory( submodules/yaml-cpp )
 include_directories(
     "${CMAKE_CURRENT_BINARY_DIR}"
     "${CMAKE_CURRENT_SOURCE_DIR}"
-    "${CMAKE_CURRENT_SOURCE_DIR}/submodules/json-cpp/include"
+    #"${CMAKE_CURRENT_SOURCE_DIR}/submodules/json-cpp/include"
+)
+
+include_directories(SYSTEM
     "${CMAKE_CURRENT_SOURCE_DIR}/submodules/yaml-cpp/include"
 )
 

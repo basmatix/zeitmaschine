@@ -34,12 +34,12 @@ bool empty_db_on_load()
     // client 1 saves some content
     ThingsModel l_m1;
     std::string l_item1 = l_m1.createNewItem( "some first item" );
-    l_m1.save( "tmp_export.yaml" );
+    //l_m1.save( "tmp_export.yaml" );
 
     ThingsModel l_m2;
     std::string l_item2 = l_m2.createNewItem( "yet some item" );
 
-    l_m2.load( "tmp_export.yaml" );
+    //l_m2.load( "tmp_export.yaml" );
 
     bool l_test_passed = l_m2.hasItem( l_item1 ) && ! l_m2.hasItem( l_item2 );
     return l_test_passed;
@@ -54,11 +54,11 @@ bool change_while_open()
     // meanwhile another client (or some syncing system) writes some content
     ThingsModel l_m2;
     std::string l_item2 = l_m2.createNewItem( "some concurrent item" );
-    l_m2.save( "tmp_export.yaml" );
+    //l_m2.save( "tmp_export.yaml" );
 
 
     // now the first model decides to dump it's mind
-    l_m1.save( "tmp_export.yaml" );
+    //l_m1.save( "tmp_export.yaml" );
 
     // client 2 (or a third client) starts again and loads the current db
     ThingsModel l_m3;
