@@ -289,6 +289,7 @@ public:
 
         void load( const std::string &journalFileName )
         {
+            assert( m_journal.empty() );
             if( ! boost::filesystem::exists( journalFileName ) )
             {
                 return;
@@ -299,6 +300,36 @@ public:
                 assert( n["update"] );
                 assert( n["type"] );
                 assert( n["time"] );
+                std::string l_uid = n["update"].as< std::string >();
+                std::string l_type = n["type"].as< std::string >();
+
+                zmJournalItem *l_newItem;
+                if( l_type == "CreateItem" )
+                {
+                    l_newItem = new zmJournalItem( l_uid, zmJournalItem::CreateItem );
+                }
+                if( l_type == "SetStringValue" )
+                {
+                    l_newItem = new zmJournalItem( l_uid, zmJournalItem::SetStringValue );
+                }
+                if( l_type == "EraseItem" )
+                {
+                    l_newItem = new zmJournalItem( l_uid, zmJournalItem::EraseItem );
+                }
+                if( l_type == "AddAttribute" )
+                {
+                    l_newItem = new zmJournalItem( l_uid, zmJournalItem::AddAttribute );
+                }
+                if( l_type == "RemoveAttribute" )
+                {
+                    l_newItem = new zmJournalItem( l_uid, zmJournalItem::RemoveAttribute );
+                }
+                if( l_type == "ChangeCaption" )
+                {
+                    l_newItem = new zmJournalItem( l_uid, zmJournalItem::ChangeCaption );
+                }
+                l_newItem->time = n["time"].as< std::string >();
+                m_journal.push_back( l_newItem );
             }
         }
 
