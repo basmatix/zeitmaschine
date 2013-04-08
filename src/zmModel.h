@@ -307,10 +307,16 @@ public:
                 if( l_type == "CreateItem" )
                 {
                     l_newItem = new zmJournalItem( l_uid, zmJournalItem::CreateItem );
+                    assert( n["caption"] );
+                    l_newItem->value = n["caption"].as< std::string >();
                 }
                 if( l_type == "SetStringValue" )
                 {
                     l_newItem = new zmJournalItem( l_uid, zmJournalItem::SetStringValue );
+                    assert( n["name"] );
+                    assert( n["value"] );
+                    l_newItem->key = n["name"].as< std::string >();
+                    l_newItem->value = n["value"].as< std::string >();
                 }
                 if( l_type == "EraseItem" )
                 {
@@ -319,14 +325,20 @@ public:
                 if( l_type == "AddAttribute" )
                 {
                     l_newItem = new zmJournalItem( l_uid, zmJournalItem::AddAttribute );
+                    assert( n["name"] );
+                    l_newItem->key = n["name"].as< std::string >();
                 }
                 if( l_type == "RemoveAttribute" )
                 {
                     l_newItem = new zmJournalItem( l_uid, zmJournalItem::RemoveAttribute );
+                    assert( n["name"] );
+                    l_newItem->key = n["name"].as< std::string >();
                 }
                 if( l_type == "ChangeCaption" )
                 {
                     l_newItem = new zmJournalItem( l_uid, zmJournalItem::ChangeCaption );
+                    assert( n["value"] );
+                    l_newItem->value = n["value"].as< std::string >();
                 }
                 l_newItem->time = n["time"].as< std::string >();
                 m_journal.push_back( l_newItem );
