@@ -30,19 +30,25 @@ int main( int arg_n, char **arg_v )
 }
 
 bool empty_db_on_load()
-{
+{/*
     // client 1 saves some content
     ThingsModel l_m1;
+    l_m1.setLocalFolder( "zmtest" );
     std::string l_item1 = l_m1.createNewItem( "some first item" );
+    l_m1.localSave();
     //l_m1.save( "tmp_export.yaml" );
 
     ThingsModel l_m2;
+    l_m1.setLocalFolder( "zmtest" );
     std::string l_item2 = l_m2.createNewItem( "yet some item" );
+    l_m1.localSave();
 
     //l_m2.load( "tmp_export.yaml" );
 
     bool l_test_passed = l_m2.hasItem( l_item1 ) && ! l_m2.hasItem( l_item2 );
     return l_test_passed;
+*/
+    return false;
 }
 
 bool change_while_open()

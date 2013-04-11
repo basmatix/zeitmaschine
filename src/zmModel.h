@@ -169,7 +169,7 @@ public:
         zmJournalItem( const std::string &Uid, ChangeType Type )
             : uid   ( Uid )
             , type  ( Type )
-            , time  ( time_stamp() )
+            , time  ( time_stamp_iso_ext() )
             , key   ( )
             , value ( )
         {
@@ -403,8 +403,12 @@ public:
 
         // eg. /path/to/zeitmaschine/zm-frans-heizluefter-temp-journal.yaml
         std::stringstream l_ssTempJournalFile;
-        l_ssTempJournalFile << m_localFolder << "/zm-" << getUserName() << "-" << getHostName() << "-temp-journal.yaml";
+        l_ssTempJournalFile << m_localFolder << "/zm-" << getUserName()
+                            << "-" << getHostName() << "-"
+                            << time_stamp_iso() << "-temp-journal.yaml";
         m_temporaryJournalFile = l_ssTempJournalFile.str();
+
+        tracemessage( "using temp file '%s'", m_temporaryJournalFile.c_str() );
 
         load( m_filename );
 
@@ -656,9 +660,15 @@ public:
         return l_diff.ticks() / boost::posix_time::time_duration::rep_type::ticks_per_second;
     }
 
-    static std::string time_stamp()
+    static std::string time_stamp_iso_ext()
     {
         return boost::posix_time::to_iso_extended_string(
+                    boost::posix_time::microsec_clock::local_time());
+    }
+
+    static std::string time_stamp_iso()
+    {
+        return boost::posix_time::to_iso_string(
                     boost::posix_time::microsec_clock::local_time());
     }
 
@@ -669,7 +679,7 @@ public:
     {
         std::string l_new_key = generateUid();
         Thing *l_new_thing = new Thing( caption );
-        std::string l_time = time_stamp();
+        std::string l_time = time_stamp_iso_ext();
         l_new_thing->addValue( "global_time_created", l_time );
 
         m_things[ l_new_key ] = l_new_thing;

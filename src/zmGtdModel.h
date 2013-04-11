@@ -293,7 +293,7 @@ public:
                     task_item, "gtd_item_done" );
 
         m_things_model.setValue(
-                    task_item, "gtd_time_done", ThingsModel::time_stamp() );
+                    task_item, "gtd_time_done", ThingsModel::time_stamp_iso_ext() );
 
         m_things_model.localSave();
     }
