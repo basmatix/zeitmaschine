@@ -396,11 +396,16 @@ public:
     /// the given information
     void initialize()
     {
+        /// find the name for the local model file - should be equal
+        /// across sessions and unique for each client
+        // <local folder>/zm-<user>-<client>-<zm-domain>-local.yaml
+        // eg. /path/to/zeitmaschine/zm-frans-heizluefter-private-local.yaml
         std::stringstream l_ssFileName;
-        // eg. /path/to/zeitmaschine/zm-frans-heizluefter-local.yaml
         l_ssFileName << m_localFolder << "/zm-" << getUserName() << "-" << getHostName() << "-local.yaml";
         m_filename = l_ssFileName.str();
 
+        /// find the name for the session journal. must be unique
+        /// across sessions
         // eg. /path/to/zeitmaschine/zm-frans-heizluefter-temp-journal.yaml
         std::stringstream l_ssTempJournalFile;
         l_ssTempJournalFile << m_localFolder << "/zm-" << getUserName()
@@ -668,8 +673,12 @@ public:
 
     static std::string time_stamp_iso()
     {
-        return boost::posix_time::to_iso_string(
-                    boost::posix_time::microsec_clock::local_time());
+        std::stringstream l_stream;
+
+        boost::posix_time::time_facet *facet = new boost::posix_time::time_facet("%Y%m%dT%H%M%S");
+        l_stream.imbue(std::locale(l_stream.getloc(), facet));
+        l_stream <<  boost::posix_time::second_clock::local_time();
+        return l_stream.str();
     }
 
 /// write relevant interface

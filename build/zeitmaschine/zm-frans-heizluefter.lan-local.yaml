@@ -347,11 +347,12 @@
     gtd_item_note: ""
 - uid: a5e1ed5292d3cfa1
   caption: Tags einführen
-  hash1: 1637371150083117285917488944585017322136121944458477670383791758774251974716132
+  hash1: 16373711500831172859174889445850173221362654435818121944458477670383791758774251974716132
   attributes:
     - gtd_item_unhandled
   string_values:
     global_time_created: 2013-03-31T15:26:32.388446
+    gtd_importance: 1
     gtd_item_note: "* separate Mulit-Select-Liste einführen\n* Tags sind Items\n* Context als Tag?\n* Tags sind mit Items bidirektional verknüpft"
 - uid: a6031d07a28441da
   caption: "Bug: Absturz bei delete"
