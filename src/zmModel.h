@@ -5,6 +5,7 @@
 #define FLOWMODEL_H
 
 #include "zmTrace.h"
+#include "osal.h"
 
 #include <map>
 #include <set>
@@ -401,15 +402,15 @@ public:
         // <local folder>/zm-<user>-<client>-<zm-domain>-local.yaml
         // eg. /path/to/zeitmaschine/zm-frans-heizluefter-private-local.yaml
         std::stringstream l_ssFileName;
-        l_ssFileName << m_localFolder << "/zm-" << getUserName() << "-" << getHostName() << "-local.yaml";
+        l_ssFileName << m_localFolder << "/zm-" << osal::getUserName() << "-" << osal::getHostName() << "-local.yaml";
         m_filename = l_ssFileName.str();
 
         /// find the name for the session journal. must be unique
         /// across sessions
         // eg. /path/to/zeitmaschine/zm-frans-heizluefter-temp-journal.yaml
         std::stringstream l_ssTempJournalFile;
-        l_ssTempJournalFile << m_localFolder << "/zm-" << getUserName()
-                            << "-" << getHostName() << "-"
+        l_ssTempJournalFile << m_localFolder << "/zm-" << osal::getUserName()
+                            << "-" << osal::getHostName() << "-"
                             << time_stamp_iso() << "-temp-journal.yaml";
         m_temporaryJournalFile = l_ssTempJournalFile.str();
 
@@ -785,18 +786,6 @@ public:
     }
 
 private:
-
-    static std::string getHostName()
-    {
-        char l_hostname[1024];
-        gethostname(l_hostname,1024);
-        return std::string( l_hostname );
-    }
-
-    static std::string getUserName()
-    {
-        return std::string( getlogin() );
-    }
 
     static std::time_t pt_to_time_t(const boost::posix_time::ptime& pt)
     {

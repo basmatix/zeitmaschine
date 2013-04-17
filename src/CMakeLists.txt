@@ -11,13 +11,13 @@ find_package(
         Boost 1.47
     COMPONENTS
         filesystem
-        serialization
+        #serialization
         system
-        thread
-        program_options
-        iostreams
+        #thread
+        #program_options
+        #iostreams
         date_time
-        regex
+        #regex
     REQUIRED
   )
 
@@ -69,6 +69,7 @@ file( GLOB ${PROJECT_NAME}_files
     CMakeLists.txt
     *.h
     main.cpp
+    osal.cpp
 )
 
 add_subdirectory( submodules/yaml-cpp )
@@ -99,7 +100,7 @@ target_link_libraries( zm
     yaml-cpp
 )
 
-add_executable( zmTool zmTool.cpp )
+add_executable( zmTool zmTool.cpp osal.cpp )
 target_link_libraries( zmTool
     ${QT_LIBRARIES}
     ${Boost_LIBRARIES}
