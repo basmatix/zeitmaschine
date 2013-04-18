@@ -23,6 +23,11 @@ std::string osal::getUserName()
 
 #ifdef WIN32
 
+std::string osal::getHostName()
+{
+    return "";
+}
+/*
 BOOL GetMyHostName(LPSTR pszBuffer, UINT nLen)
 {
     BOOL ret;
@@ -39,12 +44,17 @@ BOOL GetMyHostName(LPSTR pszBuffer, UINT nLen)
 
     return ret;
 }
-
+*/
 #include <windows.h>
 #include <Lmcons.h>
 
+std::string osal::getUserName()
+{
+    return "";
+}
+/*
 // http://stackoverflow.com/questions/11587426/get-current-username-in-c-on-windows
 char username[UNLEN+1];
 GetUserName(username, UNLEN+1);
-
+*/
 #endif
