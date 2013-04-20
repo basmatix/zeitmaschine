@@ -11,7 +11,7 @@
 
 class zmGtdModel
 {
-    ThingsModel m_things_model;
+    zm::ThingsModel m_things_model;
 
 /// maintenance interface
 public:
@@ -72,7 +72,7 @@ public:
     {
         std::list< std::string > l_return;
 
-        BOOST_FOREACH(const ThingsModel::ThingsModelMapType::value_type& i, m_things_model.things() )
+        BOOST_FOREACH(const zm::ThingsModel::ThingsModelMapType::value_type& i, m_things_model.things() )
         {
             if( isInboxItem( i.first )
                 && (includeDoneItems       || !isDone(  i.first ) ) )
@@ -90,7 +90,7 @@ public:
     {
         std::list< std::string > l_return;
 
-        BOOST_FOREACH(const ThingsModel::ThingsModelMapType::value_type& i, m_things_model.things() )
+        BOOST_FOREACH(const zm::ThingsModel::ThingsModelMapType::value_type& i, m_things_model.things() )
         {
             if( isTaskItem( i.first, includeStandaloneTasks )
                     && (includeDoneItems       || !isDone(  i.first ) ) )
@@ -106,7 +106,7 @@ public:
     {
         std::list< std::string > l_return;
 
-        BOOST_FOREACH(const ThingsModel::ThingsModelMapType::value_type& i, m_things_model.things() )
+        BOOST_FOREACH(const zm::ThingsModel::ThingsModelMapType::value_type& i, m_things_model.things() )
         {
             if( isProjectItem( i.first, includeStandaloneTasks )
                     && (includeDoneItems       || !isDone(  i.first ) ) )
@@ -122,7 +122,7 @@ public:
     {
         std::list< std::string > l_return;
 
-        BOOST_FOREACH(const ThingsModel::ThingsModelMapType::value_type& i, m_things_model.things() )
+        BOOST_FOREACH(const zm::ThingsModel::ThingsModelMapType::value_type& i, m_things_model.things() )
         {
             if( isDone(  i.first ) )
             {
@@ -293,7 +293,7 @@ public:
                     task_item, "gtd_item_done" );
 
         m_things_model.setValue(
-                    task_item, "gtd_time_done", ThingsModel::time_stamp_iso_ext() );
+                    task_item, "gtd_time_done", zm::common::time_stamp_iso_ext() );
 
         m_things_model.localSave();
     }

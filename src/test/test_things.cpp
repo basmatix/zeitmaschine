@@ -54,11 +54,11 @@ bool empty_db_on_load()
 bool change_while_open()
 {
     // client 1 starts and has a model in mind
-    ThingsModel l_m1;
+    zm::ThingsModel l_m1;
     std::string l_item1 = l_m1.createNewItem( "some first item" );
 
     // meanwhile another client (or some syncing system) writes some content
-    ThingsModel l_m2;
+    zm::ThingsModel l_m2;
     std::string l_item2 = l_m2.createNewItem( "some concurrent item" );
     //l_m2.save( "tmp_export.yaml" );
 
@@ -67,7 +67,7 @@ bool change_while_open()
     //l_m1.save( "tmp_export.yaml" );
 
     // client 2 (or a third client) starts again and loads the current db
-    ThingsModel l_m3;
+    zm::ThingsModel l_m3;
 //    std::cout <<  boost_concept_check__LINE__ << std::endl;
 
     bool l_everythings_there =
