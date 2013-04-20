@@ -4,7 +4,7 @@
 #include "zmModel.h"
 
 #include "zmTrace.h"
-#include "osal.h"
+#include "zmOsal.h"
 
 #include "zmThing.h"
 #include "zmChangeSet.h"

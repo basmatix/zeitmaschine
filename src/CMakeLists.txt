@@ -79,7 +79,7 @@ file( GLOB ${PROJECT_NAME}_files
     CMakeLists.txt
     *.h
     main.cpp
-    osal.cpp
+    zmOsal.cpp
     zmModel.cpp
 )
 
@@ -117,7 +117,7 @@ target_link_libraries( zm
 add_executable( zmTool
     zmTool.cpp
     zmModel.cpp
-    osal.cpp
+    zmOsal.cpp
 )
 
 target_link_libraries( zmTool
@@ -129,7 +129,7 @@ target_link_libraries( zmTool
 add_executable( test_things
     test/test_things.cpp
     zmModel.cpp
-    osal.cpp
+    zmOsal.cpp
 )
 
 target_link_libraries( test_things

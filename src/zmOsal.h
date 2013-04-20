@@ -6,6 +6,9 @@
 
 #include <string>
 
+namespace zm
+{
+
 namespace osal
 {
 
@@ -14,4 +17,6 @@ std::string getHostName();
 std::string getUserName();
 
 }
+}
+
 #endif

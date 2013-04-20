@@ -1,20 +1,20 @@
 /// copyright (C) 2013 Frans Fürst
 /// -*- coding: utf-8 -*-
 
-#include "osal.h"
+#include "zmOsal.h"
 
 #ifdef __unix__
 
 #include <unistd.h>
 
-std::string osal::getHostName()
+std::string zm::osal::getHostName()
 {
     char l_hostname[1024];
     gethostname(l_hostname,1024);
     return std::string( l_hostname );
 }
 
-std::string osal::getUserName()
+std::string zm::osal::getUserName()
 {
     return std::string( getlogin() );
 }
@@ -23,7 +23,7 @@ std::string osal::getUserName()
 
 #ifdef WIN32
 
-std::string osal::getHostName()
+std::string zm::osal::getHostName()
 {
     return "";
 }
@@ -48,7 +48,7 @@ BOOL GetMyHostName(LPSTR pszBuffer, UINT nLen)
 #include <windows.h>
 #include <Lmcons.h>
 
-std::string osal::getUserName()
+std::string zm::osal::getUserName()
 {
     return "";
 }
