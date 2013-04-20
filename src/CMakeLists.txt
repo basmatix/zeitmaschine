@@ -80,6 +80,7 @@ file( GLOB ${PROJECT_NAME}_files
     *.h
     main.cpp
     osal.cpp
+    zmModel.cpp
 )
 
 add_subdirectory( submodules/yaml-cpp )
@@ -113,14 +114,23 @@ target_link_libraries( zm
     yaml-cpp
 )
 
-add_executable( zmTool zmTool.cpp osal.cpp )
+add_executable( zmTool
+    zmTool.cpp
+    zmModel.cpp
+    osal.cpp
+)
+
 target_link_libraries( zmTool
     ${QT_LIBRARIES}
     ${Boost_LIBRARIES}
     yaml-cpp
 )
 
-add_executable( test_things test/test_things.cpp )
+add_executable( test_things
+    test/test_things.cpp
+    zmModel.cpp
+    osal.cpp
+)
 
 target_link_libraries( test_things
     ${Boost_LIBRARIES}

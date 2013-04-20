@@ -12,7 +12,7 @@ namespace zm
 namespace common
 {
 
-static std::time_t seconds_from_epoch(const std::string& a_time, const std::string& a_format )
+inline std::time_t seconds_from_epoch(const std::string& a_time, const std::string& a_format )
 {
     boost::posix_time::ptime l_ptime;
 
@@ -34,13 +34,13 @@ static std::time_t seconds_from_epoch(const std::string& a_time, const std::stri
     return l_diff.ticks() / boost::posix_time::time_duration::rep_type::ticks_per_second;
 }
 
-static std::string time_stamp_iso_ext()
+inline std::string time_stamp_iso_ext()
 {
     return boost::posix_time::to_iso_extended_string(
                 boost::posix_time::microsec_clock::local_time());
 }
 
-static std::string time_stamp_iso()
+inline std::string time_stamp_iso()
 {
     std::stringstream l_stream;
 
@@ -48,6 +48,14 @@ static std::string time_stamp_iso()
     l_stream.imbue(std::locale(l_stream.getloc(), facet));
     l_stream <<  boost::posix_time::second_clock::local_time();
     return l_stream.str();
+}
+
+inline std::time_t pt_to_time_t(const boost::posix_time::ptime& pt)
+{
+    boost::posix_time::ptime timet_start(boost::gregorian::date(1970,1,1));
+    boost::posix_time::time_duration diff = pt - timet_start;
+    std::time_t r = diff.ticks()/boost::posix_time::time_duration::rep_type::ticks_per_second;
+    return r;
 }
 
 }
