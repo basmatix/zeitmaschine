@@ -7,6 +7,7 @@
 #include "ui_zeitmaschine.h"
 
 #include "zmQtGtdModel.h"
+#include "zmOsal.h"
 
 #include "zmTrace.h"
 
@@ -23,6 +24,7 @@
 #include <QtCore/QPair>
 #include <QtCore/QTimer>
 #include <QtGui/QMessageBox>
+#include <QtGui/QInputDialog>
 
 #include <iostream>
 #include <assert.h>
@@ -153,6 +155,23 @@ public:
     {   tracemessage( __FUNCTION__ );
 
         m_ui->setupUi( this );
+
+        if( !m_model.hasUsedUsername() )
+        {
+            bool ok;
+            QString text = QInputDialog::getText( this, tr("QInputDialog::getText()"),
+                                                    tr("user name:"), QLineEdit::Normal,
+                                                    QDir::home().dirName(), &ok);
+            m_model.setUsedUsername( text );
+        }
+        if( !m_model.hasUsedHostname() )
+        {
+            bool ok;
+            QString text = QInputDialog::getText( this, tr("QInputDialog::getText()"),
+                                                    tr("machine name:"), QLineEdit::Normal,
+                                                    zm::osal::getHostName().c_str(), &ok);
+            m_model.setUsedHostname( text );
+        }
 
         if( QDir( QDir::currentPath() + QDir::separator() + "zeitmaschine").exists() )
         {

@@ -24,7 +24,7 @@ find_package(
         #serialization
         system
         #thread
-        #program_options
+        program_options
         #iostreams
         date_time
         #regex

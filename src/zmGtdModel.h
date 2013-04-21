@@ -20,6 +20,26 @@ public:
         : m_things_model()
     {}
 
+    bool hasUsedUsername() const
+    {
+        return m_things_model.hasUsedUsername();
+    }
+
+    bool hasUsedHostname() const
+    {
+        return m_things_model.hasUsedHostname();
+    }
+
+    void setUsedUsername( const std::string &username )
+    {
+        m_things_model.setUsedUsername( username );
+    }
+
+    void setUsedHostname( const std::string &hostname )
+    {
+        m_things_model.setUsedHostname( hostname );
+    }
+
     void setLocalFolder( const std::string &path )
     {
         m_things_model.setLocalFolder( path );

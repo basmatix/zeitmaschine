@@ -55,6 +55,26 @@ namespace zm
         /// available to the sync folders and
         void sync();
 
+        /// returns whether there is a valid username stored
+        bool hasUsedUsername() const;
+
+        /// returns whether there is a valid hostname stored
+        bool hasUsedHostname() const;
+
+        /// returns the username used by us
+        std::string getUsedUsername() const;
+
+        /// set the username used by us - should be the system user
+        /// name but doesn't have to
+        void setUsedUsername( const std::string &username );
+
+        /// returns the hostname used by us - should be the system user
+        /// name but doesn't have to
+        std::string getUsedHostname() const;
+
+        /// set the hostname used by us
+        void setUsedHostname( const std::string &hostname );
+
     private:
 
         void load( const std::string &filename );

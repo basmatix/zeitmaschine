@@ -20,6 +20,26 @@ public:
         : m_gtd_model()
     {}
 
+    bool hasUsedUsername() const
+    {
+        return m_gtd_model.hasUsedUsername();
+    }
+
+    bool hasUsedHostname() const
+    {
+        return m_gtd_model.hasUsedHostname();
+    }
+
+    void setUsedUsername( const QString &username )
+    {
+        m_gtd_model.setUsedUsername( username.toUtf8().constData() );
+    }
+
+    void setUsedHostname( const QString &hostname )
+    {
+        m_gtd_model.setUsedHostname( hostname.toUtf8().constData() );
+    }
+
     void setLocalFolder( const QString &path )
     {
         m_gtd_model.setLocalFolder( path.toUtf8().constData() );

@@ -6,34 +6,152 @@
 #include "zmTrace.h"
 #include "zmOsal.h"
 
-#include "zmThing.h"
-#include "zmChangeSet.h"
-
-#include <map>
-//#include <set>
-//#include <fstream>
+#include <fstream>
 #include <string>
-//#include <yaml-cpp/yaml.h>
+#include <yaml-cpp/yaml.h>
 
-//#include <algorithm>
-//#include <boost/foreach.hpp>
-//#include <boost/filesystem.hpp>
-//#include <boost/date_time.hpp>
-//#include <boost/functional/hash.hpp>
+#include <algorithm>
+#include <boost/foreach.hpp>
+#include <boost/filesystem.hpp>
 
-// info regarding string encoding:
-//    http://code.google.com/p/yaml-cpp/wiki/Strings
+#include <boost/program_options.hpp>
+
+namespace po = boost::program_options;
+
+class Options
+{
+public:
+
+    Options()
+        : m_variable_map()
+        , m_descriptions("Generic options")
+    {
+        m_descriptions.add_options()
+            ("username", "unique username - used for syncing")
+                ("read_journal",  po::value< std::vector<std::string> >(),//->default_value( std::vector< std::string >() ),
+                    "name of a journal file already parsed")
+            ("hostname", "unique name for this machine - used for syncing")
+            ;
+    }
+
+    void load( const std::string &filename )
+    {
+        //store(parse_command_line(argc, argv, desc), m_variable_map);
+
+        boost::program_options::store(
+                    boost::program_options::parse_config_file< char >(
+                        filename.c_str(), m_descriptions ),
+                    m_variable_map);
+
+        boost::program_options::notify( m_variable_map );
+    }
+
+    bool hasValue( const std::string &key ) const
+    {
+        return m_variable_map.count( key ) > 0;
+    }
+
+    std::string getStringValue( const std::string &key ) const
+    {
+        return m_variable_map[ key ].as< std::string >();
+    }
+
+    std::vector< std::string > getStringList( const std::string &key ) const
+    {
+        return m_variable_map[ key ].as< std::vector< std::string > >();
+    }
+
+    void addString( const std::string &key, const std::string &value )
+    {
+        std::vector< std::string > l_tmp;
+
+        bool l_value_exists = m_variable_map.count( key ) > 0;
+
+        if( l_value_exists )
+        {
+            l_tmp = m_variable_map[ key ].as< std::vector< std::string > >();
+        }
+
+        l_tmp.push_back( value );
+
+        /// insert does not override values - we have to trick boost
+        if( l_value_exists )
+        {
+            boost::program_options::variables_map::iterator i = m_variable_map.find( key );
+            i->second = boost::program_options::variable_value( l_tmp, false);
+        }
+        else
+        {
+            m_variable_map.insert( std::make_pair(
+                key, boost::program_options::variable_value( l_tmp, false) ) );
+        }
+
+        boost::program_options::notify( m_variable_map );
+
+        save( "zeitmaschine.cfg" );
+    }
+
+    void setStringValue( const std::string &key, const std::string &value )
+    {
+        boost::program_options::variables_map::iterator i = m_variable_map.find( key );
+        if( i == m_variable_map.end() )
+        {
+            m_variable_map.insert( std::make_pair(
+                key, boost::program_options::variable_value( value, false)) );
+        }
+        else
+        {
+            i->second = boost::program_options::variable_value( value, false);
+        }
+
+        boost::program_options::notify( m_variable_map );
+
+        save( "zeitmaschine.cfg" );
+    }
+
+private:
+
+    void save( const std::string &filename )
+    {
+        std::ofstream l_fout( filename.c_str() );
+
+        BOOST_FOREACH( po::variables_map::value_type v, m_variable_map)
+        {
+            if ( v.second.empty() ) continue;
+            const ::std::type_info &type = v.second.value().type() ;
+            if ( type == typeid( ::std::string ) )
+            {
+                l_fout << v.first << " = " << v.second.as< std::string >() << std::endl;
+            }
+            else if ( type == typeid( std::vector< std::string > ) )
+            {
+                std::vector< std::string > l_tmp( v.second.as< std::vector< std::string > >() );
+                tracemessage( "%d", l_tmp.size() );
+                BOOST_FOREACH( std::string s, l_tmp)
+                {
+                    l_fout << v.first << " = " << s << std::endl;
+                }
+            }
+        }
+    }
+
+    boost::program_options::variables_map       m_variable_map;
+    boost::program_options::options_description m_descriptions;
+
+// not gonna stay here
+} m_options;
 
 zm::ThingsModel::ThingsModel()
     : m_things              ()
     , m_thingsOnLoad        ()
-    , m_localFolder         ()
-    , m_filename            ()
-    , m_temporaryJournalFile()
+    , m_localFolder         ( "" )
+    , m_filename            ( "" )
+    , m_temporaryJournalFile( "" )
     , m_initialized         ( false )
     , m_dirty               ( false )
     , m_changeSet           ()
 {
+    m_options.load("zeitmaschine.cfg");
 }
 
 void zm::ThingsModel::setLocalFolder( const std::string &path )
@@ -47,6 +165,28 @@ void zm::ThingsModel::addDomainSyncFolder( const std::string &domainName, const 
     tracemessage( "new domain: %s %s", domainName.c_str(), path.c_str() );
 }
 
+bool zm::ThingsModel::hasUsedUsername() const
+{
+    return m_options.hasValue( "username" )
+            && m_options.getStringValue( "username" ) != "";
+}
+
+bool zm::ThingsModel::hasUsedHostname() const
+{
+    return m_options.hasValue( "hostname" )
+            && m_options.getStringValue( "hostname" ) != "";
+}
+
+void zm::ThingsModel::setUsedUsername( const std::string &username )
+{
+    m_options.setStringValue( "username", username );
+}
+
+void zm::ThingsModel::setUsedHostname( const std::string &hostname )
+{
+    m_options.setStringValue( "hostname", hostname );
+}
+
 void zm::ThingsModel::initialize()
 {
     /// find the name for the local model file - should be equal
@@ -54,16 +194,24 @@ void zm::ThingsModel::initialize()
     // <local folder>/zm-<user>-<client>-<zm-domain>-local.yaml
     // eg. /path/to/zeitmaschine/zm-frans-heizluefter-private-local.yaml
     std::stringstream l_ssFileName;
-    l_ssFileName << m_localFolder << "/zm-" << osal::getUserName() << "-" << osal::getHostName() << "-local.yaml";
+    l_ssFileName << m_localFolder << "/zm-"
+                 << m_options.getStringValue( "username" )
+                 << "-"
+                 << m_options.getStringValue( "hostname" )
+                 << "-local.yaml";
+
     m_filename = l_ssFileName.str();
 
     /// find the name for the session journal. must be unique
     /// across sessions
     // eg. /path/to/zeitmaschine/zm-frans-heizluefter-temp-journal.yaml
     std::stringstream l_ssTempJournalFile;
-    l_ssTempJournalFile << m_localFolder << "/zm-" << osal::getUserName()
-                        << "-" << osal::getHostName() << "-"
-                        << zm::common::time_stamp_iso() << "-temp-journal.yaml";
+    l_ssTempJournalFile << m_localFolder << "/zm-"
+                        << m_options.getStringValue( "username" )
+                        << "-"
+                        << m_options.getStringValue( "hostname" ) << "-"
+                        << zm::common::time_stamp_iso()
+                        << "-temp-journal.yaml";
     m_temporaryJournalFile = l_ssTempJournalFile.str();
 
     tracemessage( "using temp file '%s'", m_temporaryJournalFile.c_str() );
@@ -105,6 +253,9 @@ void zm::ThingsModel::dirty()
 {
     m_dirty = true;
 }
+
+// info regarding string encoding:
+//    http://code.google.com/p/yaml-cpp/wiki/Strings
 
 void zm::ThingsModel::save( const std::string &filename )
 {
