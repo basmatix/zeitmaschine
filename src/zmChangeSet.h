@@ -57,14 +57,15 @@ public:
 
 class ChangeSet
 {
+
 public:
 
     ChangeSet()
-        :m_journal()
+        : m_journal()
     {}
 
     ChangeSet( const std::string &journalFileName )
-        :m_journal()
+        : m_journal()
     {
         load( journalFileName );
     }
@@ -135,7 +136,6 @@ public:
                 break;
             }
 
-
             l_yaml_emitter << YAML::EndMap;
         }
         l_yaml_emitter << YAML::EndSeq;
@@ -150,9 +150,24 @@ public:
         }
     }
 
+    const std::vector< JournalItem * > & getJournal() const
+    {
+        return m_journal;
+    }
+
     void push_back( JournalItem *item )
     {
         m_journal.push_back( item );
+    }
+
+    void clear()
+    {
+        BOOST_FOREACH( JournalItem *i, m_journal )
+        {
+            delete i;
+        }
+
+        m_journal.clear();
     }
 
 private:

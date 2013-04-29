@@ -6,6 +6,7 @@
 
 #include <string>
 #include <boost/date_time.hpp>
+#include <boost/regex.hpp>
 
 namespace zm
 {
@@ -57,6 +58,38 @@ inline std::time_t pt_to_time_t(const boost::posix_time::ptime& pt)
     std::time_t r = diff.ticks()/boost::posix_time::time_duration::rep_type::ticks_per_second;
     return r;
 }
+
+inline void escapeRegex( std::string &regex )
+{
+    boost::replace_all(regex, "\\", "\\\\");
+    boost::replace_all(regex, "^", "\\^");
+    boost::replace_all(regex, ".", "\\.");
+    boost::replace_all(regex, "$", "\\$");
+    boost::replace_all(regex, "|", "\\|");
+    boost::replace_all(regex, "(", "\\(");
+    boost::replace_all(regex, ")", "\\)");
+    boost::replace_all(regex, "[", "\\[");
+    boost::replace_all(regex, "]", "\\]");
+    boost::replace_all(regex, "*", "\\*");
+    boost::replace_all(regex, "+", "\\+");
+    boost::replace_all(regex, "?", "\\?");
+    boost::replace_all(regex, "/", "\\/");
+}
+
+inline bool matchesWildcards( const std::string &text, std::string wildcardPattern, bool caseSensitive = true)
+{
+    // Escape all regex special chars
+    escapeRegex(wildcardPattern);
+
+    // Convert chars '*?' back to their regex equivalents
+    boost::replace_all(wildcardPattern, "\\?", ".");
+    boost::replace_all(wildcardPattern, "\\*", ".*");
+
+    boost::regex pattern(wildcardPattern, caseSensitive ? boost::regex::normal : boost::regex::icase);
+
+    return regex_match(text, pattern);
+}
+
 
 }
 }

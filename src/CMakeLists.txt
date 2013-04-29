@@ -27,7 +27,7 @@ find_package(
         program_options
         #iostreams
         date_time
-        #regex
+        regex
     REQUIRED
   )
 

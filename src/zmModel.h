@@ -21,7 +21,6 @@ namespace zm
     private:
 
         ThingsModelMapType  m_things;
-        ThingsModelMapType  m_thingsOnLoad;
         std::string         m_localFolder;
         std::string         m_filename;
         ChangeSet           m_changeSet;
@@ -83,6 +82,10 @@ namespace zm
 
         void save( const std::string &filename );
 
+        std::vector< std::string > getJournalFiles();
+
+        void applyChangeSet( const ChangeSet &changeSet );
+
     /// const interface
     public:
 
@@ -122,6 +125,18 @@ namespace zm
         void setCaption( const std::string &uid, const std::string &caption );
 
     private:
+
+        std::string _createNewItem( const std::string &caption, const std::string &time );
+
+        void _eraseItem( ThingsModelMapType::iterator &item );
+
+        void _addAttribute( ThingsModelMapType::iterator &item, const std::string &attribute );
+
+        bool _removeAttribute( ThingsModelMapType::iterator &item, const std::string &attribute );
+
+        bool _setValue( ThingsModelMapType::iterator &item, const std::string &name, const std::string &value );
+
+        bool _setCaption( ThingsModelMapType::iterator &item, const std::string &caption );
 
         // returns 16x8 bit
         static inline std::string generateUid()

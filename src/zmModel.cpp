@@ -143,7 +143,6 @@ private:
 
 zm::ThingsModel::ThingsModel()
     : m_things              ()
-    , m_thingsOnLoad        ()
     , m_localFolder         ( "" )
     , m_filename            ( "" )
     , m_temporaryJournalFile( "" )
@@ -202,16 +201,15 @@ void zm::ThingsModel::initialize()
 
     m_filename = l_ssFileName.str();
 
-    /// find the name for the session journal. must be unique
-    /// across sessions
+    /// find the name for the temporary session journal- should be equal
+    /// across sessions and unique for each client
     // eg. /path/to/zeitmaschine/zm-frans-heizluefter-temp-journal.yaml
     std::stringstream l_ssTempJournalFile;
     l_ssTempJournalFile << m_localFolder << "/zm-"
                         << m_options.getStringValue( "username" )
                         << "-"
-                        << m_options.getStringValue( "hostname" ) << "-"
-                        << zm::common::time_stamp_iso()
-                        << "-temp-journal.yaml";
+                        << m_options.getStringValue( "hostname" )
+                        << "-journal-temp.yaml";
     m_temporaryJournalFile = l_ssTempJournalFile.str();
 
     tracemessage( "using temp file '%s'", m_temporaryJournalFile.c_str() );
@@ -232,12 +230,23 @@ void zm::ThingsModel::localSave()
 void zm::ThingsModel::sync()
 {
     save( m_filename );
+
+    m_changeSet.write( m_temporaryJournalFile );
+
+    std::stringstream l_ssJournalFile;
+    l_ssJournalFile << m_localFolder << "/zm-"
+                    << m_options.getStringValue( "username" )
+                    << "-"
+                    << m_options.getStringValue( "hostname" ) << "-"
+                    << zm::common::time_stamp_iso()
+                    << "-journal.yaml";
+    boost::filesystem::rename( m_temporaryJournalFile, l_ssJournalFile.str() );
+    m_changeSet.clear();
 }
 
 void zm::ThingsModel::load( const std::string &filename )
 {
     clear( m_things );
-    clear( m_thingsOnLoad );
 
     if( ! boost::filesystem::exists( filename ) )
     {
@@ -246,7 +255,71 @@ void zm::ThingsModel::load( const std::string &filename )
     YAML::Node l_import = YAML::LoadFile(filename);
 
     yamlToThingsMap( l_import, m_things );
-    yamlToThingsMap( l_import, m_thingsOnLoad );
+
+    std::vector< std::string > l = getJournalFiles();
+
+    BOOST_FOREACH( std::string s, l )
+    {
+        tracemessage( "journal: %s", s.c_str() );
+        applyChangeSet( ChangeSet( s ) );
+    }
+}
+
+void zm::ThingsModel::applyChangeSet( const ChangeSet &changeSet )
+{
+    return;
+    BOOST_FOREACH(const JournalItem * j, changeSet.getJournal() )
+    {
+        ThingsModelMapType::iterator l_item_it( m_things.find( j->uid ) );
+
+        assert( l_item_it != m_things.end() );
+
+        switch( j->type )
+        {
+        case JournalItem::CreateItem:
+            _createNewItem( j->value, j->time );
+            break;
+        case JournalItem::SetStringValue:
+            _setValue(l_item_it, j->key, j->value );
+            break;
+        case JournalItem::EraseItem:
+            _eraseItem( l_item_it );
+            break;
+        case JournalItem::AddAttribute:
+            _addAttribute( l_item_it, j->key );
+            break;
+        case JournalItem::RemoveAttribute:
+            _removeAttribute( l_item_it, j->key );
+            break;
+        case JournalItem::ChangeCaption:
+            _setCaption( l_item_it, j->value );
+            break;
+        }
+    }
+}
+
+std::vector< std::string > zm::ThingsModel::getJournalFiles()
+{
+    const std::string target_path( m_localFolder );
+    const std::string my_filter( "*-journal.yaml" );
+
+    std::vector< std::string > all_matching_files;
+
+    boost::filesystem::directory_iterator end_itr; // Default ctor yields past-the-end
+    for( boost::filesystem::directory_iterator i( target_path ); i != end_itr; ++i )
+    {
+        tracemessage( "%s", i->path().string().c_str() );
+        // skip if not a file
+        if( !boost::filesystem::is_regular_file( i->status() ) ) continue;
+
+        // skip if no match
+        if( !zm::common::matchesWildcards( i->path().string(), my_filter )) continue;
+
+        // file matches, store it
+        all_matching_files.push_back( i->path().string() );
+    }
+
+    return all_matching_files;
 }
 
 void zm::ThingsModel::dirty()
@@ -445,12 +518,8 @@ bool zm::ThingsModel::itemContentMatchesString( const std::string &uid, const st
 
 std::string zm::ThingsModel::createNewItem( const std::string &caption )
 {
-    std::string l_new_key = generateUid();
-    Thing *l_new_thing = new Thing( caption );
     std::string l_time = zm::common::time_stamp_iso_ext();
-    l_new_thing->addValue( "global_time_created", l_time );
-
-    m_things[ l_new_key ] = l_new_thing;
+    std::string l_new_key = _createNewItem( caption, l_time );
 
     JournalItem *l_change = new JournalItem( l_new_key, JournalItem::CreateItem );
     l_change->time = l_time;
@@ -462,13 +531,22 @@ std::string zm::ThingsModel::createNewItem( const std::string &caption )
     return l_new_key;
 }
 
+std::string zm::ThingsModel::_createNewItem( const std::string &caption, const std::string &a_time )
+{
+    std::string l_new_key = generateUid();
+    Thing *l_new_thing = new Thing( caption );
+    l_new_thing->addValue( "global_time_created", a_time );
+    m_things[ l_new_key ] = l_new_thing;
+    return l_new_key;
+}
+
 void zm::ThingsModel::eraseItem( const std::string &uid )
 {
     ThingsModelMapType::iterator l_item_it( m_things.find( uid ) );
 
     assert( l_item_it != m_things.end() );
 
-    m_things.erase( l_item_it );
+    _eraseItem( l_item_it );
 
     JournalItem *l_change = new JournalItem( uid, JournalItem::EraseItem );
     m_changeSet.push_back( l_change );
@@ -476,11 +554,20 @@ void zm::ThingsModel::eraseItem( const std::string &uid )
     dirty();
 }
 
+void zm::ThingsModel::_eraseItem( ThingsModelMapType::iterator &item )
+{
+    //todo: remove references
+    //todo: delete item
+    m_things.erase( item );
+}
+
 void zm::ThingsModel::addAttribute( const std::string &uid, const std::string &attribute )
 {
     ThingsModelMapType::iterator l_item_it( m_things.find( uid ) );
 
     assert( l_item_it != m_things.end() );
+
+    _addAttribute( l_item_it, attribute );
 
     l_item_it->second->addAttribute( attribute );
 
@@ -491,13 +578,18 @@ void zm::ThingsModel::addAttribute( const std::string &uid, const std::string &a
     dirty();
 }
 
+void zm::ThingsModel::_addAttribute( ThingsModelMapType::iterator &item, const std::string &attribute )
+{
+    item->second->addAttribute( attribute );
+}
+
 bool zm::ThingsModel::removeAttribute( const std::string &uid, const std::string &attribute )
 {
     ThingsModelMapType::iterator l_item_it( m_things.find( uid ) );
 
     assert( l_item_it != m_things.end() );
 
-    bool l_return = l_item_it->second->removeAttribute( attribute );
+    bool l_return = _removeAttribute( l_item_it, attribute );
 
     JournalItem *l_change = new JournalItem( uid, JournalItem::RemoveAttribute );
     l_change->key = attribute;
@@ -508,21 +600,32 @@ bool zm::ThingsModel::removeAttribute( const std::string &uid, const std::string
     return l_return;
 }
 
+bool zm::ThingsModel::_removeAttribute( ThingsModelMapType::iterator &item, const std::string &attribute )
+{
+    return item->second->removeAttribute( attribute );
+}
+
 void zm::ThingsModel::setValue( const std::string &uid, const std::string &name, const std::string &value )
 {
     ThingsModelMapType::iterator l_item_it( m_things.find( uid ) );
 
     assert( l_item_it != m_things.end() );
 
+    if( !_setValue(l_item_it, name, value ) ) return;
+
     JournalItem *l_change = new JournalItem( uid, JournalItem::SetStringValue );
-    //l_change->before = l_item_it->second->m_caption;
     l_change->key = name;
     l_change->value = value;
     m_changeSet.push_back( l_change );
 
-    l_item_it->second->addValue( name, value );
-
     dirty();
+}
+
+bool zm::ThingsModel::_setValue( ThingsModelMapType::iterator &item, const std::string &name, const std::string &value )
+{
+    if( item->second->getValue( name) == value ) return false;
+    item->second->addValue( name, value );
+    return true;
 }
 
 void zm::ThingsModel::setCaption( const std::string &uid, const std::string &caption )
@@ -531,16 +634,21 @@ void zm::ThingsModel::setCaption( const std::string &uid, const std::string &cap
 
     assert( l_item_it != m_things.end() );
 
-    if( l_item_it->second->m_caption == caption ) return;
+    if( !_setCaption( l_item_it, caption ) ) return;
 
     JournalItem *l_change = new JournalItem( uid, JournalItem::ChangeCaption );
     //l_change->before = l_item_it->second->m_caption;
     l_change->value = caption;
     m_changeSet.push_back( l_change );
 
-    l_item_it->second->m_caption = caption;
-
     dirty();
+}
+
+bool zm::ThingsModel::_setCaption( ThingsModelMapType::iterator &item, const std::string &caption )
+{
+    if( item->second->m_caption == caption ) return false;
+    item->second->m_caption = caption;
+    return true;
 }
 
 void zm::ThingsModel::clear( ThingsModelMapType &thingsMap )

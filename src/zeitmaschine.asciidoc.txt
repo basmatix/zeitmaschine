@@ -1,0 +1,30 @@
+zeitmaschine - GTD inspired home for thoughts
+=============================================
+//:toc:
+:icons:
+:numbered:
+:website: http://www.scitics.de
+//=-~^+
+
+Implementational details
+------------------------
+
+["plantuml"]
+--------------------------------------------------------------------------------
+title Startup sequence
+
+participant "Qt-Gui"        as gui    #99FF99
+participant "GTD-Model"     as gtd    #aa77aa
+participant "Things-Model"  as things #6666dd
+
+gui   ->  gtd                 :   set username/hostname
+          gtd   ->  things    :   set username/hostname
+gui   ->  gtd                 :   set localfolder
+          gtd   ->  things    :   set localfolder
+gui   ->  gtd                 :   initialize
+          gtd   ->  things    :   initialize
+                    things   ->  things    :   compose filenames for\n model and temp. jounal
+                    things   ->  things    :   load local journal
+                    things   ->  things    :   <color:#aa2222> load new external journals
+--------------------------------------------------------------------------------
+
