@@ -28,11 +28,11 @@
 namespace zm
 {
 
-    class Thing
+    class MindMatter
     {
     public:
 
-        Thing( const std::string &caption)
+        MindMatter( const std::string &caption)
             : m_caption         ( caption )
             , m_attributes      ()
             , m_string_values   ()
@@ -111,7 +111,7 @@ namespace zm
             return false;
         }
 
-        bool equals( const Thing & other )
+        bool equals( const MindMatter & other )
         {
             if( m_caption != other.m_caption )
             {

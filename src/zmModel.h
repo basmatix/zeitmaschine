@@ -12,15 +12,15 @@
 
 namespace zm
 {
-    class ThingsModel
+    class MindMatterModel
     {
     public:
 
-        typedef std::map< std::string, Thing * > ThingsModelMapType;
+        typedef std::map< std::string, MindMatter * > MindMatterModelMapType;
 
     private:
 
-        ThingsModelMapType  m_things;
+        MindMatterModelMapType  m_things;
         std::string         m_localFolder;
         std::string         m_filename;
         ChangeSet           m_changeSet;
@@ -31,7 +31,7 @@ namespace zm
 
     public:
 
-        ThingsModel();
+        MindMatterModel();
 
         /// sets the one and only local folder for configuration temorary and
         /// snapshot files
@@ -82,6 +82,8 @@ namespace zm
 
         void save( const std::string &filename );
 
+        /// returns a sorted list containing names of journal files
+        /// located in the sync folder
         std::vector< std::string > getJournalFiles();
 
         void applyChangeSet( const ChangeSet &changeSet );
@@ -89,9 +91,9 @@ namespace zm
     /// const interface
     public:
 
-        const ThingsModelMapType & things() const;
+        const MindMatterModelMapType & things() const;
 
-        bool equals( const ThingsModelMapType &thingsMap, const ThingsModelMapType &thingsMapOther ) const;
+        bool equals( const MindMatterModelMapType &thingsMap, const MindMatterModelMapType &thingsMapOther ) const;
 
         size_t getItemCount() const;
 
@@ -128,15 +130,15 @@ namespace zm
 
         std::string _createNewItem( const std::string &caption, const std::string &time );
 
-        void _eraseItem( ThingsModelMapType::iterator &item );
+        void _eraseItem( MindMatterModelMapType::iterator &item );
 
-        void _addAttribute( ThingsModelMapType::iterator &item, const std::string &attribute );
+        void _addAttribute( MindMatterModelMapType::iterator &item, const std::string &attribute );
 
-        bool _removeAttribute( ThingsModelMapType::iterator &item, const std::string &attribute );
+        bool _removeAttribute( MindMatterModelMapType::iterator &item, const std::string &attribute );
 
-        bool _setValue( ThingsModelMapType::iterator &item, const std::string &name, const std::string &value );
+        bool _setValue( MindMatterModelMapType::iterator &item, const std::string &name, const std::string &value );
 
-        bool _setCaption( ThingsModelMapType::iterator &item, const std::string &caption );
+        bool _setCaption( MindMatterModelMapType::iterator &item, const std::string &caption );
 
         // returns 16x8 bit
         static inline std::string generateUid()
@@ -152,9 +154,9 @@ namespace zm
             return l_return;
         }
 
-        static void clear( ThingsModelMapType &thingsMap );
+        static void clear( MindMatterModelMapType &thingsMap );
 
-        static void yamlToThingsMap( YAML::Node yamlNode, ThingsModelMapType &thingsMap );
+        static void yamlToThingsMap( YAML::Node yamlNode, MindMatterModelMapType &thingsMap );
     };
 }
 

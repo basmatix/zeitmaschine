@@ -11,7 +11,7 @@
 
 class zmGtdModel
 {
-    zm::ThingsModel m_things_model;
+    zm::MindMatterModel m_things_model;
 
 /// maintenance interface
 public:
@@ -92,7 +92,7 @@ public:
     {
         std::list< std::string > l_return;
 
-        BOOST_FOREACH(const zm::ThingsModel::ThingsModelMapType::value_type& i, m_things_model.things() )
+        BOOST_FOREACH(const zm::MindMatterModel::MindMatterModelMapType::value_type& i, m_things_model.things() )
         {
             if( isInboxItem( i.first )
                 && (includeDoneItems       || !isDone(  i.first ) ) )
@@ -110,7 +110,7 @@ public:
     {
         std::list< std::string > l_return;
 
-        BOOST_FOREACH(const zm::ThingsModel::ThingsModelMapType::value_type& i, m_things_model.things() )
+        BOOST_FOREACH(const zm::MindMatterModel::MindMatterModelMapType::value_type& i, m_things_model.things() )
         {
             if( isTaskItem( i.first, includeStandaloneTasks )
                     && (includeDoneItems       || !isDone(  i.first ) ) )
@@ -126,7 +126,7 @@ public:
     {
         std::list< std::string > l_return;
 
-        BOOST_FOREACH(const zm::ThingsModel::ThingsModelMapType::value_type& i, m_things_model.things() )
+        BOOST_FOREACH(const zm::MindMatterModel::MindMatterModelMapType::value_type& i, m_things_model.things() )
         {
             if( isProjectItem( i.first, includeStandaloneTasks )
                     && (includeDoneItems       || !isDone(  i.first ) ) )
@@ -142,7 +142,7 @@ public:
     {
         std::list< std::string > l_return;
 
-        BOOST_FOREACH(const zm::ThingsModel::ThingsModelMapType::value_type& i, m_things_model.things() )
+        BOOST_FOREACH(const zm::MindMatterModel::MindMatterModelMapType::value_type& i, m_things_model.things() )
         {
             if( isDone(  i.first ) )
             {
