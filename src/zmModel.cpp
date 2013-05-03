@@ -37,6 +37,7 @@ public:
     void load( const std::string &filename )
     {
         //store(parse_command_line(argc, argv, desc), m_variable_map);
+        if( !boost::filesystem::exists( filename ) ) return;
 
         boost::program_options::store(
                     boost::program_options::parse_config_file< char >(
@@ -58,6 +59,10 @@ public:
 
     std::vector< std::string > getStringList( const std::string &key ) const
     {
+        if( m_variable_map.count( key ) == 0 )
+        {
+            return std::vector< std::string >();
+        }
         return m_variable_map[ key ].as< std::vector< std::string > >();
     }
 
@@ -144,7 +149,7 @@ private:
 zm::MindMatterModel::MindMatterModel()
     : m_things              ()
     , m_localFolder         ( "" )
-    , m_filename            ( "" )
+    , m_localModelFile      ( "" )
     , m_temporaryJournalFile( "" )
     , m_initialized         ( false )
     , m_dirty               ( false )
@@ -199,7 +204,7 @@ void zm::MindMatterModel::initialize()
                  << m_options.getStringValue( "hostname" )
                  << "-local.yaml";
 
-    m_filename = l_ssFileName.str();
+    m_localModelFile = l_ssFileName.str();
 
     /// find the name for the temporary session journal- should be equal
     /// across sessions and unique for each client
@@ -212,27 +217,28 @@ void zm::MindMatterModel::initialize()
                         << "-journal-temp.yaml";
     m_temporaryJournalFile = l_ssTempJournalFile.str();
 
+    if( boost::filesystem::exists( m_temporaryJournalFile ) )
+    {
+        /// there is a temporary journal file which should not be there
+        /// (maybe a leftover after a crash or a debug session)
+        /// make it available for the rest of the world
+        makeTempJournalStatic();
+    }
+
     tracemessage( "using temp file '%s'", m_temporaryJournalFile.c_str() );
 
-    load( m_filename );
+    loadLocalModel( m_localModelFile );
+
+    if( importJournalFiles() )
+    {
+        saveLocalModel( m_localModelFile );
+    }
 
     m_initialized = true;
 }
 
-void zm::MindMatterModel::localSave()
+void zm::MindMatterModel::makeTempJournalStatic()
 {
-    /// just for debug purposes - later we will only write the journal
-    save( m_filename );
-
-    m_changeSet.write( m_temporaryJournalFile );
-}
-
-void zm::MindMatterModel::sync()
-{
-    save( m_filename );
-
-    m_changeSet.write( m_temporaryJournalFile );
-
     std::stringstream l_ssJournalFile;
     l_ssJournalFile << m_localFolder << "/zm-"
                     << m_options.getStringValue( "username" )
@@ -241,10 +247,28 @@ void zm::MindMatterModel::sync()
                     << zm::common::time_stamp_iso()
                     << "-journal.yaml";
     boost::filesystem::rename( m_temporaryJournalFile, l_ssJournalFile.str() );
+}
+
+void zm::MindMatterModel::localSave()
+{
+    /// just for debug purposes - later we will only write the journal
+    saveLocalModel( m_localModelFile );
+
+    m_changeSet.write( m_temporaryJournalFile );
+}
+
+void zm::MindMatterModel::sync()
+{
+    saveLocalModel( m_localModelFile );
+
+    m_changeSet.write( m_temporaryJournalFile );
+
+    makeTempJournalStatic();
+
     m_changeSet.clear();
 }
 
-void zm::MindMatterModel::load( const std::string &filename )
+void zm::MindMatterModel::loadLocalModel( const std::string &filename )
 {
     clear( m_things );
 
@@ -255,29 +279,50 @@ void zm::MindMatterModel::load( const std::string &filename )
     YAML::Node l_import = YAML::LoadFile(filename);
 
     yamlToThingsMap( l_import, m_things );
+}
 
-    std::vector< std::string > l = getJournalFiles();
+bool zm::MindMatterModel::importJournalFiles()
+{
+    bool l_importedJournals = false;
 
-    BOOST_FOREACH( std::string s, l )
+    std::vector< std::string > l_journalFiles = getJournalFiles();
+    tracemessage( "found %d journal files", l_journalFiles.size() );
+
+    std::vector< std::string > l_alreadyImported = m_options.getStringList("read_journal");
+    tracemessage( "%d journal files already imported", l_alreadyImported.size() );
+
+    BOOST_FOREACH( std::string j, l_journalFiles )
     {
-        tracemessage( "journal: %s", s.c_str() );
-        applyChangeSet( ChangeSet( s ) );
+        std::string l_filename = boost::filesystem::path( j ).filename().string();
+        if( std::find( l_alreadyImported.begin(), l_alreadyImported.end(), l_filename) == l_alreadyImported.end() )
+        {
+            tracemessage( "journal '%s' not imported yet", l_filename.c_str() );
+            applyChangeSet( ChangeSet( j ) );
+            m_options.addString( "read_journal", l_filename );
+            l_importedJournals = true;
+        }
     }
+    return l_importedJournals;
 }
 
 void zm::MindMatterModel::applyChangeSet( const ChangeSet &changeSet )
 {
-    return;
-    BOOST_FOREACH(const JournalItem * j, changeSet.getJournal() )
+    BOOST_FOREACH( const JournalItem * j, changeSet.getJournal() )
     {
         MindMatterModelMapType::iterator l_item_it( m_things.find( j->uid ) );
 
-        assert( l_item_it != m_things.end() );
+        if( j->type == JournalItem::CreateItem && l_item_it != m_things.end() )
+        {
+            tracemessage( "WARNING: tried to create already existant item '%s'", j->uid.c_str() );
+            continue;
+        }
+
+        assert( j->type == JournalItem::CreateItem || l_item_it != m_things.end() );
 
         switch( j->type )
         {
         case JournalItem::CreateItem:
-            _createNewItem( j->value, j->time );
+            _createNewItem( j->uid, j->value, j->time );
             break;
         case JournalItem::SetStringValue:
             _setValue(l_item_it, j->key, j->value );
@@ -332,7 +377,7 @@ void zm::MindMatterModel::dirty()
 // info regarding string encoding:
 //    http://code.google.com/p/yaml-cpp/wiki/Strings
 
-void zm::MindMatterModel::save( const std::string &filename )
+void zm::MindMatterModel::saveLocalModel( const std::string &filename )
 {
     /// be careful! if( !m_dirty ) return;
 
@@ -521,7 +566,8 @@ bool zm::MindMatterModel::itemContentMatchesString( const std::string &uid, cons
 std::string zm::MindMatterModel::createNewItem( const std::string &caption )
 {
     std::string l_time = zm::common::time_stamp_iso_ext();
-    std::string l_new_key = _createNewItem( caption, l_time );
+    std::string l_new_key = generateUid();
+    _createNewItem( l_new_key, caption, l_time );
 
     JournalItem *l_change = new JournalItem( l_new_key, JournalItem::CreateItem );
     l_change->time = l_time;
@@ -533,13 +579,11 @@ std::string zm::MindMatterModel::createNewItem( const std::string &caption )
     return l_new_key;
 }
 
-std::string zm::MindMatterModel::_createNewItem( const std::string &caption, const std::string &a_time )
+void zm::MindMatterModel::_createNewItem( const std::string &a_uid, const std::string &a_caption, const std::string &a_time )
 {
-    std::string l_new_key = generateUid();
-    MindMatter *l_new_thing = new MindMatter( caption );
+    MindMatter *l_new_thing = new MindMatter( a_caption );
     l_new_thing->addValue( "global_time_created", a_time );
-    m_things[ l_new_key ] = l_new_thing;
-    return l_new_key;
+    m_things[ a_uid ] = l_new_thing;
 }
 
 void zm::MindMatterModel::eraseItem( const std::string &uid )

@@ -22,7 +22,7 @@ namespace zm
 
         MindMatterModelMapType  m_things;
         std::string         m_localFolder;
-        std::string         m_filename;
+        std::string         m_localModelFile;
         ChangeSet           m_changeSet;
 
         std::string         m_temporaryJournalFile;
@@ -76,11 +76,15 @@ namespace zm
 
     private:
 
-        void load( const std::string &filename );
+        void loadLocalModel( const std::string &filename );
+
+        bool importJournalFiles();
 
         void dirty();
 
-        void save( const std::string &filename );
+        void saveLocalModel( const std::string &filename );
+
+        void makeTempJournalStatic();
 
         /// returns a sorted list containing names of journal files
         /// located in the sync folder
@@ -128,7 +132,7 @@ namespace zm
 
     private:
 
-        std::string _createNewItem( const std::string &caption, const std::string &time );
+        void _createNewItem( const std::string &uid, const std::string &caption, const std::string &time );
 
         void _eraseItem( MindMatterModelMapType::iterator &item );
 

@@ -74,6 +74,8 @@ public:
 
     void write( const std::string &journalFileName )
     {
+        if( m_journal.size() == 0 ) return;
+
         std::ofstream l_fout( journalFileName.c_str() );
 
         assert( l_fout.is_open() );
