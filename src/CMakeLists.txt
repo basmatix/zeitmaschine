@@ -106,6 +106,10 @@ add_executable( zm
     ${${PROJECT_NAME}_UIS}
 )
 
+add_custom_target( resettimestamp ALL
+    COMMAND touch "${CMAKE_CURRENT_SOURCE_DIR}/mainwindow.h"
+)
+
 target_link_libraries( zm
     ${QT_LIBRARIES}
     ${ADDITIONAL_LIBRARIES}

@@ -156,6 +156,8 @@ public:
 
         m_ui->setupUi( this );
 
+        this->setWindowTitle(QApplication::translate("window", "zeitmaschine - built on "__TIMESTAMP__, 0, QApplication::UnicodeUTF8));
+
         if( !m_model.hasUsedUsername() )
         {
             bool ok;
