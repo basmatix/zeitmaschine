@@ -72,18 +72,13 @@ public:
 
     virtual ~ChangeSet(){}
 
-    void write( const std::string &journalFileName )
+    bool write( const std::string &journalFileName )
     {
-        if( m_journal.size() == 0 ) return;
+        if( m_journal.size() == 0 ) return false;
 
         std::ofstream l_fout( journalFileName.c_str() );
 
         assert( l_fout.is_open() );
-
-        if( m_journal.empty() )
-        {
-            return;
-        }
 
         /// NOTE: we do the yaml exporting here semi manually
         ///       because this way we can ensure consistent
@@ -150,6 +145,7 @@ public:
         {
             std::cerr << "writing failed" << std::endl;
         }
+        return true;
     }
 
     const std::vector< JournalItem * > & getJournal() const

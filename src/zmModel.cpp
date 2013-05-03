@@ -240,13 +240,18 @@ void zm::MindMatterModel::initialize()
 void zm::MindMatterModel::makeTempJournalStatic()
 {
     std::stringstream l_ssJournalFile;
-    l_ssJournalFile << m_localFolder << "/zm-"
+    l_ssJournalFile << "zm-"
                     << m_options.getStringValue( "username" )
                     << "-"
                     << m_options.getStringValue( "hostname" ) << "-"
                     << zm::common::time_stamp_iso()
                     << "-journal.yaml";
-    boost::filesystem::rename( m_temporaryJournalFile, l_ssJournalFile.str() );
+
+    std::string l_filename = l_ssJournalFile.str();
+    m_options.addString( "read_journal", l_filename );
+
+    l_filename = m_localFolder + "/" + l_filename;
+    boost::filesystem::rename( m_temporaryJournalFile, l_filename );
 }
 
 void zm::MindMatterModel::localSave()
@@ -261,9 +266,10 @@ void zm::MindMatterModel::sync()
 {
     saveLocalModel( m_localModelFile );
 
-    m_changeSet.write( m_temporaryJournalFile );
-
-    makeTempJournalStatic();
+    if( m_changeSet.write( m_temporaryJournalFile ) )
+    {
+        makeTempJournalStatic();
+    }
 
     m_changeSet.clear();
 }
