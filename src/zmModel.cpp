@@ -161,7 +161,9 @@ zm::MindMatterModel::MindMatterModel()
 void zm::MindMatterModel::setLocalFolder( const std::string &path )
 {
     tracemessage( "privateDir: %s", path.c_str() );
-    m_localFolder = path;
+    std::string l_path = path;
+    std::replace(l_path.begin(), l_path.end(), '\\', '/');
+    m_localFolder = l_path;
 }
 
 void zm::MindMatterModel::addDomainSyncFolder( const std::string &domainName, const std::string &path )

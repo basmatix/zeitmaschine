@@ -11,6 +11,7 @@
 #include <map>
 #include <set>
 #include <fstream>
+#include <sstream>
 #include <string>
 //#include <yaml-cpp/yaml.h>
 
