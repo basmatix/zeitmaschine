@@ -195,6 +195,8 @@ void zm::MindMatterModel::setUsedHostname( const std::string &hostname )
 
 void zm::MindMatterModel::initialize()
 {
+    srand( time( NULL ) );
+
     /// find the name for the local model file - should be equal
     /// across sessions and unique for each client
     // <local folder>/zm-<user>-<client>-<zm-domain>-local.yaml
@@ -575,6 +577,9 @@ std::string zm::MindMatterModel::createNewItem( const std::string &caption )
 {
     std::string l_time = zm::common::time_stamp_iso_ext();
     std::string l_new_key = generateUid();
+
+    assert( m_things.find( l_new_key ) == m_things.end() );
+
     _createNewItem( l_new_key, caption, l_time );
 
     JournalItem *l_change = new JournalItem( l_new_key, JournalItem::CreateItem );

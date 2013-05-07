@@ -6,6 +6,8 @@ bool change_while_open();
 bool empty_db_on_load();
 bool output_node();
 
+
+
 int main( int arg_n, char **arg_v )
 {
     if( arg_n < 2 )
