@@ -1,3 +1,15 @@
 *.user*
-build*
 *~
+CMakeCache.txt
+CMakeFiles
+build/*.cmake
+build/Makefile
+build/moc_*
+build/submodules/
+build/ui_*
+*.pc
+*.cbp
+*.cfg
+build/zm
+build/zmTool
+build/test_things
