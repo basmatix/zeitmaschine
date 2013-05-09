@@ -33,6 +33,8 @@ namespace zm
 
         MindMatterModel();
 
+        void setConfigPersistance( bool value );
+
         /// sets the one and only local folder for configuration temorary and
         /// snapshot files
         void setLocalFolder( const std::string &path );
@@ -53,6 +55,10 @@ namespace zm
         /// write the local model files and make the temporary journal file
         /// available to the sync folders and
         void sync();
+
+        /// development only: load an external model file and merge items
+        /// which don't exist in the current model
+        void merge( const std::string &modelFile );
 
         /// returns whether there is a valid username stored
         bool hasUsedUsername() const;

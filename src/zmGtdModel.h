@@ -40,6 +40,11 @@ public:
         m_things_model.setUsedHostname( hostname );
     }
 
+    void setConfigPersistance( bool value )
+    {
+        m_things_model.setConfigPersistance( value );
+    }
+
     void setLocalFolder( const std::string &path )
     {
         m_things_model.setLocalFolder( path );
@@ -59,6 +64,11 @@ public:
     void sync()
     {
         m_things_model.sync();
+    }
+
+    void merge( const std::string &modelFile )
+    {
+        m_things_model.merge( modelFile );
     }
 
 /// const interface

@@ -10,14 +10,27 @@ int main(int argc, char *argv[])
 {
     zmQtGtdModel        m_model;
 
-    if( QDir( QDir::currentPath() + QDir::separator() + "zeitmaschine").exists() )
+    if( ! QDir( QDir::currentPath() + QDir::separator() + "zeitmaschine").exists() )
     {
-        m_model.setLocalFolder( QDir::currentPath() + QDir::separator() + "zeitmaschine" );
+        return -1;
     }
-    else
+    m_model.setLocalFolder( QDir::currentPath() + QDir::separator() + "zeitmaschine" );
+
+    m_model.setConfigPersistance( false );
+
+    m_model.setUsedUsername("frans");
+    m_model.setUsedHostname("x121e");
+
+    if( !m_model.hasUsedUsername() )
     {
-        m_model.setLocalFolder( QDir::homePath() + QDir::separator() + "zeitmaschine" );
+        return -1;
+    }
+    if( !m_model.hasUsedHostname() )
+    {
+        return -1;
     }
 
     m_model.initialize();
+
+    m_model.merge( "zm-frans-blackbox-local.yaml" );
 }

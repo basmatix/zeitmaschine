@@ -40,6 +40,11 @@ public:
         m_gtd_model.setUsedHostname( hostname.toUtf8().constData() );
     }
 
+    void setConfigPersistance( bool value )
+    {
+        m_gtd_model.setConfigPersistance( value );
+    }
+
     void setLocalFolder( const QString &path )
     {
         m_gtd_model.setLocalFolder( path.toUtf8().constData() );
@@ -58,6 +63,11 @@ public:
     void sync()
     {
         m_gtd_model.sync();
+    }
+
+    void merge( const QString &modelFile )
+    {
+        m_gtd_model.merge( modelFile.toUtf8().constData() );
     }
 
     // todo: eventually provide some sort of export functionality for

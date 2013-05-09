@@ -27,6 +27,7 @@ public:
         , m_descriptions("Generic options")
         , m_filename( "zm-config-fallback.cfg" )
         , m_loaded( false )
+        , m_autosave( true )
     {
         m_descriptions.add_options()
             ("username", "unique username - used for syncing")
@@ -34,6 +35,11 @@ public:
                     "name of a journal file already parsed")
             ("hostname", "unique name for this machine - used for syncing")
             ;
+    }
+
+    void setAutosave( bool value )
+    {
+        m_autosave = value;
     }
 
     void load( const std::string &filename )
@@ -102,7 +108,7 @@ public:
 
         boost::program_options::notify( m_variable_map );
 
-        save( m_filename );
+        if( m_autosave ) save( m_filename );
     }
 
     void setStringValue( const std::string &key, const std::string &value )
@@ -121,7 +127,7 @@ public:
 
         boost::program_options::notify( m_variable_map );
 
-        save( m_filename );
+        if( m_autosave ) save( m_filename );
     }
 
 private:
@@ -154,6 +160,7 @@ private:
     boost::program_options::options_description m_descriptions;
     std::string                                 m_filename;
     bool                                        m_loaded;
+    bool                                        m_autosave;
 
 // not gonna stay here
 } m_options;
@@ -167,6 +174,11 @@ zm::MindMatterModel::MindMatterModel()
     , m_dirty               ( false )
     , m_changeSet           ()
 {
+}
+
+void zm::MindMatterModel::setConfigPersistance( bool value )
+{
+    m_options.setAutosave( value );
 }
 
 void zm::MindMatterModel::setLocalFolder( const std::string &a_path )
@@ -296,6 +308,32 @@ void zm::MindMatterModel::sync()
     }
 
     m_changeSet.clear();
+}
+
+void zm::MindMatterModel::merge( const std::string &a_modelFile )
+{
+    std::string l_modelFile = m_localFolder + "/" + a_modelFile;
+
+    if( ! boost::filesystem::exists( l_modelFile ) )
+    {
+        return;
+    }
+
+    MindMatterModelMapType l_externalModel;
+
+    YAML::Node l_import = YAML::LoadFile( l_modelFile );
+
+    yamlToThingsMap( l_import, l_externalModel );
+
+    BOOST_FOREACH( const MindMatterModelMapType::value_type& i, l_externalModel )
+    {
+        if( m_things.find( i.first ) == m_things.end() )
+        {
+            tracemessage( "external item not in local model: %s", i.first.c_str() );
+            m_things[ i.first ] = i.second;
+        }
+    }
+    saveLocalModel( m_localModelFile );
 }
 
 void zm::MindMatterModel::loadLocalModel( const std::string &filename )
