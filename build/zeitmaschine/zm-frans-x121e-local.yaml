@@ -1,3 +1,20 @@
+- uid: 01529344e9c94b0a
+  caption: Note-Text kontinuierlich zwischenspeichern
+  hash1: 6718468973846468427517569864510282267601758774251974716132
+  attributes:
+    - gtd_item_unhandled
+  string_values:
+    global_time_created: 2013-03-30T17:03:58.920549
+    gtd_item_note: ""
+- uid: 039169e44ccb9a27
+  caption: Buttons erfüllen für alle Selections einen Zweck
+  hash1: 18600915258216778361842889920244479720001496489181778714122216998091438055673123
+  attributes:
+    - gtd_task
+  string_values:
+    global_time_created: 2013-03-31T13:56:30.245177
+    gtd_item_note: ""
+    gtd_parent_project: 04fb9a8bef1c12d2
 - uid: 048d5cb69c066bea
   caption: zeitabschätzung unterbringen
   hash1: 117105722383422346231732219836831701576201758774251974716132
@@ -14,6 +31,23 @@
   string_values:
     global_time_created: 2013-03-14T16:48:26.036303
     gtd_item_note: brain
+- uid: 04e941ccbb62640d
+  caption: Things-Schicht wird Service
+  hash1: 65255914516741997061192102852732886355701758774251974716132
+  attributes:
+    - gtd_item_unhandled
+  string_values:
+    global_time_created: 2013-03-31T00:19:16.093917
+    gtd_item_note: ""
+- uid: 04fb9a8bef1c12d2
+  caption: Usability
+  hash1: 1698925238298928067681822201271491975990150602490880711166248368085240360104704
+  attributes:
+    - gtd_project
+  string_values:
+    global_time_created: 2013-03-28T22:33:49.435303
+    gtd_item_note: ""
+    gtd_next_task: 039169e44ccb9a27
 - uid: 0512fd52738e81b6
   caption: Vorschlag für nächste Aktion geben
   hash1: 1501644202435881422091357226803213460507062463316610181758774251974716132
@@ -22,6 +56,23 @@
   string_values:
     global_time_created: 2013-03-13T08:16:55.007919
     gtd_item_note: test
+- uid: 0599dbd17f0fddf7
+  caption: Inbox Items werden nach Zeit sortiert
+  hash1: 9391710038176765756152620170730466192864608257603455101937186389580746557803762767301519685777
+  attributes:
+    - gtd_item_done
+  string_values:
+    global_time_created: 2013-03-29T17:33:57.837767
+    gtd_item_note: brain
+    gtd_time_done: 2013-03-30T12:24:12.715611
+- uid: 132a6fd748a32668
+  caption: iphone-client implementieren
+  hash1: 98719748435862650311198496675009280415001758774251974716132
+  attributes:
+    - gtd_item_unhandled
+  string_values:
+    global_time_created: 2013-04-07T12:38:16.222393
+    gtd_item_note: ""
 - uid: 165f478b240e74a3
   caption: Model-operator= zum Testen verwenden
   hash1: 17676736518022610385768368425107503487212799093283039209301758774251974716132
@@ -30,6 +81,14 @@
   string_values:
     global_time_created: 2013-03-13T08:15:13.298517
     gtd_item_note: model operator zum testen verwenden
+- uid: 178080bb63c4a815
+  caption: Gruppen/Projekte/Contexts/Tags als Verknüpfung implementieren?
+  hash1: 1022857428708481178109397297592355731121944458477670383791758774251974716132
+  attributes:
+    - gtd_item_unhandled
+  string_values:
+    global_time_created: 2013-03-31T15:27:48.259472
+    gtd_item_note: "* separate Mulit-Select-Liste einführen\n* Tags sind Items\n* Context als Tag?\n* Tags sind mit Items bidirektional verknüpft"
 - uid: 1dc1d191b993e17f
   caption: Verknüpfungen unter Dateien ermöglichen
   hash1: 50411973406590351811034289599690758728868070357232841467451758774251974716132
@@ -46,6 +105,30 @@
   string_values:
     global_time_created: 2013-03-13T08:13:44.829694
     gtd_item_note: ""
+- uid: 1f6189cd5ad712f4
+  caption: GTD-Plausibilitäten einführen
+  hash1: 110947534677513911721472336272820369795308368085240360104704
+  attributes:
+    - gtd_project
+  string_values:
+    global_time_created: 2013-03-30T12:22:21.873416
+    gtd_item_note: ""
+- uid: 229a62ebe4335801
+  caption: Plattformspezifische Funktionen auslagern
+  hash1: 16265098394337252007591147122149031667501758774251974716132
+  attributes:
+    - gtd_item_unhandled
+  string_values:
+    global_time_created: 2013-04-02T19:34:07.163752
+    gtd_item_note: ""
+- uid: 23b81ac2998c1cc4
+  caption: "Bug: add new item / komisches Notes-Verhalten"
+  hash1: 92609254669922693131717523682143906385678542415027906890001758774251974716132
+  attributes:
+    - gtd_item_unhandled
+  string_values:
+    global_time_created: 2013-03-31T00:16:15.529672
+    gtd_item_note: "edit new caption + note\nadd() \n> note bleibt bestehen\nclick auf anderes element\n> note wird nicht geupdated\n"
 - uid: 29f28a754e8ed341
   caption: bei Tracking/Done Zeitabschätzung vergleichen
   hash1: 61253976919792406241218969658631707713601758774251974716132
@@ -53,6 +136,31 @@
     - gtd_item_unhandled
   string_values:
     global_time_created: 2013-03-27T15:10:28.431585
+    gtd_item_note: ""
+- uid: 2f4d4551d559ad27
+  caption: Blog-Artiges Tagebuch unterstützen
+  hash1: 16181269233225177161555496662236640535701758774251974716132
+  attributes:
+    - gtd_item_unhandled
+  string_values:
+    global_time_created: 2013-04-05T14:40:10.034273
+    gtd_item_note: ""
+- uid: 302bb7feccd62be2
+  caption: Konfliktfreies I/O-Konzept bereitstellen
+  hash1: 3764374937622543525935676963471883473265443581989480442946994936661758774251974716132
+  attributes:
+    - gtd_item_unhandled
+  string_values:
+    global_time_created: 2013-03-28T22:18:17.444214
+    gtd_importance: 2
+    gtd_item_note: "z.b. mit journaling\n"
+- uid: 31a227682a0de22c
+  caption: Itemtyp an Farbe erkennbar machen
+  hash1: 15080264516503986945167406754334960759901758774251974716132
+  attributes:
+    - gtd_item_unhandled
+  string_values:
+    global_time_created: 2013-03-30T13:27:08.807281
     gtd_item_note: ""
 - uid: 33e204487c6fd159
   caption: Items nach GTD überführen
@@ -70,6 +178,15 @@
   string_values:
     global_time_created: 2013-03-13T08:15:33.115617
     gtd_item_note: ""
+- uid: 42c7f18a3681d7cd
+  caption: Drag-Drops erfüllen bei allen Kombinationen einen Zweck
+  hash1: 15491578147119801713373910982245899624401496489181778714122216998091438055673123
+  attributes:
+    - gtd_task
+  string_values:
+    global_time_created: 2013-03-31T13:58:08.295380
+    gtd_item_note: ""
+    gtd_parent_project: 04fb9a8bef1c12d2
 - uid: 441a045c65d325c8
   caption: items speichern eine checksumme um merge-fehler aufzudecken
   hash1: 1010528449409465807612421521455926966434069052884559591244983762767301519685777
@@ -79,6 +196,15 @@
     global_time_created: 2013-03-18T12:48:30.358876
     gtd_item_note: ""
     gtd_time_done: 2013-03-18T23:12:52.909893
+- uid: 46f97e8c9786649d
+  caption: QTreeView verwenden
+  hash1: 1804008544693338476312389073035070459447265443582001758774251974716132
+  attributes:
+    - gtd_item_unhandled
+  string_values:
+    global_time_created: 2013-03-30T12:57:19.688536
+    gtd_importance: 3
+    gtd_item_note: ""
 - uid: 4d41ee297bc5c34c
   caption: Sync-Mechanismus für Android finden
   hash1: 175939370238809437891069986785064721725301758774251974716132
@@ -103,14 +229,6 @@
     - gtd_project
   string_values:
     global_time_created: 2013-03-19T10:48:02.721512
-    gtd_item_note: ""
-- uid: 573c58936fb97114
-  caption: p1
-  hash1: 1752477595171264698177505697465008368085240360104704
-  attributes:
-    - gtd_project
-  string_values:
-    global_time_created: 2013-03-12T23:08:12.250498
     gtd_item_note: ""
 - uid: 60ee2a07206332d6
   caption: beim Exportieren Ordnung erzwingen (macht diffs unproblematischer)
@@ -138,6 +256,31 @@
     global_time_created: 2013-03-18T18:21:16.973285
     gtd_item_note: ""
     gtd_time_done: 2013-03-18T23:13:22.368169
+- uid: 682ec4f3030aa5e7
+  caption: Vorm zm Beenden Notes abspeichern
+  hash1: 749902154565374674322830377132456093101758774251974716132
+  attributes:
+    - gtd_item_unhandled
+  string_values:
+    global_time_created: 2013-04-06T17:40:54.749309
+    gtd_item_note: ""
+- uid: 6d5fe8722069ff69
+  caption: Compilierversuch
+  hash1: 721790492016774196105007031912957535470305281993402415468016998091438055673123
+  attributes:
+    - gtd_task
+  string_values:
+    global_time_created: 2013-04-07T13:02:30.634510
+    gtd_item_note: ""
+    gtd_parent_project: f433a091bea20385
+- uid: 6da0ad5dd2c6e01e
+  caption: Inbox kann fremd-befüllt werden (Kolab)
+  hash1: 9491142729993614595847178246647895478801758774251974716132
+  attributes:
+    - gtd_item_unhandled
+  string_values:
+    global_time_created: 2013-03-31T00:18:57.508969
+    gtd_item_note: ""
 - uid: 71b03b5d545c83ab
   caption: zeige Anzahl an inbox items / projects
   hash1: 239338386464207453173451417731310981901758774251974716132
@@ -154,6 +297,30 @@
   string_values:
     global_time_created: 2013-03-14T15:39:37.246621
     gtd_item_note: ""
+- uid: 76aff7af97432950
+  caption: "Bug: zwei mal \"m Project\" > Absturz"
+  hash1: 16193903983171415524271821627307850321508368085240360104704
+  attributes:
+    - gtd_project
+  string_values:
+    global_time_created: 2013-03-30T12:55:37.026800
+    gtd_item_note: ""
+- uid: 7b3f0add73c9618e
+  caption: GTD-Things-Spezifikation schreiben
+  hash1: 21120727969797246861392103022105379736673796547225535454911758774251974716132
+  attributes:
+    - gtd_item_unhandled
+  string_values:
+    global_time_created: 2013-03-30T16:24:33.347108
+    gtd_item_note: "Schichten:\n\nUI\n--\nQt-GTD\n===\nGTD\n===\nThings\n\n\ngtd_item::setDone():\n> gtd_item_unhandled: NO\n> gtd_item_done: YES\n> gtd_time_done: now()\n\nFarben:\n\nInbox \nProject \nProject ohne First Task\n        darkRed,\nStandalone Project \nTask\nTo Be Done Next Task\nDone\nContext\nGroup\nNote\n\tblack\n\tdarkGray,\ngray,\nlightGray,\n        red,\n        green,\n        blue,\n        cyan,\n        magenta,\n        yellow,\n        darkGreen,\n        darkBlue,\n        darkCyan,\n        darkMagenta,\n        darkYellow,\n"
+- uid: 7bfc9c3530df9c4b
+  caption: Wiki-Sync für offne Dateien
+  hash1: 48806718664779085361724032130097228818301758774251974716132
+  attributes:
+    - gtd_item_unhandled
+  string_values:
+    global_time_created: 2013-03-31T00:16:56.606674
+    gtd_item_note: ""
 - uid: 87ceff4a6a501ab7
   caption: unit tests einf�hren
   hash1: 1708797669670210915762791934660545245960138997941255810379543762767301519685777
@@ -163,6 +330,14 @@
     global_time_created: 2013-03-16T07:40:33.900368
     gtd_item_note: ""
     gtd_time_done: 2013-03-18T23:13:27.432613
+- uid: 8a4d1eb5a649faa9
+  caption: Tage-Gruppen einführen
+  hash1: 108721235905268612481191448676538963998101758774251974716132
+  attributes:
+    - gtd_item_unhandled
+  string_values:
+    global_time_created: 2013-03-30T18:02:07.680778
+    gtd_item_note: ""
 - uid: 99051bad4dc41d82
   caption: GTD-Layer einf�hren
   hash1: 13795613902507265737155858007057784856300138384691493489033333762767301519685777
@@ -181,6 +356,48 @@
     global_time_created: 2013-03-13T08:12:46.610628
     gtd_item_note: ""
     gtd_time_done: 2013-03-18T23:13:37.473124
+- uid: a14047a6e9f90527
+  caption: Note-Text highlighten, zb. mit AsciiDoc
+  hash1: 12507628203342934528897153227710690132101758774251974716132
+  attributes:
+    - gtd_item_unhandled
+  string_values:
+    global_time_created: 2013-03-30T17:19:50.179964
+    gtd_item_note: ""
+- uid: a3caa793ed707c0b
+  caption: Gruppen unterstützen
+  hash1: 145545001198974852641824781979438598244701758774251974716132
+  attributes:
+    - gtd_item_unhandled
+  string_values:
+    global_time_created: 2013-03-30T13:00:46.147445
+    gtd_item_note: ""
+- uid: a5e1ed5292d3cfa1
+  caption: Tags einführen
+  hash1: 16373711500831172859174889445850173221362654435818121944458477670383791758774251974716132
+  attributes:
+    - gtd_item_unhandled
+  string_values:
+    global_time_created: 2013-03-31T15:26:32.388446
+    gtd_importance: 1
+    gtd_item_note: "* separate Mulit-Select-Liste einführen\n* Tags sind Items\n* Context als Tag?\n* Tags sind mit Items bidirektional verknüpft"
+- uid: a6031d07a28441da
+  caption: "Bug: Absturz bei delete"
+  hash1: 7022930875664744359180543870220906442740141289284673994522283762767301519685777
+  attributes:
+    - gtd_item_done
+  string_values:
+    global_time_created: 2013-03-31T00:22:29.965113
+    gtd_item_note: ""
+    gtd_time_done: 2013-03-31T12:31:07.276656
+- uid: a7003c8ee33f1466
+  caption: Scheduler berücksichtigt Kontexte, definierte Prioritäten, +1, Dismisses, Reihenfolgen von Projekten
+  hash1: 611536361241432868862240101967982583801758774251974716132
+  attributes:
+    - gtd_item_unhandled
+  string_values:
+    global_time_created: 2013-03-29T09:46:34.579479
+    gtd_item_note: ""
 - uid: ad46330484d4a1d8
   caption: encoding klarziehen
   hash1: 2930912006446946298379327238905222641001758774251974716132
@@ -197,6 +414,23 @@
   string_values:
     global_time_created: 2013-03-18T12:47:32.750278
     gtd_item_note: ""
+- uid: af37dccd056a26df
+  caption: Konzept erarbeiten
+  hash1: 173898650852657207693580261362562814053796400995660367659712930704169306897316998091438055673123
+  attributes:
+    - gtd_task
+  string_values:
+    global_time_created: 2013-04-07T13:01:54.179874
+    gtd_item_note: mit Sebastian und Uli
+    gtd_parent_project: baa2c977d941e438
+- uid: b40a615e1596298f
+  caption: bei Selection Sichtbarkeit von Buttons konfigurieren
+  hash1: 122072811275185300631363898351844766892501758774251974716132
+  attributes:
+    - gtd_item_unhandled
+  string_values:
+    global_time_created: 2013-03-30T20:23:46.450948
+    gtd_item_note: ""
 - uid: baa2c977d941e438
   caption: YSbox Anschluss ermöglichen
   hash1: 152644386420526264321529463412834501803801758774251974716132
@@ -205,6 +439,15 @@
   string_values:
     global_time_created: 2013-03-13T22:22:16.938815
     gtd_item_note: ""
+- uid: baa30490fb282b73
+  caption: GTD-Modell generiert Liste mit nächsten Aktionen
+  hash1: 57380693794362724351543678441926720133901521984639681115907916998091438055673123
+  attributes:
+    - gtd_task
+  string_values:
+    global_time_created: 2013-04-07T12:44:22.548215
+    gtd_item_note: ""
+    gtd_parent_project: 0512fd52738e81b6
 - uid: bbf929d790aaecfe
   caption: +1 für tasks
   hash1: 172736754903265052721290484895352271541701758774251974716132
@@ -220,6 +463,14 @@
     - gtd_item_unhandled
   string_values:
     global_time_created: 2013-03-13T08:15:03.169982
+    gtd_item_note: ""
+- uid: c6a5c9a21b10091e
+  caption: Subitems von Groups/Projects/Contexts handlen, wenn diese gelöscht werden
+  hash1: 91500438385921672211449651131315045148401758774251974716132
+  attributes:
+    - gtd_item_unhandled
+  string_values:
+    global_time_created: 2013-03-29T17:49:09.621891
     gtd_item_note: ""
 - uid: cc5e156225d7120a
   caption: Beginn/Ende-Zeiten tracken
@@ -245,6 +496,15 @@
   string_values:
     global_time_created: 2013-03-13T08:12:02.088587
     gtd_time_done: 2013-03-13T22:01:49.940226
+- uid: d006903849837f9d
+  caption: Fehler analysieren
+  hash1: 1052147415188055088197253672083682402462276654296699173561078058704185486007916998091438055673123
+  attributes:
+    - gtd_task
+  string_values:
+    global_time_created: 2013-04-07T13:00:49.431995
+    gtd_item_note: liegt vmtl an der Qt-Version von Qt-Creator
+    gtd_parent_project: d3fa86b079b50dc5
 - uid: d3fa86b079b50dc5
   caption: "Qt-Bug umschiffen: komisches edit-Verhalten"
   hash1: 12846569618965837197801122928463562942401758774251974716132
@@ -261,6 +521,39 @@
   string_values:
     global_time_created: 2013-03-18T12:48:53.015026
     gtd_item_note: ""
+- uid: d902599ec4449bd3
+  caption: Beim Suchen ggf. parent-items sichtbar lassen
+  hash1: 1348053408500936143124618946899606713401758774251974716132
+  attributes:
+    - gtd_item_unhandled
+  string_values:
+    global_time_created: 2013-03-30T20:22:04.981708
+    gtd_item_note: ""
+- uid: d91cd40d18e8d047
+  caption: Timer unterbringen (für abgesteckte Zeitslots)
+  hash1: 1530657475786324669710648218584477394817265443581801758774251974716132
+  attributes:
+    - gtd_item_unhandled
+  string_values:
+    global_time_created: 2013-03-29T10:51:31.190149
+    gtd_importance: 1
+    gtd_item_note: ""
+- uid: d93e130deae87de7
+  caption: Konzept für Notes-Only-Einträge
+  hash1: 8546649023515118025209606483730926755801758774251974716132
+  attributes:
+    - gtd_item_unhandled
+  string_values:
+    global_time_created: 2013-03-31T13:53:45.257509
+    gtd_item_note: ""
+- uid: d971d80b41652bfe
+  caption: Zähle/Bewerte Produktivität auf täglicher Basis
+  hash1: 70065110680176082711764992338801479815501758774251974716132
+  attributes:
+    - gtd_item_unhandled
+  string_values:
+    global_time_created: 2013-03-31T13:17:57.287026
+    gtd_item_note: ""
 - uid: db5eb7f57dd454fb
   caption: wiederkehrende Aktionen ermöglichen
   hash1: 13239046493203051821147870727049221638020109447389512768419431758774251974716132
@@ -270,6 +563,14 @@
     global_time_created: 2013-03-19T14:48:30.520787
     gtd_item_note: ""
     gtd_time_done: 2013-03-27T13:47:40.954733
+- uid: db81207892d619e2
+  caption: GTD-Phasen wie "Inbox-Aufräumen" einführen
+  hash1: 11216883447843639572578405010432876972601758774251974716132
+  attributes:
+    - gtd_item_unhandled
+  string_values:
+    global_time_created: 2013-03-28T22:35:32.768058
+    gtd_item_note: ""
 - uid: e1d5be9be76a5879
   caption: mehrere GTD-export files gleichzeitig verwalten können (über Attribute verwaltet)
   hash1: 7572680735844106660679813876637319315801758774251974716132
@@ -293,6 +594,24 @@
     - gtd_item_unhandled
   string_values:
     global_time_created: 2013-03-13T08:13:22.748611
+    gtd_item_note: ""
+- uid: e91b5d952f045d3b
+  caption: Konzept erarbeiten
+  hash1: 17389865085265720769766246148726529873501618618201799691741716998091438055673123
+  attributes:
+    - gtd_task
+  string_values:
+    global_time_created: 2013-04-07T13:04:46.217604
+    gtd_item_note: ""
+    gtd_parent_project: 04a842e656639b07
+- uid: ea052d41b2edd7fb
+  caption: Due-Dates werden gespeichert und unterstützt
+  hash1: 21828887160457790109040963900702283042265443581801758774251974716132
+  attributes:
+    - gtd_item_unhandled
+  string_values:
+    global_time_created: 2013-03-31T13:54:46.828460
+    gtd_importance: 1
     gtd_item_note: ""
 - uid: eb2679ddd7f9ab17
   caption: Nodes nach Zeit sortieren
@@ -319,11 +638,12 @@
   string_values:
     global_time_created: 2013-03-14T15:38:40.518222
     gtd_item_note: ""
-- uid: f913168e95de2713
-  caption: android-client bauen
-  hash1: 99405092189776387731093964428596836718556712660464262441916998091438055673123
+- uid: ff309f238afa6bee
+  caption: lokale Verschlüsselung ermöglichen
+  hash1: 35541059334500199201546763182368521118265443581801758774251974716132
   attributes:
-    - gtd_task
+    - gtd_item_unhandled
   string_values:
-    global_time_created: 2013-03-13T08:14:24.895912
-    gtd_parent_project: 573c58936fb97114
+    global_time_created: 2013-03-31T00:17:25.328105
+    gtd_importance: 1
+    gtd_item_note: ""
