@@ -26,6 +26,7 @@ public:
         : m_variable_map()
         , m_descriptions("Generic options")
         , m_filename( "zm-config-fallback.cfg" )
+        , m_loaded( false )
     {
         m_descriptions.add_options()
             ("username", "unique username - used for syncing")
@@ -38,6 +39,7 @@ public:
     void load( const std::string &filename )
     {
         m_filename = filename;
+        m_loaded = true;
 
         //store(parse_command_line(argc, argv, desc), m_variable_map);
         if( !boost::filesystem::exists( filename ) ) return;
@@ -52,16 +54,19 @@ public:
 
     bool hasValue( const std::string &key ) const
     {
+        assert( m_loaded );
         return m_variable_map.count( key ) > 0;
     }
 
     std::string getStringValue( const std::string &key ) const
     {
+        assert( m_loaded );
         return m_variable_map[ key ].as< std::string >();
     }
 
     std::vector< std::string > getStringList( const std::string &key ) const
     {
+        assert( m_loaded );
         if( m_variable_map.count( key ) == 0 )
         {
             return std::vector< std::string >();
@@ -71,6 +76,7 @@ public:
 
     void addString( const std::string &key, const std::string &value )
     {
+        assert( m_loaded );
         std::vector< std::string > l_tmp;
 
         bool l_value_exists = m_variable_map.count( key ) > 0;
@@ -101,6 +107,7 @@ public:
 
     void setStringValue( const std::string &key, const std::string &value )
     {
+        assert( m_loaded );
         boost::program_options::variables_map::iterator i = m_variable_map.find( key );
         if( i == m_variable_map.end() )
         {
@@ -114,7 +121,7 @@ public:
 
         boost::program_options::notify( m_variable_map );
 
-        save( "zeitmaschine.cfg" );
+        save( m_filename );
     }
 
 private:
@@ -146,6 +153,8 @@ private:
     boost::program_options::variables_map       m_variable_map;
     boost::program_options::options_description m_descriptions;
     std::string                                 m_filename;
+    bool                                        m_loaded;
+
 // not gonna stay here
 } m_options;
 
@@ -158,15 +167,23 @@ zm::MindMatterModel::MindMatterModel()
     , m_dirty               ( false )
     , m_changeSet           ()
 {
-    m_options.load("zeitmaschine.cfg");
 }
 
-void zm::MindMatterModel::setLocalFolder( const std::string &path )
+void zm::MindMatterModel::setLocalFolder( const std::string &a_path )
 {
-    tracemessage( "privateDir: %s", path.c_str() );
-    std::string l_path = path;
-    std::replace(l_path.begin(), l_path.end(), '\\', '/');
+    tracemessage( "privateDir: %s", a_path.c_str() );
+
+    // handle cases: path contains "\"
+    //               path == ""
+    //               path == "/"
+    //               path doesn't end with "/"
+    // todo: there might be a boost::filesystem call for this
+
+    std::string l_path = a_path;
+    std::replace( l_path.begin(), l_path.end(), '\\', '/' );
+    if( l_path == "/" ) l_path = "./";
     m_localFolder = l_path;
+    m_options.load( m_localFolder + "/zeitmaschine.cfg" );
 }
 
 void zm::MindMatterModel::addDomainSyncFolder( const std::string &domainName, const std::string &path )
