@@ -32,9 +32,16 @@ int main( int arg_n, char **arg_v )
 }
 
 bool empty_db_on_load()
-{/*
+{
+    zm::MindMatterModel l_m1;
+
+    l_m1.setUsedUsername( "test-user" );
+    l_m1.setUsedHostname( "test-machine" );
+    l_m1.setLocalFolder( "./test-localfolder" );
+    l_m1.initialize();
+
+    /*
     // client 1 saves some content
-    MindMatterModel l_m1;
     l_m1.setLocalFolder( "zmtest" );
     std::string l_item1 = l_m1.createNewItem( "some first item" );
     l_m1.localSave();

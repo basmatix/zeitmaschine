@@ -158,6 +158,15 @@ public:
 
         this->setWindowTitle(QApplication::translate("window", "zeitmaschine - built on "__TIMESTAMP__, 0, QApplication::UnicodeUTF8));
 
+        if( QDir( QDir::currentPath() + QDir::separator() + "zeitmaschine").exists() )
+        {
+            m_model.setLocalFolder( QDir::currentPath() + QDir::separator() + "zeitmaschine" );
+        }
+        else
+        {
+            m_model.setLocalFolder( QDir::homePath() + QDir::separator() + "zeitmaschine" );
+        }
+
         if( !m_model.hasUsedUsername() )
         {
             bool ok;
@@ -173,15 +182,6 @@ public:
                                                     tr("machine name:"), QLineEdit::Normal,
                                                     zm::osal::getHostName().c_str(), &ok);
             m_model.setUsedHostname( text );
-        }
-
-        if( QDir( QDir::currentPath() + QDir::separator() + "zeitmaschine").exists() )
-        {
-            m_model.setLocalFolder( QDir::currentPath() + QDir::separator() + "zeitmaschine" );
-        }
-        else
-        {
-            m_model.setLocalFolder( QDir::homePath() + QDir::separator() + "zeitmaschine" );
         }
 
         m_model.initialize();

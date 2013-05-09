@@ -25,6 +25,7 @@ public:
     Options()
         : m_variable_map()
         , m_descriptions("Generic options")
+        , m_filename( "zm-config-fallback.cfg" )
     {
         m_descriptions.add_options()
             ("username", "unique username - used for syncing")
@@ -36,6 +37,8 @@ public:
 
     void load( const std::string &filename )
     {
+        m_filename = filename;
+
         //store(parse_command_line(argc, argv, desc), m_variable_map);
         if( !boost::filesystem::exists( filename ) ) return;
 
@@ -93,7 +96,7 @@ public:
 
         boost::program_options::notify( m_variable_map );
 
-        save( "zeitmaschine.cfg" );
+        save( m_filename );
     }
 
     void setStringValue( const std::string &key, const std::string &value )
@@ -142,7 +145,7 @@ private:
 
     boost::program_options::variables_map       m_variable_map;
     boost::program_options::options_description m_descriptions;
-
+    std::string                                 m_filename;
 // not gonna stay here
 } m_options;
 
@@ -327,7 +330,11 @@ void zm::MindMatterModel::applyChangeSet( const ChangeSet &changeSet )
             continue;
         }
 
-        assert( j->type == JournalItem::CreateItem || l_item_it != m_things.end() );
+        if( j->type != JournalItem::CreateItem && l_item_it == m_things.end() )
+        {
+            tracemessage( "WARNING: trying to modify item non existent item '%s'", j->uid.c_str() );
+            assert( j->type == JournalItem::CreateItem || l_item_it != m_things.end() );
+        }
 
         switch( j->type )
         {
