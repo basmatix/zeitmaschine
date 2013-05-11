@@ -186,6 +186,8 @@ public:
 
         m_model.initialize();
 
+        m_ui->tvMaster->setModel( &m_model );
+
         m_liToday = new QTreeWidgetItem();
         m_liToday->setText( 0, "TODAY");
         m_ui->twMaster->addTopLevelItem( m_liToday );

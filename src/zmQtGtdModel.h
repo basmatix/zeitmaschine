@@ -1,26 +1,47 @@
-/// copyright (C) 2013 Frans Fürst
 /// -*- coding: utf-8 -*-
+///
+/// file: zmQtGtdModel.h
+///
+/// Copyright (C) 2013 Frans Fuerst
+///
 
 #ifndef ZMQTGTDADAPTER_H
 #define ZMQTGTDADAPTER_H
 
+#include <zmQtGtdItem.h>
+
 #include <zmGtdModel.h>
 #include <QtCore/QString>
 #include <QtCore/QAbstractItemModel>
+
 
 /// std-c++/Qt - interface to zmGtdModel. Aims to be a
 /// fully qualified Qt model in the future
 class zmQtGtdModel
     : public QAbstractItemModel
 {
-    zmGtdModel m_gtd_model;
+    zmGtdModel   m_gtd_model;
+    zmQtGtdItem *m_rootItem;
+
+    zmQtGtdModel( const zmQtGtdModel & );
+    zmQtGtdModel & operator= ( const zmQtGtdModel & );
 
 /// maintenance interface
 public:
 
     zmQtGtdModel()
-        : m_gtd_model()
-    {}
+        : m_gtd_model   ()
+        , m_rootItem    ( NULL )
+    {
+        QList< QVariant > l_rootData;
+        l_rootData << "Title" << "Summary";
+        m_rootItem = new zmQtGtdItem( l_rootData );
+    }
+
+    virtual ~zmQtGtdModel()
+    {
+        delete m_rootItem;
+    }
 
     bool hasUsedUsername() const
     {
@@ -80,29 +101,122 @@ public:
     //}
 
 ///
-    QModelIndex index(int, int, const QModelIndex&) const
+/// QAbstractItemModel interface
+///
+    Qt::ItemFlags flags( const QModelIndex &index ) const
     {
-        return QModelIndex();
+        if (!index.isValid())
+        {
+            return 0;
+        }
+
+        return Qt::ItemIsEnabled | Qt::ItemIsSelectable;
     }
 
-    QModelIndex parent(const QModelIndex&) const
+    QVariant headerData(int section, Qt::Orientation orientation,
+                                   int role) const
     {
-        return QModelIndex();
-    }
+        if( orientation == Qt::Horizontal && role == Qt::DisplayRole )
+        {
+            return m_rootItem->data( section );
+        }
 
-    int rowCount(const QModelIndex&) const
-    {
-        return 0;
-    }
-
-    int columnCount(const QModelIndex&) const
-    {
-        return 0;
-    }
-
-    QVariant data(const QModelIndex&, int) const
-    {
         return QVariant();
+    }
+
+    QModelIndex index( int row, int column, const QModelIndex &parent ) const
+    {
+        if( !hasIndex(row, column, parent) )
+        {
+            return QModelIndex();
+        }
+
+        zmQtGtdItem *l_parentItem;
+
+        if( !parent.isValid() )
+        {
+            l_parentItem = m_rootItem;
+        }
+        else
+        {
+            l_parentItem = static_cast<zmQtGtdItem*>(parent.internalPointer());
+        }
+
+        zmQtGtdItem *l_childItem = l_parentItem->child(row);
+        if( l_childItem == NULL )
+        {
+            return QModelIndex();
+        }
+
+        return createIndex(row, column, l_childItem);
+    }
+
+    QModelIndex parent( const QModelIndex &index ) const
+    {
+        if( !index.isValid() )
+        {
+            return QModelIndex();
+        }
+
+        zmQtGtdItem *l_childItem = static_cast< zmQtGtdItem * >( index.internalPointer() );
+        zmQtGtdItem *l_parentItem = l_childItem->parent();
+
+        if( l_parentItem == m_rootItem )
+        {
+            return QModelIndex();
+        }
+
+        return createIndex(l_parentItem->row(), 0, l_parentItem);
+    }
+
+    int rowCount( const QModelIndex &parent ) const
+    {
+        if( parent.column() > 0 )
+        {
+            return 0;
+        }
+
+        zmQtGtdItem *l_parentItem;
+
+        if (!parent.isValid())
+        {
+            l_parentItem = m_rootItem;
+        }
+        else
+        {
+            l_parentItem = static_cast< zmQtGtdItem * >(parent.internalPointer());
+        }
+
+        return l_parentItem->childCount();
+    }
+
+    int columnCount( const QModelIndex &parent ) const
+    {
+        if( parent.isValid() )
+        {
+            return static_cast< zmQtGtdItem* >( parent.internalPointer() )->columnCount();
+        }
+        else
+        {
+            return m_rootItem->columnCount();
+        }
+    }
+
+    QVariant data( const QModelIndex &index, int role ) const
+    {
+        if (!index.isValid())
+        {
+            return QVariant();
+        }
+
+        if (role != Qt::DisplayRole)
+        {
+            return QVariant();
+        }
+
+        zmQtGtdItem *l_item = static_cast< zmQtGtdItem * >(index.internalPointer());
+
+        return l_item->data( index.column() );
     }
 
 /// const interface
