@@ -10,16 +10,16 @@ int main(int argc, char *argv[])
 {
     zmQtGtdModel        m_model;
 
-    if( ! QDir( QDir::currentPath() + QDir::separator() + "zeitmaschine").exists() )
+    if( ! QDir( QDir::currentPath() + QDir::separator() + "zm-local").exists() )
     {
         return -1;
     }
-    m_model.setLocalFolder( QDir::currentPath() + QDir::separator() + "zeitmaschine" );
+    m_model.setLocalFolder( QDir::currentPath() + QDir::separator() + "zm-local" );
 
     m_model.setConfigPersistance( false );
 
     m_model.setUsedUsername("frans");
-    m_model.setUsedHostname("x121e");
+    m_model.setUsedHostname("heizluefter");
 
     if( !m_model.hasUsedUsername() )
     {

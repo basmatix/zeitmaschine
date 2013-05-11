@@ -479,6 +479,14 @@
   string_values:
     global_time_created: 2013-03-29T17:49:09.621891
     gtd_item_note: ""
+- uid: c8683da086b8e626
+  caption: Syncing concept verstehen
+  hash1: 6080895381113556657465491243538450536101758774251974716132
+  attributes:
+    - gtd_item_unhandled
+  string_values:
+    global_time_created: 2013-05-09T17:04:05.085176
+    gtd_item_note: ""
 - uid: cc5e156225d7120a
   caption: Beginn/Ende-Zeiten tracken
   hash1: 12866529867588580270398943137862638224172228646787657238438368085240360104704

@@ -6,10 +6,12 @@
 
 #include <zmGtdModel.h>
 #include <QtCore/QString>
+#include <QtCore/QAbstractItemModel>
 
 /// std-c++/Qt - interface to zmGtdModel. Aims to be a
 /// fully qualified Qt model in the future
 class zmQtGtdModel
+    : public QAbstractItemModel
 {
     zmGtdModel m_gtd_model;
 
@@ -76,6 +78,32 @@ public:
     //{
     //    m_gtd_model.save( filename );
     //}
+
+///
+    QModelIndex index(int, int, const QModelIndex&) const
+    {
+        return QModelIndex();
+    }
+
+    QModelIndex parent(const QModelIndex&) const
+    {
+        return QModelIndex();
+    }
+
+    int rowCount(const QModelIndex&) const
+    {
+        return 0;
+    }
+
+    int columnCount(const QModelIndex&) const
+    {
+        return 0;
+    }
+
+    QVariant data(const QModelIndex&, int) const
+    {
+        return QVariant();
+    }
 
 /// const interface
 public:

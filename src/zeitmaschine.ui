@@ -46,7 +46,7 @@
            </layout>
           </item>
           <item>
-           <widget class="zmQTreeWidget" name="twTask">
+           <widget class="zmQTreeWidget" name="twMaster">
             <property name="toolTip">
              <string>test</string>
             </property>
@@ -70,6 +70,9 @@
              </property>
             </column>
            </widget>
+          </item>
+          <item>
+           <widget class="QTreeView" name="tvMaster"/>
           </item>
          </layout>
         </item>
