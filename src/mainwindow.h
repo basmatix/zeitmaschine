@@ -344,7 +344,7 @@ private slots:
         createInboxItemFromUiElements();
     }
 
-    void on_twTask_currentItemChanged( QTreeWidgetItem *current, QTreeWidgetItem *previous )
+    void on_twMaster_currentItemChanged( QTreeWidgetItem *current, QTreeWidgetItem *previous )
     {   //tracemessage( __FUNCTION__ );
 
         if( m_widget_item_mapper.contains( previous ) )
@@ -379,7 +379,7 @@ private slots:
         m_ui->teNotes->setText( m_model.getNote( m_selected_thing ) );
     }
 
-    void on_twTask_itemChanged( QTreeWidgetItem *item )
+    void on_twMaster_itemChanged( QTreeWidgetItem *item )
     {   //tracemessage( __FUNCTION__ );
 
         if( m_widget_item_mapper.contains( item ) )
@@ -395,7 +395,7 @@ private slots:
         }
     }
 
-    void on_twTask_itemDropped( QTreeWidgetItem *item, QTreeWidgetItem *target )
+    void on_twMaster_itemDropped( QTreeWidgetItem *item, QTreeWidgetItem *target )
     {   //tracemessage( __FUNCTION__ );
 
         if( !m_widget_item_mapper.contains( item ) )
@@ -669,25 +669,25 @@ private slots:
     }
 
 #if 0
-    void on_twTask_itemActivated( QTreeWidgetItem *item, int )
+    void on_twMaster_itemActivated( QTreeWidgetItem *item, int )
     {   tracemessage( __FUNCTION__ );
         //std::cout << index. << std::endl;;
-        //m_ui->twTask->currentItemChanged();
+        //m_ui->twMaster->currentItemChanged();
     }
 
-    void on_twTask_clicked( const QModelIndex &index )
+    void on_twMaster_clicked( const QModelIndex &index )
     {   tracemessage( __FUNCTION__ );
         //std::cout << index. << std::endl;;
     }
 
-    void on_twTask_doubleClicked( const QModelIndex &index )
+    void on_twMaster_doubleClicked( const QModelIndex &index )
     {   tracemessage( __FUNCTION__ );
         //std::cout << index. << std::endl;;
 
-        //m_ui->twTask->edit(index);
+        //m_ui->twMaster->edit(index);
     }
 
-    void on_twTask_itemDoubleClicked( QTreeWidgetItem *item, int column )
+    void on_twMaster_itemDoubleClicked( QTreeWidgetItem *item, int column )
     {   tracemessage( __FUNCTION__ );
         //std::cout << index. << std::endl;;
 
@@ -699,7 +699,7 @@ private slots:
         //tracemessage( "%d",m_model.getCurrentTaskDuration() );
     }
 
-    void on_twTask_itemSelectionChanged ()
+    void on_twMaster_itemSelectionChanged ()
     {   tracemessage( __FUNCTION__ );
     }
 

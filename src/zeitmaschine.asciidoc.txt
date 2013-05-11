@@ -1,13 +1,117 @@
 zeitmaschine - GTD inspired home for thoughts
 =============================================
-//:toc:
+:toc:
 :icons:
 :numbered:
 :website: http://www.scitics.de
 //=-~^+
 
-Implementational details
+requirements
+------------
+
+top level features
+~~~~~~~~~~~~~~~~~~
+
+*F.00* - _GTD_::
+    Shall provide GTD-like self-organizing capabilities
+
+*F.00* - _note taking_::
+    * plain text
+    * file links
+    * context links
+    * brain stack
+
+*F.00* - multi client_::
+    * syncing
+
+*F.00* - _search_::
+
+*F.00* - _supported platforms_::
+    * windows, linux, android, osx, ios
+
+*F.00* - _privacy_::
+    * crypting
+
+*F.00* - _multi user / visibility domains_::
+
+*F.00* - _project management_::
+    * time schedule
+    * ticket import/export
+
+*F.00* - _scheduling / priority_::
+    * provide next task
+    * priority, due dates, order, dismisses, contexts
+
+*F.00* - _item groups_::
+
+*F.00* - _tagging_::
+
+*F.00* - _time tracking_::
+    * keep track of current task -> ask
+    * record start/stop
+    * provide statistics
+
+
+*F.00* - _YSbox connectivity_::
+    * automatically issue searching
+    * ticket import/export
+
+GUI / GTD
+~~~~~~~~~
+
+workflow
+^^^^^^^^
+* new
+* cast to task
+* cast to project
+* cast to group
+* cast to done
+* cast to knowledge
+* dragability
+
+layout
+^^^^^^
+* [ ] inbox/projects initially pre-opened
+* [ ] projects initially closed
+* [ ] inbox items sorted by creation date
+* [ ] knowledge items sorted by creation date
+* [ ] items editable (double click, context menu, F2)
+
+colors
+^^^^^^
+* today
+* inbox
+* project
+
+
+MindMatter
+~~~~~~~~~~
+
+export
+^^^^^^
+
+sync
+^^^^
+* folder sync based
+* conflict free
+
+development environment
+~~~~~~~~~~~~~~~~~~~~~~~
+* tests
+
+implementational details
 ------------------------
+
+* Qt based interface for Linux/Windows/MacOS
+
+block diagram
+~~~~~~~~~~~~~
+* UI Layer
+* GTD-Layer
+* MindMatter-Layer
+
+sequences
+~~~~~~~~~
 
 ["plantuml"]
 --------------------------------------------------------------------------------

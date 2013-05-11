@@ -10,30 +10,50 @@
 #include <QtCore/QList>
 #include <QtCore/QVariant>
 
+#include <ctime>
+
+class zmQtGtdModel;
+
 class zmQtGtdItem
 {
     zmQtGtdItem            *m_parentItem;
-    QList< QVariant >       m_itemData;
     QList< zmQtGtdItem * >  m_childItems;
+    std::time_t             m_creationTime;
+    zmQtGtdModel           *m_model;
+    std::string             m_uid;
+    QString                 m_text;
 
     zmQtGtdItem( const zmQtGtdItem & );
     zmQtGtdItem & operator= ( const zmQtGtdItem & );
 
 public:
 
-    zmQtGtdItem( const QList< QVariant > &data, zmQtGtdItem *parent = NULL )
-        : m_parentItem  ( parent )
-        , m_itemData    ( data )
-        , m_childItems  ()
-    {    }
+    enum ItemRole
+    {
+        ROOT,
+        FOLDER,
+        GTD_ITEM
+    };
+
+    zmQtGtdItem( ItemRole role );
+
+    zmQtGtdItem( ItemRole role, const QString &title );
+
+    zmQtGtdItem( ItemRole role, zmQtGtdModel *model, const std::string &uid );
 
     virtual ~zmQtGtdItem()
     {
         qDeleteAll( m_childItems );
     }
 
+    void setParent( zmQtGtdItem *item )
+    {
+        m_parentItem = item;
+    }
+
     void appendChild( zmQtGtdItem *item )
     {
+        item->setParent( this );
         m_childItems.append( item );
     }
 
@@ -49,12 +69,22 @@ public:
 
     int columnCount() const
     {
-        return m_itemData.count();
+        return 1; //todo
+        //return m_itemData.count();
     }
 
     QVariant data( int column ) const
     {
-        return m_itemData.value( column );
+        //todo
+        if( column == 0 )
+        {
+            return m_text;
+        }
+        else
+        {
+            return QVariant();
+        }
+        //return m_itemData.value( column );
     }
 
     int row() const

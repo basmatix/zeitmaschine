@@ -20,11 +20,90 @@
 class zmQtGtdModel
     : public QAbstractItemModel
 {
-    zmGtdModel   m_gtd_model;
-    zmQtGtdItem *m_rootItem;
+    zmGtdModel      m_gtd_model;
+    zmQtGtdItem    *m_rootItem;
+
+    //zmQtGtdItem    *m_liToday;
+    zmQtGtdItem    *m_liInbox;
+    zmQtGtdItem    *m_liProjects;
+    zmQtGtdItem    *m_liKnowledge;
+    zmQtGtdItem    *m_liDone;
 
     zmQtGtdModel( const zmQtGtdModel & );
     zmQtGtdModel & operator= ( const zmQtGtdModel & );
+
+
+    class WidgetItemMapper
+    {
+        QMap< std::string, zmQtGtdItem * > m_thing_lwitem_map;
+        QMap< zmQtGtdItem *, std::string > m_lwitem_thing_map;
+
+    public:
+
+        WidgetItemMapper()
+            : m_thing_lwitem_map()
+            , m_lwitem_thing_map()
+        {
+
+        }
+
+        void add( const std::string uid, zmQtGtdItem *item )
+        {
+            m_lwitem_thing_map[ item ] = uid;
+            m_thing_lwitem_map[ uid ] = item;
+        }
+
+        void erase( const std::string uid, zmQtGtdItem *item )
+        {
+            QMap< std::string, zmQtGtdItem * >::iterator l_thingToErase =
+                    m_thing_lwitem_map.find( uid );
+            QMap< zmQtGtdItem *, std::string >::iterator l_itemToErase =
+                    m_lwitem_thing_map.find( (zmQtGtdItem*)item );
+            assert( l_thingToErase != m_thing_lwitem_map.end() );
+            assert( l_itemToErase != m_lwitem_thing_map.end() );
+
+            assert( l_thingToErase.value() == (zmQtGtdItem*)item );
+            assert( l_itemToErase.value() == uid );
+
+            m_thing_lwitem_map.erase( l_thingToErase );
+
+            m_lwitem_thing_map.erase( l_itemToErase );
+        }
+
+
+        bool contains( zmQtGtdItem *item ) const
+        {
+            return m_lwitem_thing_map.find(item) != m_lwitem_thing_map.end();
+        }
+
+        zmQtGtdItem * get( const std::string uid )
+        {
+            QMap< std::string, zmQtGtdItem * >::iterator l_it =
+                    m_thing_lwitem_map.find( uid );
+            assert( l_it != m_thing_lwitem_map.end() );
+            return l_it.value();
+        }
+
+        const std::string & get( zmQtGtdItem *item ) const
+        {
+            QMap< zmQtGtdItem *, std::string >::const_iterator l_it =
+                    m_lwitem_thing_map.find( item );
+            assert( l_it != m_lwitem_thing_map.end() );
+            return l_it.value();
+        }
+
+        QMap< std::string, zmQtGtdItem * >::iterator begin()
+        {
+            return m_thing_lwitem_map.begin();
+        }
+
+        QMap< std::string, zmQtGtdItem * >::iterator end()
+        {
+            return m_thing_lwitem_map.end();
+        }
+
+    } m_widget_item_mapper;
+
 
 /// maintenance interface
 public:
@@ -32,10 +111,96 @@ public:
     zmQtGtdModel()
         : m_gtd_model   ()
         , m_rootItem    ( NULL )
+        //, m_liToday     ( NULL )
+        , m_liInbox     ( NULL )
+        , m_liProjects  ( NULL )
+        , m_liKnowledge ( NULL )
+        , m_liDone      ( NULL )
+        , m_widget_item_mapper()
     {
         QList< QVariant > l_rootData;
         l_rootData << "Title" << "Summary";
-        m_rootItem = new zmQtGtdItem( l_rootData );
+        m_rootItem = new zmQtGtdItem( zmQtGtdItem::ROOT );
+
+    }
+
+    void populate()
+    {
+        //m_liToday = new zmQtGtdItem( QList< QVariant >() << "TODAY", m_rootItem );
+        //m_rootItem->appendChild( m_liToday );
+
+        m_liInbox = new zmQtGtdItem( zmQtGtdItem::FOLDER, "INBOX" );
+        m_rootItem->appendChild( m_liInbox );
+
+        m_liProjects = new zmQtGtdItem( zmQtGtdItem::FOLDER, "PROJECTS" );
+        m_rootItem->appendChild( m_liProjects );
+
+        m_liKnowledge = new zmQtGtdItem( zmQtGtdItem::FOLDER, "KNOWLEDGE" );
+        m_rootItem->appendChild( m_liKnowledge );
+
+        m_liDone = new zmQtGtdItem( zmQtGtdItem::FOLDER, "DONE" );
+        m_rootItem->appendChild( m_liDone );
+
+        //zmQtGtdItem *test = new zmQtGtdItem( QList< QVariant >() << "TEST", m_liToday );
+        //m_liToday->appendChild( test );
+        /// enforce list filling order by now..
+
+        BOOST_FOREACH( const std::string& p, getProjectItems( false, false ) )
+        {
+            addListItem( p );
+        }
+
+        BOOST_FOREACH( const std::string& t, getTaskItems( true, false ) )
+        {
+            addListItem( t );
+        }
+
+        BOOST_FOREACH( const std::string& i, getInboxItems( false ) )
+        {
+            addListItem( i );
+        }
+    }
+
+    void addListItem( const std::string uid )
+    {
+        zmQtGtdItem *l_item = new zmQtGtdItem( zmQtGtdItem::GTD_ITEM, this, uid );
+
+        //todo l_item->decorate();
+
+        //tracemessage( "adding item %s / %d to list (%s)",
+        //              uid.c_str(),
+        //              l_creationTime,
+        //              m_model.getCaption( uid ).toAscii().constData()  );
+
+        if( isDone( uid ) )
+        {
+            m_liDone->appendChild( l_item );
+        }
+
+        else if( isInboxItem( uid ) )
+        {
+            m_liInbox->appendChild( l_item );
+            //todo m_liInbox->sortChildren( 0, Qt::AscendingOrder );
+            //todo m_liInbox->setText( 0, QString().sprintf("INBOX (%d)", m_liInbox->childCount()) );
+        }
+
+        else if( isProjectItem( uid, true ) )
+        {
+            m_liProjects->appendChild( l_item );
+            //todo m_liProjects->setText( 0, QString().sprintf("PROJECTS (%d)", m_liProjects->childCount()) );
+        }
+
+        else if( isTaskItem( uid, false ) )
+        {
+            std::string l_parentProject = getParentProject( uid );
+
+            // todo: make sure l_project exists
+            zmQtGtdItem *l_project = m_widget_item_mapper.get(l_parentProject);
+
+            l_project->appendChild( l_item );
+        }
+
+        m_widget_item_mapper.add( uid, l_item );
     }
 
     virtual ~zmQtGtdModel()
@@ -81,6 +246,8 @@ public:
     void initialize()
     {
         m_gtd_model.initialize();
+
+        populate();
     }
 
     void sync()

@@ -77,10 +77,12 @@ qt4_wrap_cpp( ${PROJECT_NAME}_MOCS
 
 file( GLOB ${PROJECT_NAME}_files
     CMakeLists.txt
+    *.txt
     *.h
     main.cpp
     zmOsal.cpp
     zmModel.cpp
+    zmQtGtdItem.cpp
 )
 
 add_subdirectory( submodules/yaml-cpp )
@@ -122,6 +124,7 @@ add_executable( zmTool
     zmTool.cpp
     zmModel.cpp
     zmOsal.cpp
+    zmQtGtdItem.cpp
 )
 
 target_link_libraries( zmTool

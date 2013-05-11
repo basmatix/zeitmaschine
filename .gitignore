@@ -2,6 +2,7 @@ build-release
 build/*.png
 *.user*
 *~
+*.html
 CMakeCache.txt
 CMakeFiles
 build/*.cmake
