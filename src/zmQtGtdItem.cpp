@@ -15,7 +15,7 @@ zmQtGtdItem::zmQtGtdItem( ItemRole role )
     , m_uid             ( "" )
     , m_text            ( "" )
 {
-
+    assert( role == zmQtGtdItem::ROOT );
 }
 
 zmQtGtdItem::zmQtGtdItem( ItemRole role, const QString &title )
@@ -26,7 +26,7 @@ zmQtGtdItem::zmQtGtdItem( ItemRole role, const QString &title )
     , m_uid             ( "" )
     , m_text            ( title )
 {
-
+    assert( role == zmQtGtdItem::FOLDER );
 }
 
 zmQtGtdItem::zmQtGtdItem( ItemRole role, zmQtGtdModel *model, const std::string &uid )
@@ -37,9 +37,11 @@ zmQtGtdItem::zmQtGtdItem( ItemRole role, zmQtGtdModel *model, const std::string 
     , m_uid             ( uid )
     , m_text            ( "" )
 {
+    assert( role == zmQtGtdItem::GTD_ITEM );
+
     m_creationTime = m_model->getCreationTime( uid );
 
-    m_text = QString().sprintf("%ld", m_creationTime );
+    // m_text = QString().sprintf("%ld", m_creationTime );
 
-    //todosetFlags( flags() | Qt::ItemIsEditable );
+    //todo setFlags( flags() | Qt::ItemIsEditable );
 }
