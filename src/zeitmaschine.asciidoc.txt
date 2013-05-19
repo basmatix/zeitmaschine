@@ -67,16 +67,20 @@ workflow
 * cast to group
 * cast to done
 * cast to knowledge
-* dragability
 
-layout
-^^^^^^
+
+ui-behaviour
+^^^^^^^^^^^^
+
 * [ ] inbox/projects initially pre-opened
 * [ ] projects initially closed
 * [ ] inbox items sorted by creation date
 * [ ] knowledge items sorted by creation date
 * [ ] items editable (double click, context menu, F2)
-* [ ] priority gets displayed
+* [ ] item caption gets displayed
+* [ ] item priority gets displayed
+* [ ] dragability
+* [ ] item captions editable
 
 colors
 ^^^^^^

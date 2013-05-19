@@ -90,6 +90,8 @@ file( GLOB ${PROJECT_NAME}_files
     zmModel.cpp
     zmQtGtdItem.cpp
     zmQtUi.cpp
+    zmQtGtdModel.cpp
+    zmGtdModel.cpp
 )
 
 add_subdirectory( submodules/yaml-cpp )
@@ -132,6 +134,8 @@ add_executable( zmTool
     zmModel.cpp
     zmOsal.cpp
     zmQtGtdItem.cpp
+    zmGtdModel.cpp
+    zmQtGtdModel.cpp
 )
 
 target_link_libraries( zmTool

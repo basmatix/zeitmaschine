@@ -79,10 +79,17 @@ zmQtUi::zmQtUi( QWidget *parent )
 
     m_model.initialize();
 
-    m_searchProxy = new MySortFilterProxyModel( this );
-    m_searchProxy->setSourceModel( &m_model );
-
-    m_ui->tvMaster->setModel( m_searchProxy );
+    if(0)
+    {
+    //m_searchProxy = new MySortFilterProxyModel( this );
+    //m_searchProxy->setSourceModel( &m_model );
+        //m_ui->tvMaster->setModel( m_searchProxy );
+    }
+    else
+    {
+        m_ui->tvMaster->setModel( &m_model );
+        m_model.autoExpand( m_ui->tvMaster );
+    }
 
     m_liToday = new QTreeWidgetItem();
     m_liToday->setText( 0, "TODAY");

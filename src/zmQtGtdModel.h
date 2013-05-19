@@ -15,6 +15,8 @@
 #include <QtCore/QAbstractItemModel>
 #include <QtGui/QSortFilterProxyModel>
 
+class QTreeView;
+
 class MySortFilterProxyModel
         : public QSortFilterProxyModel
 {
@@ -146,105 +148,15 @@ class zmQtGtdModel
 /// maintenance interface
 public:
 
-    zmQtGtdModel()
-        : m_gtd_model   ()
-        , m_rootItem    ( NULL )
-        //, m_liToday     ( NULL )
-        , m_liInbox     ( NULL )
-        , m_liProjects  ( NULL )
-        , m_liKnowledge ( NULL )
-        , m_liDone      ( NULL )
-        , m_widget_item_mapper()
-    {
-        QList< QVariant > l_rootData;
-        l_rootData << "Title" << "Summary";
-        m_rootItem = new zmQtGtdItem( zmQtGtdItem::ROOT );
+    zmQtGtdModel();
 
-    }
+    virtual ~zmQtGtdModel();
 
-    void populate()
-    {
-        //m_liToday = new zmQtGtdItem( QList< QVariant >() << "TODAY", m_rootItem );
-        //m_rootItem->appendChild( m_liToday );
+    void populate();
 
-        m_liInbox = new zmQtGtdItem( zmQtGtdItem::FOLDER, "INBOX" );
-        m_rootItem->appendChild( m_liInbox );
+    void autoExpand( QTreeView * );
 
-        m_liProjects = new zmQtGtdItem( zmQtGtdItem::FOLDER, "PROJECTS" );
-        m_rootItem->appendChild( m_liProjects );
-
-        m_liKnowledge = new zmQtGtdItem( zmQtGtdItem::FOLDER, "KNOWLEDGE" );
-        m_rootItem->appendChild( m_liKnowledge );
-
-        m_liDone = new zmQtGtdItem( zmQtGtdItem::FOLDER, "DONE" );
-        m_rootItem->appendChild( m_liDone );
-
-        //zmQtGtdItem *test = new zmQtGtdItem( QList< QVariant >() << "TEST", m_liToday );
-        //m_liToday->appendChild( test );
-        /// enforce list filling order by now..
-
-        BOOST_FOREACH( const std::string& p, getProjectItems( false, false ) )
-        {
-            addListItem( p );
-        }
-
-        BOOST_FOREACH( const std::string& t, getTaskItems( true, false ) )
-        {
-            addListItem( t );
-        }
-
-        BOOST_FOREACH( const std::string& i, getInboxItems( false ) )
-        {
-            addListItem( i );
-        }
-    }
-
-    void addListItem( const std::string uid )
-    {
-        zmQtGtdItem *l_item = new zmQtGtdItem( zmQtGtdItem::GTD_ITEM, this, uid );
-
-        //todo l_item->decorate();
-
-        //tracemessage( "adding item %s / %d to list (%s)",
-        //              uid.c_str(),
-        //              l_creationTime,
-        //              m_model.getCaption( uid ).toAscii().constData()  );
-
-        if( isDone( uid ) )
-        {
-            m_liDone->appendChild( l_item );
-        }
-
-        else if( isInboxItem( uid ) )
-        {
-            m_liInbox->appendChild( l_item );
-            //todo m_liInbox->sortChildren( 0, Qt::AscendingOrder );
-            //todo m_liInbox->setText( 0, QString().sprintf("INBOX (%d)", m_liInbox->childCount()) );
-        }
-
-        else if( isProjectItem( uid, true ) )
-        {
-            m_liProjects->appendChild( l_item );
-            //todo m_liProjects->setText( 0, QString().sprintf("PROJECTS (%d)", m_liProjects->childCount()) );
-        }
-
-        else if( isTaskItem( uid, false ) )
-        {
-            std::string l_parentProject = getParentProject( uid );
-
-            // todo: make sure l_project exists
-            zmQtGtdItem *l_project = m_widget_item_mapper.get(l_parentProject);
-
-            l_project->appendChild( l_item );
-        }
-
-        m_widget_item_mapper.add( uid, l_item );
-    }
-
-    virtual ~zmQtGtdModel()
-    {
-        delete m_rootItem;
-    }
+    void addListItem( const std::string uid );
 
     bool hasUsedUsername() const
     {
@@ -308,138 +220,19 @@ public:
 ///
 /// QAbstractItemModel interface
 ///
-    Qt::ItemFlags flags( const QModelIndex &index ) const
-    {
-        if (!index.isValid())
-        {
-            return 0;
-        }
+    Qt::ItemFlags flags( const QModelIndex &index ) const;
 
-        return Qt::ItemIsEnabled | Qt::ItemIsSelectable;
-    }
+    QVariant headerData(int section, Qt::Orientation orientation, int role) const;
 
-    QVariant headerData(int section, Qt::Orientation orientation,
-                                   int role) const
-    {
-        if( orientation == Qt::Horizontal && role == Qt::DisplayRole )
-        {
-            return m_rootItem->data( section );
-        }
+    QModelIndex index( int row, int column, const QModelIndex &parent ) const;
 
-        return QVariant();
-    }
+    QModelIndex parent( const QModelIndex &index ) const;
 
-    QModelIndex index( int row, int column, const QModelIndex &parent ) const
-    {
-        if( !hasIndex(row, column, parent) )
-        {
-            return QModelIndex();
-        }
+    int rowCount( const QModelIndex &parent ) const;
 
-        zmQtGtdItem *l_parentItem;
+    int columnCount( const QModelIndex &parent ) const;
 
-        if( !parent.isValid() )
-        {
-            l_parentItem = m_rootItem;
-        }
-        else
-        {
-            l_parentItem = static_cast<zmQtGtdItem*>(parent.internalPointer());
-        }
-
-        zmQtGtdItem *l_childItem = l_parentItem->child(row);
-        if( l_childItem == NULL )
-        {
-            return QModelIndex();
-        }
-
-        return createIndex(row, column, l_childItem);
-    }
-
-    QModelIndex parent( const QModelIndex &index ) const
-    {
-        if( !index.isValid() )
-        {
-            return QModelIndex();
-        }
-
-        zmQtGtdItem *l_childItem = static_cast< zmQtGtdItem * >( index.internalPointer() );
-        zmQtGtdItem *l_parentItem = l_childItem->parent();
-
-        if( l_parentItem == m_rootItem )
-        {
-            return QModelIndex();
-        }
-
-        return createIndex(l_parentItem->row(), 0, l_parentItem);
-    }
-
-    int rowCount( const QModelIndex &parent ) const
-    {
-        if( parent.column() > 0 )
-        {
-            return 0;
-        }
-
-        zmQtGtdItem *l_parentItem;
-
-        if (!parent.isValid())
-        {
-            l_parentItem = m_rootItem;
-        }
-        else
-        {
-            l_parentItem = static_cast< zmQtGtdItem * >(parent.internalPointer());
-        }
-
-        return l_parentItem->childCount();
-    }
-
-    int columnCount( const QModelIndex &parent ) const
-    {
-        if( parent.isValid() )
-        {
-            return static_cast< zmQtGtdItem* >( parent.internalPointer() )->columnCount();
-        }
-        else
-        {
-            return m_rootItem->columnCount();
-        }
-    }
-
-    QVariant data( const QModelIndex &index, int role ) const
-    {
-        if (!index.isValid())
-        {
-            return QVariant();
-        }
-
-        switch( role )
-        {
-        case Qt::DisplayRole:
-        {
-            zmQtGtdItem *l_item = static_cast< zmQtGtdItem * >(index.internalPointer());
-            return l_item->data( index.column() );
-        }
-        case Qt::SizeHintRole:
-        case Qt::ToolTipRole:
-        case Qt::DecorationRole:
-        case Qt::FontRole:
-        case Qt::TextAlignmentRole:
-        case Qt::BackgroundRole:
-        case Qt::TextColorRole:
-        case Qt::CheckStateRole:
-
-        {
-            return QVariant();
-            break;
-        }
-        default:
-            return QVariant();
-            break;
-
-        }
-    }
+    QVariant data( const QModelIndex &index, int role ) const;
 
 /// const interface
 public:
