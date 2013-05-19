@@ -1,3 +1,4 @@
+*.autosave
 build-release
 build/*.png
 *.user*

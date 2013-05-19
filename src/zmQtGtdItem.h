@@ -22,6 +22,7 @@ class zmQtGtdItem
     zmQtGtdModel           *m_model;
     std::string             m_uid;
     QString                 m_text;
+    int                     m_sortValue;
 
     zmQtGtdItem( const zmQtGtdItem & );
     zmQtGtdItem & operator= ( const zmQtGtdItem & );
@@ -54,7 +55,23 @@ public:
     void appendChild( zmQtGtdItem *item )
     {
         item->setParent( this );
+        for(QList< zmQtGtdItem * >::iterator
+            i  = m_childItems.begin();
+            i != m_childItems.end(); ++i )
+        {
+            if( *item < **i )
+            {
+                m_childItems.insert( i, item );
+                return;
+            }
+        }
+
         m_childItems.append( item );
+    }
+
+    bool operator< ( const zmQtGtdItem &other )
+    {
+        return m_sortValue < other.m_sortValue;
     }
 
     zmQtGtdItem *child( int row )
@@ -73,19 +90,7 @@ public:
         //return m_itemData.count();
     }
 
-    QVariant data( int column ) const
-    {
-        //todo
-        if( column == 0 )
-        {
-            return m_text;
-        }
-        else
-        {
-            return QVariant();
-        }
-        //return m_itemData.value( column );
-    }
+    QVariant data( int column ) const;
 
     int row() const
     {

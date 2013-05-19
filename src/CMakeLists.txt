@@ -79,6 +79,8 @@ file( GLOB ${PROJECT_NAME}_files
     CMakeLists.txt
     *.txt
     *.h
+    DOC-*
+    *asciidoc.txt
     main.cpp
     zmOsal.cpp
     zmModel.cpp

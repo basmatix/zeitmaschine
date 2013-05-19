@@ -72,7 +72,11 @@
            </widget>
           </item>
           <item>
-           <widget class="QTreeView" name="tvMaster"/>
+           <widget class="QTreeView" name="tvMaster">
+            <property name="sortingEnabled">
+             <bool>true</bool>
+            </property>
+           </widget>
           </item>
          </layout>
         </item>

@@ -13,7 +13,44 @@
 #include <zmGtdModel.h>
 #include <QtCore/QString>
 #include <QtCore/QAbstractItemModel>
+#include <QtGui/QSortFilterProxyModel>
 
+class MySortFilterProxyModel
+        : public QSortFilterProxyModel
+{
+    QString m_search;
+
+public:
+
+    MySortFilterProxyModel(QObject *parent = 0)
+        : QSortFilterProxyModel( parent )
+        , m_search( "" )
+    {
+
+    }
+
+    void setSearchString( const QString &searchString )
+    {
+        m_search = searchString.toLower();
+        invalidateFilter();
+    }
+
+private:
+
+    bool filterAcceptsRow( int sourceRow,const QModelIndex &sourceParent ) const
+    {
+        if( m_search == "" ) return true;
+
+        QModelIndex index0 = sourceModel()->index(sourceRow, 0, sourceParent);
+        return (sourceModel()->data(index0).toString().toLower().contains( m_search ) );
+    }
+
+    void sort(int column, Qt::SortOrder order = Qt::AscendingOrder)
+    {
+        return;
+    }
+
+};
 
 /// std-c++/Qt - interface to zmGtdModel. Aims to be a
 /// fully qualified Qt model in the future
@@ -376,14 +413,31 @@ public:
             return QVariant();
         }
 
-        if (role != Qt::DisplayRole)
+        switch( role )
+        {
+        case Qt::DisplayRole:
+        {
+            zmQtGtdItem *l_item = static_cast< zmQtGtdItem * >(index.internalPointer());
+            return l_item->data( index.column() );
+        }
+        case Qt::SizeHintRole:
+        case Qt::ToolTipRole:
+        case Qt::DecorationRole:
+        case Qt::FontRole:
+        case Qt::TextAlignmentRole:
+        case Qt::BackgroundRole:
+        case Qt::TextColorRole:
+        case Qt::CheckStateRole:
+
         {
             return QVariant();
+            break;
         }
+        default:
+            return QVariant();
+            break;
 
-        zmQtGtdItem *l_item = static_cast< zmQtGtdItem * >(index.internalPointer());
-
-        return l_item->data( index.column() );
+        }
     }
 
 /// const interface

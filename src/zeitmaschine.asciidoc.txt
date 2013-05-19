@@ -76,6 +76,7 @@ layout
 * [ ] inbox items sorted by creation date
 * [ ] knowledge items sorted by creation date
 * [ ] items editable (double click, context menu, F2)
+* [ ] priority gets displayed
 
 colors
 ^^^^^^

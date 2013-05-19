@@ -53,6 +53,7 @@ private:
     QTreeWidgetItem    *m_liProjects;
     QTreeWidgetItem    *m_liContexts;
     QTreeWidgetItem    *m_liDone;
+    MySortFilterProxyModel *m_searchProxy;
 
     class WidgetItemMapper
     {
@@ -152,6 +153,7 @@ public:
         , m_liContexts         ()
         , m_liDone             ()
         , m_widget_item_mapper ()
+        , m_searchProxy         ( NULL )
     {   tracemessage( __FUNCTION__ );
 
         m_ui->setupUi( this );
@@ -186,7 +188,10 @@ public:
 
         m_model.initialize();
 
-        m_ui->tvMaster->setModel( &m_model );
+        m_searchProxy = new MySortFilterProxyModel( this );
+        m_searchProxy->setSourceModel( &m_model );
+
+        m_ui->tvMaster->setModel( m_searchProxy );
 
         m_liToday = new QTreeWidgetItem();
         m_liToday->setText( 0, "TODAY");
@@ -648,6 +653,8 @@ private slots:
     void on_leCommand_textChanged ( const QString & text )
     {   //tracemessage( __FUNCTION__ );
         // this method is being called automatically by Qt
+        m_searchProxy->setSearchString( text );
+
         QString l_search_string = text.toLower();
         for( QMap< std::string, zmQTreeWidgetItem * >::iterator
              i  = m_widget_item_mapper.begin();
