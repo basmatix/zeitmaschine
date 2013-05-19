@@ -1,5 +1,9 @@
-# copyright (C) 2013 Frans Fürst
 # -*- coding: utf-8 -*-
+#
+# file: zmQtGtdModel.h
+#
+# Copyright (C) 2013 Frans Fuerst
+#
 
 project( zeitmaschine )
 
@@ -71,7 +75,7 @@ qt4_wrap_ui( ${PROJECT_NAME}_UIS
 
 # list all class files which implement Q_OBJECT
 qt4_wrap_cpp( ${PROJECT_NAME}_MOCS
-    mainwindow.h
+    zmQtUi.h
     zmQTreeWidget.h
 )
 
@@ -85,6 +89,7 @@ file( GLOB ${PROJECT_NAME}_files
     zmOsal.cpp
     zmModel.cpp
     zmQtGtdItem.cpp
+    zmQtUi.cpp
 )
 
 add_subdirectory( submodules/yaml-cpp )
@@ -110,9 +115,9 @@ add_executable( zm
     ${${PROJECT_NAME}_UIS}
 )
 
-add_custom_target( resettimestamp ALL
-    COMMAND touch "${CMAKE_CURRENT_SOURCE_DIR}/mainwindow.h"
-)
+#add_custom_target( resettimestamp ALL
+#    COMMAND touch "${CMAKE_CURRENT_SOURCE_DIR}/zmQtUi.h"
+#)
 
 target_link_libraries( zm
     ${QT_LIBRARIES}

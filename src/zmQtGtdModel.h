@@ -45,6 +45,7 @@ private:
         return (sourceModel()->data(index0).toString().toLower().contains( m_search ) );
     }
 
+    /// we don't want sorting
     void sort(int column, Qt::SortOrder order = Qt::AscendingOrder)
     {
         return;

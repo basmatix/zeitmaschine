@@ -1,13 +1,17 @@
-/// copyright (C) 2013 Frans Fürst
 /// -*- coding: utf-8 -*-
+///
+/// file: main.cpp
+///
+/// Copyright (C) 2013 Frans Fuerst
+///
 
 #include <QtGui/QApplication>
-#include "mainwindow.h"
+#include "zmQtUi.h"
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-    MainWindow w;
+    zmQtUi w;
 #if defined(Q_WS_S60)
     w.showMaximized();
 #else

@@ -1,5 +1,10 @@
-/// copyright (C) 2013 Frans Fuerst
 /// -*- coding: utf-8 -*-
+///
+/// file: zmChangeSet.h
+///
+/// Copyright (C) 2013 Frans Fuerst
+///
+
 
 #ifndef ZMCHANGESET_H
 #define ZMCHANGESET_H
