@@ -49,7 +49,11 @@ zmQtUi::zmQtUi( QWidget *parent )
 
     m_ui->setupUi( this );
 
-    this->setWindowTitle(QApplication::translate("window", "zeitmaschine - built on "__TIMESTAMP__, 0, QApplication::UnicodeUTF8));
+    this->setWindowTitle(
+                QApplication::translate(
+                    "window",
+                    "zeitmaschine - built on "__TIMESTAMP__,
+                    0, QApplication::UnicodeUTF8 ));
 
     if( QDir( QDir::currentPath() + QDir::separator() + "zm-local").exists() )
     {

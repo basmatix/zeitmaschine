@@ -9,8 +9,10 @@
 
 #include <zmGtdModel.h>
 #include <QtCore/QString>
+#include <QtGui/QColor>
 #include <QtCore/QAbstractItemModel>
 #include <QtGui/QSortFilterProxyModel>
+#include <QtGui/QTreeView>
 
 zmQtGtdModel::zmQtGtdModel()
     : m_gtd_model   ()
@@ -25,6 +27,11 @@ zmQtGtdModel::zmQtGtdModel()
     QList< QVariant > l_rootData;
     l_rootData << "Title" << "Summary";
     m_rootItem = new zmQtGtdItem( zmQtGtdItem::ROOT );
+}
+
+zmQtGtdModel::~zmQtGtdModel()
+{
+    delete m_rootItem;
 }
 
 void zmQtGtdModel::populate()
@@ -64,9 +71,9 @@ void zmQtGtdModel::populate()
     }
 }
 
-void zmQtGtdModel::autoExpand( QTreeView * )
+void zmQtGtdModel::autoExpand( QTreeView *treeView )
 {
-
+    //treeView->setExpanded();
 }
 
 void zmQtGtdModel::addListItem( const std::string uid )
@@ -109,11 +116,6 @@ void zmQtGtdModel::addListItem( const std::string uid )
     }
 
     m_widget_item_mapper.add( uid, l_item );
-}
-
-zmQtGtdModel::~zmQtGtdModel()
-{
-    delete m_rootItem;
 }
 
 Qt::ItemFlags zmQtGtdModel::flags( const QModelIndex &index ) const
@@ -229,20 +231,22 @@ QVariant zmQtGtdModel::data( const QModelIndex &index, int role ) const
         return QVariant();
     }
 
+    zmQtGtdItem *l_item = static_cast< zmQtGtdItem * >(index.internalPointer());
+
     switch( role )
     {
     case Qt::DisplayRole:
     {
-        zmQtGtdItem *l_item = static_cast< zmQtGtdItem * >(index.internalPointer());
         return l_item->data( index.column() );
     }
+    case Qt::TextColorRole: //ForegroundRole
+        return QVariant( l_item->color( index.column() ) );
     case Qt::SizeHintRole:
     case Qt::ToolTipRole:
     case Qt::DecorationRole:
     case Qt::FontRole:
     case Qt::TextAlignmentRole:
     case Qt::BackgroundRole:
-    case Qt::TextColorRole:
     case Qt::CheckStateRole:
 
     {

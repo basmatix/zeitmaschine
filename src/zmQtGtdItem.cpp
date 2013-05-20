@@ -7,6 +7,8 @@
 #include "zmQtGtdItem.h"
 #include "zmQtGtdModel.h"
 
+#include <QtGui/QColor>
+
 zmQtGtdItem::zmQtGtdItem( ItemRole role )
     : m_parentItem      ( NULL )
     , m_childItems      ()
@@ -67,4 +69,9 @@ QVariant zmQtGtdItem::data( int column ) const
         return QVariant();
     }
     //return m_itemData.value( column );
+}
+
+QColor zmQtGtdItem::color( int column ) const
+{
+    return QColor( Qt::blue );
 }

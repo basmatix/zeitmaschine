@@ -92,6 +92,8 @@ public:
 
     QVariant data( int column ) const;
 
+    QColor color( int column ) const;
+
     int row() const
     {
         if( m_parentItem == NULL )
