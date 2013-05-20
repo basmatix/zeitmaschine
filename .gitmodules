@@ -1,3 +1,6 @@
 [submodule "src/submodules/json-cpp"]
 	path = src/submodules/json-cpp
 	url = https://github.com/mrtazz/json-cpp.git
+[submodule "src/submodules/yaml-cpp"]
+	path = src/submodules/yaml-cpp
+	url = gitosis@git.scitics.de:yaml-cpp
