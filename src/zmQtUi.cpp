@@ -36,6 +36,7 @@ zmQtUi::zmQtUi( QWidget *parent )
     : QMainWindow          ( parent )
     , m_ui                 ( new Ui_window )
     , m_model              ()
+    /*
     , m_selected_thing     ( "" )
     , m_selected_twItem    ( NULL )
     , m_liToday            ()
@@ -44,6 +45,7 @@ zmQtUi::zmQtUi( QWidget *parent )
     , m_liContexts         ()
     , m_liDone             ()
     , m_widget_item_mapper ()
+*/
     , m_searchProxy         ( NULL )
 {   tracemessage( __FUNCTION__ );
 
@@ -94,7 +96,7 @@ zmQtUi::zmQtUi( QWidget *parent )
         m_ui->tvMaster->setModel( &m_model );
         m_model.autoExpand( m_ui->tvMaster );
     }
-
+/*
     m_liToday = new QTreeWidgetItem();
     m_liToday->setText( 0, "TODAY");
     m_ui->twMaster->addTopLevelItem( m_liToday );
@@ -132,7 +134,7 @@ zmQtUi::zmQtUi( QWidget *parent )
     m_liDone->setExpanded( false );
     m_liDone->setForeground( 0, b );
     m_liDone->setBackgroundColor( 0, Qt::lightGray );
-
+*/
     updateUi();
 }
 
@@ -143,8 +145,8 @@ zmQtUi::~zmQtUi()
 
 void zmQtUi::addListItem( const std::string uid )
 {
-    zmQTreeWidgetItem *l_item = new zmQTreeWidgetItem( m_model, uid );
-
+//    zmQTreeWidgetItem *l_item = new zmQTreeWidgetItem( m_model, uid );
+/*
     l_item->decorate();
 
     //tracemessage( "adding item %s / %d to list (%s)",
@@ -163,7 +165,6 @@ void zmQtUi::addListItem( const std::string uid )
         m_liInbox->sortChildren(0,Qt::AscendingOrder);
         m_liInbox->setText( 0, QString().sprintf("INBOX (%d)", m_liInbox->childCount()) );
     }
-
     else if( m_model.isProjectItem( uid, true ) )
     {
         m_liProjects->addChild( l_item );
@@ -181,6 +182,7 @@ void zmQtUi::addListItem( const std::string uid )
     }
 
     m_widget_item_mapper.add( uid, l_item );
+*/
 }
 
 void zmQtUi::updateUi()
@@ -212,9 +214,11 @@ void zmQtUi::closeEvent( QCloseEvent *event )
 
 void zmQtUi::unselect()
 {
+    /*
     m_selected_thing = "";
     m_selected_twItem = NULL;
     m_ui->twMaster->unselect();
+    */
 }
 
 void zmQtUi::createInboxItemFromUiElements()
@@ -241,7 +245,7 @@ void zmQtUi::on_leCommand_returnPressed()
 
     createInboxItemFromUiElements();
 }
-
+/*
 void zmQtUi::on_twMaster_currentItemChanged( QTreeWidgetItem *current, QTreeWidgetItem *previous )
 {   //tracemessage( __FUNCTION__ );
 
@@ -326,11 +330,12 @@ void zmQtUi::on_twMaster_itemDropped( QTreeWidgetItem *item, QTreeWidgetItem *ta
         target->addChild( l_uselessCopy );
     }
 }
-
+*/
 void zmQtUi::on_pbClose_clicked()
 {   tracemessage( __FUNCTION__ );
 
     //QMutexLocker monitor( &m_mutex );
+    /*
     if( m_selected_thing == "" ) return;
 
     tracemessage( "set item to DONE: %s (%s)",
@@ -341,6 +346,7 @@ void zmQtUi::on_pbClose_clicked()
 
     // NOTE: this is black magic - don't touch! why does m_selected_twItem
     //       get set to NULL on removeChild()?!
+
     zmQTreeWidgetItem *l_uselessCopy( m_selected_twItem );
     QTreeWidgetItem *l_groupingItem( m_selected_twItem->parent() );
     l_groupingItem->removeChild( l_uselessCopy );
@@ -348,11 +354,12 @@ void zmQtUi::on_pbClose_clicked()
     m_liDone->addChild( l_uselessCopy );
 
     unselect();
+    */
 }
 
 void zmQtUi::on_pbDelete_clicked()
 {   tracemessage( __FUNCTION__ );
-
+    /*
     if( m_selected_thing == "" ) return;
 
     tracemessage( "erase item: %s (%s)",
@@ -366,29 +373,29 @@ void zmQtUi::on_pbDelete_clicked()
     // dont alter m_selected_thing or m_selected_twItem after this
     // deletion since they get set there synchronously
     delete m_selected_twItem;
-
+*/
     unselect();
 }
 
 
 void zmQtUi::on_pbPlusOne_clicked()
 {   tracemessage( __FUNCTION__ );
-
+/*
     if( m_selected_thing == "" ) return;
 
     tracemessage( "plus one item %s (%s)",
                   m_selected_thing.c_str(),
                   m_model.getCaption( m_selected_thing ).toAscii().constData()  );
-
     m_model.plusOne( m_selected_thing );
-    m_selected_twItem->decorate();
+*/
+//    m_selected_twItem->decorate();
 }
 
 void zmQtUi::on_pbMakeProject_clicked()
 {   tracemessage( __FUNCTION__ );
 
     QString l_project_name = m_ui->leCommand->text();
-
+/*
     /// if no name for a new item has been given cast an inbox item
     if( l_project_name == "" )
     {
@@ -435,10 +442,12 @@ void zmQtUi::on_pbMakeProject_clicked()
 
         m_ui->leCommand->setText("");
     }
+        */
 }
 
 void zmQtUi::on_pbMakeNextAction_clicked()
 {
+    /*
     if( m_selected_thing == "" )
     {
         // todo: error
@@ -475,13 +484,14 @@ void zmQtUi::on_pbMakeNextAction_clicked()
         // todo: error
         assert(false);
     }
+    */
 }
 
 void zmQtUi::on_pbMakeAction_clicked()
 {   tracemessage( __FUNCTION__ );
 
     QString l_project_name = m_ui->leCommand->text();
-
+/*
     /// if no name for a new item has been given cast an inbox item
     if( l_project_name == "" )
     {
@@ -528,6 +538,7 @@ void zmQtUi::on_pbMakeAction_clicked()
 
         m_ui->leCommand->setText("");
     }
+    */
 }
 
 void zmQtUi::on_pbOrder_clicked()
@@ -547,7 +558,7 @@ void zmQtUi::on_leCommand_textChanged ( const QString & text )
 {   //tracemessage( __FUNCTION__ );
     // this method is being called automatically by Qt
     m_searchProxy->setSearchString( text );
-
+/*
     QString l_search_string = text.toLower();
     for( QMap< std::string, zmQTreeWidgetItem * >::iterator
          i  = m_widget_item_mapper.begin();
@@ -566,4 +577,5 @@ void zmQtUi::on_leCommand_textChanged ( const QString & text )
         assert( m_selected_twItem == m_widget_item_mapper.get(m_selected_thing) );
     }
     unselect();
+    */
 }

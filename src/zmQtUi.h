@@ -50,7 +50,8 @@ private:
 
     zmQtGtdModel        m_model;
 
-    std::string         m_selected_thing;
+    //std::string         m_selected_thing;
+    /*
     zmQTreeWidgetItem  *m_selected_twItem;
 
     QTreeWidgetItem    *m_liToday;
@@ -58,8 +59,9 @@ private:
     QTreeWidgetItem    *m_liProjects;
     QTreeWidgetItem    *m_liContexts;
     QTreeWidgetItem    *m_liDone;
+    */
     MySortFilterProxyModel *m_searchProxy;
-
+/*
     class WidgetItemMapper
     {
         QMap< std::string, zmQTreeWidgetItem * > m_thing_lwitem_map;
@@ -142,7 +144,7 @@ private:
         }
 
     } m_widget_item_mapper;
-
+*/
 
 public:
 
@@ -172,13 +174,13 @@ private slots:
     void on_pbAddInboxItem_clicked();
 
     void on_leCommand_returnPressed();
-
+/*
     void on_twMaster_currentItemChanged( QTreeWidgetItem *current, QTreeWidgetItem *previous );
 
     void on_twMaster_itemChanged( QTreeWidgetItem *item );
 
     void on_twMaster_itemDropped( QTreeWidgetItem *item, QTreeWidgetItem *target );
-
+*/
     void on_pbClose_clicked();
 
     void on_pbDelete_clicked();
