@@ -9,7 +9,7 @@
 %module pyZm
 %{
 // Includes the header in the wrapper code
-#include <zmGtdModel.h>
+#include <zm/zmGtdModel.h>
 %}
 
 // Parse the header file to generate wrappers
@@ -22,4 +22,4 @@
 //%array_class(char, charArray);
 //%include "cstring.i"
 
-%include "zmGtdModel.h"
+%include <zm/zmGtdModel.h>

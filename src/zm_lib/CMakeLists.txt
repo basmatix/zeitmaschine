@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 #
-# file: CMakeLists.txt (mindmatter)
+# file: CMakeLists.txt (zeitmaschine)
 #
 # Copyright (C) 2013 Frans Fuerst
 #
 
-project( mindmatter )
+project( zeitmaschine )
 
 cmake_minimum_required(VERSION 2.8.11)
 
@@ -15,15 +15,15 @@ file( GLOB ${PROJECT_NAME}_files
     *.h
     DOC-*
     *asciidoc.txt
-    zmOsal.cpp
-    zmModel.cpp
+    zmGtdModel.cpp
     include/*/*.h
 )
 
 # generated and external headers made system so
 # we don't have to deal with their warnings
 include_directories(SYSTEM
-    "${CMAKE_CURRENT_SOURCE_DIR}/include"
+#    "${CMAKE_CURRENT_SOURCE_DIR}/include"
+    "${MM_INCLUDE_DIR}"
     "${YAML_CPP_INCLUDE_DIR}"
 #    "${Boost_INCLUDE_DIR}"
 #    "${CMAKE_CURRENT_BINARY_DIR}"
@@ -31,8 +31,8 @@ include_directories(SYSTEM
 #    "${CMAKE_CURRENT_SOURCE_DIR}/mm_lib/include"
 )
 
-add_library( mm_s STATIC  ${${PROJECT_NAME}_files} )
+add_library( zm_s STATIC  ${${PROJECT_NAME}_files} )
 
-set_target_properties( mm_s PROPERTIES COMPILE_FLAGS -fPIC )
+set_target_properties( zm_s PROPERTIES COMPILE_FLAGS -fPIC )
 
 link_directories( ${Boost_LIBRARY_DIRS} )

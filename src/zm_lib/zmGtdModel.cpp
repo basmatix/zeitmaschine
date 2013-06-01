@@ -5,7 +5,7 @@
 /// Copyright (C) 2013 Frans Fuerst
 ///
 
-#include "zmGtdModel.h"
+#include "include/zm/zmGtdModel.h"
 
 #include <mm/zmTrace.h>
 

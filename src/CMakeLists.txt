@@ -87,14 +87,17 @@ file( GLOB ${PROJECT_NAME}_files
     *asciidoc.txt
     main.cpp
     zmQtGtdItem.cpp
-    zmQtUi.cpp
     zmQtGtdModel.cpp
+    zmQtUi.cpp
 )
 
 set( YAML_CPP_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/submodules/yaml-cpp/include" )
+set( MM_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/mm_lib/include" )
+set( ZM_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/zm_lib/include" )
 
 add_subdirectory( submodules/yaml-cpp )
 add_subdirectory( mm_lib )
+add_subdirectory( zm_lib )
 
 include_directories(
     "${CMAKE_CURRENT_SOURCE_DIR}"
@@ -108,13 +111,8 @@ include_directories(SYSTEM
     "${CMAKE_CURRENT_BINARY_DIR}"
     "${CMAKE_CURRENT_SOURCE_DIR}/submodules/yaml-cpp/include"
     "${CMAKE_CURRENT_SOURCE_DIR}/mm_lib/include"
+    "${CMAKE_CURRENT_SOURCE_DIR}/zm_lib/include"
 )
-
-add_library( zm_s STATIC
-    zmGtdModel.cpp
-)
-
-set_target_properties( zm_s PROPERTIES COMPILE_FLAGS -fPIC )
 
 link_directories( ${Boost_LIBRARY_DIRS} )
 
@@ -139,7 +137,6 @@ target_link_libraries( zm
 add_executable( zmTool
     zmTool.cpp
     zmQtGtdItem.cpp
-    zmGtdModel.cpp
     zmQtGtdModel.cpp
 )
 
@@ -163,7 +160,7 @@ include_directories( ${CMAKE_CURRENT_SOURCE_DIR} )
 
 set( PYTHON_ZM_LIBRARY_NAME "pyZm" )
 
-set( SWIG_MODULE_${PYTHON_ZM_LIBRARY_NAME}_EXTRA_DEPS "zmGtdModel.h" )
+set( SWIG_MODULE_${PYTHON_ZM_LIBRARY_NAME}_EXTRA_DEPS "${ZM_INCLUDE_DIR}/zm/zmGtdModel.h" )
 
 set_source_files_properties( zm-python.i PROPERTIES CPLUSPLUS ON )
 

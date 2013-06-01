@@ -7,7 +7,7 @@
 
 #include "zmQtGtdModel.h"
 
-#include <zmGtdModel.h>
+#include <zm/zmGtdModel.h>
 #include <QtCore/QString>
 #include <QtGui/QColor>
 #include <QtCore/QAbstractItemModel>

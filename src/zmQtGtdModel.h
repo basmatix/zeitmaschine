@@ -10,7 +10,7 @@
 
 #include <zmQtGtdItem.h>
 
-#include <zmGtdModel.h>
+#include <zm/zmGtdModel.h>
 #include <QtCore/QString>
 #include <QtCore/QAbstractItemModel>
 #include <QtGui/QSortFilterProxyModel>
