@@ -8,7 +8,7 @@
 #ifndef ZMQTGTDADAPTER_H
 #define ZMQTGTDADAPTER_H
 
-#include <zmQtGtdItem.h>
+#include "zmQtGtdItem.h"
 
 #include <zm/zmGtdModel.h>
 #include <QtCore/QString>

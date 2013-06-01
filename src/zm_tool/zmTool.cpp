@@ -4,10 +4,12 @@
 #include <QtGui/QApplication>
 #include <QtCore/QDir>
 #include <string>
-#include "zmQtGtdModel.h"
+
+//#include "zmQtGtdModel.h"
 
 int main(int argc, char *argv[])
 {
+    /*
     zmQtGtdModel        m_model;
 
     if( ! QDir( QDir::currentPath() + QDir::separator() + "zm-local").exists() )
@@ -33,4 +35,6 @@ int main(int argc, char *argv[])
     m_model.initialize();
 
     m_model.merge( "zm-frans-blackbox-local.yaml" );
+    */
+    return 0;
 }

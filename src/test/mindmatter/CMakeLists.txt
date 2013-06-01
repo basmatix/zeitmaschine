@@ -13,9 +13,13 @@
 #include_directories( "${CMAKE_SOURCE_DIR}/common/include" )
 
 # general include directories
-
 include_directories( "${Boost_INCLUDE_DIR}" )
 link_directories( ${Boost_LIBRARY_DIRS} )
+
+include_directories(
+    "${YAML_CPP_INCLUDE_DIR}"
+    "${MM_INCLUDE_DIR}"
+)
 
 add_executable( test_mindmatter test_mindmatter.cpp )
 target_link_libraries( test_mindmatter
