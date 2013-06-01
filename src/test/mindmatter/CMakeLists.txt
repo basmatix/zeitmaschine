@@ -20,6 +20,7 @@ link_directories( ${Boost_LIBRARY_DIRS} )
 add_executable( test_mindmatter test_mindmatter.cpp )
 target_link_libraries( test_mindmatter
     ${Boost_LIBRARIES}
+    mm_s
     zm_s
     yaml-cpp
 )

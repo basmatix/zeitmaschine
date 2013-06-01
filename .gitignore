@@ -24,5 +24,7 @@ build/zmTool
 build/test_things
 build/Testing
 build/test
+build/mm_lib
+build/zm_lib
 
 

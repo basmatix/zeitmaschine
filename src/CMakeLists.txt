@@ -91,7 +91,10 @@ file( GLOB ${PROJECT_NAME}_files
     zmQtGtdModel.cpp
 )
 
+set( YAML_CPP_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/submodules/yaml-cpp/include" )
+
 add_subdirectory( submodules/yaml-cpp )
+add_subdirectory( mm_lib )
 
 include_directories(
     "${CMAKE_CURRENT_SOURCE_DIR}"
@@ -108,8 +111,6 @@ include_directories(SYSTEM
 )
 
 add_library( zm_s STATIC
-    zmOsal.cpp
-    zmModel.cpp
     zmGtdModel.cpp
 )
 
@@ -130,6 +131,7 @@ add_executable( zm
 target_link_libraries( zm
     ${QT_LIBRARIES}
     ${Boost_LIBRARIES}
+    mm_s
     zm_s
     yaml-cpp
 )
@@ -144,6 +146,7 @@ add_executable( zmTool
 target_link_libraries( zmTool
     ${QT_LIBRARIES}
     ${Boost_LIBRARIES}
+    mm_s
     zm_s
     yaml-cpp
 )
@@ -169,7 +172,7 @@ swig_add_module( ${PYTHON_ZM_LIBRARY_NAME} python zm-python.i )
 # important: add _ to swig generated python modules
 #set_target_properties( _${PYTHON_ZM_LIBRARY_NAME} PROPERTIES COMPILE_DEFINITIONS "${YSBOX_COMPILE_FLAGS}" )
 
-swig_link_libraries( ${PYTHON_ZM_LIBRARY_NAME} zm_s yaml-cpp )
+swig_link_libraries( ${PYTHON_ZM_LIBRARY_NAME}  mm_s zm_s yaml-cpp )
 
 if( NOT MSVC )
      swig_link_libraries( ${PYTHON_ZM_LIBRARY_NAME} ${Boost_LIBRARIES} )
