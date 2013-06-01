@@ -9,9 +9,9 @@
 #include "zmQtUi.h"
 
 #include "zmQtGtdModel.h"
-#include "zmOsal.h"
+#include <mm/zmOsal.h>
 
-#include "zmTrace.h"
+#include <mm/zmTrace.h>
 
 #include <map>
 #include <QtGui/QMainWindow>
@@ -51,7 +51,7 @@ zmQtUi::zmQtUi( QWidget *parent )
 
     m_ui->setupUi( this );
 
-    this->setWindowTitle(
+    setWindowTitle(
                 QApplication::translate(
                     "window",
                     "zeitmaschine - built on "__TIMESTAMP__,

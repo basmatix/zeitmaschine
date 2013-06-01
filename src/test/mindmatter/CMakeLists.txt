@@ -10,17 +10,22 @@
 # written permission of scitics GmbH is prohibited.
 
 # test specific includes
-include_directories( "${CMAKE_SOURCE_DIR}/common/include" )
+#include_directories( "${CMAKE_SOURCE_DIR}/common/include" )
 
 # general include directories
+
 include_directories( "${Boost_INCLUDE_DIR}" )
 link_directories( ${Boost_LIBRARY_DIRS} )
 
-add_executable( test_common test_common.cpp )
-target_link_libraries( test_common common )
+add_executable( test_mindmatter test_mindmatter.cpp )
+target_link_libraries( test_mindmatter
+    ${Boost_LIBRARIES}
+    zm_s
+    yaml-cpp
+)
 
-set( test_executable "${CMAKE_CURRENT_BINARY_DIR}/test_common" )
+set( test_executable "${CMAKE_CURRENT_BINARY_DIR}/test_mindmatter" )
 
-add_test( common_get_file_owner  ${test_executable} common_get_file_owner )
-add_test( common_get_file_group  ${test_executable} common_get_file_group )
-add_test( common_get_file_size   ${test_executable} common_get_file_size )
+add_test( empty_db_on_load         ${test_executable} empty_db_on_load )
+add_test( things_change_while_open ${test_executable} change_while_open )
+add_test( output_node              ${test_executable} output_node )

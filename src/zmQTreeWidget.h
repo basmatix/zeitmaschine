@@ -5,7 +5,7 @@
 #define ZMQTREEWIDGET_H
 
 #include "zmQtGtdModel.h"
-#include "zmTrace.h"
+#include <zm/zmTrace.h>
 
 #include <QtGui/QTreeWidget>
 #include <QtGui/QDropEvent>

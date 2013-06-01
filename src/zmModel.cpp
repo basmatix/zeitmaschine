@@ -1,10 +1,10 @@
 /// copyright (C) 2013 Frans Fürst
 /// -*- coding: utf-8 -*-
 
-#include "zmModel.h"
+#include <mm/zmModel.h>
 
-#include "zmTrace.h"
-#include "zmOsal.h"
+#include <mm/zmTrace.h>
+#include <mm/zmOsal.h>
 
 #include <fstream>
 #include <string>

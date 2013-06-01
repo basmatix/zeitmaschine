@@ -4,7 +4,7 @@
 #ifndef ZMGTDMODEL_H
 #define ZMGTDMODEL_H
 
-#include <zmModel.h>
+#include <mm/zmModel.h>
 
 class zmGtdModel
 {

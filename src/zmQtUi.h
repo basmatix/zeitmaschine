@@ -12,9 +12,9 @@
 #include "ui_zeitmaschine.h"
 
 #include "zmQtGtdModel.h"
-#include "zmOsal.h"
+#include <mm/zmOsal.h>
 
-#include "zmTrace.h"
+#include <mm/zmTrace.h>
 
 #include <map>
 #include <QtGui/QMainWindow>

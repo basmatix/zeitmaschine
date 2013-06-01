@@ -7,7 +7,7 @@
 
 #include "zmGtdModel.h"
 
-#include "zmTrace.h"
+#include <mm/zmTrace.h>
 
 #include <boost/lexical_cast.hpp>
 

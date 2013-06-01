@@ -1,7 +1,7 @@
 /// copyright (C) 2013 Frans Fürst
 /// -*- coding: utf-8 -*-
 
-#include "zmOsal.h"
+#include <mm/zmOsal.h>
 
 #ifdef __unix__
 

@@ -76,7 +76,7 @@ qt4_wrap_ui( ${PROJECT_NAME}_UIS
 # list all class files which implement Q_OBJECT
 qt4_wrap_cpp( ${PROJECT_NAME}_MOCS
     zmQtUi.h
-    zmQTreeWidget.h
+    #zmQTreeWidget.h
 )
 
 file( GLOB ${PROJECT_NAME}_files
@@ -104,6 +104,7 @@ include_directories(SYSTEM
     "${Boost_INCLUDE_DIR}"
     "${CMAKE_CURRENT_BINARY_DIR}"
     "${CMAKE_CURRENT_SOURCE_DIR}/submodules/yaml-cpp/include"
+    "${CMAKE_CURRENT_SOURCE_DIR}/mm_lib/include"
 )
 
 add_library( zm_s STATIC
@@ -174,20 +175,6 @@ if( NOT MSVC )
      swig_link_libraries( ${PYTHON_ZM_LIBRARY_NAME} ${Boost_LIBRARIES} )
 endif()
 
+add_subdirectory( test )
 
-add_executable( test_things
-    test/test_things.cpp
-    zmModel.cpp
-    zmOsal.cpp
-)
-
-target_link_libraries( test_things
-    ${Boost_LIBRARIES}
-    yaml-cpp
-    zm_s
-)
-
-add_test( empty-db-on-load         ${CMAKE_CURRENT_BINARY_DIR}/test_things empty-db-on-load )
-add_test( things-change-while-open ${CMAKE_CURRENT_BINARY_DIR}/test_things change-while-open )
-add_test( output-node              ${CMAKE_CURRENT_BINARY_DIR}/test_things output-node )
 

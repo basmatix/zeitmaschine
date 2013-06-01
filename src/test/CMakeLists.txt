@@ -1,1 +1,1 @@
-add_subdirectory(test_mindmatter)
+add_subdirectory(mindmatter)

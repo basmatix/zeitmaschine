@@ -1,35 +1,35 @@
-#include <zmModel.h>
+/// -*- coding: utf-8 -*-
+///
+/// file: test_common.cpp
+///
+/// Copyright 2011 - 2013 scitics GmbH
+///
+/// Information  contained  herein  is  subject  to change  without  notice.
+/// scitics GmbH  retains ownership and  all other rights  in this software.
+/// Any reproduction of the software or components thereof without the prior
+/// written permission of scitics GmbH is prohibited.
+
+#include <mm/zmModel.h>
 
 #include <iostream>
+
+#include "../testing.h"
 
 bool change_while_open();
 bool empty_db_on_load();
 bool output_node();
 
-
-
 int main( int arg_n, char **arg_v )
 {
-    if( arg_n < 2 )
-    {
-        std::cerr << "no test specified" << std::endl;
-        return 2;
-    }
+    named_function_container l_tests;
 
-    std::string l_test_identifier( arg_v[1] );
+    l_tests["change_while_open"] = change_while_open;
+    l_tests["empty_db_on_load"] = empty_db_on_load;
+    l_tests["output_node"] = output_node;
 
-    if( l_test_identifier == "empty-db-on-load" )
-        return empty_db_on_load() ? 0 : 1;
-
-    if( l_test_identifier == "change-while-open" )
-        return change_while_open() ? 0 : 1;
-
-    if( l_test_identifier == "output-node" )
-        return output_node() ? 0 : 1;
-
-    std::cerr << "unknown test specifier: '" << l_test_identifier << "'" << std::endl;
-    return 3;
+    return run_tests( l_tests, arg_n, arg_v );
 }
+
 
 bool empty_db_on_load()
 {
@@ -57,7 +57,9 @@ bool empty_db_on_load()
     bool l_test_passed = l_m2.hasItem( l_item1 ) && ! l_m2.hasItem( l_item2 );
     return l_test_passed;
 */
-    return false;
+    test_assert( false, "dummy test should not pass" );
+
+    return true;
 }
 
 bool change_while_open()
