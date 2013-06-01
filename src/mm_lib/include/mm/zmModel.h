@@ -1,5 +1,9 @@
-/// copyright (C) 2013 Frans Fürst
 /// -*- coding: utf-8 -*-
+///
+/// file: zmModel.h
+///
+/// Copyright (C) 2013 Frans Fuerst
+///
 
 #ifndef FLOWMODEL_H
 #define FLOWMODEL_H

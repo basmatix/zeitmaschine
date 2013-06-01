@@ -1,5 +1,9 @@
-/// copyright (C) 2013 Frans Fürst
 /// -*- coding: utf-8 -*-
+///
+/// file: zmTrace.h
+///
+/// Copyright (C) 2013 Frans Fuerst
+///
 
 #ifndef ZMTRACE_H
 #define ZMTRACE_H

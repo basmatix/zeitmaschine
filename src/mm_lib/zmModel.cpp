@@ -3,9 +3,10 @@
 
 #include <mm/zmModel.h>
 
+#include "zmThing.h"
+
 #include <mm/zmTrace.h>
 #include <mm/zmOsal.h>
-#include <mm/zmThing.h>
 
 #include <fstream>
 #include <string>

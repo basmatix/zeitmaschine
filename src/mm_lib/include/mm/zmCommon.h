@@ -1,5 +1,9 @@
-/// copyright (C) 2013 Frans Fürst
 /// -*- coding: utf-8 -*-
+///
+/// file: zmCommon.h
+///
+/// Copyright (C) 2013 Frans Fuerst
+///
 
 #ifndef ZMCOMMON_H
 #define ZMCOMMON_H
