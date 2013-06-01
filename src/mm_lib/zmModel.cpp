@@ -5,6 +5,7 @@
 
 #include <mm/zmTrace.h>
 #include <mm/zmOsal.h>
+#include <mm/zmThing.h>
 
 #include <fstream>
 #include <string>
@@ -16,7 +17,10 @@
 
 #include <boost/program_options.hpp>
 
+#include <stdlib.h>
+
 namespace po = boost::program_options;
+using namespace zm;
 
 class Options
 {
@@ -164,6 +168,8 @@ private:
 
 // not gonna stay here
 } m_options;
+
+void yamlToThingsMap( YAML::Node yamlNode, MindMatterModel::MindMatterModelMapType &thingsMap );
 
 zm::MindMatterModel::MindMatterModel()
     : m_things              ()
@@ -782,7 +788,7 @@ void zm::MindMatterModel::clear( MindMatterModelMapType &thingsMap )
     thingsMap.clear();
 }
 
-void zm::MindMatterModel::yamlToThingsMap( YAML::Node yamlNode, MindMatterModelMapType &thingsMap )
+void yamlToThingsMap( YAML::Node yamlNode, zm::MindMatterModel::MindMatterModelMapType &thingsMap )
 {
     BOOST_FOREACH( YAML::Node n, yamlNode )
     {
@@ -834,4 +840,17 @@ void zm::MindMatterModel::yamlToThingsMap( YAML::Node yamlNode, MindMatterModelM
 
         thingsMap[ l_uid ] = l_new_thing;
     }
+}
+
+std::string zm::MindMatterModel::generateUid()
+{
+    std::string l_return;
+    l_return.reserve(16);
+    l_return.resize(16);
+    for( int i = 0; i < 16; ++i )
+    {
+        const char *l_characters = "0123456789abcdef";
+        l_return[i] = l_characters[ rand() % 16 ];
+    }
+    return l_return;
 }

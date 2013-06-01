@@ -6,6 +6,11 @@
 
 #include <mm/zmModel.h>
 
+#include <list>
+
+
+#include <assert.h>
+
 class zmGtdModel
 {
     zm::MindMatterModel m_things_model;
@@ -85,15 +90,7 @@ public:
         }
     }
 
-    int getImportance( const std::string &uid ) const
-    {
-        if( m_things_model.hasValue( uid, "gtd_importance" ) )
-        {
-            return boost::lexical_cast<int>( m_things_model.getValue( uid, "gtd_importance" ) );
-        }
-
-        return 0;
-    }
+    int getImportance( const std::string &uid ) const;
 
     std::list< std::string > getInboxItems( bool includeDoneItems ) const;
 

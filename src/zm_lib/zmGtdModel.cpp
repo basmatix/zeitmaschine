@@ -10,6 +10,7 @@
 #include <mm/zmTrace.h>
 
 #include <boost/lexical_cast.hpp>
+#include <boost/foreach.hpp>
 
 std::list< std::string > zmGtdModel::getInboxItems( bool includeDoneItems ) const
 {
@@ -228,5 +229,15 @@ std::string zmGtdModel::createProject( const std::string &project_name )
     m_things_model.localSave();
 
     return l_item_uid;
+}
+
+int zmGtdModel::getImportance( const std::string &uid ) const
+{
+    if( m_things_model.hasValue( uid, "gtd_importance" ) )
+    {
+        return boost::lexical_cast<int>( m_things_model.getValue( uid, "gtd_importance" ) );
+    }
+
+    return 0;
 }
 

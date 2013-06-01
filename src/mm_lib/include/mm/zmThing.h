@@ -4,21 +4,14 @@
 #ifndef THING_H
 #define THING_H
 
-//#include "zmTrace.h"
-//#include "osal.h"
-
 
 #include <map>
 #include <set>
 #include <fstream>
 #include <sstream>
 #include <string>
-//#include <yaml-cpp/yaml.h>
 
 #include <algorithm>
-//#include <boost/foreach.hpp>
-//#include <boost/filesystem.hpp>
-//#include <boost/date_time.hpp>
 #include <boost/functional/hash.hpp>
 
 #include <assert.h>

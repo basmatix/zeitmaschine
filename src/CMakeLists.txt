@@ -98,6 +98,7 @@ set( ZM_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/zm_lib/include" )
 add_subdirectory( submodules/yaml-cpp )
 add_subdirectory( mm_lib )
 add_subdirectory( zm_lib )
+add_subdirectory( pyZm )
 
 include_directories(
     "${CMAKE_CURRENT_SOURCE_DIR}"
@@ -147,33 +148,6 @@ target_link_libraries( zmTool
     zm_s
     yaml-cpp
 )
-
-find_package( PythonLibs 2.6 REQUIRED )
-include_directories( ${PYTHON_INCLUDE_DIR} )
-get_filename_component( PYTHON_LIBRARY_DIR ${PYTHON_LIBRARY} PATH )
-link_directories( ${PYTHON_LIBRARY_DIR} )
-
-find_package( SWIG REQUIRED )
-include( ${SWIG_USE_FILE} )
-
-include_directories( ${CMAKE_CURRENT_SOURCE_DIR} )
-
-set( PYTHON_ZM_LIBRARY_NAME "pyZm" )
-
-set( SWIG_MODULE_${PYTHON_ZM_LIBRARY_NAME}_EXTRA_DEPS "${ZM_INCLUDE_DIR}/zm/zmGtdModel.h" )
-
-set_source_files_properties( zm-python.i PROPERTIES CPLUSPLUS ON )
-
-swig_add_module( ${PYTHON_ZM_LIBRARY_NAME} python zm-python.i )
-
-# important: add _ to swig generated python modules
-#set_target_properties( _${PYTHON_ZM_LIBRARY_NAME} PROPERTIES COMPILE_DEFINITIONS "${YSBOX_COMPILE_FLAGS}" )
-
-swig_link_libraries( ${PYTHON_ZM_LIBRARY_NAME}  mm_s zm_s yaml-cpp )
-
-if( NOT MSVC )
-     swig_link_libraries( ${PYTHON_ZM_LIBRARY_NAME} ${Boost_LIBRARIES} )
-endif()
 
 add_subdirectory( test )
 

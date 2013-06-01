@@ -11,7 +11,10 @@
 
 #include <mm/zmModel.h>
 
+#include <yaml-cpp/yaml.h>
+
 #include <iostream>
+#include <fstream>
 
 #include "../testing.h"
 

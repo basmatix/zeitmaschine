@@ -14,6 +14,8 @@
 #include <QtGui/QSortFilterProxyModel>
 #include <QtGui/QTreeView>
 
+#include <boost/foreach.hpp>
+
 zmQtGtdModel::zmQtGtdModel()
     : m_gtd_model   ()
     , m_rootItem    ( NULL )

@@ -4,7 +4,7 @@
 #ifndef FLOWMODEL_H
 #define FLOWMODEL_H
 
-#include "zmThing.h"
+//#include "zmThing.h"
 #include "zmChangeSet.h"
 
 #include <map>
@@ -12,6 +12,8 @@
 
 namespace zm
 {
+    class MindMatter;
+
     class MindMatterModel
     {
     public:
@@ -151,22 +153,9 @@ namespace zm
         bool _setCaption( MindMatterModelMapType::iterator &item, const std::string &caption );
 
         // returns 16x8 bit
-        static inline std::string generateUid()
-        {
-            std::string l_return;
-            l_return.reserve(16);
-            l_return.resize(16);
-            for( int i = 0; i < 16; ++i )
-            {
-                const char *l_characters = "0123456789abcdef";
-                l_return[i] = l_characters[ rand() % 16 ];
-            }
-            return l_return;
-        }
+        static std::string generateUid();
 
         static void clear( MindMatterModelMapType &thingsMap );
-
-        static void yamlToThingsMap( YAML::Node yamlNode, MindMatterModelMapType &thingsMap );
     };
 }
 

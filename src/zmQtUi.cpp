@@ -28,6 +28,8 @@
 #include <QtGui/QMessageBox>
 #include <QtGui/QInputDialog>
 
+#include <boost/foreach.hpp>
+
 #include <iostream>
 #include <assert.h>
 
