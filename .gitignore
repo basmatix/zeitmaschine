@@ -17,3 +17,9 @@ build/ui_*
 build/zm
 build/zmTool
 build/test_things
+*.so
+*.a
+pyZm.py
+*.pyc
+*.cxx
+

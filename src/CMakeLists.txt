@@ -86,12 +86,9 @@ file( GLOB ${PROJECT_NAME}_files
     DOC-*
     *asciidoc.txt
     main.cpp
-    zmOsal.cpp
-    zmModel.cpp
     zmQtGtdItem.cpp
     zmQtUi.cpp
     zmQtGtdModel.cpp
-    zmGtdModel.cpp
 )
 
 add_subdirectory( submodules/yaml-cpp )
@@ -109,6 +106,14 @@ include_directories(SYSTEM
     "${CMAKE_CURRENT_SOURCE_DIR}/submodules/yaml-cpp/include"
 )
 
+add_library( zm_s STATIC
+    zmOsal.cpp
+    zmModel.cpp
+    zmGtdModel.cpp
+)
+
+set_target_properties( zm_s PROPERTIES COMPILE_FLAGS -fPIC )
+
 link_directories( ${Boost_LIBRARY_DIRS} )
 
 add_executable( zm
@@ -123,16 +128,13 @@ add_executable( zm
 
 target_link_libraries( zm
     ${QT_LIBRARIES}
-    ${ADDITIONAL_LIBRARIES}
     ${Boost_LIBRARIES}
-    #yaml-cppjson-cpp
+    zm_s
     yaml-cpp
 )
 
 add_executable( zmTool
     zmTool.cpp
-    zmModel.cpp
-    zmOsal.cpp
     zmQtGtdItem.cpp
     zmGtdModel.cpp
     zmQtGtdModel.cpp
@@ -141,8 +143,37 @@ add_executable( zmTool
 target_link_libraries( zmTool
     ${QT_LIBRARIES}
     ${Boost_LIBRARIES}
+    zm_s
     yaml-cpp
 )
+
+find_package( PythonLibs 2.6 REQUIRED )
+include_directories( ${PYTHON_INCLUDE_DIR} )
+get_filename_component( PYTHON_LIBRARY_DIR ${PYTHON_LIBRARY} PATH )
+link_directories( ${PYTHON_LIBRARY_DIR} )
+
+find_package( SWIG REQUIRED )
+include( ${SWIG_USE_FILE} )
+
+include_directories( ${CMAKE_CURRENT_SOURCE_DIR} )
+
+set( PYTHON_ZM_LIBRARY_NAME "pyZm" )
+
+set( SWIG_MODULE_${PYTHON_ZM_LIBRARY_NAME}_EXTRA_DEPS "zmGtdModel.h" )
+
+set_source_files_properties( zm-python.i PROPERTIES CPLUSPLUS ON )
+
+swig_add_module( ${PYTHON_ZM_LIBRARY_NAME} python zm-python.i )
+
+# important: add _ to swig generated python modules
+#set_target_properties( _${PYTHON_ZM_LIBRARY_NAME} PROPERTIES COMPILE_DEFINITIONS "${YSBOX_COMPILE_FLAGS}" )
+
+swig_link_libraries( ${PYTHON_ZM_LIBRARY_NAME} zm_s yaml-cpp )
+
+if( NOT MSVC )
+     swig_link_libraries( ${PYTHON_ZM_LIBRARY_NAME} ${Boost_LIBRARIES} )
+endif()
+
 
 add_executable( test_things
     test/test_things.cpp
@@ -153,6 +184,7 @@ add_executable( test_things
 target_link_libraries( test_things
     ${Boost_LIBRARIES}
     yaml-cpp
+    zm_s
 )
 
 add_test( empty-db-on-load         ${CMAKE_CURRENT_BINARY_DIR}/test_things empty-db-on-load )
