@@ -9,6 +9,25 @@
 
 #include <boost/date_time.hpp>
 #include <boost/regex.hpp>
+#include <boost/filesystem.hpp>
+
+bool zm::common::create_base_directory( const std::string& filename )
+{
+    if( filename.find_last_of("/") != std::string::npos )
+    {
+        std::string l_dir = filename.substr( 0, filename.find_last_of("/") );
+
+        try
+        {
+            boost::filesystem::create_directory( l_dir );
+        }
+        catch( ... )
+        {
+            return false;
+        }
+    }
+    return true;
+}
 
 std::time_t zm::common::seconds_from_epoch(const std::string& a_time, const std::string& a_format )
 {

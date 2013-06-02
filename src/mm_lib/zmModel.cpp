@@ -139,7 +139,16 @@ private:
 
     void save( const std::string &filename )
     {
+        if( !zm::common::create_base_directory( filename ) )
+        {
+            // todo: error
+            tracemessage( "should not happen" );
+            return;
+        }
+
         std::ofstream l_fout( filename.c_str() );
+
+        assert( l_fout.is_open() );
 
         BOOST_FOREACH( po::variables_map::value_type v, m_variable_map)
         {
@@ -460,18 +469,11 @@ void zm::MindMatterModel::saveLocalModel( const std::string &filename )
 {
     /// be careful! if( !m_dirty ) return;
 
-    if( filename.find_last_of("/") != std::string::npos )
-    {
-        std::string l_dir = filename.substr( 0, filename.find_last_of("/") );
 
-        try
-        {
-            boost::filesystem::create_directory( l_dir );
-        }
-        catch( ... )
-        {
-            //error
-        }
+    if( !zm::common::create_base_directory( filename ) )
+    {
+        // todo: error
+        return;
     }
 
     std::ofstream l_fout( filename.c_str() );

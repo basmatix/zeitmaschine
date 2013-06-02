@@ -20,6 +20,8 @@ namespace zm
 namespace common
 {
 
+bool create_base_directory( const std::string& filename );
+
 std::time_t seconds_from_epoch(const std::string& a_time, const std::string& a_format );
 
 std::string time_stamp_iso_ext();
