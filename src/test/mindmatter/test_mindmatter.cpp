@@ -21,6 +21,7 @@
 bool change_while_open();
 bool empty_db_on_load();
 bool output_node();
+bool connections();
 
 int main( int arg_n, char **arg_v )
 {
@@ -29,10 +30,38 @@ int main( int arg_n, char **arg_v )
     l_tests["change_while_open"] = change_while_open;
     l_tests["empty_db_on_load"] = empty_db_on_load;
     l_tests["output_node"] = output_node;
+    l_tests["connections"] = connections;
 
     return run_tests( l_tests, arg_n, arg_v );
 }
 
+
+bool connections()
+{
+    zm::MindMatterModel l_m1;
+
+    l_m1.setUsedUsername( "test-user" );
+    l_m1.setUsedHostname( "test-machine" );
+    l_m1.setLocalFolder( "./test-localfolder" );
+    l_m1.initialize();
+
+    std::string node1 = l_m1.createNewItem( "node1" );
+    std::string node2 = l_m1.createNewItem( "node2" );
+    std::string node3 = l_m1.createNewItem( "node3" );
+
+    l_m1.connect( node1, node2 );
+
+    test_assert( l_m1.connected(node1, node2),
+                 "node1 and node2 should be connected after connection" );
+
+    test_assert( l_m1.connected(node2, node1),
+                 "node1 and node2 should be connected after connection" );
+
+    test_assert( !l_m1.connected(node1, node3),
+                 "node1 and node2 should be connected after connection" );
+
+    return true;
+}
 
 bool empty_db_on_load()
 {
