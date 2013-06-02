@@ -609,7 +609,7 @@ const std::string & zm::MindMatterModel::getCaption( const std::string &uid ) co
     return l_item_it->second->m_caption;
 }
 
-bool zm::MindMatterModel::hasAttribute( const std::string uid, const std::string attribute ) const
+bool zm::MindMatterModel::hasAttribute( const std::string &uid, const std::string &attribute ) const
 {
     MindMatterModelMapType::const_iterator l_item_it( m_things.find( uid ) );
 
@@ -618,7 +618,7 @@ bool zm::MindMatterModel::hasAttribute( const std::string uid, const std::string
     return l_item_it->second->hasAttribute( attribute );
 }
 
-bool zm::MindMatterModel::hasValue( const std::string uid, const std::string name ) const
+bool zm::MindMatterModel::hasValue( const std::string &uid, const std::string &name ) const
 {
     MindMatterModelMapType::const_iterator l_item_it( m_things.find( uid ) );
 
@@ -636,6 +636,10 @@ bool zm::MindMatterModel::itemContentMatchesString( const std::string &uid, cons
     return l_item_it->second->contentMatchesString( searchString );
 }
 
+bool zm::MindMatterModel::isConnected( const std::string &node1_uid, const std::string &node2_uid ) const
+{
+    return false;
+}
 
 
 ///
@@ -732,6 +736,12 @@ bool zm::MindMatterModel::_removeAttribute( MindMatterModelMapType::iterator &it
 {
     return item->second->removeAttribute( attribute );
 }
+
+void zm::MindMatterModel::connect( const std::string &node1_uid, const std::string &node2_uid )
+{
+
+}
+
 
 void zm::MindMatterModel::setValue( const std::string &uid, const std::string &name, const std::string &value )
 {

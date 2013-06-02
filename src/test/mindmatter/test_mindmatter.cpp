@@ -45,19 +45,22 @@ bool connections()
     l_m1.setLocalFolder( "./test-localfolder" );
     l_m1.initialize();
 
+    test_assert( l_m1.getItemCount() == 0,
+                 "nodes should be empty for the test" );
+
     std::string node1 = l_m1.createNewItem( "node1" );
     std::string node2 = l_m1.createNewItem( "node2" );
     std::string node3 = l_m1.createNewItem( "node3" );
 
     l_m1.connect( node1, node2 );
 
-    test_assert( l_m1.connected(node1, node2),
+    test_assert( l_m1.isConnected(node1, node2),
                  "node1 and node2 should be connected after connection" );
 
-    test_assert( l_m1.connected(node2, node1),
+    test_assert( l_m1.isConnected(node2, node1),
                  "node1 and node2 should be connected after connection" );
 
-    test_assert( !l_m1.connected(node1, node3),
+    test_assert( !l_m1.isConnected(node1, node3),
                  "node1 and node2 should be connected after connection" );
 
     return true;

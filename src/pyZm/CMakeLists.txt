@@ -17,7 +17,6 @@ file( GLOB ${PROJECT_NAME}_files
     *asciidoc.txt
 )
 
-
 find_package( PythonLibs 2.6 REQUIRED )
 include_directories( ${PYTHON_INCLUDE_DIR} )
 get_filename_component( PYTHON_LIBRARY_DIR ${PYTHON_LIBRARY} PATH )
@@ -26,7 +25,7 @@ link_directories( ${PYTHON_LIBRARY_DIR} )
 find_package( SWIG REQUIRED )
 include( ${SWIG_USE_FILE} )
 
-include_directories( ${CMAKE_CURRENT_SOURCE_DIR}
+include_directories(
     ${MM_INCLUDE_DIR}
     ${ZM_INCLUDE_DIR}
 )
@@ -39,10 +38,16 @@ set_source_files_properties( pyZm.i PROPERTIES CPLUSPLUS ON )
 
 swig_add_module( ${PYTHON_ZM_LIBRARY_NAME} python pyZm.i )
 
+# disable Weffc++ for swig generated file
+set_source_files_properties(
+    ${CMAKE_CURRENT_BINARY_DIR}/pyZmPYTHON_wrap.cxx
+    PROPERTIES COMPILE_FLAGS -Wno-effc++
+)
+
 # important: add _ to swig generated python modules
 #set_target_properties( _${PYTHON_ZM_LIBRARY_NAME} PROPERTIES COMPILE_DEFINITIONS "${YSBOX_COMPILE_FLAGS}" )
 
-swig_link_libraries( ${PYTHON_ZM_LIBRARY_NAME}  mm_s zm_s yaml-cpp )
+swig_link_libraries( ${PYTHON_ZM_LIBRARY_NAME} mm_s zm_s yaml-cpp )
 
 if( NOT MSVC )
      swig_link_libraries( ${PYTHON_ZM_LIBRARY_NAME} ${Boost_LIBRARIES} )

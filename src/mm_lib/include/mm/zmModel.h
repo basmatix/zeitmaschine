@@ -8,7 +8,6 @@
 #ifndef FLOWMODEL_H
 #define FLOWMODEL_H
 
-//#include "zmThing.h"
 #include "zmChangeSet.h"
 
 #include <map>
@@ -121,11 +120,13 @@ namespace zm
 
         const std::string & getCaption( const std::string &uid ) const;
 
-        bool hasAttribute( const std::string uid, const std::string attribute ) const;
+        bool hasAttribute( const std::string &uid, const std::string &attribute ) const;
 
-        bool hasValue( const std::string uid, const std::string name ) const;
+        bool hasValue( const std::string &uid, const std::string &name ) const;
 
         bool itemContentMatchesString( const std::string &uid, const std::string &searchString ) const;
+
+        bool isConnected( const std::string &node1_uid, const std::string &node2_uid ) const;
 
     /// write relevant interface
     public:
@@ -141,6 +142,8 @@ namespace zm
         void setValue( const std::string &uid, const std::string &name, const std::string &value );
 
         void setCaption( const std::string &uid, const std::string &caption );
+
+        void connect( const std::string &node1_uid, const std::string &node2_uid );
 
     private:
 

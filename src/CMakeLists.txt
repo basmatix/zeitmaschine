@@ -75,12 +75,18 @@ set( YAML_CPP_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/submodules/yaml-cpp/inclu
 set( MM_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/mm_lib/include" )
 set( ZM_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/zm_lib/include" )
 
+enable_testing()
+
 add_subdirectory( submodules/yaml-cpp )
+
 add_subdirectory( mm_lib )
+
 add_subdirectory( zm_lib )
+
 add_subdirectory( zmQt )
+
 add_subdirectory( zm_tool )
+
 add_subdirectory( pyZm )
+
 add_subdirectory( test )
-
-

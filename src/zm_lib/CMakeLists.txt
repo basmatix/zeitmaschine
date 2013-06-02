@@ -22,13 +22,12 @@ file( GLOB ${PROJECT_NAME}_files
 # generated and external headers made system so
 # we don't have to deal with their warnings
 include_directories(SYSTEM
-#    "${CMAKE_CURRENT_SOURCE_DIR}/include"
-    "${MM_INCLUDE_DIR}"
     "${YAML_CPP_INCLUDE_DIR}"
 #    "${Boost_INCLUDE_DIR}"
-#    "${CMAKE_CURRENT_BINARY_DIR}"
-#    "${CMAKE_CURRENT_SOURCE_DIR}/submodules/yaml-cpp/include"
-#    "${CMAKE_CURRENT_SOURCE_DIR}/mm_lib/include"
+)
+
+include_directories(
+    "${MM_INCLUDE_DIR}"
 )
 
 add_library( zm_s STATIC  ${${PROJECT_NAME}_files} )

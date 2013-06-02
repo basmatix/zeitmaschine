@@ -16,8 +16,11 @@
 include_directories( "${Boost_INCLUDE_DIR}" )
 link_directories( ${Boost_LIBRARY_DIRS} )
 
-include_directories(
+include_directories( SYSTEM
     "${YAML_CPP_INCLUDE_DIR}"
+)
+
+include_directories(
     "${MM_INCLUDE_DIR}"
 )
 
