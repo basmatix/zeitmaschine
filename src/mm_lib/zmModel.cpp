@@ -427,6 +427,11 @@ void zm::MindMatterModel::applyChangeSet( const ChangeSet &changeSet )
         case JournalItem::ChangeCaption:
             _setCaption( l_item_it, j->value );
             break;
+        case JournalItem::Connect:
+            MindMatterModelMapType::iterator l_item2_it( m_things.find( j->value ) );
+            assert( l_item2_it != m_things.end() );
+            _connect( l_item_it, l_item2_it );
+            break;
         }
     }
 }
@@ -741,7 +746,25 @@ bool zm::MindMatterModel::_removeAttribute( MindMatterModelMapType::iterator &it
 
 void zm::MindMatterModel::connect( const std::string &node1_uid, const std::string &node2_uid )
 {
+    MindMatterModelMapType::iterator l_item1_it( m_things.find( node1_uid ) );
+    MindMatterModelMapType::iterator l_item2_it( m_things.find( node2_uid ) );
 
+    assert( l_item1_it != m_things.end() );
+    assert( l_item2_it != m_things.end() );
+
+    JournalItem *l_change = new JournalItem( node1_uid, JournalItem::Connect );
+    l_change->value = node2_uid;
+    m_changeSet.push_back( l_change );
+
+    dirty();
+
+    _connect( l_item1_it, l_item2_it );
+}
+
+void zm::MindMatterModel::_connect( MindMatterModelMapType::iterator &item1, MindMatterModelMapType::iterator &item2 )
+{
+    item1->second->m_neighbours.insert( (item2->second) );
+    item2->second->m_neighbours.insert( (item1->second) );
 }
 
 

@@ -30,6 +30,7 @@ namespace zm
             : m_caption         ( caption )
             , m_attributes      ()
             , m_string_values   ()
+            , m_neighbours      ()
         {
         }
 
@@ -75,6 +76,7 @@ namespace zm
             return m_attributes.find( attribute ) != m_attributes.end();
         }
 
+        // todo: should be visitor stuff
         static bool stringFind(const std::string &bigString, const std::string &pattern  )
         {
             std::string l_tmpBigString(bigString);
@@ -87,6 +89,7 @@ namespace zm
             return l_tmpBigString.find(pattern) != std::string::npos;
         }
 
+        // todo: should be visitor stuff
         bool contentMatchesString( const std::string &searchString ) const
         {
             if( stringFind( m_caption, searchString ) )
@@ -146,9 +149,10 @@ namespace zm
 
         typedef std::map< std::string, std::string > string_value_map_type;
 
-        std::string             m_caption;
-        std::set< std::string > m_attributes;
-        string_value_map_type   m_string_values;
+        std::string                 m_caption;    // todo: should be value
+        std::set< std::string >     m_attributes;
+        string_value_map_type       m_string_values;
+        std::set< MindMatter * >    m_neighbours;
     };
 
 }

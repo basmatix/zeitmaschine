@@ -26,7 +26,8 @@ public:
         EraseItem,
         AddAttribute,
         RemoveAttribute,
-        ChangeCaption
+        ChangeCaption,
+        Connect
     };
 
     JournalItem( const std::string &Uid, ChangeType Type )

@@ -159,6 +159,8 @@ namespace zm
 
         bool _setCaption( MindMatterModelMapType::iterator &item, const std::string &caption );
 
+        void _connect( MindMatterModelMapType::iterator &item1, MindMatterModelMapType::iterator &item2 );
+
         // returns 16x8 bit
         static std::string generateUid();
 
