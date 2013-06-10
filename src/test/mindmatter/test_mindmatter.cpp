@@ -40,9 +40,11 @@ bool connections()
 {
     zm::MindMatterModel l_m1;
 
+    l_m1.setLocalFolder( "./test-localfolder" );
+
     l_m1.setUsedUsername( "test-user" );
     l_m1.setUsedHostname( "test-machine" );
-    l_m1.setLocalFolder( "./test-localfolder" );
+
     l_m1.initialize();
 
     test_assert( l_m1.getItemCount() == 0,

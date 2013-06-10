@@ -645,7 +645,43 @@ bool zm::MindMatterModel::itemContentMatchesString( const std::string &uid, cons
 
 bool zm::MindMatterModel::isConnected( const std::string &node1_uid, const std::string &node2_uid ) const
 {
-    return false;
+    MindMatterModelMapType::const_iterator l_item1_it( m_things.find( node1_uid ) );
+    MindMatterModelMapType::const_iterator l_item2_it( m_things.find( node2_uid ) );
+
+    assert( l_item1_it != m_things.end() );
+    assert( l_item1_it != m_things.end() );
+
+    std::set< MindMatter * > n1(  l_item1_it->second->m_neighbours );
+    std::set< MindMatter * > n2(  l_item2_it->second->m_neighbours );
+
+    // this check is just for performance reasons (we test the
+    // smaller set (in case assert expands to void))
+    if( n1.size() < n2.size() )
+    {
+        if( n1.find( l_item2_it->second ) != n1.end() )
+        {
+            assert( n2.find( l_item1_it->second ) != n2.end() );
+            return true;
+        }
+        else
+        {
+            assert( n2.find( l_item1_it->second ) == n2.end() );
+            return false;
+        }
+    }
+    else
+    {
+        if( n2.find( l_item1_it->second ) != n2.end() )
+        {
+            assert( n1.find( l_item2_it->second ) != n1.end() );
+            return true;
+        }
+        else
+        {
+            assert( n1.find( l_item2_it->second ) == n1.end() );
+            return false;
+        }
+    }
 }
 
 
