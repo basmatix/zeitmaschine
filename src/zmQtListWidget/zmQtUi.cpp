@@ -38,11 +38,6 @@ MainWindow::MainWindow(QWidget *parent)
     , m_model              ()
     , m_selected_thing     ( "" )
     , m_selected_twItem    ( NULL )
-    , m_liToday            ()
-    , m_liInbox            ()
-    , m_liProjects         ()
-    , m_liContexts         ()
-    , m_liDone             ()
 {   tracemessage( __FUNCTION__ );
 
     m_ui->setupUi( this );
@@ -75,114 +70,13 @@ MainWindow::MainWindow(QWidget *parent)
         m_model.setUsedHostname( text );
     }
 
-    m_model.initialize();
+    m_model.initialize(  m_ui->twTask->invisibleRootItem() );
 
-    m_liToday = new QTreeWidgetItem();
-    m_liToday->setText( 0, "TODAY");
-    m_ui->twTask->addTopLevelItem( m_liToday );
-    m_liToday->setExpanded( true );
-    // should be an independent object of course
-    QBrush b = m_liToday->foreground(0);
-    b.setColor( Qt::darkBlue );
-    m_liToday->setForeground( 0, b );
-    m_liToday->setBackgroundColor( 0, Qt::lightGray );
-
-    m_liInbox = new QTreeWidgetItem();
-    m_liInbox->setText( 0, "INBOX");
-    m_ui->twTask->addTopLevelItem( m_liInbox );
-    m_liInbox->setExpanded( true );
-    m_liInbox->setForeground( 0, b );
-    m_liInbox->setBackgroundColor( 0, Qt::lightGray );
-
-    m_liProjects = new QTreeWidgetItem();
-    m_liProjects->setText( 0, "PROJECTS");
-    m_ui->twTask->addTopLevelItem( m_liProjects );
-    m_liProjects->setExpanded( true );
-    m_liProjects->setForeground( 0, b );
-    m_liProjects->setBackgroundColor( 0, Qt::lightGray );
-
-    m_liContexts = new QTreeWidgetItem();
-    m_liContexts->setText( 0, "CONTEXT");
-    m_ui->twTask->addTopLevelItem( m_liContexts );
-    m_liContexts->setExpanded( true );
-    m_liContexts->setForeground( 0, b );
-    m_liContexts->setBackgroundColor( 0, Qt::lightGray );
-
-    m_liDone = new QTreeWidgetItem();
-    m_liDone->setText( 0, "DONE");
-    m_ui->twTask->addTopLevelItem( m_liDone );
-    m_liDone->setExpanded( false );
-    m_liDone->setForeground( 0, b );
-    m_liDone->setBackgroundColor( 0, Qt::lightGray );
-
-    updateUi();
 }
 
 MainWindow::~MainWindow()
 {
     delete m_ui;
-}
-
-void MainWindow::addListItem( const std::string uid )
-{
-    zmQTreeWidgetItem *l_item = new zmQTreeWidgetItem( m_model, uid );
-
-    l_item->decorate();
-
-    //tracemessage( "adding item %s / %d to list (%s)",
-    //              uid.c_str(),
-    //              l_creationTime,
-    //              m_model.getCaption( uid ).toAscii().constData()  );
-
-    if( m_model.isDone( uid ) )
-    {
-        m_liDone->addChild( l_item );
-    }
-
-    else if( m_model.isInboxItem( uid ) )
-    {
-        m_liInbox->addChild( l_item );
-        m_liInbox->sortChildren(0,Qt::AscendingOrder);
-        m_liInbox->setText( 0, QString().sprintf("INBOX (%d)", m_liInbox->childCount()) );
-    }
-
-    else if( m_model.isProjectItem( uid, true ) )
-    {
-        m_liProjects->addChild( l_item );
-        m_liProjects->setText( 0, QString().sprintf("PROJECTS (%d)", m_liProjects->childCount()) );
-    }
-
-    else if( m_model.isTaskItem( uid, false ) )
-    {
-        std::string l_parentProject = m_model.getParentProject( uid );
-
-        // todo: make sure l_project exists
-        zmQTreeWidgetItem *l_project = m_model.m_wi_map->get(l_parentProject);
-
-        l_project->addChild( l_item );
-    }
-
-    m_model.m_wi_map->add( uid, l_item );
-}
-
-void MainWindow::updateUi()
-{
-    /// enforce list filling order by now..
-
-    BOOST_FOREACH( const std::string& p, m_model.getProjectItems( false, false ) )
-    {
-        addListItem( p );
-    }
-
-    BOOST_FOREACH( const std::string& t, m_model.getTaskItems( true, false ) )
-    {
-        addListItem( t );
-    }
-
-    BOOST_FOREACH( const std::string& i, m_model.getInboxItems( false ) )
-    {
-        addListItem( i );
-    }
 }
 
 void MainWindow::updateGui()
@@ -210,7 +104,7 @@ void MainWindow::createInboxItemFromUiElements()
 
     m_model.setNote( l_item_uid, m_ui->teNotes->toPlainText() );
 
-    addListItem( l_item_uid );
+    m_model.addListItem( l_item_uid );
 
     m_ui->leCommand->setText("");
 }
@@ -332,7 +226,7 @@ void MainWindow::on_pbClose_clicked()
     QTreeWidgetItem *l_groupingItem( m_selected_twItem->parent() );
     l_groupingItem->removeChild( l_uselessCopy );
     l_uselessCopy->decorate();
-    m_liDone->addChild( l_uselessCopy );
+    m_model.m_liDone->addChild( l_uselessCopy );
 
     unselect();
 }
@@ -400,7 +294,7 @@ void MainWindow::on_pbMakeProject_clicked()
             QTreeWidgetItem *l_groupingItem( m_selected_twItem->parent() );
             l_groupingItem->removeChild( l_uselessCopy );
             l_uselessCopy->decorate();
-            m_liProjects->addChild( l_uselessCopy );
+            m_model.m_liProjects->addChild( l_uselessCopy );
 
             m_selected_thing = "";
             m_selected_twItem = NULL;
@@ -418,7 +312,7 @@ void MainWindow::on_pbMakeProject_clicked()
 
         std::string l_item_uid = m_model.createProject( l_project_name );
 
-        addListItem( l_item_uid );
+        m_model.addListItem( l_item_uid );
 
         m_ui->leCommand->setText("");
     }
@@ -493,7 +387,7 @@ void MainWindow::on_pbMakeAction_clicked()
             QTreeWidgetItem *l_groupingItem( m_selected_twItem->parent() );
             l_groupingItem->removeChild( l_uselessCopy );
             l_uselessCopy->decorate();
-            m_liProjects->addChild( l_uselessCopy );
+            m_model.m_liProjects->addChild( l_uselessCopy );
 
             m_selected_thing = "";
             m_selected_twItem = NULL;
@@ -511,7 +405,7 @@ void MainWindow::on_pbMakeAction_clicked()
 
         std::string l_item_uid = m_model.createProject( l_project_name );
 
-        addListItem( l_item_uid );
+        m_model.addListItem( l_item_uid );
 
         m_ui->leCommand->setText("");
     }

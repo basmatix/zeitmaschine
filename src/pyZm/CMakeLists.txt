@@ -39,10 +39,12 @@ set_source_files_properties( pyZm.i PROPERTIES CPLUSPLUS ON )
 swig_add_module( ${PYTHON_ZM_LIBRARY_NAME} python pyZm.i )
 
 # disable Weffc++ for swig generated file
-set_source_files_properties(
-    ${CMAKE_CURRENT_BINARY_DIR}/pyZmPYTHON_wrap.cxx
-    PROPERTIES COMPILE_FLAGS -Wno-effc++
-)
+if( NOT MSVC )
+    set_source_files_properties(
+        ${CMAKE_CURRENT_BINARY_DIR}/pyZmPYTHON_wrap.cxx
+        PROPERTIES COMPILE_FLAGS -Wno-effc++
+    )
+endif()
 
 # important: add _ to swig generated python modules
 #set_target_properties( _${PYTHON_ZM_LIBRARY_NAME} PROPERTIES COMPILE_DEFINITIONS "${YSBOX_COMPILE_FLAGS}" )

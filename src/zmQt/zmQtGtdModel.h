@@ -83,9 +83,7 @@ class zmQtGtdModel
         WidgetItemMapper()
             : m_thing_lwitem_map()
             , m_lwitem_thing_map()
-        {
-
-        }
+        { }
 
         void add( const std::string uid, zmQtGtdItem *item )
         {
@@ -152,7 +150,9 @@ public:
 
     virtual ~zmQtGtdModel();
 
+    /// will create tree items on base of gtd items
     void populate();
+
 
     void autoExpand( QTreeView * );
 

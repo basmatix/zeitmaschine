@@ -31,12 +31,6 @@ private:
     std::string         m_selected_thing;
     zmQTreeWidgetItem  *m_selected_twItem;
 
-    QTreeWidgetItem    *m_liToday;
-    QTreeWidgetItem    *m_liInbox;
-    QTreeWidgetItem    *m_liProjects;
-    QTreeWidgetItem    *m_liContexts;
-    QTreeWidgetItem    *m_liDone;
-
 public:
 
     explicit MainWindow(QWidget *parent = 0);
@@ -44,10 +38,6 @@ public:
     virtual ~MainWindow();
 
 private:
-
-    void addListItem( const std::string uid );
-
-    void updateUi();
 
     void updateGui();
 

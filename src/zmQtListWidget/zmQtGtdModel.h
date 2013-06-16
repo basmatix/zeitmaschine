@@ -13,6 +13,7 @@
 #include <QtCore/QString>
 
 class zmWidgetItemMap;
+class QTreeWidgetItem;
 
 /// std-c++/Qt - interface to zmGtdModel. Aims to be a
 /// fully qualified Qt model in the future
@@ -27,6 +28,11 @@ class zmQtGtdModel
 public:
 
     zmWidgetItemMap *m_wi_map;
+    QTreeWidgetItem    *m_liToday;
+    QTreeWidgetItem    *m_liInbox;
+    QTreeWidgetItem    *m_liProjects;
+    QTreeWidgetItem    *m_liContexts;
+    QTreeWidgetItem    *m_liDone;
 
     zmQtGtdModel();
     virtual ~zmQtGtdModel();
@@ -66,10 +72,11 @@ public:
         m_gtd_model.addDomainSyncFolder( domainName.toUtf8().constData(), path.toUtf8().constData() );
     }
 
-    void initialize()
-    {
-        m_gtd_model.initialize();
-    }
+    void initialize( QTreeWidgetItem *root );
+
+    void addListItem( const std::string uid );
+
+    void populate();
 
     void sync()
     {

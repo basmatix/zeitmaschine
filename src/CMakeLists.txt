@@ -86,6 +86,8 @@ add_subdirectory( zm_lib )
 #add_subdirectory( zmQt )
 add_subdirectory( zmQtListWidget )
 
+#add_subdirectory( zm_qt_mvc_stub )
+
 add_subdirectory( zm_tool )
 
 add_subdirectory( pyZm )
