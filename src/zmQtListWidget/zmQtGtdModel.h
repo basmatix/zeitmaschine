@@ -1,24 +1,35 @@
-/// copyright (C) 2013 Frans Fürst
 /// -*- coding: utf-8 -*-
+///
+/// file: zmQtGtdModel.h
+///
+/// Copyright (C) 2013 Frans Fuerst
+///
 
-#ifndef ZMQTGTDADAPTER_H
-#define ZMQTGTDADAPTER_H
+#ifndef ZMQTGTDMODEL_H
+#define ZMQTGTDMODEL_H
 
 #include <zm/zmGtdModel.h>
+
 #include <QtCore/QString>
+
+class zmWidgetItemMap;
 
 /// std-c++/Qt - interface to zmGtdModel. Aims to be a
 /// fully qualified Qt model in the future
 class zmQtGtdModel
 {
+    zmQtGtdModel( const zmQtGtdModel & );
+    zmQtGtdModel &operator=( const zmQtGtdModel & );
+
     zmGtdModel m_gtd_model;
 
 /// maintenance interface
 public:
 
-    zmQtGtdModel()
-        : m_gtd_model()
-    {}
+    zmWidgetItemMap *m_wi_map;
+
+    zmQtGtdModel();
+    virtual ~zmQtGtdModel();
 
     bool hasUsedUsername() const
     {

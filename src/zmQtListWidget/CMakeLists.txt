@@ -19,7 +19,8 @@ qt4_wrap_ui( ${PROJECT_NAME}_UIS zmQtListWidget.ui )
 # list all class files which implement Q_OBJECT
 qt4_wrap_cpp( ${PROJECT_NAME}_MOCS
     zmQTreeWidget.h
-    mainwindow.h )
+    zmQtUi.h
+)
 
 file( GLOB ${PROJECT_NAME}_files
     CMakeLists.txt
@@ -27,7 +28,9 @@ file( GLOB ${PROJECT_NAME}_files
     *.h
     DOC-*
     *asciidoc.txt
-    main.cpp
+    zmQtMain.cpp
+    zmQtUi.cpp
+    zmQtGtdModel.cpp
 )
 
 # generated and external headers made system so
