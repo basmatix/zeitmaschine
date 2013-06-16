@@ -83,7 +83,8 @@ add_subdirectory( mm_lib )
 
 add_subdirectory( zm_lib )
 
-add_subdirectory( zmQt )
+#add_subdirectory( zmQt )
+add_subdirectory( zmQtListWidget )
 
 add_subdirectory( zm_tool )
 
