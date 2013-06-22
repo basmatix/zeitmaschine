@@ -78,6 +78,7 @@ set( ZM_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/zm_lib/include" )
 enable_testing()
 
 add_subdirectory( submodules/yaml-cpp )
+set_target_properties( yaml-cpp PROPERTIES POSITION_INDEPENDENT_CODE TRUE )
 
 add_subdirectory( mm_lib )
 
