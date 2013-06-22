@@ -18,12 +18,28 @@
 class zmGtdModel
 {
     zm::MindMatterModel m_things_model;
+    std::string m_item_inbox;
+    std::string m_item_task;
+    std::string m_item_next_task;
+    std::string m_item_project;
+    std::string m_item_group;
+    std::string m_item_done;
+    std::string m_item_knowledge;
+    std::string m_item_person;
 
 /// maintenance interface
 public:
 
     zmGtdModel()
-        : m_things_model()
+        : m_things_model    ()
+        , m_item_inbox      ()
+        , m_item_task       ()
+        , m_item_next_task  ()
+        , m_item_project    ()
+        , m_item_group      ()
+        , m_item_done       ()
+        , m_item_knowledge  ()
+        , m_item_person     ()
     {}
 
     bool hasUsedUsername() const
@@ -64,6 +80,15 @@ public:
     void initialize()
     {
         m_things_model.initialize();
+        m_item_inbox =      m_things_model.findOrCreateTagItem( "gtd_inbox" );
+        m_item_task =       m_things_model.findOrCreateTagItem( "gtd_task" );
+        m_item_next_task =  m_things_model.findOrCreateTagItem( "gtd_next_task" );
+        m_item_project =    m_things_model.findOrCreateTagItem( "gtd_project" );
+        m_item_group =      m_things_model.findOrCreateTagItem( "gtd_group" );
+        m_item_done =       m_things_model.findOrCreateTagItem( "gtd_done" );
+        m_item_knowledge =  m_things_model.findOrCreateTagItem( "knowledge" );
+        m_item_person =     m_things_model.findOrCreateTagItem( "person" );
+
         print_statistics();
     }
 
@@ -149,6 +174,11 @@ public:
     bool itemContentMatchesString( const std::string &uid, const std::string &searchString ) const;
 
     void print_statistics() const;
+
+    bool empty() const
+    {
+        return m_things_model.getItemCount() == 0;
+    }
 
 /// save relevant interface
 public:
