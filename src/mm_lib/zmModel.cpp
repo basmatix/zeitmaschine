@@ -649,41 +649,65 @@ bool zm::MindMatterModel::isConnected( const std::string &node1_uid, const std::
     MindMatterModelMapType::const_iterator l_item2_it( m_things.find( node2_uid ) );
 
     assert( l_item1_it != m_things.end() );
-    assert( l_item1_it != m_things.end() );
+    assert( l_item2_it != m_things.end() );
 
-    std::set< MindMatter * > n1(  l_item1_it->second->m_neighbours );
-    std::set< MindMatter * > n2(  l_item2_it->second->m_neighbours );
+    return _isConnected( l_item1_it, l_item2_it );
+}
+
+bool zm::MindMatterModel::_isConnected(
+        MindMatterModelMapType::const_iterator a_item1_it,
+        MindMatterModelMapType::const_iterator a_item2_it ) const
+{
+    std::set< MindMatter * > &n1(  a_item1_it->second->m_neighbours );
+    std::set< MindMatter * > &n2(  a_item2_it->second->m_neighbours );
 
     // this check is just for performance reasons (we test the
     // smaller set (in case assert expands to void))
     if( n1.size() < n2.size() )
     {
-        if( n1.find( l_item2_it->second ) != n1.end() )
+        if( n1.find( a_item2_it->second ) != n1.end() )
         {
-            assert( n2.find( l_item1_it->second ) != n2.end() );
+            assert( n2.find( a_item1_it->second ) != n2.end() );
             return true;
         }
         else
         {
-            assert( n2.find( l_item1_it->second ) == n2.end() );
+            assert( n2.find( a_item1_it->second ) == n2.end() );
             return false;
         }
     }
     else
     {
-        if( n2.find( l_item1_it->second ) != n2.end() )
+        if( n2.find( a_item1_it->second ) != n2.end() )
         {
-            assert( n1.find( l_item2_it->second ) != n1.end() );
+            assert( n1.find( a_item2_it->second ) != n1.end() );
             return true;
         }
         else
         {
-            assert( n1.find( l_item2_it->second ) == n1.end() );
+            assert( n1.find( a_item2_it->second ) == n1.end() );
             return false;
         }
     }
 }
 
+std::string zm::MindMatterModel::findOrCreateTagItem( const std::string &name )
+{
+    BOOST_FOREACH(const MindMatterModelMapType::value_type& i, m_things)
+    {
+        if( i.second->m_caption == name )
+        {
+            return i.first;
+        }
+    }
+
+    // todo: TagItems should be held in a list to prevent generic Items
+    //       from getting the same name
+    // todo: what about tag items from other domains? Should there be duplicated
+    //       tags?
+
+    return createNewItem( name );
+}
 
 ///
 /// write relevant interface
@@ -778,6 +802,20 @@ bool zm::MindMatterModel::removeAttribute( const std::string &uid, const std::st
 bool zm::MindMatterModel::_removeAttribute( MindMatterModelMapType::iterator &item, const std::string &attribute )
 {
     return item->second->removeAttribute( attribute );
+}
+
+void zm::MindMatterModel::disconnect( const std::string &node1_uid, const std::string &node2_uid )
+{
+    MindMatterModelMapType::iterator l_item1_it( m_things.find( node1_uid ) );
+    MindMatterModelMapType::iterator l_item2_it( m_things.find( node2_uid ) );
+
+    assert( l_item1_it != m_things.end() );
+    assert( l_item2_it != m_things.end() );
+
+    assert( _isConnected( l_item1_it, l_item2_it ));
+
+    l_item1_it->second->m_neighbours.erase( l_item2_it->second );
+    l_item2_it->second->m_neighbours.erase( l_item1_it->second );
 }
 
 void zm::MindMatterModel::connect( const std::string &node1_uid, const std::string &node2_uid )

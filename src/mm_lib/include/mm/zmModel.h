@@ -128,6 +128,11 @@ namespace zm
 
         bool isConnected( const std::string &node1_uid, const std::string &node2_uid ) const;
 
+private:
+        bool _isConnected(
+                MindMatterModelMapType::const_iterator item_it1,
+                MindMatterModelMapType::const_iterator item_it2 ) const;
+
     /// write relevant interface
     public:
 
@@ -144,6 +149,10 @@ namespace zm
         void setCaption( const std::string &uid, const std::string &caption );
 
         void connect( const std::string &node1_uid, const std::string &node2_uid );
+
+        void disconnect( const std::string &node1_uid, const std::string &node2_uid );
+
+        std::string findOrCreateTagItem( const std::string &name );
 
     private:
 
