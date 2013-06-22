@@ -20,8 +20,9 @@
 
 bool change_while_open();
 bool empty_db_on_load();
-bool output_node();
+bool low_level_gtd_workflow();
 bool connections();
+bool diff_and_reapply();
 
 int main( int arg_n, char **arg_v )
 {
@@ -29,7 +30,7 @@ int main( int arg_n, char **arg_v )
 
     l_tests["change_while_open"] = change_while_open;
     l_tests["empty_db_on_load"] = empty_db_on_load;
-    l_tests["output_node"] = output_node;
+    l_tests["low_level_gtd_workflow"] = low_level_gtd_workflow;
     l_tests["connections"] = connections;
 
     return run_tests( l_tests, arg_n, arg_v );
@@ -64,6 +65,27 @@ bool connections()
 
     test_assert( !l_m1.isConnected(node1, node3),
                  "node1 and node2 should be connected after connection" );
+
+    return true;
+}
+
+bool diff_and_reapply()
+{
+
+    // create
+
+    // modifiy
+
+    // fork
+
+    // modify
+
+    // diff
+
+    // apply
+
+    // compare
+
 
     return true;
 }
@@ -124,36 +146,60 @@ bool change_while_open()
     return l_everythings_there;
 }
 
-bool output_node()
+
+bool low_level_gtd_workflow()
 {
-    std::ofstream l_fout( "testfile.yaml" );
-    YAML::Emitter out(l_fout);
+    zm::MindMatterModel l_m1;
 
-    // main sequence
-    out << YAML::BeginSeq;
+    l_m1.setLocalFolder( "./test-localfolder" );
 
-        out << YAML::VerbatimTag("048d5cb69c066bea");
+    l_m1.setUsedUsername( "test-user" );
+    l_m1.setUsedHostname( "test-machine" );
 
-        out << YAML::BeginMap;
-            out << YAML::Key << "StringValues";
-            out << YAML::Value;
-                out << YAML::BeginMap;
-                    out << YAML::Key << "position";
-                    out << YAML::Value << "3B";
-                out << YAML::EndMap;
-        out << YAML::EndMap;
+    l_m1.initialize();
 
-        out << YAML::Key << "attributes";
-        out << YAML::Value ;
-        out << YAML::BeginSeq;
-        out << "eins";
-        out << "zwei";
-        out << YAML::EndSeq;
+    test_assert( l_m1.getItemCount() == 0,
+                 "nodes should be empty for the test" );
 
-    out << YAML::VerbatimTag("abcuniquedef2");
+    std::string l_item_inbox =      l_m1.findOrCreateTagItem( "gtd_inbox" );
+    std::string l_item_task =       l_m1.findOrCreateTagItem( "gtd_task" );
+    std::string l_item_next_task =  l_m1.findOrCreateTagItem( "gtd_next_task" );
+    std::string l_item_project =    l_m1.findOrCreateTagItem( "gtd_project" );
+    std::string l_item_group =      l_m1.findOrCreateTagItem( "gtd_group" );
+    std::string l_item_done =       l_m1.findOrCreateTagItem( "gtd_done" );
+    std::string l_item_knowledge =  l_m1.findOrCreateTagItem( "knowledge" );
+    std::string l_item_person =     l_m1.findOrCreateTagItem( "person" );
 
-    out << YAML::EndSeq;
-    l_fout << std::endl;
+    /// create new gtd item
+    std::string l_gtd_item1 = l_m1.createNewItem("urlaub planen");
+    l_m1.connect( l_gtd_item1, l_item_inbox );
+
+
+    /// decide this item to be a project
+    l_m1.disconnect( l_gtd_item1, l_item_inbox );
+    l_m1.connect( l_gtd_item1, l_item_project );
+
+
+    /// find two subtasks
+    std::string l_gtd_item2 = l_m1.createNewItem("gemeinsames Datum finden");
+    l_m1.connect( l_gtd_item2, l_item_inbox );
+
+    std::string l_gtd_item3 = l_m1.createNewItem("Urlaubsort bestimmen");
+    l_m1.connect( l_gtd_item3, l_item_inbox );
+
+
+    /// make them tasks and connect them with task1
+    l_m1.connect( l_gtd_item2, l_item_task );
+    l_m1.disconnect( l_gtd_item2, l_item_inbox );
+    l_m1.connect( l_gtd_item2, l_gtd_item1 );
+
+    l_m1.connect( l_gtd_item3, l_item_task );
+    l_m1.disconnect( l_gtd_item3, l_item_inbox );
+    l_m1.connect( l_gtd_item3, l_gtd_item1 );
+
+
+    /// decide item3 to be the first step to take
+    l_m1.connect( l_gtd_item3, l_item_next_task );
 
     return true;
 }

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# file: CMakeLists.txt (ysbox-unit_tests-common)
+# file: CMakeLists.txt (zeitmaschine-unit_tests-gtd)
 #
 # Copyright 2011 - 2013 scitics GmbH
 #
@@ -22,21 +22,18 @@ include_directories( SYSTEM
 
 include_directories(
     "${MM_INCLUDE_DIR}"
+    "${ZM_INCLUDE_DIR}"
 )
 
-add_executable( test_mindmatter test_mindmatter.cpp )
-target_link_libraries( test_mindmatter
+add_executable( test_gtd test_gtd.cpp )
+target_link_libraries( test_gtd
     ${Boost_LIBRARIES}
     mm_s
-    #zm_s
+    zm_s
     yaml-cpp
 )
 
-set( test_executable "${CMAKE_CURRENT_BINARY_DIR}/test_mindmatter" )
+set( test_executable "${CMAKE_CURRENT_BINARY_DIR}/test_gtd" )
 
-add_test( empty_db_on_load         ${test_executable} empty_db_on_load )
-add_test( things_change_while_open ${test_executable} change_while_open )
-add_test( low_level_gtd_workflow   ${test_executable} low_level_gtd_workflow )
-add_test( connections              ${test_executable} connections )
-add_test( diff_and_reapply         ${test_executable} diff_and_reapply )
+add_test( basic_workflow         ${test_executable} basic_workflow )
 
