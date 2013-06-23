@@ -395,16 +395,16 @@ void zm::MindMatterModel::applyChangeSet( const ChangeSet &changeSet )
     {
         MindMatterModelMapType::left_iterator l_item_it( m_things.left.find( j->uid ) );
 
-        if( j->type == JournalItem::CreateItem && l_item_it != m_things.end() )
+        if( j->type == JournalItem::CreateItem && l_item_it != m_things.left.end() )
         {
             tracemessage( "WARNING: tried to create already existant item '%s'", j->uid.c_str() );
             continue;
         }
 
-        if( j->type != JournalItem::CreateItem && l_item_it == m_things.end() )
+        if( j->type != JournalItem::CreateItem && l_item_it == m_things.left.end() )
         {
             tracemessage( "WARNING: trying to modify item non existent item '%s'", j->uid.c_str() );
-            assert( j->type == JournalItem::CreateItem || l_item_it != m_things.end() );
+            assert( j->type == JournalItem::CreateItem || l_item_it != m_things.left.end() );
         }
 
         switch( j->type )
@@ -428,8 +428,8 @@ void zm::MindMatterModel::applyChangeSet( const ChangeSet &changeSet )
             _setCaption( l_item_it, j->value );
             break;
         case JournalItem::Connect:
-            MindMatterModelMapType::iterator l_item2_it( m_things.find( j->value ) );
-            assert( l_item2_it != m_things.end() );
+            MindMatterModelMapType::left_iterator l_item2_it( m_things.left.find( j->value ) );
+            assert( l_item2_it != m_things.left.end() );
             _connect( l_item_it, l_item2_it );
             break;
         }
@@ -584,7 +584,7 @@ std::time_t zm::MindMatterModel::getCreationTime( const std::string &uid ) const
 
     assert( l_item_it != m_things.left.end() );
 
-    std::string l_timeStr = l_item_it->right->getValue( "global_time_created" );
+    std::string l_timeStr = l_item_it->second->getValue( "global_time_created" );
 
     // unfortunately in boost 1.50 iso_format_extended_specifier only specifies to "%Y-%m-%dT"
     //return seconds_from_epoch( l_timeStr, boost::posix_time::time_facet::iso_format_extended_specifier );
@@ -593,99 +593,99 @@ std::time_t zm::MindMatterModel::getCreationTime( const std::string &uid ) const
 
 bool zm::MindMatterModel::hasItem( const std::string &uid ) const
 {
-    MindMatterModelMapType::const_iterator l_item_it( m_things.find( uid ) );
+    MindMatterModelMapType::left_const_iterator l_item_it( m_things.left.find( uid ) );
 
-    return l_item_it != m_things.end();
+    return l_item_it != m_things.left.end();
 }
 
 std::string zm::MindMatterModel::getValue( const std::string &uid, const std::string &name ) const
 {
-    MindMatterModelMapType::const_iterator l_item_it( m_things.find( uid ) );
+    MindMatterModelMapType::left_const_iterator l_item_it( m_things.left.find( uid ) );
 
-    assert( l_item_it != m_things.end() );
+    assert( l_item_it != m_things.left.end() );
 
-    return l_item_it->right->getValue( name );
+    return l_item_it->second->getValue( name );
 }
 
 const std::string & zm::MindMatterModel::getCaption( const std::string &uid ) const
 {
-    MindMatterModelMapType::const_iterator l_item_it( m_things.find( uid ) );
+    MindMatterModelMapType::left_const_iterator l_item_it( m_things.left.find( uid ) );
 
-    assert( l_item_it != m_things.end() );
+    assert( l_item_it != m_things.left.end() );
 
-    return l_item_it->right->m_caption;
+    return l_item_it->second->m_caption;
 }
 
 bool zm::MindMatterModel::hasAttribute( const std::string &uid, const std::string &attribute ) const
 {
-    MindMatterModelMapType::const_iterator l_item_it( m_things.find( uid ) );
+    MindMatterModelMapType::left_const_iterator l_item_it( m_things.left.find( uid ) );
 
-    assert( l_item_it != m_things.end() );
+    assert( l_item_it != m_things.left.end() );
 
-    return l_item_it->right->hasAttribute( attribute );
+    return l_item_it->second->hasAttribute( attribute );
 }
 
 bool zm::MindMatterModel::hasValue( const std::string &uid, const std::string &name ) const
 {
-    MindMatterModelMapType::const_iterator l_item_it( m_things.find( uid ) );
+    MindMatterModelMapType::left_const_iterator l_item_it( m_things.left.find( uid ) );
 
-    assert( l_item_it != m_things.end() );
+    assert( l_item_it != m_things.left.end() );
 
-    return l_item_it->right->hasValue( name );
+    return l_item_it->second->hasValue( name );
 }
 
 bool zm::MindMatterModel::itemContentMatchesString( const std::string &uid, const std::string &searchString ) const
 {
-    MindMatterModelMapType::const_iterator l_item_it( m_things.find( uid ) );
+    MindMatterModelMapType::left_const_iterator l_item_it( m_things.left.find( uid ) );
 
-    assert( l_item_it != m_things.end() );
+    assert( l_item_it != m_things.left.end() );
 
-    return l_item_it->right->contentMatchesString( searchString );
+    return l_item_it->second->contentMatchesString( searchString );
 }
 
 bool zm::MindMatterModel::isConnected( const std::string &node1_uid, const std::string &node2_uid ) const
 {
-    MindMatterModelMapType::const_iterator l_item1_it( m_things.find( node1_uid ) );
-    MindMatterModelMapType::const_iterator l_item2_it( m_things.find( node2_uid ) );
+    MindMatterModelMapType::left_const_iterator l_item1_it( m_things.left.find( node1_uid ) );
+    MindMatterModelMapType::left_const_iterator l_item2_it( m_things.left.find( node2_uid ) );
 
-    assert( l_item1_it != m_things.end() );
-    assert( l_item2_it != m_things.end() );
+    assert( l_item1_it != m_things.left.end() );
+    assert( l_item2_it != m_things.left.end() );
 
     return _isConnected( l_item1_it, l_item2_it );
 }
 
 bool zm::MindMatterModel::_isConnected(
-        MindMatterModelMapType::const_iterator a_item1_it,
-        MindMatterModelMapType::const_iterator a_item2_it ) const
+        MindMatterModelMapType::left_const_iterator a_item1_it,
+        MindMatterModelMapType::left_const_iterator a_item2_it ) const
 {
-    std::set< MindMatter * > &n1(  a_item1_it->right->m_neighbours );
-    std::set< MindMatter * > &n2(  a_item2_it->right->m_neighbours );
+    std::set< MindMatter * > &n1(  a_item1_it->second->m_neighbours );
+    std::set< MindMatter * > &n2(  a_item2_it->second->m_neighbours );
 
     // this check is just for performance reasons (we test the
     // smaller set (in case assert expands to void))
     if( n1.size() < n2.size() )
     {
-        if( n1.find( a_item2_it->right ) != n1.end() )
+        if( n1.find( a_item2_it->second ) != n1.end() )
         {
-            assert( n2.find( a_item1_it->right ) != n2.end() );
+            assert( n2.find( a_item1_it->second ) != n2.end() );
             return true;
         }
         else
         {
-            assert( n2.find( a_item1_it->right ) == n2.end() );
+            assert( n2.find( a_item1_it->second ) == n2.end() );
             return false;
         }
     }
     else
     {
-        if( n2.find( a_item1_it->right ) != n2.end() )
+        if( n2.find( a_item1_it->second ) != n2.end() )
         {
-            assert( n1.find( a_item2_it->right ) != n1.end() );
+            assert( n1.find( a_item2_it->second ) != n1.end() );
             return true;
         }
         else
         {
-            assert( n1.find( a_item2_it->right ) == n1.end() );
+            assert( n1.find( a_item2_it->second ) == n1.end() );
             return false;
         }
     }
@@ -693,13 +693,15 @@ bool zm::MindMatterModel::_isConnected(
 
 std::list< std::string > zm::MindMatterModel::getNeighbours( const std::string &node_uid )
 {
-    MindMatterModelMapType::iterator l_item_it( m_things.find( node_uid ) );
+    MindMatterModelMapType::left_iterator l_item_it( m_things.left.find( node_uid ) );
     std::list< std::string > l_return;
 
-    assert( l_item_it != m_things.end() );
-    BOOST_FOREACH( const MindMatter *m, l_item_it->right->m_neighbours)
+    assert( l_item_it != m_things.left.end() );
+    BOOST_FOREACH( MindMatter *m, l_item_it->second->m_neighbours)
     {
-        //l_return.push_back( m );
+        MindMatterModelMapType::right_iterator i = m_things.right.find(m);
+        assert( i != m_things.right.end() );
+        //l_return.push_back( i->second  );
     }
 
     return l_return;
@@ -732,7 +734,7 @@ std::string zm::MindMatterModel::createNewItem( const std::string &caption )
     std::string l_time = zm::common::time_stamp_iso_ext();
     std::string l_new_key = generateUid();
 
-    assert( m_things.find( l_new_key ) == m_things.end() );
+    assert( m_things.left.find( l_new_key ) == m_things.left.end() );
 
     _createNewItem( l_new_key, caption, l_time );
 
@@ -755,9 +757,9 @@ void zm::MindMatterModel::_createNewItem( const std::string &a_uid, const std::s
 
 void zm::MindMatterModel::eraseItem( const std::string &uid )
 {
-    MindMatterModelMapType::iterator l_item_it( m_things.find( uid ) );
+    MindMatterModelMapType::left_iterator l_item_it( m_things.left.find( uid ) );
 
-    assert( l_item_it != m_things.end() );
+    assert( l_item_it != m_things.left.end() );
 
     _eraseItem( l_item_it );
 
@@ -767,22 +769,23 @@ void zm::MindMatterModel::eraseItem( const std::string &uid )
     dirty();
 }
 
-void zm::MindMatterModel::_eraseItem( MindMatterModelMapType::iterator &item )
+void zm::MindMatterModel::_eraseItem( MindMatterModelMapType::left_iterator &item )
 {
     //todo: remove references
     //todo: delete item
-    m_things.erase( item );
+    //m_things.erase( item );
+    m_things.left.erase( item );
 }
 
 void zm::MindMatterModel::addAttribute( const std::string &uid, const std::string &attribute )
 {
-    MindMatterModelMapType::iterator l_item_it( m_things.find( uid ) );
+    MindMatterModelMapType::left_iterator l_item_it( m_things.left.find( uid ) );
 
-    assert( l_item_it != m_things.end() );
+    assert( l_item_it != m_things.left.end() );
 
     _addAttribute( l_item_it, attribute );
 
-    l_item_it->right->addAttribute( attribute );
+    l_item_it->second->addAttribute( attribute );
 
     JournalItem *l_change = new JournalItem( uid, JournalItem::AddAttribute );
     l_change->key = attribute;
@@ -791,16 +794,16 @@ void zm::MindMatterModel::addAttribute( const std::string &uid, const std::strin
     dirty();
 }
 
-void zm::MindMatterModel::_addAttribute( MindMatterModelMapType::iterator &item, const std::string &attribute )
+void zm::MindMatterModel::_addAttribute( MindMatterModelMapType::left_iterator &item, const std::string &attribute )
 {
-    item->right->addAttribute( attribute );
+    item->second->addAttribute( attribute );
 }
 
 bool zm::MindMatterModel::removeAttribute( const std::string &uid, const std::string &attribute )
 {
-    MindMatterModelMapType::iterator l_item_it( m_things.find( uid ) );
+    MindMatterModelMapType::left_iterator l_item_it( m_things.left.find( uid ) );
 
-    assert( l_item_it != m_things.end() );
+    assert( l_item_it != m_things.left.end() );
 
     bool l_return = _removeAttribute( l_item_it, attribute );
 
@@ -813,32 +816,32 @@ bool zm::MindMatterModel::removeAttribute( const std::string &uid, const std::st
     return l_return;
 }
 
-bool zm::MindMatterModel::_removeAttribute( MindMatterModelMapType::iterator &item, const std::string &attribute )
+bool zm::MindMatterModel::_removeAttribute( MindMatterModelMapType::left_iterator &item, const std::string &attribute )
 {
-    return item->right->removeAttribute( attribute );
+    return item->second->removeAttribute( attribute );
 }
 
 void zm::MindMatterModel::disconnect( const std::string &node1_uid, const std::string &node2_uid )
 {
-    MindMatterModelMapType::iterator l_item1_it( m_things.find( node1_uid ) );
-    MindMatterModelMapType::iterator l_item2_it( m_things.find( node2_uid ) );
+    MindMatterModelMapType::left_iterator l_item1_it( m_things.left.find( node1_uid ) );
+    MindMatterModelMapType::left_iterator l_item2_it( m_things.left.find( node2_uid ) );
 
-    assert( l_item1_it != m_things.end() );
-    assert( l_item2_it != m_things.end() );
+    assert( l_item1_it != m_things.left.end() );
+    assert( l_item2_it != m_things.left.end() );
 
     assert( _isConnected( l_item1_it, l_item2_it ));
 
-    l_item1_it->right->m_neighbours.erase( l_item2_it->right );
-    l_item2_it->right->m_neighbours.erase( l_item1_it->right );
+    l_item1_it->second->m_neighbours.erase( l_item2_it->second );
+    l_item2_it->second->m_neighbours.erase( l_item1_it->second );
 }
 
 void zm::MindMatterModel::connect( const std::string &node1_uid, const std::string &node2_uid )
 {
-    MindMatterModelMapType::iterator l_item1_it( m_things.find( node1_uid ) );
-    MindMatterModelMapType::iterator l_item2_it( m_things.find( node2_uid ) );
+    MindMatterModelMapType::left_iterator l_item1_it( m_things.left.find( node1_uid ) );
+    MindMatterModelMapType::left_iterator l_item2_it( m_things.left.find( node2_uid ) );
 
-    assert( l_item1_it != m_things.end() );
-    assert( l_item2_it != m_things.end() );
+    assert( l_item1_it != m_things.left.end() );
+    assert( l_item2_it != m_things.left.end() );
 
     JournalItem *l_change = new JournalItem( node1_uid, JournalItem::Connect );
     l_change->value = node2_uid;
@@ -849,18 +852,18 @@ void zm::MindMatterModel::connect( const std::string &node1_uid, const std::stri
     _connect( l_item1_it, l_item2_it );
 }
 
-void zm::MindMatterModel::_connect( MindMatterModelMapType::iterator &item1, MindMatterModelMapType::iterator &item2 )
+void zm::MindMatterModel::_connect( MindMatterModelMapType::left_iterator &item1, MindMatterModelMapType::left_iterator &item2 )
 {
-    item1->right->m_neighbours.insert( (item2->right) );
-    item2->right->m_neighbours.insert( (item1->right) );
+    item1->second->m_neighbours.insert( item2->second );
+    item2->second->m_neighbours.insert( item1->second );
 }
 
 
 void zm::MindMatterModel::setValue( const std::string &uid, const std::string &name, const std::string &value )
 {
-    MindMatterModelMapType::iterator l_item_it( m_things.find( uid ) );
+    MindMatterModelMapType::left_iterator l_item_it( m_things.left.find( uid ) );
 
-    assert( l_item_it != m_things.end() );
+    assert( l_item_it != m_things.left.end() );
 
     if( !_setValue(l_item_it, name, value ) ) return;
 
@@ -872,19 +875,19 @@ void zm::MindMatterModel::setValue( const std::string &uid, const std::string &n
     dirty();
 }
 
-bool zm::MindMatterModel::_setValue( MindMatterModelMapType::iterator &item, const std::string &name, const std::string &value )
+bool zm::MindMatterModel::_setValue( MindMatterModelMapType::left_iterator &item, const std::string &name, const std::string &value )
 {
-    if( item->right->hasValue( name )
-     && item->right->getValue( name ) == value ) return false;
-    item->right->addValue( name, value );
+    if( item->second->hasValue( name )
+     && item->second->getValue( name ) == value ) return false;
+    item->second->addValue( name, value );
     return true;
 }
 
 void zm::MindMatterModel::setCaption( const std::string &uid, const std::string &caption )
 {
-    MindMatterModelMapType::iterator l_item_it( m_things.find( uid ) );
+    MindMatterModelMapType::left_iterator l_item_it( m_things.left.find( uid ) );
 
-    assert( l_item_it != m_things.end() );
+    assert( l_item_it != m_things.left.end() );
 
     if( !_setCaption( l_item_it, caption ) ) return;
 
@@ -896,10 +899,10 @@ void zm::MindMatterModel::setCaption( const std::string &uid, const std::string 
     dirty();
 }
 
-bool zm::MindMatterModel::_setCaption( MindMatterModelMapType::iterator &item, const std::string &caption )
+bool zm::MindMatterModel::_setCaption( MindMatterModelMapType::left_iterator &item, const std::string &caption )
 {
-    if( item->right->m_caption == caption ) return false;
-    item->right->m_caption = caption;
+    if( item->second->m_caption == caption ) return false;
+    item->second->m_caption = caption;
     return true;
 }
 

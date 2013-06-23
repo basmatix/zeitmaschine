@@ -134,8 +134,8 @@ namespace zm
 
 private:
         bool _isConnected(
-                MindMatterModelMapType::const_iterator item_it1,
-                MindMatterModelMapType::const_iterator item_it2 ) const;
+                MindMatterModelMapType::left_const_iterator item_it1,
+                MindMatterModelMapType::left_const_iterator item_it2 ) const;
 
     /// write relevant interface
     public:
@@ -162,17 +162,17 @@ private:
 
         void _createNewItem( const std::string &uid, const std::string &caption, const std::string &time );
 
-        void _eraseItem( MindMatterModelMapType::iterator &item );
+        void _eraseItem( MindMatterModelMapType::left_iterator &item );
 
-        void _addAttribute( MindMatterModelMapType::iterator &item, const std::string &attribute );
+        void _addAttribute( MindMatterModelMapType::left_iterator &item, const std::string &attribute );
 
-        bool _removeAttribute( MindMatterModelMapType::iterator &item, const std::string &attribute );
+        bool _removeAttribute( MindMatterModelMapType::left_iterator &item, const std::string &attribute );
 
-        bool _setValue( MindMatterModelMapType::iterator &item, const std::string &name, const std::string &value );
+        bool _setValue( MindMatterModelMapType::left_iterator &item, const std::string &name, const std::string &value );
 
-        bool _setCaption( MindMatterModelMapType::iterator &item, const std::string &caption );
+        bool _setCaption( MindMatterModelMapType::left_iterator &item, const std::string &caption );
 
-        void _connect( MindMatterModelMapType::iterator &item1, MindMatterModelMapType::iterator &item2 );
+        void _connect( MindMatterModelMapType::left_iterator &item1, MindMatterModelMapType::left_iterator &item2 );
 
         // returns 16x8 bit
         static std::string generateUid();
