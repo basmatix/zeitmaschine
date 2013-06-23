@@ -33,6 +33,25 @@ find_package(
     REQUIRED
   )
 
+option( CONFIG_CPP11 "compile with c++11 options" OFF )
+if( CONFIG_CPP11 )
+    if(${CMAKE_CXX_COMPILER_ID} MATCHES Clang)
+        set( CMAKE_CXX_FLAGS "-std=c++11 -stdlib=libstdc++" )
+        set( CMAKE_CXX_LINK_FLAGS "-std=c++11 -stdlib=libstdc++" )
+    elseif( ${CMAKE_CXX_COMPILER_ID} STREQUAL GNU )
+        include( CheckCXXCompilerFlag )
+        check_cxx_compiler_flag(-std=c++11 HAVE_STD11)
+        if(HAVE_STD11)
+            set(CMAKE_CXX_FLAGS -std=c++11)
+            else()
+                check_cxx_compiler_flag(-std=c++0x HAVE_STD0X)
+            if(HAVE_STD0X)
+                set(CMAKE_CXX_FLAGS -std=c++0x)
+            endif()
+        endif()
+    endif()
+endif()
+
 if( NOT CMAKE_CONFIGURATION_TYPES )
     # Build Debug by default
     if( NOT CMAKE_BUILD_TYPE )
