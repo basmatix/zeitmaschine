@@ -18,7 +18,12 @@
 
 zmQtGtdModel::zmQtGtdModel()
     : m_gtd_model()
-    , m_wi_map( NULL )
+    , m_wi_map      ( NULL )
+    , m_liToday     ( NULL )
+    , m_liInbox     ( NULL )
+    , m_liProjects  ( NULL )
+    , m_liContexts  ( NULL )
+    , m_liDone      ( NULL )
 {
     m_wi_map = new zmWidgetItemMap();
 
