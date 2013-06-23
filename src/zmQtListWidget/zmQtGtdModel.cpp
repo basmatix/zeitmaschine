@@ -5,6 +5,10 @@
 /// Copyright (C) 2013 Frans Fuerst
 ///
 
+/// this is a workaround for a qt based bug
+/// http://stackoverflow.com/questions/15191361/boostq-foreach-has-not-been-declared
+#include <boost/foreach.hpp>
+
 #include "zmQtGtdModel.h"
 #include "zmWidgetItemMap.h"
 #include "zmQTreeWidget.h"

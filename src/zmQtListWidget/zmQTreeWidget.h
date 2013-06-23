@@ -4,6 +4,10 @@
 #ifndef ZMQTREEWIDGET_H
 #define ZMQTREEWIDGET_H
 
+/// this is a workaround for a qt based bug
+/// http://stackoverflow.com/questions/15191361/boostq-foreach-has-not-been-declared
+#include <boost/foreach.hpp>
+
 #include "zmQtGtdModel.h"
 #include <mm/zmTrace.h>
 
