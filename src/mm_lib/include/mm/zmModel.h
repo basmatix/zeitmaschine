@@ -10,8 +10,10 @@
 
 #include "zmChangeSet.h"
 
-#include <map>
+//#include <map>
+#include <boost/bimap.hpp>
 #include <string>
+#include <list>
 
 namespace zm
 {
@@ -21,7 +23,7 @@ namespace zm
     {
     public:
 
-        typedef std::map< std::string, MindMatter * > MindMatterModelMapType;
+        typedef boost::bimaps::bimap< std::string, MindMatter * > MindMatterModelMapType;
 
     private:
 
@@ -127,6 +129,8 @@ namespace zm
         bool itemContentMatchesString( const std::string &uid, const std::string &searchString ) const;
 
         bool isConnected( const std::string &node1_uid, const std::string &node2_uid ) const;
+
+        std::list< std::string > getNeighbours( const std::string &node_uid );
 
 private:
         bool _isConnected(
