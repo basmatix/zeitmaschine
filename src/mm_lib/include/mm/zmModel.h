@@ -40,6 +40,8 @@ namespace zm
 
         MindMatterModel();
 
+        bool operator==( const MindMatterModel &other );
+
         void setConfigPersistance( bool value );
 
         /// sets the one and only local folder for configuration temorary and
@@ -87,6 +89,10 @@ namespace zm
         /// set the hostname used by us
         void setUsedHostname( const std::string &hostname );
 
+        void applyChangeSet( const ChangeSet &changeSet );
+
+        ChangeSet diff( const MindMatterModel &other );
+
     private:
 
         void loadLocalModel( const std::string &filename );
@@ -102,8 +108,6 @@ namespace zm
         /// returns a sorted list containing names of journal files
         /// located in the sync folder
         std::vector< std::string > getJournalFiles();
-
-        void applyChangeSet( const ChangeSet &changeSet );
 
     /// const interface
     public:

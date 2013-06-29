@@ -71,20 +71,48 @@ bool connections()
 
 bool diff_and_reapply()
 {
+    //
+    // create first model
+    //
 
-    // create
+    zm::MindMatterModel l_m1;
+    l_m1.setLocalFolder( "./test-localfolder" );
+    l_m1.setUsedUsername( "test-user" );
+    l_m1.setUsedHostname( "test-machine" );
+    l_m1.initialize();
 
-    // modifiy
+    test_assert( l_m1.getItemCount() == 0,
+                 "nodes should be empty for the test" );
 
+    //
+    // save
+    //
+    l_m1.localSave();
+
+    //
     // fork
+    //
+    zm::MindMatterModel l_m2;
+    l_m2.setLocalFolder( "./test-localfolder" );
+    l_m2.setUsedUsername( "test-user" );
+    l_m2.setUsedHostname( "test-machine" );
+    l_m2.initialize();
+
+    test_assert( l_m2 == l_m1,
+                 "both model should hold same data" );
+
 
     // modify
 
     // diff
+    zm::ChangeSet c = l_m2.diff( l_m1 );
 
     // apply
+    l_m2.applyChangeSet( c );
 
     // compare
+    test_assert( l_m2 == l_m1,
+                 "both model should hold same data after applying changeset" );
 
 
     return true;

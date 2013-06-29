@@ -192,6 +192,17 @@ zm::MindMatterModel::MindMatterModel()
 {
 }
 
+bool zm::MindMatterModel::operator==( const zm::MindMatterModel &other )
+{
+    return false;
+}
+
+ChangeSet zm::MindMatterModel::diff( const MindMatterModel &other )
+{
+    ChangeSet l_return;
+    return l_return;
+}
+
 void zm::MindMatterModel::setConfigPersistance( bool value )
 {
     m_options.setAutosave( value );

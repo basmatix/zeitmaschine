@@ -79,7 +79,7 @@ public:
 
 private:
 
-    ChangeSet( const ChangeSet & );
+    //ChangeSet( const ChangeSet & );
     ChangeSet & operator=( const ChangeSet & );
 
     void load( const std::string &journalFileName );

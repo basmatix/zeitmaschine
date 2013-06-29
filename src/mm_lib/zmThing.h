@@ -5,7 +5,6 @@
 #define THING_H
 
 
-#include <map>
 #include <set>
 #include <fstream>
 #include <sstream>
