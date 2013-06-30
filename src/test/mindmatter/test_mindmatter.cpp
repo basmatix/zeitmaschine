@@ -15,6 +15,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <boost/filesystem/operations.hpp>
 
 #include "../testing.h"
 
@@ -41,6 +42,7 @@ bool connections()
 {
     zm::MindMatterModel l_m1;
 
+    boost::filesystem::remove_all( "./test-localfolder" );
     l_m1.setLocalFolder( "./test-localfolder" );
     l_m1.setUsedUsername( "test-user" );
     l_m1.setUsedHostname( "test-machine" );
@@ -74,6 +76,7 @@ bool diff_and_reapply()
     //
 
     zm::MindMatterModel l_m1;
+    boost::filesystem::remove_all( "./test-localfolder" );
     l_m1.setLocalFolder( "./test-localfolder" );
     l_m1.setUsedUsername( "test-user" );
     l_m1.setUsedHostname( "test-machine" );
@@ -118,8 +121,8 @@ bool diff_and_reapply()
 
 bool empty_db_on_load()
 {
+    boost::filesystem::remove_all( "./test-localfolder" );
     zm::MindMatterModel l_m1;
-
     l_m1.setUsedUsername( "test-user" );
     l_m1.setUsedHostname( "test-machine" );
     l_m1.setLocalFolder( "./test-localfolder" );
@@ -131,18 +134,20 @@ bool empty_db_on_load()
     //l_m1.save( "tmp_export.yaml" );
 
     zm::MindMatterModel l_m2;
-    l_m1.setUsedUsername( "test-user" );
-    l_m1.setUsedHostname( "test-machine" );
-    l_m1.setLocalFolder( "./test-localfolder" );
-    l_m1.initialize();
+    l_m2.setUsedUsername( "test-user" );
+    l_m2.setUsedHostname( "test-machine" );
+    l_m2.setLocalFolder( "./test-localfolder" );
+    l_m2.initialize();
 
     std::string l_item2 = l_m2.createNewItem( "yet some item" );
     l_m1.localSave();
 
     //l_m2.load( "tmp_export.yaml" );
 
-    test_assert(  l_m2.hasItem( l_item1 ) && ! l_m2.hasItem( l_item2 ),
-                  "");
+    bool b1 = l_m2.hasItem( l_item1 );
+    bool b2 = l_m2.hasItem( l_item2 );
+
+    test_assert( b1 && ! b2, "");
 
     test_assert( false, "dummy test should not pass" );
 
