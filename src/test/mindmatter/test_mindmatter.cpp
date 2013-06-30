@@ -42,10 +42,8 @@ bool connections()
     zm::MindMatterModel l_m1;
 
     l_m1.setLocalFolder( "./test-localfolder" );
-
     l_m1.setUsedUsername( "test-user" );
     l_m1.setUsedHostname( "test-machine" );
-
     l_m1.initialize();
 
     test_assert( l_m1.getItemCount() == 0,
@@ -127,23 +125,25 @@ bool empty_db_on_load()
     l_m1.setLocalFolder( "./test-localfolder" );
     l_m1.initialize();
 
-    /*
     // client 1 saves some content
-    l_m1.setLocalFolder( "zmtest" );
     std::string l_item1 = l_m1.createNewItem( "some first item" );
     l_m1.localSave();
     //l_m1.save( "tmp_export.yaml" );
 
-    MindMatterModel l_m2;
-    l_m1.setLocalFolder( "zmtest" );
+    zm::MindMatterModel l_m2;
+    l_m1.setUsedUsername( "test-user" );
+    l_m1.setUsedHostname( "test-machine" );
+    l_m1.setLocalFolder( "./test-localfolder" );
+    l_m1.initialize();
+
     std::string l_item2 = l_m2.createNewItem( "yet some item" );
     l_m1.localSave();
 
     //l_m2.load( "tmp_export.yaml" );
 
-    bool l_test_passed = l_m2.hasItem( l_item1 ) && ! l_m2.hasItem( l_item2 );
-    return l_test_passed;
-*/
+    test_assert(  l_m2.hasItem( l_item1 ) && ! l_m2.hasItem( l_item2 ),
+                  "");
+
     test_assert( false, "dummy test should not pass" );
 
     return true;

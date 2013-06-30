@@ -20,9 +20,17 @@
 
 namespace zm
 {
-
     class MindMatter
     {
+    public:
+
+        typedef std::map< std::string, std::string > string_value_map_type;
+
+        std::string                 m_caption;    // todo: should be value
+        std::set< std::string >     m_attributes;
+        string_value_map_type       m_string_values;
+        std::set< MindMatter * >    m_neighbours;
+
     public:
 
         MindMatter( const std::string &caption)
@@ -145,13 +153,6 @@ namespace zm
             }
             return l_stream.str();
         }
-
-        typedef std::map< std::string, std::string > string_value_map_type;
-
-        std::string                 m_caption;    // todo: should be value
-        std::set< std::string >     m_attributes;
-        string_value_map_type       m_string_values;
-        std::set< MindMatter * >    m_neighbours;
     };
 
 }

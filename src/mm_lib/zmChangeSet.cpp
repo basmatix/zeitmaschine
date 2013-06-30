@@ -11,17 +11,12 @@
 //#include "osal.h"
 #include "include/mm/zmCommon.h"
 
-//#include <map>
-//#include <set>
 #include <fstream>
 #include <string>
 #include <yaml-cpp/yaml.h>
 
-//#include <algorithm>
 #include <boost/foreach.hpp>
 #include <boost/filesystem.hpp>
-//#include <boost/date_time.hpp>
-//#include <boost/functional/hash.hpp>
 
 // info regarding string encoding:
 //    http://code.google.com/p/yaml-cpp/wiki/Strings
@@ -82,6 +77,11 @@ bool zm::ChangeSet::write( const std::string &journalFileName )
             break;
         case JournalItem::ChangeCaption:
             l_yaml_emitter << YAML::Value << "ChangeCaption";
+            l_yaml_emitter << YAML::Key << "value";
+            l_yaml_emitter << YAML::Value << j->value;
+            break;
+        case JournalItem::Connect:
+            l_yaml_emitter << YAML::Value << "Connect";
             l_yaml_emitter << YAML::Key << "value";
             l_yaml_emitter << YAML::Value << j->value;
             break;
