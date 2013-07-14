@@ -25,14 +25,16 @@
 
 #include <stdlib.h>
 namespace boost_ptree = boost::property_tree;
-//namespace po = boost::program_options;
 using namespace zm;
 
 class Options
 {
-public:
+    boost_ptree::ptree  m_tree;
+    std::string         m_filename;
+    bool                m_loaded;
+    bool                m_autosave;
 
-    boost_ptree::ptree m_tree;
+public:
 
     Options()
         : m_tree    ()
@@ -140,10 +142,6 @@ private:
 
         boost::property_tree::json_parser::write_json( m_filename, m_tree );
     }
-
-    std::string                                 m_filename;
-    bool                                        m_loaded;
-    bool                                        m_autosave;
 
 // not gonna stay here
 } m_options;
@@ -699,14 +697,13 @@ std::list< std::string > zm::MindMatterModel::getNeighbours( const std::string &
     return l_return;
 }
 
-std::string zm::MindMatterModel::findOrCreateTagItem( const std::string &name )
+std::string zm::MindMatterModel::findOrCreateTagItem( const std::string &tag_name )
 {
-    BOOST_FOREACH(const MindMatterModelMapType::value_type& i, m_things)
+    MindMatterModelMapType::left_iterator l_item_it( m_things.left.find( tag_name ) );
+
+    if( l_item_it != m_things.left.end() )
     {
-        if( i.right->m_caption == name )
-        {
-            return i.left;
-        }
+        return tag_name;
     }
 
     // todo: TagItems should be held in a list to prevent generic Items
@@ -714,7 +711,7 @@ std::string zm::MindMatterModel::findOrCreateTagItem( const std::string &name )
     // todo: what about tag items from other domains? Should there be duplicated
     //       tags?
 
-    return createNewItem( name, name );
+    return createNewItem( tag_name, tag_name );
 }
 
 ///
@@ -789,11 +786,20 @@ void zm::MindMatterModel::addTag( const std::string &uid, const std::string &att
     dirty();
 }
 
-void zm::MindMatterModel::_addTag( MindMatterModelMapType::left_iterator &item, const std::string &attribute )
+void zm::MindMatterModel::_addTag( MindMatterModelMapType::left_iterator &item, const std::string &tag_name )
 {
-    assert(false);
-    //TBI
-    //item->second->addTag( attribute );
+    MindMatterModelMapType::left_iterator l_tag_it( m_things.left.find( tag_name ) );
+
+    if( l_tag_it == m_things.left.end() )
+    {
+        std::string n(createNewItem( tag_name, tag_name ));
+        MindMatterModelMapType::left_iterator i( m_things.left.find( n ) );
+        _connect( item, i );
+    }
+    else
+    {
+        _connect( item, l_tag_it );
+    }
 }
 
 bool zm::MindMatterModel::removeTag( const std::string &uid, const std::string &attribute )
@@ -813,12 +819,23 @@ bool zm::MindMatterModel::removeTag( const std::string &uid, const std::string &
     return l_return;
 }
 
-bool zm::MindMatterModel::_removeTag( MindMatterModelMapType::left_iterator &item, const std::string &attribute )
+bool zm::MindMatterModel::_removeTag( MindMatterModelMapType::left_iterator &a_item_it, const std::string &tag_name )
 {
-    assert(false);
-    //TBI
+    MindMatterModelMapType::left_iterator l_tag_it( m_things.left.find( tag_name ) );
+
+    if( l_tag_it == m_things.left.end() )
+    {
+        return false;
+    }
+
+    if( _isConnected( a_item_it, l_tag_it ) )
+    {
+        a_item_it->second->m_neighbours.erase( l_tag_it->second );
+        l_tag_it->second->m_neighbours.erase( a_item_it->second );
+        return true;
+    }
+
     return false;
-    //return item->second->removeTag( attribute );
 }
 
 void zm::MindMatterModel::disconnect( const std::string &node1_uid, const std::string &node2_uid )
@@ -829,7 +846,7 @@ void zm::MindMatterModel::disconnect( const std::string &node1_uid, const std::s
     assert( l_item1_it != m_things.left.end() );
     assert( l_item2_it != m_things.left.end() );
 
-    assert( _isConnected( l_item1_it, l_item2_it ));
+    assert( _isConnected( l_item1_it, l_item2_it ) );
 
     l_item1_it->second->m_neighbours.erase( l_item2_it->second );
     l_item2_it->second->m_neighbours.erase( l_item1_it->second );
