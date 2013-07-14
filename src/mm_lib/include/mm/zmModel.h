@@ -144,7 +144,7 @@ private:
     /// write relevant interface
     public:
 
-        std::string createNewItem( const std::string &caption );
+        std::string createNewItem( const std::string &caption, const std::string &uid = "" );
 
         void eraseItem( const std::string &uid );
 

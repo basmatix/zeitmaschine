@@ -1,13 +1,8 @@
 /// -*- coding: utf-8 -*-
 ///
-/// file: test_common.cpp
+/// file: test_mindmatter.cpp
 ///
-/// Copyright 2011 - 2013 scitics GmbH
-///
-/// Information  contained  herein  is  subject  to change  without  notice.
-/// scitics GmbH  retains ownership and  all other rights  in this software.
-/// Any reproduction of the software or components thereof without the prior
-/// written permission of scitics GmbH is prohibited.
+/// Copyright (C) 2013 Frans Fuerst
 
 #include <mm/zmModel.h>
 

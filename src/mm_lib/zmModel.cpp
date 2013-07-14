@@ -607,10 +607,14 @@ bool zm::MindMatterModel::hasTag( const std::string &uid, const std::string &tag
 
     assert( l_item_it != m_things.left.end() );
 
-    /// TBI
-    assert( false );
-    return false;
-    //return l_item_it->second->hasTag( tag_name );
+    MindMatterModelMapType::left_const_iterator l_tag_it( m_things.left.find( tag_name ) );
+
+    if( l_tag_it == m_things.left.end() )
+    {
+        return false;
+    }
+
+    return _isConnected( l_item_it, l_tag_it );
 }
 
 bool zm::MindMatterModel::hasValue( const std::string &uid, const std::string &name ) const
@@ -710,17 +714,22 @@ std::string zm::MindMatterModel::findOrCreateTagItem( const std::string &name )
     // todo: what about tag items from other domains? Should there be duplicated
     //       tags?
 
-    return createNewItem( name );
+    return createNewItem( name, name );
 }
 
 ///
 /// write relevant interface
 ///
 
-std::string zm::MindMatterModel::createNewItem( const std::string &caption )
+std::string zm::MindMatterModel::createNewItem( const std::string &caption, const std::string &uid )
 {
     std::string l_time = zm::common::time_stamp_iso_ext();
-    std::string l_new_key = generateUid();
+    std::string l_new_key( uid );
+
+    if( uid == "" )
+    {
+        std::string l_new_key = generateUid();
+    }
 
     assert( m_things.left.find( l_new_key ) == m_things.left.end() );
 
