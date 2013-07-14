@@ -23,11 +23,11 @@
 namespace po = boost::program_options;
 using namespace zm;
 
-class Options
+class Options_old
 {
 public:
 
-    Options()
+    Options_old()
         : m_variable_map()
         , m_descriptions("Generic options")
         , m_filename( "zm-config-fallback.cfg" )
@@ -53,8 +53,13 @@ public:
         m_loaded = true;
 
         //store(parse_command_line(argc, argv, desc), m_variable_map);
-        if( !boost::filesystem::exists( filename ) ) return;
-
+        boost::filesystem::path p( filename );
+        bool b = boost::filesystem::exists( p );
+        if( !b )
+        {
+            return;
+        }
+        //std::cout << m_variable_map;
         boost::program_options::store(
                     boost::program_options::parse_config_file< char >(
                         filename.c_str(), m_descriptions ),
@@ -195,6 +200,11 @@ zm::MindMatterModel::MindMatterModel()
 bool zm::MindMatterModel::operator==( const zm::MindMatterModel &other )
 {
     return false;
+}
+
+bool zm::MindMatterModel::operator!=( const zm::MindMatterModel &other )
+{
+    return !this->operator ==( other );
 }
 
 ChangeSet zm::MindMatterModel::diff( const MindMatterModel &other )

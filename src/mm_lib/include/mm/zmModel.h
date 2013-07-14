@@ -40,6 +40,7 @@ namespace zm
         MindMatterModel();
 
         bool operator==( const MindMatterModel &other );
+        bool operator!=( const MindMatterModel &other );
 
         void setConfigPersistance( bool value );
 
