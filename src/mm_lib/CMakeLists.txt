@@ -27,7 +27,7 @@ file( GLOB ${PROJECT_NAME}_files
 include_directories(SYSTEM
     "${CMAKE_CURRENT_SOURCE_DIR}/include"
     "${YAML_CPP_INCLUDE_DIR}"
-#    "${Boost_INCLUDE_DIR}"
+    "${Boost_INCLUDE_DIR}"
 )
 
 add_library( mm_s STATIC  ${${PROJECT_NAME}_files} )

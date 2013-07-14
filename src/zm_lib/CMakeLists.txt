@@ -23,7 +23,7 @@ file( GLOB ${PROJECT_NAME}_files
 # we don't have to deal with their warnings
 include_directories(SYSTEM
     "${YAML_CPP_INCLUDE_DIR}"
-#    "${Boost_INCLUDE_DIR}"
+    "${Boost_INCLUDE_DIR}"
 )
 
 include_directories(

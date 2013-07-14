@@ -9,6 +9,7 @@
 #include <fstream>
 #include <sstream>
 #include <string>
+#include <map>
 
 #include <algorithm>
 #include <boost/functional/hash.hpp>
