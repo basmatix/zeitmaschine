@@ -37,12 +37,11 @@ int main( int arg_n, char **arg_v )
     return run_tests( l_tests, arg_n, arg_v );
 }
 
-
 bool connections()
 {
-    zm::MindMatterModel l_m1;
-
     boost::filesystem::remove_all( "./test-localfolder" );
+
+    zm::MindMatterModel l_m1;
     l_m1.setLocalFolder( "./test-localfolder" );
     l_m1.setUsedUsername( "test-user" );
     l_m1.setUsedHostname( "test-machine" );
@@ -75,8 +74,9 @@ bool diff_and_reapply()
     // create first model
     //
 
-    zm::MindMatterModel l_m1;
     boost::filesystem::remove_all( "./test-localfolder" );
+
+    zm::MindMatterModel l_m1;
     l_m1.setLocalFolder( "./test-localfolder" );
     l_m1.setUsedUsername( "test-user" );
     l_m1.setUsedHostname( "test-machine" );
@@ -86,7 +86,12 @@ bool diff_and_reapply()
                  "nodes should be empty for the test" );
 
     //
-    // save
+    // generate some content for m1
+    //
+    // TBD
+
+    //
+    // save m1
     //
     l_m1.localSave();
 
@@ -103,9 +108,18 @@ bool diff_and_reapply()
                  "both model should hold same data" );
 
 
-    // modify
+    //
+    // modify m1
+    //
 
-    // diff
+    // TBD
+
+    test_assert( l_m2 != l_m1,
+                 "models should differ from each other" );
+
+    //
+    // generate a change set
+    //
     zm::ChangeSet c = l_m2.diff( l_m1 );
 
     // apply
@@ -122,6 +136,7 @@ bool diff_and_reapply()
 bool empty_db_on_load()
 {
     boost::filesystem::remove_all( "./test-localfolder" );
+
     zm::MindMatterModel l_m1;
     l_m1.setUsedUsername( "test-user" );
     l_m1.setUsedHostname( "test-machine" );
@@ -156,6 +171,8 @@ bool empty_db_on_load()
 
 bool change_while_open()
 {
+    boost::filesystem::remove_all( "./test-localfolder" );
+
     // client 1 starts and has a model in mind
     zm::MindMatterModel l_m1;
     std::string l_item1 = l_m1.createNewItem( "some first item" );
@@ -183,12 +200,10 @@ bool change_while_open()
 bool low_level_gtd_workflow()
 {
     zm::MindMatterModel l_m1;
-
+    boost::filesystem::remove_all( "./test-localfolder" );
     l_m1.setLocalFolder( "./test-localfolder" );
-
     l_m1.setUsedUsername( "test-user" );
     l_m1.setUsedHostname( "test-machine" );
-
     l_m1.initialize();
 
     test_assert( l_m1.getItemCount() == 0,
@@ -236,4 +251,3 @@ bool low_level_gtd_workflow()
 
     return true;
 }
-
