@@ -18,10 +18,10 @@ std::list< std::string > zmGtdModel::getInboxItems( bool includeDoneItems ) cons
 
     BOOST_FOREACH(const zm::MindMatterModel::MindMatterModelMapType::value_type& i, m_things_model.things() )
     {
-        if( isInboxItem( i.first )
-            && (includeDoneItems       || !isDone(  i.first ) ) )
+        if( isInboxItem( i.left )
+            && (includeDoneItems       || !isDone(  i.left ) ) )
         {
-            l_return.push_back( i.first );
+            l_return.push_back( i.left );
         }
     }
 
@@ -34,10 +34,10 @@ std::list< std::string > zmGtdModel::getTaskItems( bool includeStandaloneTasks, 
 
     BOOST_FOREACH(const zm::MindMatterModel::MindMatterModelMapType::value_type& i, m_things_model.things() )
     {
-        if( isTaskItem( i.first, includeStandaloneTasks )
-                && (includeDoneItems       || !isDone(  i.first ) ) )
+        if( isTaskItem( i.left, includeStandaloneTasks )
+                && (includeDoneItems       || !isDone(  i.left ) ) )
         {
-            l_return.push_back( i.first );
+            l_return.push_back( i.left );
         }
     }
 
@@ -50,10 +50,10 @@ std::list< std::string > zmGtdModel::getProjectItems( bool includeStandaloneTask
 
     BOOST_FOREACH(const zm::MindMatterModel::MindMatterModelMapType::value_type& i, m_things_model.things() )
     {
-        if( isProjectItem( i.first, includeStandaloneTasks )
-                && (includeDoneItems       || !isDone(  i.first ) ) )
+        if( isProjectItem( i.left, includeStandaloneTasks )
+                && (includeDoneItems       || !isDone(  i.left ) ) )
         {
-            l_return.push_back( i.first );
+            l_return.push_back( i.left );
         }
     }
 
@@ -66,9 +66,9 @@ std::list< std::string > zmGtdModel::getDoneItems() const
 
     BOOST_FOREACH(const zm::MindMatterModel::MindMatterModelMapType::value_type& i, m_things_model.things() )
     {
-        if( isDone(  i.first ) )
+        if( isDone(  i.left ) )
         {
-            l_return.push_back( i.first );
+            l_return.push_back( i.left );
         }
     }
 
@@ -223,24 +223,24 @@ void zmGtdModel::setNextTask( const std::string &project_item, const std::string
     m_things_model.localSave();
 }
 
-std::string zmGtdModel::createProject( const std::string &project_name )
-{
-    std::string l_item_uid = m_things_model.createNewItem( project_name );
-
-    m_things_model.connect( project_name, m_item_project );
-
-    m_things_model.localSave();
-
-    return l_item_uid;
-}
-
-int zmGtdModel::getImportance( const std::string &uid ) const
-{
-    if( m_things_model.hasValue( uid, "gtd_importance" ) )
+    std::string zmGtdModel::createProject( const std::string &project_name )
     {
-        return boost::lexical_cast<int>( m_things_model.getValue( uid, "gtd_importance" ) );
+        std::string l_item_uid = m_things_model.createNewItem( project_name );
+
+        m_things_model.connect( project_name, m_item_project );
+
+        m_things_model.localSave();
+
+        return l_item_uid;
     }
 
-    return 0;
-}
+    int zmGtdModel::getImportance( const std::string &uid ) const
+    {
+        if( m_things_model.hasValue( uid, "gtd_importance" ) )
+        {
+            return boost::lexical_cast<int>( m_things_model.getValue( uid, "gtd_importance" ) );
+        }
+
+        return 0;
+    }
 
