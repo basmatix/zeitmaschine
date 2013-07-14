@@ -16,6 +16,8 @@
 
 #include "../testing.h"
 
+#include <boost/filesystem/operations.hpp>
+
 bool basic_workflow();
 
 int main( int arg_n, char **arg_v )
@@ -32,11 +34,10 @@ bool basic_workflow()
 {
     zmGtdModel l_m1;
 
+    boost::filesystem::remove_all( "./test-localfolder" );
     l_m1.setLocalFolder( "./test-localfolder" );
-
     l_m1.setUsedUsername( "test-user" );
     l_m1.setUsedHostname( "test-machine" );
-
     l_m1.initialize();
 
     test_assert( l_m1.empty(),
