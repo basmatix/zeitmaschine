@@ -1,5 +1,9 @@
-/// copyright (C) 2013 Frans Fürst
 /// -*- coding: utf-8 -*-
+///
+/// file: zmModel.cpp
+///
+/// Copyright (C) 2013 Frans Fuerst
+///
 
 #include <mm/zmModel.h>
 
@@ -16,30 +20,26 @@
 #include <boost/foreach.hpp>
 #include <boost/filesystem.hpp>
 
-#include <boost/program_options.hpp>
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/json_parser.hpp>
 
 #include <stdlib.h>
-
-namespace po = boost::program_options;
+namespace boost_ptree = boost::property_tree;
+//namespace po = boost::program_options;
 using namespace zm;
 
-class Options_old
+class Options
 {
 public:
 
-    Options_old()
-        : m_variable_map()
-        , m_descriptions("Generic options")
-        , m_filename( "zm-config-fallback.cfg" )
-        , m_loaded( false )
+    boost_ptree::ptree m_tree;
+
+    Options()
+        : m_tree    ()
+        , m_filename( "zm_config-fallback.json" )
+        , m_loaded  ( false )
         , m_autosave( true )
     {
-        m_descriptions.add_options()
-            ("username", "unique username - used for syncing")
-                ("read_journal",  po::value< std::vector<std::string> >(),//->default_value( std::vector< std::string >() ),
-                    "name of a journal file already parsed")
-            ("hostname", "unique name for this machine - used for syncing")
-            ;
     }
 
     void setAutosave( bool value )
@@ -50,73 +50,66 @@ public:
     void load( const std::string &filename )
     {
         m_filename = filename;
+
         m_loaded = true;
 
-        //store(parse_command_line(argc, argv, desc), m_variable_map);
-        boost::filesystem::path p( filename );
-        bool b = boost::filesystem::exists( p );
-        if( !b )
+        if( !boost::filesystem::exists( m_filename ) )
         {
             return;
         }
-        //std::cout << m_variable_map;
-        boost::program_options::store(
-                    boost::program_options::parse_config_file< char >(
-                        filename.c_str(), m_descriptions ),
-                    m_variable_map);
 
-        boost::program_options::notify( m_variable_map );
+        boost_ptree::json_parser::read_json( m_filename, m_tree );
     }
 
     bool hasValue( const std::string &key ) const
     {
         assert( m_loaded );
-        return m_variable_map.count( key ) > 0;
+
+        return m_tree.count( key ) > 0;
     }
 
     std::string getStringValue( const std::string &key ) const
     {
         assert( m_loaded );
-        return m_variable_map[ key ].as< std::string >();
+        return m_tree.get< std::string >( key );
     }
 
     std::vector< std::string > getStringList( const std::string &key ) const
     {
         assert( m_loaded );
-        if( m_variable_map.count( key ) == 0 )
+
+        if( m_tree.count( key ) == 0 )
         {
             return std::vector< std::string >();
         }
-        return m_variable_map[ key ].as< std::vector< std::string > >();
+
+        const boost_ptree::ptree &l_tmp = m_tree.get_child( key );
+        std::vector< std::string > l_return;
+        l_return.reserve( l_tmp.size() );
+
+        BOOST_FOREACH( const boost_ptree::ptree::value_type &v, l_tmp)
+        {
+            l_return.push_back( v.second.data() );
+        }
+
+        return l_return;
     }
 
     void addString( const std::string &key, const std::string &value )
     {
         assert( m_loaded );
-        std::vector< std::string > l_tmp;
 
-        bool l_value_exists = m_variable_map.count( key ) > 0;
-
-        if( l_value_exists )
+        if( m_tree.count( key ) > 0 )
         {
-            l_tmp = m_variable_map[ key ].as< std::vector< std::string > >();
-        }
-
-        l_tmp.push_back( value );
-
-        /// insert does not override values - we have to trick boost
-        if( l_value_exists )
-        {
-            boost::program_options::variables_map::iterator i = m_variable_map.find( key );
-            i->second = boost::program_options::variable_value( l_tmp, false);
+            boost_ptree::ptree &l_tmp = m_tree.get_child( key );
+            l_tmp.push_back(std::make_pair("", value));
         }
         else
         {
-            m_variable_map.insert( std::make_pair(
-                key, boost::program_options::variable_value( l_tmp, false) ) );
+            boost_ptree::ptree l_tmp;
+            l_tmp.push_back( std::make_pair("", value ) );
+            m_tree.put_child( key,l_tmp);
         }
-
-        boost::program_options::notify( m_variable_map );
 
         if( m_autosave ) save( m_filename );
     }
@@ -124,18 +117,8 @@ public:
     void setStringValue( const std::string &key, const std::string &value )
     {
         assert( m_loaded );
-        boost::program_options::variables_map::iterator i = m_variable_map.find( key );
-        if( i == m_variable_map.end() )
-        {
-            m_variable_map.insert( std::make_pair(
-                key, boost::program_options::variable_value( value, false)) );
-        }
-        else
-        {
-            i->second = boost::program_options::variable_value( value, false);
-        }
 
-        boost::program_options::notify( m_variable_map );
+        m_tree.put( key, value );
 
         if( m_autosave ) save( m_filename );
     }
@@ -155,28 +138,9 @@ private:
 
         assert( l_fout.is_open() );
 
-        BOOST_FOREACH( po::variables_map::value_type v, m_variable_map)
-        {
-            if ( v.second.empty() ) continue;
-            const ::std::type_info &type = v.second.value().type() ;
-            if ( type == typeid( ::std::string ) )
-            {
-                l_fout << v.first << " = " << v.second.as< std::string >() << std::endl;
-            }
-            else if ( type == typeid( std::vector< std::string > ) )
-            {
-                std::vector< std::string > l_tmp( v.second.as< std::vector< std::string > >() );
-                tracemessage( "%d", l_tmp.size() );
-                BOOST_FOREACH( std::string s, l_tmp)
-                {
-                    l_fout << v.first << " = " << s << std::endl;
-                }
-            }
-        }
+        boost::property_tree::json_parser::write_json( m_filename, m_tree );
     }
 
-    boost::program_options::variables_map       m_variable_map;
-    boost::program_options::options_description m_descriptions;
     std::string                                 m_filename;
     bool                                        m_loaded;
     bool                                        m_autosave;
@@ -232,7 +196,7 @@ void zm::MindMatterModel::setLocalFolder( const std::string &a_path )
     std::replace( l_path.begin(), l_path.end(), '\\', '/' );
     if( l_path == "/" ) l_path = "./";
     m_localFolder = l_path;
-    m_options.load( m_localFolder + "/zeitmaschine.cfg" );
+    m_options.load( m_localFolder + "/zm_config.json" );
 }
 
 void zm::MindMatterModel::addDomainSyncFolder( const std::string &domainName, const std::string &path )
