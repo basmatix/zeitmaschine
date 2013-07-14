@@ -133,30 +133,30 @@ public:
 
     bool isTaskItem( const std::string &item, bool includeStandaloneTasks ) const
     {
-        if( !includeStandaloneTasks && m_things_model.hasAttribute( item, "gtd_project" ) )
+        if( !includeStandaloneTasks && m_things_model.hasTag( item, "gtd_project" ) )
         {
             return false;
         }
-        return m_things_model.hasAttribute( item, "gtd_task" );
+        return m_things_model.hasTag( item, "gtd_task" );
     }
 
     bool isInboxItem( const std::string &item ) const
     {
-        return m_things_model.hasAttribute( item, "gtd_item_unhandled" );
+        return m_things_model.hasTag( item, "gtd_item_unhandled" );
     }
 
     bool isProjectItem( const std::string &item, bool includeStandaloneTasks ) const
     {
-        if( !includeStandaloneTasks && m_things_model.hasAttribute( item, "gtd_task" ) )
+        if( !includeStandaloneTasks && m_things_model.hasTag( item, "gtd_task" ) )
         {
             return false;
         }
-        return m_things_model.hasAttribute( item, "gtd_project" );
+        return m_things_model.hasTag( item, "gtd_project" );
     }
 
     bool isDone( const std::string &task_item ) const
     {
-        return m_things_model.hasAttribute( task_item, "gtd_item_done" );
+        return m_things_model.hasTag( task_item, "gtd_item_done" );
     }
 
     std::string getParentProject( const std::string &task_item ) const

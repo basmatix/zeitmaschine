@@ -126,7 +126,7 @@ namespace zm
 
         const std::string & getCaption( const std::string &uid ) const;
 
-        bool hasAttribute( const std::string &uid, const std::string &attribute ) const;
+        bool hasTag( const std::string &uid, const std::string &tag_name ) const;
 
         bool hasValue( const std::string &uid, const std::string &name ) const;
 
@@ -148,9 +148,9 @@ private:
 
         void eraseItem( const std::string &uid );
 
-        void addAttribute( const std::string &uid, const std::string &attribute );
+        void addTag( const std::string &uid, const std::string &tag_name );
 
-        bool removeAttribute( const std::string &uid, const std::string &attribute );
+        bool removeTag( const std::string &uid, const std::string &tag_name );
 
         void setValue( const std::string &uid, const std::string &name, const std::string &value );
 
@@ -168,9 +168,9 @@ private:
 
         void _eraseItem( MindMatterModelMapType::left_iterator &item );
 
-        void _addAttribute( MindMatterModelMapType::left_iterator &item, const std::string &attribute );
+        void _addTag( MindMatterModelMapType::left_iterator &item, const std::string &tag_name );
 
-        bool _removeAttribute( MindMatterModelMapType::left_iterator &item, const std::string &attribute );
+        bool _removeTag( MindMatterModelMapType::left_iterator &item, const std::string &tag_name );
 
         bool _setValue( MindMatterModelMapType::left_iterator &item, const std::string &name, const std::string &value );
 

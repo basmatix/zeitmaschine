@@ -404,10 +404,10 @@ void zm::MindMatterModel::applyChangeSet( const ChangeSet &changeSet )
             _eraseItem( l_item_it );
             break;
         case JournalItem::AddAttribute:
-            _addAttribute( l_item_it, j->key );
+            _addTag( l_item_it, j->key );
             break;
         case JournalItem::RemoveAttribute:
-            _removeAttribute( l_item_it, j->key );
+            _removeTag( l_item_it, j->key );
             break;
         case JournalItem::ChangeCaption:
             _setCaption( l_item_it, j->value );
@@ -495,7 +495,7 @@ void zm::MindMatterModel::saveLocalModel( const std::string &filename )
 
         l_yaml_emitter << YAML::Key << "hash1";
         l_yaml_emitter << YAML::Value << i.right->getHash();
-
+/*
         if( ! i.right->m_attributes.empty() )
         {
             l_yaml_emitter << YAML::Key << "attributes";
@@ -508,7 +508,7 @@ void zm::MindMatterModel::saveLocalModel( const std::string &filename )
             }
             l_yaml_emitter << YAML::EndSeq;
         }
-
+*/
         if( ! i.right->m_string_values.empty() )
         {
             l_yaml_emitter << YAML::Key << "string_values";
@@ -601,13 +601,16 @@ const std::string & zm::MindMatterModel::getCaption( const std::string &uid ) co
     return l_item_it->second->m_caption;
 }
 
-bool zm::MindMatterModel::hasAttribute( const std::string &uid, const std::string &attribute ) const
+bool zm::MindMatterModel::hasTag( const std::string &uid, const std::string &tag_name ) const
 {
     MindMatterModelMapType::left_const_iterator l_item_it( m_things.left.find( uid ) );
 
     assert( l_item_it != m_things.left.end() );
 
-    return l_item_it->second->hasAttribute( attribute );
+    /// TBI
+    assert( false );
+    return false;
+    //return l_item_it->second->hasTag( tag_name );
 }
 
 bool zm::MindMatterModel::hasValue( const std::string &uid, const std::string &name ) const
@@ -762,15 +765,13 @@ void zm::MindMatterModel::_eraseItem( MindMatterModelMapType::left_iterator &ite
     m_things.left.erase( item );
 }
 
-void zm::MindMatterModel::addAttribute( const std::string &uid, const std::string &attribute )
+void zm::MindMatterModel::addTag( const std::string &uid, const std::string &attribute )
 {
     MindMatterModelMapType::left_iterator l_item_it( m_things.left.find( uid ) );
 
     assert( l_item_it != m_things.left.end() );
 
-    _addAttribute( l_item_it, attribute );
-
-    l_item_it->second->addAttribute( attribute );
+    _addTag( l_item_it, attribute );
 
     JournalItem *l_change = new JournalItem( uid, JournalItem::AddAttribute );
     l_change->key = attribute;
@@ -779,18 +780,20 @@ void zm::MindMatterModel::addAttribute( const std::string &uid, const std::strin
     dirty();
 }
 
-void zm::MindMatterModel::_addAttribute( MindMatterModelMapType::left_iterator &item, const std::string &attribute )
+void zm::MindMatterModel::_addTag( MindMatterModelMapType::left_iterator &item, const std::string &attribute )
 {
-    item->second->addAttribute( attribute );
+    assert(false);
+    //TBI
+    //item->second->addTag( attribute );
 }
 
-bool zm::MindMatterModel::removeAttribute( const std::string &uid, const std::string &attribute )
+bool zm::MindMatterModel::removeTag( const std::string &uid, const std::string &attribute )
 {
     MindMatterModelMapType::left_iterator l_item_it( m_things.left.find( uid ) );
 
     assert( l_item_it != m_things.left.end() );
 
-    bool l_return = _removeAttribute( l_item_it, attribute );
+    bool l_return = _removeTag( l_item_it, attribute );
 
     JournalItem *l_change = new JournalItem( uid, JournalItem::RemoveAttribute );
     l_change->key = attribute;
@@ -801,9 +804,12 @@ bool zm::MindMatterModel::removeAttribute( const std::string &uid, const std::st
     return l_return;
 }
 
-bool zm::MindMatterModel::_removeAttribute( MindMatterModelMapType::left_iterator &item, const std::string &attribute )
+bool zm::MindMatterModel::_removeTag( MindMatterModelMapType::left_iterator &item, const std::string &attribute )
 {
-    return item->second->removeAttribute( attribute );
+    assert(false);
+    //TBI
+    return false;
+    //return item->second->removeTag( attribute );
 }
 
 void zm::MindMatterModel::disconnect( const std::string &node1_uid, const std::string &node2_uid )
@@ -920,6 +926,7 @@ void yamlToThingsMap( YAML::Node yamlNode, zm::MindMatterModel::MindMatterModelM
         tracemessage("caption: '%s'", l_caption.c_str());
 
         MindMatter *l_new_thing = new MindMatter( l_caption );
+        /*
         if( n["attributes"] )
         {
             std::vector< std::string > l_attributes =
@@ -931,6 +938,7 @@ void yamlToThingsMap( YAML::Node yamlNode, zm::MindMatterModel::MindMatterModelM
                 l_new_thing->m_attributes.insert( *a );
             }
         }
+        */
         if( n["string_values"] )
         {
             l_new_thing->m_string_values =

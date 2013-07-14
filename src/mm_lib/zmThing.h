@@ -28,7 +28,7 @@ namespace zm
         typedef std::map< std::string, std::string > string_value_map_type;
 
         std::string                 m_caption;    // todo: should be value
-        std::set< std::string >     m_attributes;
+//        std::set< std::string >     m_attributes;
         string_value_map_type       m_string_values;
         std::set< MindMatter * >    m_neighbours;
 
@@ -36,19 +36,24 @@ namespace zm
 
         MindMatter( const std::string &caption)
             : m_caption         ( caption )
-            , m_attributes      ()
+//            , m_attributes      ()
             , m_string_values   ()
             , m_neighbours      ()
         {
         }
-
-        void addAttribute( const std::string &attribute )
+/*
+        void addTag( const std::string &attribute )
         {
-            m_attributes.insert( attribute );
+            //TBI
+            assert(false);
+            //m_attributes.insert( attribute );
         }
 
-        bool removeAttribute( const std::string &attribute )
+        bool removeTag( const std::string &attribute )
         {
+            //TBI
+            assert(false);
+
             if( m_attributes.find( attribute ) == m_attributes.end() )
             {
                 return false;
@@ -58,8 +63,10 @@ namespace zm
                 m_attributes.erase( attribute );
                 return true;
             }
-        }
 
+            return false;
+        }
+*/
         void addValue( const std::string &name, const std::string &value )
         {
             m_string_values[ name ] = value;
@@ -78,12 +85,12 @@ namespace zm
 
             return i->second;
         }
-
+/*
         bool hasAttribute( const std::string &attribute ) const
         {
             return m_attributes.find( attribute ) != m_attributes.end();
         }
-
+*/
         // todo: should be visitor stuff
         static bool stringFind(const std::string &bigString, const std::string &pattern  )
         {
@@ -122,10 +129,13 @@ namespace zm
             {
                 return false;
             }
+            /*
             if( m_attributes != other.m_attributes )
             {
                 return false;
             }
+            */
+            //TODO: check neighbours
             return true;
         }
 
@@ -144,7 +154,7 @@ namespace zm
             {
                 l_stream << string_hash( i->second );
             }
-
+/*
             /// and fortunately this is true for sets, too
             for( std::set< std::string >::const_iterator
                  i  = m_attributes.begin();
@@ -152,9 +162,9 @@ namespace zm
             {
                 l_stream << string_hash( *i );
             }
+            */
             return l_stream.str();
         }
     };
-
 }
 #endif
