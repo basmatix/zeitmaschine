@@ -85,23 +85,23 @@ void zm::MindMatterModel::addDomainSyncFolder( const std::string &domainName, co
 bool zm::MindMatterModel::hasUsedUsername() const
 {
     return m_options.hasValue( "username" )
-            && m_options.getStringValue( "username" ) != "";
+            && m_options.getString( "username" ) != "";
 }
 
 bool zm::MindMatterModel::hasUsedHostname() const
 {
     return m_options.hasValue( "hostname" )
-            && m_options.getStringValue( "hostname" ) != "";
+            && m_options.getString( "hostname" ) != "";
 }
 
 void zm::MindMatterModel::setUsedUsername( const std::string &username )
 {
-    m_options.setStringValue( "username", username );
+    m_options.setString( "username", username );
 }
 
 void zm::MindMatterModel::setUsedHostname( const std::string &hostname )
 {
-    m_options.setStringValue( "hostname", hostname );
+    m_options.setString( "hostname", hostname );
 }
 
 void zm::MindMatterModel::initialize()
@@ -114,9 +114,9 @@ void zm::MindMatterModel::initialize()
     // eg. /path/to/zeitmaschine/zm-frans-heizluefter-private-local.yaml
     std::stringstream l_ssFileName;
     l_ssFileName << m_localFolder << "/zm-"
-                 << m_options.getStringValue( "username" )
+                 << m_options.getString( "username" )
                  << "-"
-                 << m_options.getStringValue( "hostname" )
+                 << m_options.getString( "hostname" )
                  << "-local.yaml";
 
     m_localModelFile = l_ssFileName.str();
@@ -126,9 +126,9 @@ void zm::MindMatterModel::initialize()
     // eg. /path/to/zeitmaschine/zm-frans-heizluefter-temp-journal.yaml
     std::stringstream l_ssTempJournalFile;
     l_ssTempJournalFile << m_localFolder << "/zm-"
-                        << m_options.getStringValue( "username" )
+                        << m_options.getString( "username" )
                         << "-"
-                        << m_options.getStringValue( "hostname" )
+                        << m_options.getString( "hostname" )
                         << "-journal-temp.yaml";
     m_temporaryJournalFile = l_ssTempJournalFile.str();
 
@@ -156,14 +156,15 @@ void zm::MindMatterModel::makeTempJournalStatic()
 {
     std::stringstream l_ssJournalFile;
     l_ssJournalFile << "zm-"
-                    << m_options.getStringValue( "username" )
+                    << m_options.getString( "username" )
                     << "-"
-                    << m_options.getStringValue( "hostname" ) << "-"
+                    << m_options.getString( "hostname" )
+                    << "-"
                     << zm::common::time_stamp_iso()
                     << "-journal.yaml";
 
     std::string l_filename = l_ssJournalFile.str();
-    m_options.addString( "read_journal", l_filename );
+    m_options.addStringListElement( "read_journal", l_filename );
 
     l_filename = m_localFolder + "/" + l_filename;
     boost::filesystem::rename( m_temporaryJournalFile, l_filename );
@@ -245,7 +246,7 @@ bool zm::MindMatterModel::importJournalFiles()
         {
             tracemessage( "journal '%s' not imported yet", l_filename.c_str() );
             applyChangeSet( ChangeSet( j ) );
-            m_options.addString( "read_journal", l_filename );
+            m_options.addStringListElement( "read_journal", l_filename );
             l_importedJournals = true;
         }
     }

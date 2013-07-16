@@ -2,23 +2,15 @@
 ///
 /// file: test_common.cpp
 ///
-/// Copyright 2011 - 2013 scitics GmbH
+/// Copyright (C) 2013 Frans Fuerst
 ///
-/// Information  contained  herein  is  subject  to change  without  notice.
-/// scitics GmbH  retains ownership and  all other rights  in this software.
-/// Any reproduction of the software or components thereof without the prior
-/// written permission of scitics GmbH is prohibited.
 
-
-//#include <iostream>
-//#include <fstream>
 
 #include "../testing.h"
 
 #include <mm/zmOptions.h>
 
-
-//#include <boost/filesystem/operations.hpp>
+#include <boost/filesystem/operations.hpp>
 
 bool options_basic();
 
@@ -31,9 +23,52 @@ int main( int arg_n, char **arg_v )
     return run_tests( l_tests, arg_n, arg_v );
 }
 
-
 bool options_basic()
 {
+    zmOptions o1;
+
+    boost::filesystem::remove( "test.json" );
+
+    o1.load( "test.json" );
+
+    test_assert( o1.hasValue( "first_value" ) == false,
+                 "value should be non existent before setting" );
+
+    o1.setInt( "first_value", 6 );
+
+    test_assert( o1.getInt( "first_value" ) == 6,
+                 "red value should be the one we set" );
+
+    test_assert( o1.hasValue( "first_value" ),
+                 "value should exist after setting" );
+
+    o1.setInt( "group.first_value", 7 );
+
+    test_assert( o1.getInt( "group.first_value" ) == 7,
+                 "red value should be the one we set" );
+
+    std::vector< std::string > v;
+    v.push_back("hallo");
+    v.push_back("welt");
+
+    o1.addStringListElement("group.strings",v[0]);
+    o1.addStringListElement("group.strings",v[1]);
+
+    test_assert( o1.getStringList( "group.strings" ) == v,
+                 "returning string list should be the one we provided" );
+
+    zmOptions o2;
+
+    test_assert( o2.hasValue( "first_value" ) == false,
+                 "value should be non existent before loading" );
+
+    o2.load( "test.json" );
+
+    test_assert( o2.hasValue( "first_value" ),
+                 "value should exist after loading" );
+
+    test_assert( o2.getInt( "first_value" ) == 6,
+                 "red value should be the one we set for o1 before" );
 
     return true;
 }

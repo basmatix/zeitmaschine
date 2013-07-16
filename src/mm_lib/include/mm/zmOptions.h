@@ -5,6 +5,10 @@
 /// Copyright (C) 2013 Frans Fuerst
 ///
 
+#pragma once
+#ifndef ZMOPTIONS_H
+#define ZMOPTIONS_H
+
 #include <mm/zmCommon.h>
 #include <string>
 
@@ -19,7 +23,6 @@ class zmOptions
 {
     boost_ptree::ptree  m_tree;
     std::string         m_filename;
-    bool                m_loaded;
     bool                m_autosave;
 
 public:
@@ -27,7 +30,6 @@ public:
     zmOptions()
         : m_tree    ()
         , m_filename( "zm_config-fallback.json" )
-        , m_loaded  ( false )
         , m_autosave( true )
     {
     }
@@ -41,8 +43,6 @@ public:
     {
         m_filename = filename;
 
-        m_loaded = true;
-
         if( !boost::filesystem::exists( m_filename ) )
         {
             return;
@@ -53,31 +53,33 @@ public:
 
     bool hasValue( const std::string &key ) const
     {
-        assert( m_loaded );
-
         return m_tree.count( key ) > 0;
     }
 
-    std::string getStringValue( const std::string &key ) const
+    std::string getString( const std::string &key ) const
     {
-        assert( m_loaded );
         return m_tree.get< std::string >( key );
+    }
+
+    long getInt( const std::string &key ) const
+    {
+        return m_tree.get< long >( key );
     }
 
     std::vector< std::string > getStringList( const std::string &key ) const
     {
-        assert( m_loaded );
+        boost::optional< const boost_ptree::ptree& > l_existing_child
+                ( m_tree.get_child_optional( key ) );
 
-        if( m_tree.count( key ) == 0 )
+        if( !l_existing_child )
         {
             return std::vector< std::string >();
         }
 
-        const boost_ptree::ptree &l_tmp = m_tree.get_child( key );
         std::vector< std::string > l_return;
-        l_return.reserve( l_tmp.size() );
+        l_return.reserve( l_existing_child.get().size() );
 
-        BOOST_FOREACH( const boost_ptree::ptree::value_type &v, l_tmp)
+        BOOST_FOREACH( const boost_ptree::ptree::value_type &v, l_existing_child.get())
         {
             l_return.push_back( v.second.data() );
         }
@@ -85,29 +87,34 @@ public:
         return l_return;
     }
 
-    void addString( const std::string &key, const std::string &value )
+    void addStringListElement( const std::string &key, const std::string &value )
     {
-        assert( m_loaded );
+        boost::optional< boost_ptree::ptree& > l_existing_child
+                ( m_tree.get_child_optional( key ) );
 
-        if( m_tree.count( key ) > 0 )
+        if( l_existing_child )
         {
-            boost_ptree::ptree &l_tmp = m_tree.get_child( key );
-            l_tmp.push_back(std::make_pair("", value));
+            l_existing_child.get().push_back(std::make_pair( "", value));
         }
         else
         {
             boost_ptree::ptree l_tmp;
-            l_tmp.push_back( std::make_pair("", value ) );
+            l_tmp.push_back( std::make_pair( "", value ) );
             m_tree.put_child( key,l_tmp);
         }
 
         if( m_autosave ) save( m_filename );
     }
 
-    void setStringValue( const std::string &key, const std::string &value )
+    void setString( const std::string &key, const std::string &value )
     {
-        assert( m_loaded );
+        m_tree.put( key, value );
 
+        if( m_autosave ) save( m_filename );
+    }
+
+    void setInt( const std::string &key, long value )
+    {
         m_tree.put( key, value );
 
         if( m_autosave ) save( m_filename );
@@ -132,3 +139,4 @@ private:
     }
 };
 
+#endif
