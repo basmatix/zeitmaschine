@@ -12,18 +12,18 @@
 
 #include <boost/filesystem/operations.hpp>
 
-bool options_basic();
+bool common_options_basic();
 
 int main( int arg_n, char **arg_v )
 {
     named_function_container l_tests;
 
-    l_tests["options_basic"] = options_basic;
+    l_tests["common_options_basic"] = common_options_basic;
 
     return run_tests( l_tests, arg_n, arg_v );
 }
 
-bool options_basic()
+bool common_options_basic()
 {
     zmOptions o1;
 

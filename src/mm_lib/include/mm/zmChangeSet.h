@@ -5,6 +5,7 @@
 /// Copyright (C) 2013 Frans Fuerst
 ///
 
+#pragma once
 #ifndef ZMCHANGESET_H
 #define ZMCHANGESET_H
 

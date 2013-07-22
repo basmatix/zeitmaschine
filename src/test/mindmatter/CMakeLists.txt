@@ -34,9 +34,9 @@ target_link_libraries( test_mindmatter
 
 set( test_executable "${CMAKE_CURRENT_BINARY_DIR}/test_mindmatter" )
 
-add_test( connections              ${test_executable} connections )
-add_test( low_level_gtd_workflow   ${test_executable} low_level_gtd_workflow )
-add_test( empty_db_on_load         ${test_executable} empty_db_on_load )
-add_test( diff_and_reapply         ${test_executable} diff_and_reapply )
-add_test( things_change_while_open ${test_executable} change_while_open )
+add_test( mm_low_level_gtd_workflow   ${test_executable} mm_low_level_gtd_workflow )
+add_test( mm_connections              ${test_executable} mm_connections )
+add_test( mm_empty_db_on_load         ${test_executable} mm_empty_db_on_load )
+add_test( mm_diff_and_reapply         ${test_executable} mm_diff_and_reapply )
+add_test( mm_things_change_while_open ${test_executable} mm_change_while_open )
 

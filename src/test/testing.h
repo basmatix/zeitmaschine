@@ -5,7 +5,7 @@
 /// Copyright (C) 2013 Frans Fuerst
 ///
 
-
+#pragma once
 #ifndef YSBOX_TESTING_H
 #define YSBOX_TESTING_H
 

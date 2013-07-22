@@ -33,5 +33,5 @@ target_link_libraries( ${PROJECT_NAME}
 
 get_target_property(TARGET_LOCATION ${PROJECT_NAME} LOCATION)
 
-add_test( options_basic     ${TARGET_LOCATION}  options_basic )
+add_test( common_options_basic     ${TARGET_LOCATION}  common_options_basic )
 

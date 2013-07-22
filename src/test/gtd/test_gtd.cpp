@@ -18,19 +18,19 @@
 
 #include <boost/filesystem/operations.hpp>
 
-bool basic_workflow();
+bool gtd_basic_workflow();
 
 int main( int arg_n, char **arg_v )
 {
     named_function_container l_tests;
 
-    l_tests["basic_workflow"] = basic_workflow;
+    l_tests["gtd_basic_workflow"] = gtd_basic_workflow;
 
     return run_tests( l_tests, arg_n, arg_v );
 }
 
 
-bool basic_workflow()
+bool gtd_basic_workflow()
 {
     zmGtdModel l_m1;
 

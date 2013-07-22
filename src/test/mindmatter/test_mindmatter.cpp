@@ -14,25 +14,26 @@
 
 #include "../testing.h"
 
-bool change_while_open();
-bool empty_db_on_load();
-bool low_level_gtd_workflow();
-bool connections();
-bool diff_and_reapply();
+bool mm_change_while_open       ();
+bool mm_empty_db_on_load        ();
+bool mm_low_level_gtd_workflow  ();
+bool mm_connections             ();
+bool mm_diff_and_reapply        ();
 
 int main( int arg_n, char **arg_v )
 {
     named_function_container l_tests;
 
-    l_tests["change_while_open"] = change_while_open;
-    l_tests["empty_db_on_load"] = empty_db_on_load;
-    l_tests["low_level_gtd_workflow"] = low_level_gtd_workflow;
-    l_tests["connections"] = connections;
+    l_tests["mm_change_while_open"] =       mm_change_while_open;
+    l_tests["mm_empty_db_on_load"] =        mm_empty_db_on_load;
+    l_tests["mm_low_level_gtd_workflow"] =  mm_low_level_gtd_workflow;
+    l_tests["mm_connections"] =             mm_connections;
+    l_tests["mm_diff_and_reapply"] =        mm_diff_and_reapply;
 
     return run_tests( l_tests, arg_n, arg_v );
 }
 
-bool connections()
+bool mm_connections()
 {
     if( boost::filesystem::exists( "./test-localfolder" ) )
         boost::filesystem::remove_all( "./test-localfolder" );
@@ -64,7 +65,7 @@ bool connections()
     return true;
 }
 
-bool diff_and_reapply()
+bool mm_diff_and_reapply()
 {
     if( boost::filesystem::exists( "./test-localfolder" ) )
         boost::filesystem::remove_all( "./test-localfolder" );
@@ -129,7 +130,7 @@ bool diff_and_reapply()
     return true;
 }
 
-bool empty_db_on_load()
+bool mm_empty_db_on_load()
 {
     if( boost::filesystem::exists( "./test-localfolder" ) )
         boost::filesystem::remove_all( "./test-localfolder" );
@@ -165,13 +166,18 @@ bool empty_db_on_load()
     return true;
 }
 
-bool change_while_open()
+bool mm_change_while_open()
 {
     if( boost::filesystem::exists( "./test-localfolder" ) )
         boost::filesystem::remove_all( "./test-localfolder" );
 
     // client 1 starts and has a model in mind
     zm::MindMatterModel l_m1;
+    l_m1.setUsedUsername( "test-user" );
+    l_m1.setUsedHostname( "test-machine" );
+    l_m1.setLocalFolder( "./test-localfolder" );
+    l_m1.initialize();
+
     std::string l_item1 = l_m1.createNewItem( "some first item" );
 
     // meanwhile another client (or some syncing system) writes some content
@@ -187,14 +193,15 @@ bool change_while_open()
     zm::MindMatterModel l_m3;
 //    std::cout <<  boost_concept_check__LINE__ << std::endl;
 
-    bool l_everythings_there =
-            l_m3.hasItem( l_item1 )  && l_m3.hasItem( l_item2 );
+    test_assert( l_m3.hasItem( l_item1 ), "" );
 
-    return l_everythings_there;
+    test_assert( l_m3.hasItem( l_item2 ), "" );
+
+    return true;
 }
 
 
-bool low_level_gtd_workflow()
+bool mm_low_level_gtd_workflow()
 {
     if( boost::filesystem::exists( "./test-localfolder" ) )
         boost::filesystem::remove_all( "./test-localfolder" );
@@ -220,12 +227,18 @@ bool low_level_gtd_workflow()
 
     /// create new gtd item
     std::string l_gtd_item1 = l_m1.createNewItem("urlaub planen");
-    l_m1.connect( l_gtd_item1, l_item_inbox );
-
+    l_m1.addTag( l_gtd_item1, "gtd_inbox" );
+    test_assert( l_m1.isConnected( l_gtd_item1, l_item_inbox ),
+                 "node properly connected to tag node" );
 
     /// decide this item to be a project
-    l_m1.disconnect( l_gtd_item1, l_item_inbox );
-    l_m1.connect( l_gtd_item1, l_item_project );
+    l_m1.removeTag( l_gtd_item1, "gtd_inbox" );
+    l_m1.addTag( l_gtd_item1, "gtd_project" );
+
+    test_assert( !l_m1.isConnected( l_gtd_item1, l_item_inbox ),
+                 "node properly connected to tag node" );
+    test_assert( l_m1.isConnected( l_gtd_item1, l_item_project ),
+                 "node properly disconnected from tag node" );
 
 
     /// find two subtasks
