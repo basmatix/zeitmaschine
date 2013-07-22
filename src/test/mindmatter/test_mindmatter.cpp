@@ -34,7 +34,8 @@ int main( int arg_n, char **arg_v )
 
 bool connections()
 {
-    boost::filesystem::remove_all( "./test-localfolder" );
+    if( boost::filesystem::exists( "./test-localfolder" ) )
+        boost::filesystem::remove_all( "./test-localfolder" );
 
     zm::MindMatterModel l_m1;
     l_m1.setLocalFolder( "./test-localfolder" );
@@ -65,11 +66,11 @@ bool connections()
 
 bool diff_and_reapply()
 {
+    if( boost::filesystem::exists( "./test-localfolder" ) )
+        boost::filesystem::remove_all( "./test-localfolder" );
     //
     // create first model
     //
-
-    boost::filesystem::remove_all( "./test-localfolder" );
 
     zm::MindMatterModel l_m1;
     l_m1.setLocalFolder( "./test-localfolder" );
@@ -130,7 +131,8 @@ bool diff_and_reapply()
 
 bool empty_db_on_load()
 {
-    boost::filesystem::remove_all( "./test-localfolder" );
+    if( boost::filesystem::exists( "./test-localfolder" ) )
+        boost::filesystem::remove_all( "./test-localfolder" );
 
     zm::MindMatterModel l_m1;
     l_m1.setUsedUsername( "test-user" );
@@ -149,7 +151,7 @@ bool empty_db_on_load()
     l_m2.setLocalFolder( "./test-localfolder" );
     l_m2.initialize();
 
-    std::string l_item2 = l_m2.createNewItem( "yet some item" );
+    std::string l_item2 = l_m1.createNewItem( "yet some item" );
     l_m1.localSave();
 
     //l_m2.load( "tmp_export.yaml" );
@@ -157,16 +159,16 @@ bool empty_db_on_load()
     bool b1 = l_m2.hasItem( l_item1 );
     bool b2 = l_m2.hasItem( l_item2 );
 
-    test_assert( b1 && ! b2, "");
-
-    test_assert( false, "dummy test should not pass" );
+    test_assert( b1 && ! b2,
+                 "m2 should contain item1 but not item2");
 
     return true;
 }
 
 bool change_while_open()
 {
-    boost::filesystem::remove_all( "./test-localfolder" );
+    if( boost::filesystem::exists( "./test-localfolder" ) )
+        boost::filesystem::remove_all( "./test-localfolder" );
 
     // client 1 starts and has a model in mind
     zm::MindMatterModel l_m1;
@@ -194,8 +196,11 @@ bool change_while_open()
 
 bool low_level_gtd_workflow()
 {
+    if( boost::filesystem::exists( "./test-localfolder" ) )
+        boost::filesystem::remove_all( "./test-localfolder" );
+
     zm::MindMatterModel l_m1;
-    boost::filesystem::remove_all( "./test-localfolder" );
+
     l_m1.setLocalFolder( "./test-localfolder" );
     l_m1.setUsedUsername( "test-user" );
     l_m1.setUsedHostname( "test-machine" );
