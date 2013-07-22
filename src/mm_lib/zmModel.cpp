@@ -303,10 +303,17 @@ void zm::MindMatterModel::applyChangeSet( const ChangeSet &changeSet )
 
 std::vector< std::string > zm::MindMatterModel::getJournalFiles()
 {
+    std::vector< std::string > l_all_matching_files;
+
     const std::string target_path( m_localFolder );
+
+    if( !boost::filesystem::exists( m_localFolder ) )
+    {
+        return l_all_matching_files;
+    }
+
     const std::string my_filter( "*-journal.yaml" );
 
-    std::vector< std::string > all_matching_files;
 
     boost::filesystem::directory_iterator end_itr; // Default ctor yields past-the-end
     for( boost::filesystem::directory_iterator i( target_path ); i != end_itr; ++i )
@@ -319,12 +326,12 @@ std::vector< std::string > zm::MindMatterModel::getJournalFiles()
         if( !zm::common::matchesWildcards( i->path().string(), my_filter )) continue;
 
         // file matches, store it
-        all_matching_files.push_back( i->path().string() );
+        l_all_matching_files.push_back( i->path().string() );
     }
 
-    std::sort( all_matching_files.begin(), all_matching_files.end() );
+    std::sort( l_all_matching_files.begin(), l_all_matching_files.end() );
 
-    return all_matching_files;
+    return l_all_matching_files;
 }
 
 void zm::MindMatterModel::dirty()
