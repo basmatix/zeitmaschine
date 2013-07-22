@@ -20,6 +20,7 @@
 #include <algorithm>
 #include <boost/foreach.hpp>
 #include <boost/filesystem.hpp>
+#include <boost/thread.hpp>
 
 #include <stdlib.h>
 using namespace zm;
@@ -106,7 +107,7 @@ void zm::MindMatterModel::setUsedHostname( const std::string &hostname )
 
 void zm::MindMatterModel::initialize()
 {
-    srand( time( NULL ) );
+    srand( time( NULL ) * rand()  );
 
     /// find the name for the local model file - should be equal
     /// across sessions and unique for each client
@@ -606,7 +607,7 @@ std::string zm::MindMatterModel::createNewItem( const std::string &caption, cons
 
     if( uid == "" )
     {
-        std::string l_new_key = generateUid();
+        l_new_key = generateUid();
     }
 
     assert( m_things.left.find( l_new_key ) == m_things.left.end() );
