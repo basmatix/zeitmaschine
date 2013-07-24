@@ -23,6 +23,7 @@ namespace zm
 {
     class MindMatter
     {
+
     public:
 
         typedef std::map< std::string, std::string > string_value_map_type;
@@ -121,6 +122,16 @@ namespace zm
             //TODO: handle neighbours
 
             return l_stream.str();
+        }
+
+        bool operator== ( const MindMatter &other )
+        {
+            return false;
+        }
+
+        bool operator!= ( const MindMatter &other )
+        {
+            return !this->operator ==( other );
         }
     };
 }

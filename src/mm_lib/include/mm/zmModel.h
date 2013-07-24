@@ -29,7 +29,7 @@ namespace zm
         MindMatterModelMapType  m_things;
         std::string         m_localFolder;
         std::string         m_localModelFile;
-        ChangeSet           m_changeSet;
+        //ChangeSet           m_changeSet;
 
         std::string         m_temporaryJournalFile;
         bool                m_initialized;

@@ -36,13 +36,32 @@ zm::MindMatterModel::MindMatterModel()
     , m_temporaryJournalFile( "" )
     , m_initialized         ( false )
     , m_dirty               ( false )
-    , m_changeSet           ()
+    //, m_changeSet           ()
 {
 }
 
 bool zm::MindMatterModel::operator==( const zm::MindMatterModel &other )
 {
-    return false;
+    /// prune if models differ in size
+    if( m_things.size() != other.m_things.size() ) return false;
+
+    /// go through all elements of m_things - note that we don't have
+    /// to do this for the second model
+    BOOST_FOREACH( const MindMatterModelMapType::value_type& i, m_things )
+    {
+        /// find the key in the other map
+        MindMatterModelMapType::left_const_iterator l_item_it( other.m_things.left.find( i.left ) );
+
+        /// not found? return false!
+        if( l_item_it == other.m_things.left.end() ) return false;
+
+        /// values differ? return false!
+        if( *i.right != *l_item_it->second ) return false;
+    }
+
+    /// if we reach this point the maps must be equal
+
+    return true;
 }
 
 bool zm::MindMatterModel::operator!=( const zm::MindMatterModel &other )
@@ -176,19 +195,19 @@ void zm::MindMatterModel::localSave()
     /// just for debug purposes - later we will only write the journal
     saveLocalModel( m_localModelFile );
 
-    m_changeSet.write( m_temporaryJournalFile );
+    //m_changeSet.write( m_temporaryJournalFile );
 }
 
 void zm::MindMatterModel::sync()
 {
     saveLocalModel( m_localModelFile );
 
-    if( m_changeSet.write( m_temporaryJournalFile ) )
-    {
-        makeTempJournalStatic();
-    }
+//    if( m_changeSet.write( m_temporaryJournalFile ) )
+//    {
+//        makeTempJournalStatic();
+//    }
 
-    m_changeSet.clear();
+//    m_changeSet.clear();
 }
 
 void zm::MindMatterModel::merge( const std::string &a_modelFile )
@@ -621,10 +640,10 @@ std::string zm::MindMatterModel::createNewItem( const std::string &caption, cons
 
     _createNewItem( l_new_key, caption, l_time );
 
-    JournalItem *l_change = new JournalItem( l_new_key, JournalItem::CreateItem );
-    l_change->time = l_time;
-    l_change->value = caption;
-    m_changeSet.push_back( l_change );
+//    JournalItem *l_change = new JournalItem( l_new_key, JournalItem::CreateItem );
+//    l_change->time = l_time;
+//    l_change->value = caption;
+//    m_changeSet.push_back( l_change );
 
     dirty();
 
@@ -646,8 +665,8 @@ void zm::MindMatterModel::eraseItem( const std::string &uid )
 
     _eraseItem( l_item_it );
 
-    JournalItem *l_change = new JournalItem( uid, JournalItem::EraseItem );
-    m_changeSet.push_back( l_change );
+//    JournalItem *l_change = new JournalItem( uid, JournalItem::EraseItem );
+//    m_changeSet.push_back( l_change );
 
     dirty();
 }
@@ -668,9 +687,9 @@ void zm::MindMatterModel::addTag( const std::string &uid, const std::string &att
 
     _addTag( l_item_it, attribute );
 
-    JournalItem *l_change = new JournalItem( uid, JournalItem::AddAttribute );
-    l_change->key = attribute;
-    m_changeSet.push_back( l_change );
+//    JournalItem *l_change = new JournalItem( uid, JournalItem::AddAttribute );
+//    l_change->key = attribute;
+//    m_changeSet.push_back( l_change );
 
     dirty();
 }
@@ -699,9 +718,9 @@ bool zm::MindMatterModel::removeTag( const std::string &uid, const std::string &
 
     bool l_return = _removeTag( l_item_it, attribute );
 
-    JournalItem *l_change = new JournalItem( uid, JournalItem::RemoveAttribute );
-    l_change->key = attribute;
-    m_changeSet.push_back( l_change );
+//    JournalItem *l_change = new JournalItem( uid, JournalItem::RemoveAttribute );
+//    l_change->key = attribute;
+//    m_changeSet.push_back( l_change );
 
     dirty();
 
@@ -749,9 +768,9 @@ void zm::MindMatterModel::connect( const std::string &node1_uid, const std::stri
     assert( l_item1_it != m_things.left.end() );
     assert( l_item2_it != m_things.left.end() );
 
-    JournalItem *l_change = new JournalItem( node1_uid, JournalItem::Connect );
-    l_change->value = node2_uid;
-    m_changeSet.push_back( l_change );
+//    JournalItem *l_change = new JournalItem( node1_uid, JournalItem::Connect );
+//    l_change->value = node2_uid;
+//    m_changeSet.push_back( l_change );
 
     dirty();
 
@@ -764,7 +783,6 @@ void zm::MindMatterModel::_connect( MindMatterModelMapType::left_iterator &item1
     item2->second->m_neighbours.insert( item1->second );
 }
 
-
 void zm::MindMatterModel::setValue( const std::string &uid, const std::string &name, const std::string &value )
 {
     MindMatterModelMapType::left_iterator l_item_it( m_things.left.find( uid ) );
@@ -773,10 +791,10 @@ void zm::MindMatterModel::setValue( const std::string &uid, const std::string &n
 
     if( !_setValue(l_item_it, name, value ) ) return;
 
-    JournalItem *l_change = new JournalItem( uid, JournalItem::SetStringValue );
-    l_change->key = name;
-    l_change->value = value;
-    m_changeSet.push_back( l_change );
+//    JournalItem *l_change = new JournalItem( uid, JournalItem::SetStringValue );
+//    l_change->key = name;
+//    l_change->value = value;
+//    m_changeSet.push_back( l_change );
 
     dirty();
 }
@@ -797,10 +815,10 @@ void zm::MindMatterModel::setCaption( const std::string &uid, const std::string 
 
     if( !_setCaption( l_item_it, caption ) ) return;
 
-    JournalItem *l_change = new JournalItem( uid, JournalItem::ChangeCaption );
-    //l_change->before = l_item_it->second->m_caption;
-    l_change->value = caption;
-    m_changeSet.push_back( l_change );
+//    JournalItem *l_change = new JournalItem( uid, JournalItem::ChangeCaption );
+//    //l_change->before = l_item_it->second->m_caption;
+//    l_change->value = caption;
+//    m_changeSet.push_back( l_change );
 
     dirty();
 }
