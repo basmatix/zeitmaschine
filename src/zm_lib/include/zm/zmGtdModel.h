@@ -80,6 +80,7 @@ public:
     void initialize()
     {
         m_things_model.initialize();
+
         m_item_inbox =      m_things_model.findOrCreateTagItem( "gtd_inbox" );
         m_item_task =       m_things_model.findOrCreateTagItem( "gtd_task" );
         m_item_next_task =  m_things_model.findOrCreateTagItem( "gtd_next_task" );
