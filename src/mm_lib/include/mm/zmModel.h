@@ -91,7 +91,7 @@ namespace zm
 
         void applyChangeSet( const ChangeSet &changeSet );
 
-        ChangeSet diff( const MindMatterModel &other );
+        ChangeSet diff( const MindMatterModel &other ) const;
 
     private:
 

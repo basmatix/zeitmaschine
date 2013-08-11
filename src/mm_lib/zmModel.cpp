@@ -69,9 +69,55 @@ bool zm::MindMatterModel::operator!=( const zm::MindMatterModel &other )
     return !this->operator ==( other );
 }
 
-ChangeSet zm::MindMatterModel::diff( const MindMatterModel &other )
+ChangeSet zm::MindMatterModel::diff( const MindMatterModel &other ) const
 {
+    /// what do we have to change on (*this) to get to (other)
+
     ChangeSet l_return;
+
+    std::set< std::string > l_done_items;
+
+    /// go through all elements of m_things - note that we don't have
+    /// to do this for the second model
+    BOOST_FOREACH( const MindMatterModelMapType::value_type& i, m_things )
+    {
+        l_done_items.insert( i.left );
+
+        /// find the key in the other map
+        MindMatterModelMapType::left_const_iterator l_item_it( other.m_things.left.find( i.left ) );
+
+        /// not found? return false!
+        if( l_item_it == other.m_things.left.end() )
+        {
+            // TODO: add remove entry
+//            l_return.add_remove_entry( i.left );
+        }
+
+        /// values differ? return false!
+        if( *i.right != *l_item_it->second )
+        {
+            // TODO: add item updater
+//            l_return.add_item_update();
+        }
+    }
+
+    BOOST_FOREACH( const MindMatterModelMapType::value_type& i, other.m_things )
+    {
+        /// prune items we handled already
+        if( l_done_items.find( i.left) != l_done_items.end() )
+        {
+            continue;
+        }
+        /// if we get here i must be an item which does not exist in
+        /// (*this) - so just upate l_return to contain i
+
+        // insert i into l_return
+//        l_return.add_item( i.left );
+
+    }
+
+    /// if we reach this point the maps must be equal
+
     return l_return;
 }
 
