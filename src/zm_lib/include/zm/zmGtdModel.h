@@ -143,7 +143,9 @@ public:
 
     bool isInboxItem( const std::string &item ) const
     {
-        return m_things_model.hasTag( item, "gtd_item_unhandled" );
+        return m_things_model.isConnected( item, m_item_inbox );
+        // should be equal to
+        //return m_things_model.hasTag( item, "gtd_inbox" );
     }
 
     bool isProjectItem( const std::string &item, bool includeStandaloneTasks ) const
@@ -178,7 +180,7 @@ public:
 
     bool empty() const
     {
-        return m_things_model.getItemCount() == 0;
+        return m_things_model.getItemCount() == 8;
     }
 
 /// save relevant interface
