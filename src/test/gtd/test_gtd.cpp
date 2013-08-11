@@ -52,7 +52,7 @@ bool gtd_basic_workflow()
     l_m1.registerItemAsTask( l_node2, l_node1 );
 
     std::string l_node3 = l_m1.createNewInboxItem( "Urlaubsort bestimmen" );
-    l_m1.registerItemAsTask( l_node2, l_node1 );
+    l_m1.registerItemAsTask( l_node3, l_node1 );
 
     l_m1.setNextTask( l_node1, l_node3 );
     return true;
