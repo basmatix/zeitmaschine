@@ -4,6 +4,7 @@
 #ifndef THING_H
 #define THING_H
 
+#include "mm/zmChangeSet.h"
 
 #include <set>
 #include <fstream>
@@ -99,8 +100,28 @@ namespace zm
                 return false;
             }
 
+            if(m_string_values.size() != other.m_string_values.size()
+            || m_neighbours.size()    != other.m_neighbours.size() )
+            {
+                return false;
+            }
+
+            //TODO: check string_values
+
             //TODO: check neighbours
             return true;
+        }
+
+        std::vector< JournalItem > diff( )
+        {
+            std::vector< JournalItem > l_result;
+            return l_result;
+        }
+
+        std::vector< JournalItem > diff( const MindMatter & other )
+        {
+            std::vector< JournalItem > l_result;
+            return l_result;
         }
 
         std::string getHash( ) const

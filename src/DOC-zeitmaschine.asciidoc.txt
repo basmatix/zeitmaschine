@@ -137,3 +137,23 @@ gui   ->  gtd                 :   initialize
                     things   ->  things    :   <color:#aa2222> load new external journals
 --------------------------------------------------------------------------------
 
+
+design considerations
+~~~~~~~~~~~~~~~~~~~~~
+
+.*should item connections be part of items rather than stand alone?*
+****************************************************************************
+currently: *yes*
+
+.pro:
+* whole model can be seen as sum of items rather than having additional
+  entities
+
+.con:
+* connections are directional by default and must be saved twice
+* design flaw
+****************************************************************************
+
+
+
+

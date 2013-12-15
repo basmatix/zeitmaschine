@@ -8,6 +8,7 @@
 #ifndef FLOWMODEL_H
 #define FLOWMODEL_H
 
+// MindMatter creates ChangeSet instances
 #include "zmChangeSet.h"
 
 #include <boost/bimap.hpp>

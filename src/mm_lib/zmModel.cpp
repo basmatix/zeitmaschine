@@ -69,7 +69,7 @@ bool zm::MindMatterModel::operator!=( const zm::MindMatterModel &other )
     return !this->operator ==( other );
 }
 
-ChangeSet zm::MindMatterModel::diff( const MindMatterModel &other ) const
+ChangeSet zm::MindMatterModel::diff( const MindMatterModel &a_other ) const
 {
     /// what do we have to change on (*this) to get to (other)
 
@@ -77,43 +77,42 @@ ChangeSet zm::MindMatterModel::diff( const MindMatterModel &other ) const
 
     std::set< std::string > l_done_items;
 
-    /// go through all elements of m_things - note that we don't have
-    /// to do this for the second model
+    /// go through all elements of m_things
     BOOST_FOREACH( const MindMatterModelMapType::value_type& i, m_things )
     {
-        l_done_items.insert( i.left );
+        const std::string &l_this_item_id(i.left);
+
+        l_done_items.insert( l_this_item_id );
 
         /// find the key in the other map
-        MindMatterModelMapType::left_const_iterator l_item_it( other.m_things.left.find( i.left ) );
+        MindMatterModelMapType::left_const_iterator l_other_item_it(
+                    a_other.m_things.left.find( l_this_item_id ) );
 
-        /// not found? return false!
-        if( l_item_it == other.m_things.left.end() )
+        if( l_other_item_it == a_other.m_things.left.end() )
         {
-            // TODO: add remove entry
-//            l_return.add_remove_entry( i.left );
+            l_return.add_remove_entry( l_this_item_id );
         }
 
-        /// values differ? return false!
-        if( *i.right != *l_item_it->second )
+        if( *i.right != *l_other_item_it->second )
         {
-            // TODO: add item updater
-//            l_return.add_item_update();
+            l_return.add_item_update(i.right->diff(*l_other_item_it->second));
         }
     }
 
-    BOOST_FOREACH( const MindMatterModelMapType::value_type& i, other.m_things )
+    BOOST_FOREACH( const MindMatterModelMapType::value_type& i, a_other.m_things )
     {
+        const std::string &l_other_item_id(i.left);
+
         /// prune items we handled already
-        if( l_done_items.find( i.left) != l_done_items.end() )
+        if( l_done_items.find( l_other_item_id ) != l_done_items.end() )
         {
             continue;
         }
         /// if we get here i must be an item which does not exist in
         /// (*this) - so just upate l_return to contain i
 
-        // insert i into l_return
-//        l_return.add_item( i.left );
-
+        /// insert i into l_return
+        l_return.add_item( i.right->diff() );
     }
 
     /// if we reach this point the maps must be equal

@@ -47,6 +47,9 @@ public:
     std::string value;
 };
 
+/// classifies difference from one model to another. Can be constructed
+/// from two models and can be applied to the first model to gain the
+/// second one
 class ChangeSet
 {
 
@@ -64,17 +67,23 @@ public:
 
     virtual ~ChangeSet(){}
 
+    /// serializes to a file
     bool write( const std::string &journalFileName );
+
 
     const std::vector< JournalItem * > & getJournal() const
     {
         return m_journal;
     }
 
-    void push_back( JournalItem *item )
-    {
-        m_journal.push_back( item );
-    }
+    void add_remove_entry( const std::string &node_uid )
+    {}
+
+    void add_item_update(std::vector< JournalItem > changes)
+    {}
+
+    void add_item(std::vector< JournalItem > changes)
+    {}
 
     void clear();
 
