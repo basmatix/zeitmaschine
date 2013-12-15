@@ -22,10 +22,10 @@ cmake_minimum_required(VERSION 2.8)
 find_package(
         Boost 1.47
     COMPONENTS
-        #filesystem
+        filesystem
         #serialization
         system
-        #thread
+        thread
         program_options
         #iostreams
         date_time
@@ -113,3 +113,5 @@ add_subdirectory( zm_tool )
 add_subdirectory( pyZm )
 
 add_subdirectory( test )
+
+add_subdirectory( submodules/asciitest/asciitest )
