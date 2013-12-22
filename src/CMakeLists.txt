@@ -114,4 +114,11 @@ add_subdirectory( pyZm )
 
 add_subdirectory( test )
 
+option(CONFIG_HAVE_ASCIITEST "let asciidoc with asciitest create docs and tests" ON)
+if(CONFIG_HAVE_ASCIITEST)
 add_subdirectory( submodules/asciitest/asciitest )
+    message("PYTHONPATH ${PYZM_BUILD_DIR}")
+    run_env_add_variable("PYTHONPATH" "${PYZM_BUILD_DIR}")
+    #run_env_add_variable("PYTHONPATH" "${ASCIITEST_CONFIG_DIR}")
+endif()
+

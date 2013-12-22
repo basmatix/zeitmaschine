@@ -28,6 +28,8 @@ if( CONFIG_BUILD_PYZM )
     find_package( SWIG REQUIRED )
     include( ${SWIG_USE_FILE} )
 
+    set(PYZM_BUILD_DIR "${CMAKE_CURRENT_BINARY_DIR}" CACHE INTERNAL "" FORCE)
+
     include_directories(
         ${MM_INCLUDE_DIR}
         ${ZM_INCLUDE_DIR}
