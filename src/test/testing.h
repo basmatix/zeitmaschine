@@ -16,7 +16,9 @@
 #include <sstream>
 #include <assert.h>
 
-#define test_assert( cond, desc ) if(!(cond)){ assert((cond) && desc ); return false;}
+#define test_assert( cond, desc ) if(!(cond)){ \
+    std::cout << "subtest '" << desc << "' failed!"; \
+    assert((cond) && desc ); return false;}
 
 #define TEST_RETURN_OK     0
 #define TEST_RETURN_FAILED 1
@@ -32,9 +34,9 @@ typedef std::map< std::string, test_function > named_function_container;
 
 inline bool run_single_test( named_function named_test )
 {
-    std::cout << "running test: '" << named_test.first << "'.. ";
-
     bool l_return = named_test.second();
+/*
+    std::cout << "running test: '" << named_test.first << "'.. ";
 
     if( l_return )
     {
@@ -45,6 +47,7 @@ inline bool run_single_test( named_function named_test )
         std::cout << "FAILED!" << std::endl;
         std::cerr << "test failed: '" << named_test.first << "'" << std::endl;
     }
+*/
     return l_return;
 }
 

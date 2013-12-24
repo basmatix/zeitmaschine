@@ -24,7 +24,7 @@ int main( int arg_n, char **arg_v )
 {
     named_function_container l_tests;
 
-    l_tests["mm_change_while_open"] =       mm_change_while_open;
+    //l_tests["mm_change_while_open"] =       mm_change_while_open;
     l_tests["mm_empty_db_on_load"] =        mm_empty_db_on_load;
     l_tests["mm_low_level_gtd_workflow"] =  mm_low_level_gtd_workflow;
     l_tests["mm_connections"] =             mm_connections;
@@ -182,6 +182,11 @@ bool mm_change_while_open()
 
     // meanwhile another client (or some syncing system) writes some content
     zm::MindMatterModel l_m2;
+    l_m2.setUsedUsername( "test-user" );
+    l_m2.setUsedHostname( "test-machine" );
+    l_m2.setLocalFolder( "./test-localfolder" );
+    l_m2.initialize();
+
     std::string l_item2 = l_m2.createNewItem( "some concurrent item" );
     //l_m2.save( "tmp_export.yaml" );
 
