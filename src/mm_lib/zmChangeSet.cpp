@@ -37,7 +37,7 @@ bool zm::ChangeSet::write( const std::string &journalFileName )
 
     l_yaml_emitter << YAML::BeginSeq;
 
-    BOOST_FOREACH(const JournalItem * j, m_journal)
+    BOOST_FOREACH(const journal_ptr_t &j, m_journal)
     {
         l_yaml_emitter << YAML::BeginMap;
 
@@ -102,6 +102,10 @@ bool zm::ChangeSet::write( const std::string &journalFileName )
     return true;
 }
 
+inline std::string str(const YAML::Node &n)
+{
+    return n.as< std::string >();
+}
 
 void zm::ChangeSet::load( const std::string &journalFileName )
 {
@@ -116,57 +120,59 @@ void zm::ChangeSet::load( const std::string &journalFileName )
         assert( n["update"] );
         assert( n["type"] );
         assert( n["time"] );
-        std::string l_uid = n["update"].as< std::string >();
-        std::string l_type = n["type"].as< std::string >();
+        std::string l_uid = str(n["update"]);
+        std::string l_type = str(n["type"]);
 
-        JournalItem *l_newItem;
+        journal_ptr_t l_newItem;
         if( l_type == "CreateItem" )
         {
-            l_newItem = new JournalItem( l_uid, JournalItem::CreateItem );
             assert( n["caption"] );
-            l_newItem->value = n["caption"].as< std::string >();
+            l_newItem = JournalItem::createCreate(
+                        l_uid, str(n["caption"]) );
         }
         if( l_type == "SetStringValue" )
         {
-            l_newItem = new JournalItem( l_uid, JournalItem::SetStringValue );
             assert( n["name"] );
             assert( n["value"] );
-            l_newItem->key = n["name"].as< std::string >();
-            l_newItem->value = n["value"].as< std::string >();
+            l_newItem = JournalItem::createSetStringValue(
+                        l_uid,
+                        str(n["name"]),
+                        str(n["value"]));
         }
         if( l_type == "EraseItem" )
         {
-            l_newItem = new JournalItem( l_uid, JournalItem::EraseItem );
+            l_newItem = JournalItem::createErase(l_uid);
         }
         if( l_type == "AddAttribute" )
         {
-            l_newItem = new JournalItem( l_uid, JournalItem::AddAttribute );
             assert( n["name"] );
-            l_newItem->key = n["name"].as< std::string >();
+            l_newItem = JournalItem::createAddAttribute(l_uid,
+                        str(n["name"]));
         }
         if( l_type == "RemoveAttribute" )
         {
-            l_newItem = new JournalItem( l_uid, JournalItem::RemoveAttribute );
             assert( n["name"] );
-            l_newItem->key = n["name"].as< std::string >();
+            l_newItem = JournalItem::createRemoveAttribute(l_uid,
+                        str(n["name"]));
         }
         if( l_type == "ChangeCaption" )
         {
-            l_newItem = new JournalItem( l_uid, JournalItem::ChangeCaption );
             assert( n["value"] );
-            l_newItem->value = n["value"].as< std::string >();
+            l_newItem = JournalItem::createChangeCaption(l_uid,
+                        str(n["value"]));
         }
-        l_newItem->time = n["time"].as< std::string >();
+        l_newItem->time = str(n["time"]);
         m_journal.push_back( l_newItem );
     }
 }
 
 void zm::ChangeSet::clear()
-{
+{   /*
     BOOST_FOREACH( JournalItem *i, m_journal )
     {
         delete i;
     }
+    */
 
     m_journal.clear();
 }

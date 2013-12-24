@@ -29,3 +29,5 @@ build/zm_lib
 build/pyZm
 build/zm_tool
 build/zmQt
+build/DartConfiguration.tcl
+build/documentation/

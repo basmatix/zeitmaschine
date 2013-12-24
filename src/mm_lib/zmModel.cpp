@@ -71,7 +71,8 @@ bool zm::MindMatterModel::operator!=( const zm::MindMatterModel &other )
 
 ChangeSet zm::MindMatterModel::diff( const MindMatterModel &a_other ) const
 {
-    /// what do we have to change on (*this) to get to (other)
+    /// return a set of changes which describes what do we have to change
+    /// on (*this) to get to (other)
 
     ChangeSet l_return;
 
@@ -112,7 +113,7 @@ ChangeSet zm::MindMatterModel::diff( const MindMatterModel &a_other ) const
         /// (*this) - so just upate l_return to contain i
 
         /// insert i into l_return
-        l_return.add_item( i.right->diff() );
+        l_return.add_item( i.right->toDiff(l_other_item_id) );
     }
 
     /// if we reach this point the maps must be equal
@@ -320,7 +321,7 @@ bool zm::MindMatterModel::importJournalFiles()
 
 void zm::MindMatterModel::applyChangeSet( const ChangeSet &changeSet )
 {
-    BOOST_FOREACH( const JournalItem * j, changeSet.getJournal() )
+    BOOST_FOREACH( const journal_ptr_t &j, changeSet.getJournal() )
     {
         MindMatterModelMapType::left_iterator l_item_it( m_things.left.find( j->uid ) );
 

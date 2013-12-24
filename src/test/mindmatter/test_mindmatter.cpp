@@ -69,10 +69,11 @@ bool mm_diff_and_reapply()
 {
     if( boost::filesystem::exists( "./test-localfolder" ) )
         boost::filesystem::remove_all( "./test-localfolder" );
+
+
     //
     // create first model
     //
-
     zm::MindMatterModel l_m1;
     l_m1.setLocalFolder( "./test-localfolder" );
     l_m1.setUsedUsername( "test-user" );
@@ -108,6 +109,8 @@ bool mm_diff_and_reapply()
     //
     // modify m1
     //
+
+    l_m1.createNewItem("some new item");
 
     // TBD
 

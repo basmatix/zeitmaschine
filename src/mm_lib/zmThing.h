@@ -112,15 +112,25 @@ namespace zm
             return true;
         }
 
-        std::vector< JournalItem > diff( )
+        /// returns a journal creating this item
+        journal_item_vec_t toDiff( const std::string &uid ) const
         {
-            std::vector< JournalItem > l_result;
+            journal_item_vec_t l_result;
+            l_result.push_back(JournalItem::createCreate(uid, m_caption));
+
+            // [todo] - change caption
+            // [todo] - change neighbours
+            // [todo] - change string values
             return l_result;
         }
 
-        std::vector< JournalItem > diff( const MindMatter & other )
+        /// returns a journal which would turn this item into the other
+        journal_item_vec_t diff( const MindMatter & other ) const
         {
-            std::vector< JournalItem > l_result;
+            journal_item_vec_t l_result;
+            // [todo] - check caption
+            // [todo] - check neighbours
+            // [todo] - check string values
             return l_result;
         }
 
