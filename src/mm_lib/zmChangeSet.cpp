@@ -42,7 +42,7 @@ bool zm::ChangeSet::write( const std::string &journalFileName )
         l_yaml_emitter << YAML::BeginMap;
 
         l_yaml_emitter << YAML::Key << "update";
-        l_yaml_emitter << YAML::Value << j->uid;
+        l_yaml_emitter << YAML::Value << j->item_uid;
 
         l_yaml_emitter << YAML::Key << "time";
         l_yaml_emitter << YAML::Value << j->time;
@@ -65,16 +65,16 @@ bool zm::ChangeSet::write( const std::string &journalFileName )
         case JournalItem::EraseItem:
             l_yaml_emitter << YAML::Value << "EraseItem";
             break;
-        case JournalItem::AddAttribute:
-            l_yaml_emitter << YAML::Value << "AddAttribute";
-            l_yaml_emitter << YAML::Key << "name";
-            l_yaml_emitter << YAML::Value << j->key;
-            break;
-        case JournalItem::RemoveAttribute:
-            l_yaml_emitter << YAML::Value << "RemoveAttribute";
-            l_yaml_emitter << YAML::Key << "name";
-            l_yaml_emitter << YAML::Value << j->key;
-            break;
+//        case JournalItem::AddAttribute:
+//            l_yaml_emitter << YAML::Value << "AddAttribute";
+//            l_yaml_emitter << YAML::Key << "name";
+//            l_yaml_emitter << YAML::Value << j->key;
+//            break;
+//        case JournalItem::RemoveAttribute:
+//            l_yaml_emitter << YAML::Value << "RemoveAttribute";
+//            l_yaml_emitter << YAML::Key << "name";
+//            l_yaml_emitter << YAML::Value << j->key;
+//            break;
         case JournalItem::ChangeCaption:
             l_yaml_emitter << YAML::Value << "ChangeCaption";
             l_yaml_emitter << YAML::Key << "value";
@@ -82,6 +82,11 @@ bool zm::ChangeSet::write( const std::string &journalFileName )
             break;
         case JournalItem::Connect:
             l_yaml_emitter << YAML::Value << "Connect";
+            l_yaml_emitter << YAML::Key << "value";
+            l_yaml_emitter << YAML::Value << j->value;
+            break;
+        case JournalItem::Disconnect:
+            l_yaml_emitter << YAML::Value << "Disonnect";
             l_yaml_emitter << YAML::Key << "value";
             l_yaml_emitter << YAML::Value << j->value;
             break;
@@ -130,7 +135,7 @@ void zm::ChangeSet::load( const std::string &journalFileName )
             l_newItem = JournalItem::createCreate(
                         l_uid, str(n["caption"]) );
         }
-        if( l_type == "SetStringValue" )
+        else if( l_type == "SetStringValue" )
         {
             assert( n["name"] );
             assert( n["value"] );
@@ -139,27 +144,31 @@ void zm::ChangeSet::load( const std::string &journalFileName )
                         str(n["name"]),
                         str(n["value"]));
         }
-        if( l_type == "EraseItem" )
+        else if( l_type == "EraseItem" )
         {
             l_newItem = JournalItem::createErase(l_uid);
         }
-        if( l_type == "AddAttribute" )
-        {
-            assert( n["name"] );
-            l_newItem = JournalItem::createAddAttribute(l_uid,
-                        str(n["name"]));
-        }
-        if( l_type == "RemoveAttribute" )
-        {
-            assert( n["name"] );
-            l_newItem = JournalItem::createRemoveAttribute(l_uid,
-                        str(n["name"]));
-        }
-        if( l_type == "ChangeCaption" )
+//        if( l_type == "AddAttribute" )
+//        {
+//            assert( n["name"] );
+//            l_newItem = JournalItem::createAddAttribute(l_uid,
+//                        str(n["name"]));
+//        }
+//        if( l_type == "RemoveAttribute" )
+//        {
+//            assert( n["name"] );
+//            l_newItem = JournalItem::createRemoveAttribute(l_uid,
+//                        str(n["name"]));
+//        }
+        else if( l_type == "ChangeCaption" )
         {
             assert( n["value"] );
             l_newItem = JournalItem::createChangeCaption(l_uid,
                         str(n["value"]));
+        }
+        else
+        {
+            assert( false && "type is not being handled" );
         }
         l_newItem->time = str(n["time"]);
         m_journal.push_back( l_newItem );

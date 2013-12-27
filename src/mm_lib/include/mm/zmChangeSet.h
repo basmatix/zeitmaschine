@@ -19,8 +19,10 @@ namespace zm
 {
 
 class JournalItem;
-typedef std::vector< boost::shared_ptr<JournalItem> > journal_item_vec_t;
-typedef boost::shared_ptr< JournalItem > journal_ptr_t;
+class MindMatter;
+
+typedef std::vector< boost::shared_ptr<JournalItem> >   journal_item_vec_t;
+typedef boost::shared_ptr< JournalItem >                journal_ptr_t;
 
 class JournalItem
 {
@@ -28,88 +30,162 @@ public:
     enum ChangeType
     {
         CreateItem,
-        SetStringValue,
         EraseItem,
-        AddAttribute,
-        RemoveAttribute,
+        SetStringValue,
+//        AddAttribute,
+//        RemoveAttribute,
         ChangeCaption,
-        Connect
+        Connect,
+        Disconnect
     };
 
     static journal_ptr_t createCreate(
-            const std::string &Uid,
-            const std::string &caption )
+            const zm::MindMatter *item_ptr,
+            const std::string    &caption )
     {
         journal_ptr_t l_result =
-                journal_ptr_t(new JournalItem(Uid, CreateItem));
+                journal_ptr_t(new JournalItem(item_ptr, CreateItem));
+        l_result->key = caption;
+        return l_result;
+    }
+
+    static journal_ptr_t createCreate(
+            const std::string   &item_uid,
+            const std::string   &caption )
+    {
+        journal_ptr_t l_result =
+                journal_ptr_t(new JournalItem(item_uid, CreateItem));
         l_result->key = caption;
         return l_result;
     }
 
     static journal_ptr_t createSetStringValue(
-            const std::string &Uid,
-            const std::string &name,
-            const std::string &value)
+            const zm::MindMatter *item_ptr,
+            const std::string    &name,
+            const std::string    &value)
     {
         journal_ptr_t l_result =
-                journal_ptr_t(new JournalItem(Uid, SetStringValue));
+                journal_ptr_t(new JournalItem(item_ptr, SetStringValue));
+        l_result->key = name;
+        l_result->value = value;
+        return l_result;
+    }
+
+    static journal_ptr_t createSetStringValue(
+            const std::string   &item_uid,
+            const std::string   &name,
+            const std::string   &value)
+    {
+        journal_ptr_t l_result =
+                journal_ptr_t(new JournalItem(item_uid, SetStringValue));
         l_result->key = name;
         l_result->value = value;
         return l_result;
     }
 
     static journal_ptr_t createErase(
-            const std::string &Uid)
+            const zm::MindMatter *item_ptr)
     {
         journal_ptr_t l_result =
-                journal_ptr_t(new JournalItem(Uid, EraseItem));
+                journal_ptr_t(new JournalItem(item_ptr, EraseItem));
         return l_result;
     }
 
-    static journal_ptr_t createAddAttribute(
-            const std::string &Uid,
-            const std::string &name)
+    static journal_ptr_t createErase(
+            const std::string   &item_uid)
     {
         journal_ptr_t l_result =
-                journal_ptr_t(new JournalItem(Uid, AddAttribute));
-        l_result->key = name;
+                journal_ptr_t(new JournalItem(item_uid, EraseItem));
         return l_result;
     }
 
-    static journal_ptr_t createRemoveAttribute(
-            const std::string &Uid,
-            const std::string &name)
-    {
-        journal_ptr_t l_result =
-                journal_ptr_t(new JournalItem(Uid, RemoveAttribute));
-        l_result->key = name;
-        return l_result;
-    }
+//    static journal_ptr_t createAddAttribute(
+//            const std::string &Uid,
+//            const std::string &name)
+//    {
+//        journal_ptr_t l_result =
+//                journal_ptr_t(new JournalItem(Uid, AddAttribute));
+//        l_result->key = name;
+//        return l_result;
+//    }
+
+//    static journal_ptr_t createRemoveAttribute(
+//            const std::string &Uid,
+//            const std::string &name)
+//    {
+//        journal_ptr_t l_result =
+//                journal_ptr_t(new JournalItem(Uid, RemoveAttribute));
+//        l_result->key = name;
+//        return l_result;
+//    }
 
     static journal_ptr_t createChangeCaption(
-            const std::string &Uid,
-            const std::string &value)
+            const zm::MindMatter *item_ptr,
+            const std::string    &value)
     {
         journal_ptr_t l_result =
-                journal_ptr_t(new JournalItem(Uid, ChangeCaption));
+                journal_ptr_t(new JournalItem(item_ptr, ChangeCaption));
         l_result->value = value;
         return l_result;
     }
 
-    std::string uid;
-    ChangeType  type;
-    std::string time;
-    std::string key;
-    std::string value;
+    static journal_ptr_t createChangeCaption(
+            const std::string   &item_uid,
+            const std::string   &value)
+    {
+        journal_ptr_t l_result =
+                journal_ptr_t(new JournalItem(item_uid, ChangeCaption));
+        l_result->value = value;
+        return l_result;
+    }
+
+    static journal_ptr_t createConnect(
+            const zm::MindMatter *item_ptr,
+            const zm::MindMatter *other_item_ptr)
+    {
+        journal_ptr_t l_result =
+                journal_ptr_t(new JournalItem(item_ptr, Connect));
+        l_result->other_item_ptr = other_item_ptr;
+        return l_result;
+    }
+
+    std::string       item_uid;
+    std::string       other_item_uid;
+    const MindMatter *item_ptr;
+    const MindMatter *other_item_ptr;
+    ChangeType        type;
+    std::string       time;
+    std::string       key;
+    std::string       value;
+
 private:
-    JournalItem( const std::string &Uid, ChangeType Type )
-        : uid   ( Uid )
-        , type  ( Type )
-        , time  ( zm::common::time_stamp_iso_ext() )
-        , key   ( )
-        , value ( )
+
+    JournalItem( const std::string &item_uid, ChangeType Type )
+        : item_ptr      ( NULL )
+        , other_item_ptr( NULL )
+        , item_uid      ( item_uid )
+        , other_item_uid( "" )
+        , type          ( Type )
+        , time          ( zm::common::time_stamp_iso_ext() )
+        , key           ( )
+        , value         ( )
     {
     }
+
+    JournalItem( const MindMatter *item_ptr, ChangeType Type )
+        : item_ptr      ( item_ptr )
+        , other_item_ptr( NULL )
+        , item_uid      ( "" )
+        , other_item_uid( "" )
+        , type          ( Type )
+        , time          ( zm::common::time_stamp_iso_ext() )
+        , key           ( )
+        , value         ( )
+    {
+    }
+
+    JournalItem(const JournalItem &);
+    JournalItem & operator=( const JournalItem & );
 };
 
 /// classifies difference from one model to another. Can be constructed

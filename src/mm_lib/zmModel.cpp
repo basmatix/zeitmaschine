@@ -92,6 +92,7 @@ ChangeSet zm::MindMatterModel::diff( const MindMatterModel &a_other ) const
         if( l_other_item_it == a_other.m_things.left.end() )
         {
             l_return.add_remove_entry( l_this_item_id );
+            continue;
         }
 
         if( *i.right != *l_other_item_it->second )
@@ -115,8 +116,6 @@ ChangeSet zm::MindMatterModel::diff( const MindMatterModel &a_other ) const
         /// insert i into l_return
         l_return.add_item( i.right->toDiff(l_other_item_id) );
     }
-
-    /// if we reach this point the maps must be equal
 
     return l_return;
 }
@@ -323,24 +322,26 @@ void zm::MindMatterModel::applyChangeSet( const ChangeSet &changeSet )
 {
     BOOST_FOREACH( const journal_ptr_t &j, changeSet.getJournal() )
     {
-        MindMatterModelMapType::left_iterator l_item_it( m_things.left.find( j->uid ) );
+        MindMatterModelMapType::left_iterator l_item_it( m_things.left.find( j->item_uid ) );
 
         if( j->type == JournalItem::CreateItem && l_item_it != m_things.left.end() )
         {
-            tracemessage( "WARNING: tried to create already existant item '%s'", j->uid.c_str() );
+            tracemessage( "WARNING: tried to create already existant item '%s'",
+                          j->item_uid.c_str() );
             continue;
         }
 
         if( j->type != JournalItem::CreateItem && l_item_it == m_things.left.end() )
         {
-            tracemessage( "WARNING: trying to modify item non existent item '%s'", j->uid.c_str() );
+            tracemessage( "WARNING: trying to modify item non existent item '%s'",
+                          j->item_uid.c_str() );
             assert( j->type == JournalItem::CreateItem || l_item_it != m_things.left.end() );
         }
 
         switch( j->type )
         {
         case JournalItem::CreateItem:
-            _createNewItem( j->uid, j->value, j->time );
+            _createNewItem( j->item_uid, j->value, j->time );
             break;
         case JournalItem::SetStringValue:
             _setValue(l_item_it, j->key, j->value );
@@ -348,12 +349,12 @@ void zm::MindMatterModel::applyChangeSet( const ChangeSet &changeSet )
         case JournalItem::EraseItem:
             _eraseItem( l_item_it );
             break;
-        case JournalItem::AddAttribute:
-            _addTag( l_item_it, j->key );
-            break;
-        case JournalItem::RemoveAttribute:
-            _removeTag( l_item_it, j->key );
-            break;
+//        case JournalItem::AddAttribute:
+//            _addTag( l_item_it, j->key );
+//            break;
+//        case JournalItem::RemoveAttribute:
+//            _removeTag( l_item_it, j->key );
+//            break;
         case JournalItem::ChangeCaption:
             _setCaption( l_item_it, j->value );
             break;

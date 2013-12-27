@@ -145,24 +145,90 @@ bool zm::MindMatter::equals( const MindMatter & other )
     return true;
 }
 
-/// returns a journal creating this item
-zm::journal_item_vec_t zm::MindMatter::toDiff( const std::string &uid ) const
+zm::journal_item_vec_t zm::MindMatter::toDiff( const std::string &a_uid ) const
 {
     journal_item_vec_t l_result;
-    l_result.push_back(JournalItem::createCreate(uid, m_caption));
 
-    // [todo] - change neighbours
-    // [todo] - change string values
+    l_result.push_back(JournalItem::createCreate(this, m_caption));
+
+    BOOST_FOREACH(const string_value_map_type::value_type &l_entry, m_string_values)
+    {
+        l_result.push_back(JournalItem::createSetStringValue(
+                               this, l_entry.first, l_entry.second));
+    }
+
+    BOOST_FOREACH(const MindMatter * l_neighbour, m_neighbours)
+    {
+        l_result.push_back(JournalItem::createConnect(
+                               this, l_neighbour));
+    }
+
     return l_result;
 }
 
-/// returns a journal which would turn this item into the other
-zm::journal_item_vec_t zm::MindMatter::diff( const MindMatter & other ) const
+zm::journal_item_vec_t zm::MindMatter::diff( const MindMatter & a_other ) const
 {
     journal_item_vec_t l_result;
-    // [todo] - check caption
+
+    ///
+    /// compare caption
+    ///
+
+    if( m_caption != a_other.m_caption)
+    {
+        l_result.push_back(JournalItem::createChangeCaption(
+                               this, a_other.m_caption));
+    }
+
+    ///
+    /// compare string values
+    ///
+
+    std::set< std::string > l_done_keys;
+
+    /// go through all elements of m_string_values
+    BOOST_FOREACH( const string_value_map_type::value_type &i, m_string_values )
+    {
+        const std::string &l_key(i.first);
+
+        l_done_keys.insert( l_key );
+
+        /// find the key in the other map
+        string_value_map_type::const_iterator l_other_it(
+                    a_other.m_string_values.find( l_key ) );
+
+        if( l_other_it == a_other.m_string_values.end() )
+        {
+            l_result.push_back(JournalItem::createSetStringValue(
+                                   this, l_key, ""));
+            continue;
+        }
+        if( i.second != l_other_it->second )
+        {
+            l_result.push_back(JournalItem::createSetStringValue(
+                                   this, l_key, l_other_it->second));
+        }
+    }
+
+    BOOST_FOREACH( const string_value_map_type::value_type &i, a_other.m_string_values )
+    {
+        const std::string &l_other_key(i.first);
+
+        /// prune keys we handled already
+        if( l_done_keys.find( l_other_key ) != l_done_keys.end() )
+        {
+            continue;
+        }
+
+        l_result.push_back(JournalItem::createSetStringValue(
+                               this, l_other_key, i.second));
+    }
+
+    ///
+    /// compare connections
+    ///
+
     // [todo] - check neighbours
-    // [todo] - check string values
     return l_result;
 }
 
