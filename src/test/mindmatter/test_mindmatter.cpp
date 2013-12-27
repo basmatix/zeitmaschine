@@ -113,27 +113,38 @@ bool mm_diff_and_reapply()
                  "both model should hold same data" );
 
 
-    //
-    // modify m1
-    //
+    // make some modification on m1
 
-    l_m1.createNewItem("some new item");
+    std::string item1 = l_m1.createNewItem("some new item");
 
-    // TBD
+    test_assert( l_m2 != l_m1, "models should differ from each other" );
 
-    test_assert( l_m2 != l_m1,
-                 "models should differ from each other" );
-
-    //
     // generate a change set
-    //
-    zm::ChangeSet c = l_m2.diff( l_m1 );
+
+    zm::ChangeSet l_changeset = l_m2.diff( l_m1 );
+
+    // and apply it
+    l_m2.applyChangeSet( l_changeset );
+
+    // compare again
+    test_assert( l_m2.equals( l_m1, true ),
+                 "both model should hold same data after applying changeset" );
+
+    // some more modification
+    std::string item2 = l_m1.createNewItem("yet some new item");
+
+    l_m1.connect(item1, item2);
+
+    test_assert( l_m2 != l_m1, "models should differ from each other" );
+
+    // generate a change set
+    l_changeset = l_m2.diff( l_m1 );
 
     // apply
-    l_m2.applyChangeSet( c );
+    l_m2.applyChangeSet( l_changeset );
 
     // compare
-    test_assert( l_m2 == l_m1,
+    test_assert( l_m2.equals( l_m1, true ),
                  "both model should hold same data after applying changeset" );
 
 
