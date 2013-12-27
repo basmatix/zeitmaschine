@@ -17,11 +17,14 @@ namespace zm
 
     public:
 
-        typedef std::map< std::string, std::string > string_value_map_type;
+        typedef std::map< std::string, std::string >   string_value_map_type;
+        typedef std::pair< MindMatter *, std::string > item_uid_pair_t;
+        typedef std::map< MindMatter *, std::string >  item_uid_map_t;
 
         std::string                 m_caption;    // [todo] - should be value
         string_value_map_type       m_string_values;
-        std::set< MindMatter * >    m_neighbours;
+        //std::set< MindMatter * >    m_neighbours;
+        item_uid_map_t              m_neighbours_;
 
     public:
 
@@ -45,7 +48,9 @@ namespace zm
         journal_item_vec_t toDiff( const std::string &uid ) const;
 
         /// returns a journal which would turn this item into the other
-        journal_item_vec_t diff( const MindMatter & other ) const;
+        journal_item_vec_t diff(
+                const std::string &uid,
+                const MindMatter  &other ) const;
 
         std::string getHash( ) const;
 
@@ -71,7 +76,7 @@ namespace zm
 zm::MindMatter::MindMatter( const std::string &caption)
     : m_caption         ( caption )
     , m_string_values   ()
-    , m_neighbours      ()
+    , m_neighbours_     ()
 {
 }
 
@@ -134,7 +139,7 @@ bool zm::MindMatter::equals( const MindMatter & other )
     }
 
     if(m_string_values.size() != other.m_string_values.size()
-    || m_neighbours.size()    != other.m_neighbours.size() )
+    || m_neighbours_.size()    != other.m_neighbours_.size() )
     {
         return false;
     }
@@ -149,24 +154,42 @@ zm::journal_item_vec_t zm::MindMatter::toDiff( const std::string &a_uid ) const
 {
     journal_item_vec_t l_result;
 
-    l_result.push_back(JournalItem::createCreate(this, m_caption));
+    l_result.push_back(JournalItem::createCreate(a_uid, m_caption));
 
     BOOST_FOREACH(const string_value_map_type::value_type &l_entry, m_string_values)
     {
         l_result.push_back(JournalItem::createSetStringValue(
-                               this, l_entry.first, l_entry.second));
+                               a_uid, l_entry.first, l_entry.second));
     }
 
-    BOOST_FOREACH(const MindMatter * l_neighbour, m_neighbours)
+    BOOST_FOREACH(const item_uid_pair_t l_neighbour, m_neighbours_)
     {
         l_result.push_back(JournalItem::createConnect(
-                               this, l_neighbour));
+                               a_uid, l_neighbour.second));
     }
 
     return l_result;
 }
 
-zm::journal_item_vec_t zm::MindMatter::diff( const MindMatter & a_other ) const
+
+std::set< std::string > get_neighbour_uids(
+        const zm::MindMatter::item_uid_map_t &neighbours )
+{
+    std::set< std::string > l_result;
+
+    BOOST_FOREACH(const zm::MindMatter::item_uid_pair_t l_neighbour, neighbours)
+    {
+        std::pair< std::set< std::string >::iterator, bool > l_success =
+                l_result.insert(l_neighbour.second);
+
+        assert( l_success.second );
+    }
+    return l_result;
+}
+
+zm::journal_item_vec_t zm::MindMatter::diff(
+        const std::string &a_uid,
+        const MindMatter  &a_other ) const
 {
     journal_item_vec_t l_result;
 
@@ -177,7 +200,7 @@ zm::journal_item_vec_t zm::MindMatter::diff( const MindMatter & a_other ) const
     if( m_caption != a_other.m_caption)
     {
         l_result.push_back(JournalItem::createChangeCaption(
-                               this, a_other.m_caption));
+                               a_uid, a_other.m_caption));
     }
 
     ///
@@ -200,13 +223,13 @@ zm::journal_item_vec_t zm::MindMatter::diff( const MindMatter & a_other ) const
         if( l_other_it == a_other.m_string_values.end() )
         {
             l_result.push_back(JournalItem::createSetStringValue(
-                                   this, l_key, ""));
+                                   a_uid, l_key, ""));
             continue;
         }
         if( i.second != l_other_it->second )
         {
             l_result.push_back(JournalItem::createSetStringValue(
-                                   this, l_key, l_other_it->second));
+                                   a_uid, l_key, l_other_it->second));
         }
     }
 
@@ -221,14 +244,47 @@ zm::journal_item_vec_t zm::MindMatter::diff( const MindMatter & a_other ) const
         }
 
         l_result.push_back(JournalItem::createSetStringValue(
-                               this, l_other_key, i.second));
+                               a_uid, l_other_key, i.second));
     }
 
     ///
     /// compare connections
     ///
 
-    // [todo] - check neighbours
+    std::set< std::string > l_this_neighbours(
+                get_neighbour_uids(m_neighbours_));
+
+    std::set< std::string > l_other_neighbours(
+            get_neighbour_uids(a_other.m_neighbours_));
+
+    std::set< std::string > l_only_in_this;
+
+    std::set_difference(
+                l_this_neighbours.begin(), l_this_neighbours.end(),
+                l_other_neighbours.begin(), l_other_neighbours.end(),
+                std::inserter(
+                    l_only_in_this, l_only_in_this.end()));
+
+    std::set< std::string > l_only_in_other;
+
+    std::set_difference(
+                l_other_neighbours.begin(), l_other_neighbours.end(),
+                l_this_neighbours.begin(), l_this_neighbours.end(),
+                std::inserter(
+                    l_only_in_other, l_only_in_other.end()));
+
+    BOOST_FOREACH( const std::string &i, l_only_in_this )
+    {
+        l_result.push_back(JournalItem::createDisconnect(
+                               a_uid, i));
+    }
+
+    BOOST_FOREACH( const std::string &i, l_only_in_other )
+    {
+        l_result.push_back(JournalItem::createConnect(
+                               a_uid, i));
+    }
+
     return l_result;
 }
 
