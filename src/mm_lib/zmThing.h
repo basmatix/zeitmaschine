@@ -42,7 +42,7 @@ namespace zm
         // todo: should be visitor stuff
         bool contentMatchesString( const std::string &searchString ) const;
 
-        bool equals( const MindMatter & other );
+        bool equals( const MindMatter & other, bool tell_why = false );
 
         /// returns a journal creating this item
         journal_item_vec_t toDiff( const std::string &uid ) const;
@@ -66,6 +66,8 @@ namespace zm
 #include <algorithm>
 #include <boost/functional/hash.hpp>
 #include <boost/foreach.hpp>
+
+#include <mm/zmTrace.h>
 
 #include <assert.h>
 
@@ -131,16 +133,33 @@ bool zm::MindMatter::contentMatchesString( const std::string &searchString ) con
     return false;
 }
 
-bool zm::MindMatter::equals( const MindMatter & other )
+bool zm::MindMatter::equals( const MindMatter & other, bool tell_why )
 {
     if( m_caption != other.m_caption )
     {
+        if(tell_why)
+        {
+            tracemessage( "equals(): captions differ. '%s'<>'%s'",
+                          m_caption.c_str(), other.m_caption.c_str() );
+        }
         return false;
     }
 
-    if(m_string_values.size() != other.m_string_values.size()
-    || m_neighbours_.size()    != other.m_neighbours_.size() )
+    if(m_string_values.size() != other.m_string_values.size() )
     {
+        if(tell_why)
+        {
+            tracemessage( "equals(): sizes of string values differ." );
+        }
+        return false;
+    }
+
+    if(m_neighbours_.size() != other.m_neighbours_.size() )
+    {
+        if(tell_why)
+        {
+            tracemessage( "equals(): sizes of m_neighbours_ differ." );
+        }
         return false;
     }
 
@@ -311,12 +330,12 @@ std::string zm::MindMatter::getHash( ) const
 
 bool zm::MindMatter::operator== ( const MindMatter &other )
 {
-    return false;
+    return equals(other);
 }
 
 bool zm::MindMatter::operator!= ( const MindMatter &other )
 {
-    return !this->operator ==( other );
+    return !equals(other);
 }
 
 #endif

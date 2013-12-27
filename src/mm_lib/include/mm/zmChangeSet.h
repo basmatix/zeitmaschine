@@ -45,7 +45,7 @@ public:
     {
         journal_ptr_t l_result =
                 journal_ptr_t(new JournalItem(item_uid, CreateItem));
-        l_result->key = caption;
+        l_result->value = caption;
         return l_result;
     }
 
@@ -171,20 +171,21 @@ public:
     }
 
     void add_remove_entry( const std::string node_uid )
-    {}
+    {
+        m_journal.push_back( JournalItem::createErase(node_uid));
+    }
 
-    void add_item_update(journal_item_vec_t changes)
-    {}
-
-    void add_item(journal_item_vec_t changes)
-    {}
+    void append(journal_item_vec_t changes)
+    {
+        m_journal.insert(m_journal.end(), changes.begin(), changes.end());
+    }
 
     void clear();
 
 private:
 
     //ChangeSet( const ChangeSet & );
-    ChangeSet & operator=( const ChangeSet & );
+    //ChangeSet & operator=( const ChangeSet & );
 
     void load( const std::string &journalFileName );
 

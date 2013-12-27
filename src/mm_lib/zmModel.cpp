@@ -40,10 +40,15 @@ zm::MindMatterModel::MindMatterModel()
 {
 }
 
-bool zm::MindMatterModel::operator==( const zm::MindMatterModel &other )
+bool zm::MindMatterModel::equals(
+        const zm::MindMatterModel &other,
+        bool tell_why ) const
 {
     /// prune if models differ in size
-    if( m_things.size() != other.m_things.size() ) return false;
+    if( m_things.size() != other.m_things.size() )
+    {
+        return false;
+    }
 
     /// go through all elements of m_things - note that we don't have
     /// to do this for the second model
@@ -56,7 +61,10 @@ bool zm::MindMatterModel::operator==( const zm::MindMatterModel &other )
         if( l_item_it == other.m_things.left.end() ) return false;
 
         /// values differ? return false!
-        if( *i.right != *l_item_it->second ) return false;
+        if( ! i.right->equals( *l_item_it->second, tell_why ) )
+        {
+            return false;
+        }
     }
 
     /// if we reach this point the maps must be equal
@@ -64,9 +72,14 @@ bool zm::MindMatterModel::operator==( const zm::MindMatterModel &other )
     return true;
 }
 
-bool zm::MindMatterModel::operator!=( const zm::MindMatterModel &other )
+bool zm::MindMatterModel::operator==( const zm::MindMatterModel &other ) const
 {
-    return !this->operator ==( other );
+    return equals( other );
+}
+
+bool zm::MindMatterModel::operator!=( const zm::MindMatterModel &other ) const
+{
+    return ! equals( other );
 }
 
 ChangeSet zm::MindMatterModel::diff( const MindMatterModel &a_other ) const
@@ -97,9 +110,9 @@ ChangeSet zm::MindMatterModel::diff( const MindMatterModel &a_other ) const
 
         if( *i.right != *l_other_item_it->second )
         {
-            l_return.add_item_update(i.right->diff(
-                                         l_this_item_id,
-                                        *l_other_item_it->second));
+            l_return.append(i.right->diff(
+                                l_this_item_id,
+                               *l_other_item_it->second));
         }
     }
 
@@ -116,7 +129,7 @@ ChangeSet zm::MindMatterModel::diff( const MindMatterModel &a_other ) const
         /// (*this) - so just upate l_return to contain i
 
         /// insert i into l_return
-        l_return.add_item( i.right->toDiff(l_other_item_id) );
+        l_return.append( i.right->toDiff(l_other_item_id) );
     }
 
     return l_return;
@@ -362,14 +375,18 @@ void zm::MindMatterModel::applyChangeSet( const ChangeSet &changeSet )
             break;
         case JournalItem::Connect:
         {
-            MindMatterModelMapType::left_iterator l_item2_it( m_things.left.find( j->value ) );
-            assert( l_item2_it != m_things.left.end() );
+            MindMatterModelMapType::left_iterator l_item2_it(
+                        m_things.left.find( j->value ) );
+            assert( l_item2_it != m_things.left.end() &&
+                    "item to connect must exist");
             _connect( l_item_it, l_item2_it );
         } break;
         case JournalItem::Disconnect:
         {
-            MindMatterModelMapType::left_iterator l_item2_it( m_things.left.find( j->value ) );
-            assert( l_item2_it != m_things.left.end() );
+            MindMatterModelMapType::left_iterator l_item2_it(
+                        m_things.left.find( j->value ) );
+            assert( l_item2_it != m_things.left.end() &&
+                    "item to disconnect from must exist");
             _disconnect( l_item_it, l_item2_it );
         } break;
         }

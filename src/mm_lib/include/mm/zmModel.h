@@ -40,8 +40,9 @@ namespace zm
 
         MindMatterModel();
 
-        bool operator==( const MindMatterModel &other );
-        bool operator!=( const MindMatterModel &other );
+        bool equals( const MindMatterModel &other, bool tell_why = false ) const;
+        bool operator==( const MindMatterModel &other ) const;
+        bool operator!=( const MindMatterModel &other ) const;
 
         void setConfigPersistance( bool value );
 
@@ -114,11 +115,11 @@ namespace zm
     public:
 
         const MindMatterModelMapType & things() const;
-
+/*
         bool equals(
                 const MindMatterModelMapType &thingsMap,
                 const MindMatterModelMapType &thingsMapOther ) const;
-
+*/
         size_t getItemCount() const;
 
         std::time_t getCreationTime(
