@@ -70,6 +70,13 @@ bool mm_diff_and_reapply()
     if( boost::filesystem::exists( "./test-localfolder" ) )
         boost::filesystem::remove_all( "./test-localfolder" );
 
+    // [todo] - test circular dependencies like
+    //          [new item 1] <=> [new item 2]
+    // [todo] - test new connections
+    // [todo] - test deleted connections
+    // [todo] - test tags across different 'devices'
+    // [todo] - test deletion of string values
+
 
     //
     // create first model
