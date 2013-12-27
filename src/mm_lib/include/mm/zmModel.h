@@ -60,7 +60,7 @@ namespace zm
         /// will write recent changes to the journal file
         void localSave();
 
-        /// make a fulf model sync.
+        /// make a full model sync.
         /// first load and apply new journal files in the sync folders. Then
         /// write the local model files and make the temporary journal file
         /// available to the sync folders and
@@ -115,27 +115,43 @@ namespace zm
 
         const MindMatterModelMapType & things() const;
 
-        bool equals( const MindMatterModelMapType &thingsMap, const MindMatterModelMapType &thingsMapOther ) const;
+        bool equals(
+                const MindMatterModelMapType &thingsMap,
+                const MindMatterModelMapType &thingsMapOther ) const;
 
         size_t getItemCount() const;
 
-        std::time_t getCreationTime( const std::string &uid ) const;
+        std::time_t getCreationTime(
+                const std::string &uid ) const;
 
-        bool hasItem( const std::string &uid ) const;
+        bool hasItem(
+                const std::string &uid ) const;
 
-        std::string getValue( const std::string &uid, const std::string &name ) const;
+        std::string getValue(
+                const std::string &uid,
+                const std::string &name ) const;
 
-        const std::string & getCaption( const std::string &uid ) const;
+        const std::string & getCaption(
+                const std::string &uid ) const;
 
-        bool hasTag( const std::string &uid, const std::string &tag_name ) const;
+        bool hasTag(
+                const std::string &uid,
+                const std::string &tag_name ) const;
 
-        bool hasValue( const std::string &uid, const std::string &name ) const;
+        bool hasValue(
+                const std::string &uid,
+                const std::string &name ) const;
 
-        bool itemContentMatchesString( const std::string &uid, const std::string &searchString ) const;
+        bool itemContentMatchesString(
+                const std::string &uid,
+                const std::string &searchString ) const;
 
-        bool isConnected( const std::string &node1_uid, const std::string &node2_uid ) const;
+        bool isConnected(
+                const std::string &node1_uid,
+                const std::string &node2_uid ) const;
 
-        std::list< std::string > getNeighbours( const std::string &node_uid );
+        std::list< std::string > getNeighbours(
+                const std::string &node_uid ) const;
 
 private:
         bool _isConnected(
@@ -145,39 +161,75 @@ private:
     /// write relevant interface
     public:
 
-        std::string createNewItem( const std::string &caption, const std::string &uid = "" );
+        std::string createNewItem(
+                const std::string &caption,
+                const std::string &uid = "" );
 
-        void eraseItem( const std::string &uid );
+        void eraseItem(
+                const std::string &uid );
 
-        void addTag( const std::string &uid, const std::string &tag_name );
+        void addTag(
+                const std::string &uid,
+                const std::string &tag_name );
 
-        bool removeTag( const std::string &uid, const std::string &tag_name );
+        bool removeTag(
+                const std::string &uid,
+                const std::string &tag_name );
 
-        void setValue( const std::string &uid, const std::string &name, const std::string &value );
+        void setValue(
+                const std::string &uid,
+                const std::string &name,
+                const std::string &value );
 
-        void setCaption( const std::string &uid, const std::string &caption );
+        void setCaption(
+                const std::string &uid,
+                const std::string &caption );
 
-        void connect( const std::string &node1_uid, const std::string &node2_uid );
+        void connect(
+                const std::string &node1_uid,
+                const std::string &node2_uid );
 
-        void disconnect( const std::string &node1_uid, const std::string &node2_uid );
+        void disconnect(
+                const std::string &node1_uid,
+                const std::string &node2_uid );
 
-        std::string findOrCreateTagItem( const std::string &name );
+        std::string findOrCreateTagItem(
+                const std::string &name );
 
     private:
 
-        void _createNewItem( const std::string &uid, const std::string &caption, const std::string &time );
+        void _createNewItem(
+                const std::string &uid,
+                const std::string &caption,
+                const std::string &time );
 
-        void _eraseItem( MindMatterModelMapType::left_iterator &item );
+        void _eraseItem(
+                MindMatterModelMapType::left_iterator &item );
 
-        void _addTag( MindMatterModelMapType::left_iterator &item, const std::string &tag_name );
+        void _addTag(
+                MindMatterModelMapType::left_iterator &item,
+                const std::string &tag_name );
 
-        bool _removeTag( MindMatterModelMapType::left_iterator &item, const std::string &tag_name );
+        bool _removeTag(
+                MindMatterModelMapType::left_iterator &item,
+                const std::string &tag_name );
 
-        bool _setValue( MindMatterModelMapType::left_iterator &item, const std::string &name, const std::string &value );
+        bool _setValue(
+                MindMatterModelMapType::left_iterator &item,
+                const std::string &name,
+                const std::string &value );
 
-        bool _setCaption( MindMatterModelMapType::left_iterator &item, const std::string &caption );
+        bool _setCaption(
+                MindMatterModelMapType::left_iterator &item,
+                const std::string &caption );
 
-        void _connect( MindMatterModelMapType::left_iterator &item1, MindMatterModelMapType::left_iterator &item2 );
+        void _connect(
+                MindMatterModelMapType::left_iterator &item1,
+                MindMatterModelMapType::left_iterator &item2 );
+
+        void _disconnect(
+                MindMatterModelMapType::left_iterator &item1,
+                MindMatterModelMapType::left_iterator &item2 );
 
         // returns 16x8 bit
         static std::string generateUid();
