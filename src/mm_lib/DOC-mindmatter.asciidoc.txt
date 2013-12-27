@@ -1,0 +1,29 @@
+mindmatter - zeitmaschine core
+==============================
+:toc:
+:icons:
+:numbered:
+:website: http://www.scitics.de
+//=-~^+
+
+
+.*mindmatter item*
+****************************************************************************
+one mm item ('thing') consists of
+
+* a unique random generated UID
+* a caption
+* a list of key-value pairs (string-string)
+* a list of connections to other items
+
+An item can also be a tag. A tag is just an item with it's caption as name
+to make it unique across devices an users.
+****************************************************************************
+
+
+.*uid -> item mapping*
+****************************************************************************
+* UIDs are NOT part of the items.
+* There's rather a bimap located in zmModel mapping from strings to
+  items and vice versa
+****************************************************************************
