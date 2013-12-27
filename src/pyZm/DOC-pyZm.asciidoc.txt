@@ -1,0 +1,12 @@
+python interface to zeitmaschine
+================================
+
+1. aim and todo
+---------------
+
+
+["asciitest", "example_test", "python", type="special_test"]
+----
+import pyZm
+model = pyZm.zmGtdModel()
+----
