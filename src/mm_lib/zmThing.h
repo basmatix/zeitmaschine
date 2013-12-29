@@ -23,40 +23,39 @@ namespace zm
 
         std::string                 m_caption;    // [todo] - should be value
         string_value_map_type       m_string_values;
-        //std::set< MindMatter * >    m_neighbours;
-        item_uid_map_t              m_neighbours_;
+        item_uid_map_t              m_neighbours;
 
     public:
 
-        MindMatter( const std::string &caption);
+        inline MindMatter( const std::string &caption);
 
-        void addValue( const std::string &name, const std::string &value );
+        inline void addValue( const std::string &name, const std::string &value );
 
-        bool hasValue( const std::string &name ) const;
+        inline bool hasValue( const std::string &name ) const;
 
-        std::string getValue( const std::string &name ) const;
+        inline std::string getValue( const std::string &name ) const;
 
         // [todo] - should be visitor stuff
-        static bool stringFind(const std::string &bigString, const std::string &pattern);
+        inline static bool stringFind(const std::string &bigString, const std::string &pattern);
 
         // todo: should be visitor stuff
-        bool contentMatchesString( const std::string &searchString ) const;
+        inline bool contentMatchesString( const std::string &searchString ) const;
 
-        bool equals( const MindMatter & other, bool tell_why = false );
+        inline bool equals( const MindMatter & other, bool tell_why = false );
 
         /// returns a journal creating this item
-        journal_item_vec_t toDiff( const std::string &uid ) const;
+        inline journal_item_vec_t toDiff( const std::string &uid ) const;
 
         /// returns a journal which would turn this item into the other
-        journal_item_vec_t diff(
+        inline journal_item_vec_t diff(
                 const std::string &uid,
                 const MindMatter  &other ) const;
 
-        std::string getHash( ) const;
+        inline std::string getHash( ) const;
 
-        bool operator== ( const MindMatter &other );
+        inline bool operator== ( const MindMatter &other );
 
-        bool operator!= ( const MindMatter &other );
+        inline bool operator!= ( const MindMatter &other );
     };
 }
 
@@ -78,7 +77,7 @@ namespace zm
 zm::MindMatter::MindMatter( const std::string &caption)
     : m_caption         ( caption )
     , m_string_values   ()
-    , m_neighbours_     ()
+    , m_neighbours     ()
 {
 }
 
@@ -154,11 +153,11 @@ bool zm::MindMatter::equals( const MindMatter & other, bool tell_why )
         return false;
     }
 
-    if(m_neighbours_.size() != other.m_neighbours_.size() )
+    if(m_neighbours.size() != other.m_neighbours.size() )
     {
         if(tell_why)
         {
-            tracemessage( "equals(): sizes of m_neighbours_ differ." );
+            tracemessage( "equals(): sizes of m_neighbours differ." );
         }
         return false;
     }
@@ -181,7 +180,7 @@ zm::journal_item_vec_t zm::MindMatter::toDiff( const std::string &a_uid ) const
                                a_uid, l_entry.first, l_entry.second));
     }
 
-    BOOST_FOREACH(const item_uid_pair_t l_neighbour, m_neighbours_)
+    BOOST_FOREACH(const item_uid_pair_t l_neighbour, m_neighbours)
     {
         l_result.push_back(JournalItem::createConnect(
                                a_uid, l_neighbour.second));
@@ -191,7 +190,7 @@ zm::journal_item_vec_t zm::MindMatter::toDiff( const std::string &a_uid ) const
 }
 
 
-std::set< std::string > get_neighbour_uids(
+inline std::set< std::string > get_neighbour_uids(
         const zm::MindMatter::item_uid_map_t &neighbours )
 {
     std::set< std::string > l_result;
@@ -271,10 +270,10 @@ zm::journal_item_vec_t zm::MindMatter::diff(
     ///
 
     std::set< std::string > l_this_neighbours(
-                get_neighbour_uids(m_neighbours_));
+                get_neighbour_uids(m_neighbours));
 
     std::set< std::string > l_other_neighbours(
-            get_neighbour_uids(a_other.m_neighbours_));
+            get_neighbour_uids(a_other.m_neighbours));
 
     std::set< std::string > l_only_in_this;
 
