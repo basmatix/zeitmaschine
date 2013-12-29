@@ -185,3 +185,22 @@ void zm::ChangeSet::clear()
 
     m_journal.clear();
 }
+
+void  zm::ChangeSet::append(journal_item_vec_t a_changes)
+{
+    /// inserts a_changes into m_journal like
+    /// m_journal.insert(m_journal.end(), changes.begin(), changes.end());
+    /// but ensures that CreateItem events are located at the beginning
+
+    BOOST_FOREACH(journal_item_vec_t::value_type &l_change, a_changes)
+    {
+        if( l_change->type == JournalItem::CreateItem )
+        {
+            m_journal.push_front(l_change);
+        }
+        else
+        {
+            m_journal.push_back(l_change);
+        }
+    }
+}

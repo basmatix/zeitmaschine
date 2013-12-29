@@ -12,7 +12,7 @@
 #include "zmCommon.h"
 
 #include <string>
-#include <vector>
+#include <list>
 #include <boost/shared_ptr.hpp>
 
 namespace zm
@@ -21,7 +21,7 @@ namespace zm
 class JournalItem;
 class MindMatter;
 
-typedef std::vector< boost::shared_ptr<JournalItem> >   journal_item_vec_t;
+typedef std::list< boost::shared_ptr<JournalItem> >   journal_item_vec_t;
 typedef boost::shared_ptr< JournalItem >                journal_ptr_t;
 
 class JournalItem
@@ -105,7 +105,7 @@ public:
     {
         journal_ptr_t l_result =
                 journal_ptr_t(new JournalItem(item_uid, Connect));
-        l_result->other_item_uid = other_item_uid;
+        l_result->value = other_item_uid;
         return l_result;
     }
 
@@ -115,12 +115,12 @@ public:
     {
         journal_ptr_t l_result =
                 journal_ptr_t(new JournalItem(item_uid, Disconnect));
-        l_result->other_item_uid = other_item_uid;
+        l_result->value = other_item_uid;
         return l_result;
     }
 
     std::string       item_uid;
-    std::string       other_item_uid;
+    //std::string       other_item_uid;
     ChangeType        type;
     std::string       time;
     std::string       key;
@@ -130,7 +130,6 @@ private:
 
     JournalItem( const std::string &item_uid, ChangeType Type )
         : item_uid      ( item_uid )
-        , other_item_uid( "" )
         , type          ( Type )
         , time          ( zm::common::time_stamp_iso_ext() )
         , key           ( )
@@ -175,10 +174,7 @@ public:
         m_journal.push_back( JournalItem::createErase(node_uid));
     }
 
-    void append(journal_item_vec_t changes)
-    {
-        m_journal.insert(m_journal.end(), changes.begin(), changes.end());
-    }
+    void append(journal_item_vec_t changes);
 
     void clear();
 

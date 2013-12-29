@@ -806,10 +806,6 @@ bool zm::MindMatterModel::removeTag( const std::string &uid, const std::string &
 
     bool l_return = _removeTag( l_item_it, attribute );
 
-//    JournalItem *l_change = new JournalItem( uid, JournalItem::RemoveAttribute );
-//    l_change->key = attribute;
-//    m_changeSet.push_back( l_change );
-
     dirty();
 
     return l_return;
@@ -1005,4 +1001,12 @@ std::string zm::MindMatterModel::generateUid()
         l_return[i] = l_characters[ rand() % 16 ];
     }
     return l_return;
+}
+
+void zm::MindMatterModel::debug_dump() const
+{
+    BOOST_FOREACH(const MindMatterModelMapType::value_type& i, m_things)
+    {
+        tracemessage("%s",i.left.c_str());
+    }
 }

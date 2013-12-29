@@ -95,6 +95,8 @@ namespace zm
 
         ChangeSet diff( const MindMatterModel &other ) const;
 
+        void debug_dump() const;
+
     private:
 
         void loadLocalModel( const std::string &filename );
