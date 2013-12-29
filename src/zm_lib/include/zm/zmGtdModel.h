@@ -95,7 +95,7 @@ public:
 
     void sync()
     {
-        m_things_model.sync();
+        m_things_model.persistence_sync();
     }
 
 /// const interface
@@ -216,7 +216,7 @@ public:
     {
         m_things_model.setCaption( uid, caption );
 
-        m_things_model.localSave();
+        m_things_model.persistence_localSave();
     }
 
     //void save( const std::string &filename )
@@ -228,7 +228,7 @@ public:
     {
         m_things_model.eraseItem( uid );
 
-        m_things_model.localSave();
+        m_things_model.persistence_localSave();
     }
 };
 

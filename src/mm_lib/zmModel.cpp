@@ -33,7 +33,7 @@ zm::MindMatterModel::MindMatterModel()
     : m_things              ()
     , m_localFolder         ( "" )
     , m_localModelFile      ( "" )
-    , m_temporaryJournalFile( "" )
+    //, m_temporaryJournalFile( "" )
     , m_initialized         ( false )
     , m_dirty               ( false )
 {
@@ -202,6 +202,7 @@ void zm::MindMatterModel::initialize()
 
     m_localModelFile = l_ssFileName.str();
 
+    /*
     /// find the name for the temporary session journal- should be equal
     /// across sessions and unique for each client
     // eg. /path/to/zeitmaschine/zm-frans-heizluefter-temp-journal.yaml
@@ -222,19 +223,24 @@ void zm::MindMatterModel::initialize()
     }
 
     tracemessage( "using temp file '%s'", m_temporaryJournalFile.c_str() );
+    */
 
-    loadLocalModel( m_localModelFile );
+    persistence_loadLocalModel( m_localModelFile );
 
-    if( importJournalFiles() )
+    if( persistence_pullJournal() )
     {
-        saveLocalModel( m_localModelFile );
+        persistence_saveLocalModel( m_localModelFile );
     }
 
     m_initialized = true;
 }
 
-void zm::MindMatterModel::makeTempJournalStatic()
+std::string createJournalFileName(
+        const std::string &username,
+        const std::string &hostname )
 {
+//    m_options.getString( "username" ),
+//    m_options.getString( "hostname" ));
     std::stringstream l_ssJournalFile;
     l_ssJournalFile << "zm-"
                     << m_options.getString( "username" )
@@ -244,24 +250,34 @@ void zm::MindMatterModel::makeTempJournalStatic()
                     << zm::common::time_stamp_iso()
                     << "-journal.yaml";
 
-    std::string l_filename = l_ssJournalFile.str();
+    return l_ssJournalFile.str();
+}
+
+/*
+void zm::MindMatterModel::makeTempJournalStatic()
+{
+    std::string l_filename = createJournalFileName(
+                m_options.getString( "username" ),
+                m_options.getString( "hostname" ));
+
     m_options.addStringListElement( "read_journal", l_filename );
 
     l_filename = m_localFolder + "/" + l_filename;
     boost::filesystem::rename( m_temporaryJournalFile, l_filename );
 }
+*/
 
-void zm::MindMatterModel::localSave()
+void zm::MindMatterModel::persistence_localSave()
 {
     /// just for debug purposes - later we will only write the journal
-    saveLocalModel( m_localModelFile );
+    persistence_saveLocalModel( m_localModelFile );
 
     //m_changeSet.write( m_temporaryJournalFile );
 }
 
-void zm::MindMatterModel::sync()
+void zm::MindMatterModel::persistence_sync()
 {
-    saveLocalModel( m_localModelFile );
+    persistence_saveLocalModel( m_localModelFile );
 
 //    if( m_changeSet.write( m_temporaryJournalFile ) )
 //    {
@@ -271,7 +287,7 @@ void zm::MindMatterModel::sync()
 //    m_changeSet.clear();
 }
 
-void zm::MindMatterModel::loadLocalModel( const std::string &filename )
+void zm::MindMatterModel::persistence_loadLocalModel( const std::string &filename )
 {
     clear( m_things );
 
@@ -284,7 +300,7 @@ void zm::MindMatterModel::loadLocalModel( const std::string &filename )
     yamlToThingsMap( l_import, m_things );
 }
 
-bool zm::MindMatterModel::importJournalFiles()
+bool zm::MindMatterModel::persistence_pullJournal()
 {
     bool l_importedJournals = false;
 
@@ -409,7 +425,8 @@ void zm::MindMatterModel::dirty()
 // info regarding string encoding:
 //    http://code.google.com/p/yaml-cpp/wiki/Strings
 
-void zm::MindMatterModel::saveLocalModel( const std::string &filename )
+void zm::MindMatterModel::persistence_saveLocalModel(
+        const std::string &filename )
 {
     /// be careful! if( !m_dirty ) return;
 

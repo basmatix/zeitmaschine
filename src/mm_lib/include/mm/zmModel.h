@@ -31,7 +31,7 @@ namespace zm
         std::string     m_localFolder;
         std::string     m_localModelFile;
 
-        std::string     m_temporaryJournalFile;
+        //std::string     m_temporaryJournalFile;
         bool            m_initialized;
         bool            m_dirty;  // maybe we need more
 
@@ -58,13 +58,13 @@ namespace zm
         void initialize();
 
         /// will write recent changes to the journal file
-        void localSave();
+        void persistence_localSave();
 
         /// make a full model sync.
         /// first load and apply new journal files in the sync folders. Then
         /// write the local model files and make the temporary journal file
         /// available to the sync folders and
-        void sync();
+        void persistence_sync();
 
         void applyChangeSet( const ChangeSet &changeSet );
 
@@ -94,15 +94,15 @@ namespace zm
 
     private:
 
-        void loadLocalModel( const std::string &filename );
-
-        bool importJournalFiles();
-
         void dirty();
 
-        void saveLocalModel( const std::string &filename );
+        void persistence_loadLocalModel( const std::string &filename );
 
-        void makeTempJournalStatic();
+        void persistence_saveLocalModel( const std::string &filename );
+
+        bool persistence_pullJournal();
+
+        //void makeTempJournalStatic();
 
         /// returns a sorted list containing names of journal files
         /// located in the sync folder

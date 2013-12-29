@@ -144,7 +144,7 @@ std::string zmGtdModel::createNewInboxItem( const std::string &caption )
 
     m_things_model.connect( l_item_uid, m_item_inbox );
 
-    m_things_model.localSave();
+    m_things_model.persistence_localSave();
 
     return l_item_uid;
 }
@@ -158,7 +158,7 @@ void zmGtdModel::setNote( const std::string &uid, const std::string &value )
 
     m_things_model.setValue( uid, "gtd_item_note", value );
 
-    m_things_model.localSave();
+    m_things_model.persistence_localSave();
 }
 
 void zmGtdModel::plusOne( const std::string &uid )
@@ -172,7 +172,7 @@ void zmGtdModel::plusOne( const std::string &uid )
 
     m_things_model.setValue( uid, "gtd_importance", boost::lexical_cast<std::string>(l_importance) );
 
-    m_things_model.localSave();
+    m_things_model.persistence_localSave();
 }
 
 void zmGtdModel::registerItemAsTask( const std::string &task_item, const std::string &project_item )
@@ -184,7 +184,7 @@ void zmGtdModel::registerItemAsTask( const std::string &task_item, const std::st
     m_things_model.connect( task_item, m_item_task );
     m_things_model.connect( task_item, project_item );
 
-    m_things_model.localSave();
+    m_things_model.persistence_localSave();
 }
 
 void zmGtdModel::setDone( const std::string &task_item )
@@ -195,7 +195,7 @@ void zmGtdModel::setDone( const std::string &task_item )
     m_things_model.setValue(
                 task_item, "gtd_time_done", zm::common::time_stamp_iso_ext() );
 
-    m_things_model.localSave();
+    m_things_model.persistence_localSave();
 }
 
 void zmGtdModel::castToProject( const std::string &item )
@@ -205,7 +205,7 @@ void zmGtdModel::castToProject( const std::string &item )
     m_things_model.disconnect( item, m_item_inbox );
     m_things_model.connect( item, m_item_project );
 
-    m_things_model.localSave();
+    m_things_model.persistence_localSave();
 }
 
 void zmGtdModel::setNextTask( const std::string &project_item, const std::string &task_item )
@@ -220,7 +220,7 @@ void zmGtdModel::setNextTask( const std::string &project_item, const std::string
     }
     m_things_model.connect( task_item, m_item_next_task );
 
-    m_things_model.localSave();
+    m_things_model.persistence_localSave();
 }
 
     std::string zmGtdModel::createProject( const std::string &project_name )
@@ -229,7 +229,7 @@ void zmGtdModel::setNextTask( const std::string &project_item, const std::string
 
         m_things_model.connect( project_name, m_item_project );
 
-        m_things_model.localSave();
+        m_things_model.persistence_localSave();
 
         return l_item_uid;
     }
