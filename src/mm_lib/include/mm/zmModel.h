@@ -23,18 +23,17 @@ namespace zm
     {
     public:
 
-        typedef boost::bimaps::bimap< std::string, MindMatter * > MindMatterModelMapType;
+        typedef boost::bimaps::bimap< std::string, MindMatter * > uid_mm_bimap_t;
 
     private:
 
-        MindMatterModelMapType  m_things;
-        std::string         m_localFolder;
-        std::string         m_localModelFile;
-        //ChangeSet           m_changeSet;
+        uid_mm_bimap_t  m_things;
+        std::string     m_localFolder;
+        std::string     m_localModelFile;
 
-        std::string         m_temporaryJournalFile;
-        bool                m_initialized;
-        bool                m_dirty;  // maybe we need more
+        std::string     m_temporaryJournalFile;
+        bool            m_initialized;
+        bool            m_dirty;  // maybe we need more
 
     public:
 
@@ -67,15 +66,10 @@ namespace zm
         /// available to the sync folders and
         void sync();
 
-        /// development only: load an external model file and merge items
-        /// which don't exist in the current model
-        void merge( const std::string &modelFile );
+        void applyChangeSet( const ChangeSet &changeSet );
 
         /// returns whether there is a valid username stored
         bool hasUsedUsername() const;
-
-        /// returns whether there is a valid hostname stored
-        bool hasUsedHostname() const;
 
         /// returns the username used by us
         std::string getUsedUsername() const;
@@ -84,14 +78,15 @@ namespace zm
         /// name but doesn't have to
         void setUsedUsername( const std::string &username );
 
+        /// returns whether there is a valid hostname stored
+        bool hasUsedHostname() const;
+
         /// returns the hostname used by us - should be the system user
         /// name but doesn't have to
         std::string getUsedHostname() const;
 
         /// set the hostname used by us
         void setUsedHostname( const std::string &hostname );
-
-        void applyChangeSet( const ChangeSet &changeSet );
 
         ChangeSet diff( const MindMatterModel &other ) const;
 
@@ -116,12 +111,8 @@ namespace zm
     /// const interface
     public:
 
-        const MindMatterModelMapType & things() const;
-/*
-        bool equals(
-                const MindMatterModelMapType &thingsMap,
-                const MindMatterModelMapType &thingsMapOther ) const;
-*/
+        const uid_mm_bimap_t & things() const;
+
         size_t getItemCount() const;
 
         std::time_t getCreationTime(
@@ -158,8 +149,8 @@ namespace zm
 
 private:
         bool _isConnected(
-                MindMatterModelMapType::left_const_iterator item_it1,
-                MindMatterModelMapType::left_const_iterator item_it2 ) const;
+                uid_mm_bimap_t::left_const_iterator item_it1,
+                uid_mm_bimap_t::left_const_iterator item_it2 ) const;
 
     /// write relevant interface
     public:
@@ -207,37 +198,37 @@ private:
                 const std::string &time );
 
         void _eraseItem(
-                MindMatterModelMapType::left_iterator &item );
+                uid_mm_bimap_t::left_iterator &item );
 
         void _addTag(
-                MindMatterModelMapType::left_iterator &item,
+                uid_mm_bimap_t::left_iterator &item,
                 const std::string &tag_name );
 
         bool _removeTag(
-                MindMatterModelMapType::left_iterator &item,
+                uid_mm_bimap_t::left_iterator &item,
                 const std::string &tag_name );
 
         bool _setValue(
-                MindMatterModelMapType::left_iterator &item,
+                uid_mm_bimap_t::left_iterator &item,
                 const std::string &name,
                 const std::string &value );
 
         bool _setCaption(
-                MindMatterModelMapType::left_iterator &item,
+                uid_mm_bimap_t::left_iterator &item,
                 const std::string &caption );
 
         void _connect(
-                MindMatterModelMapType::left_iterator &item1,
-                MindMatterModelMapType::left_iterator &item2 );
+                uid_mm_bimap_t::left_iterator &item1,
+                uid_mm_bimap_t::left_iterator &item2 );
 
         void _disconnect(
-                MindMatterModelMapType::left_iterator &item1,
-                MindMatterModelMapType::left_iterator &item2 );
+                uid_mm_bimap_t::left_iterator &item1,
+                uid_mm_bimap_t::left_iterator &item2 );
 
         // returns 16x8 bit
         static std::string generateUid();
 
-        static void clear( MindMatterModelMapType &thingsMap );
+        static void clear( uid_mm_bimap_t &thingsMap );
     };
 }
 

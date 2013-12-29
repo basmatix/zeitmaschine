@@ -27,7 +27,7 @@ using namespace zm;
 
 zmOptions m_options;
 
-void yamlToThingsMap( YAML::Node yamlNode, MindMatterModel::MindMatterModelMapType &thingsMap );
+void yamlToThingsMap( YAML::Node yamlNode, MindMatterModel::uid_mm_bimap_t &thingsMap );
 
 zm::MindMatterModel::MindMatterModel()
     : m_things              ()
@@ -51,10 +51,10 @@ bool zm::MindMatterModel::equals(
 
     /// go through all elements of m_things - note that we don't have
     /// to do this for the second model
-    BOOST_FOREACH( const MindMatterModelMapType::value_type& i, m_things )
+    BOOST_FOREACH( const uid_mm_bimap_t::value_type& i, m_things )
     {
         /// find the key in the other map
-        MindMatterModelMapType::left_const_iterator l_item_it( other.m_things.left.find( i.left ) );
+        uid_mm_bimap_t::left_const_iterator l_item_it( other.m_things.left.find( i.left ) );
 
         /// not found? return false!
         if( l_item_it == other.m_things.left.end() ) return false;
@@ -91,14 +91,14 @@ ChangeSet zm::MindMatterModel::diff( const MindMatterModel &a_other ) const
     std::set< std::string > l_done_items;
 
     /// go through all elements of m_things
-    BOOST_FOREACH( const MindMatterModelMapType::value_type& i, m_things )
+    BOOST_FOREACH( const uid_mm_bimap_t::value_type& i, m_things )
     {
         const std::string &l_this_item_id(i.left);
 
         l_done_items.insert( l_this_item_id );
 
         /// find the key in the other map
-        MindMatterModelMapType::left_const_iterator l_other_item_it(
+        uid_mm_bimap_t::left_const_iterator l_other_item_it(
                     a_other.m_things.left.find( l_this_item_id ) );
 
         if( l_other_item_it == a_other.m_things.left.end() )
@@ -115,7 +115,7 @@ ChangeSet zm::MindMatterModel::diff( const MindMatterModel &a_other ) const
         }
     }
 
-    BOOST_FOREACH( const MindMatterModelMapType::value_type& i, a_other.m_things )
+    BOOST_FOREACH( const uid_mm_bimap_t::value_type& i, a_other.m_things )
     {
         const std::string &l_other_item_id(i.left);
 
@@ -156,7 +156,9 @@ void zm::MindMatterModel::setLocalFolder( const std::string &a_path )
     m_options.load( m_localFolder + "/zm_config.json" );
 }
 
-void zm::MindMatterModel::addDomainSyncFolder( const std::string &domainName, const std::string &path )
+void zm::MindMatterModel::addDomainSyncFolder(
+        const std::string &domainName,
+        const std::string &path )
 {
     tracemessage( "new domain: %s %s", domainName.c_str(), path.c_str() );
 }
@@ -269,32 +271,6 @@ void zm::MindMatterModel::sync()
 //    m_changeSet.clear();
 }
 
-void zm::MindMatterModel::merge( const std::string &a_modelFile )
-{
-    std::string l_modelFile = m_localFolder + "/" + a_modelFile;
-
-    if( ! boost::filesystem::exists( l_modelFile ) )
-    {
-        return;
-    }
-
-    MindMatterModelMapType l_externalModel;
-
-    YAML::Node l_import = YAML::LoadFile( l_modelFile );
-
-    yamlToThingsMap( l_import, l_externalModel );
-
-    BOOST_FOREACH( const MindMatterModelMapType::value_type& i, l_externalModel )
-    {
-        if( m_things.left.find( i.left ) == m_things.left.end() )
-        {
-            tracemessage( "external item not in local model: %s", i.left.c_str() );
-            m_things.insert( MindMatterModelMapType::value_type(i.left,i.right) );
-        }
-    }
-    saveLocalModel( m_localModelFile );
-}
-
 void zm::MindMatterModel::loadLocalModel( const std::string &filename )
 {
     clear( m_things );
@@ -336,7 +312,7 @@ void zm::MindMatterModel::applyChangeSet( const ChangeSet &changeSet )
 {
     BOOST_FOREACH( const journal_ptr_t &j, changeSet.getJournal() )
     {
-        MindMatterModelMapType::left_iterator l_item_it( m_things.left.find( j->item_uid ) );
+        uid_mm_bimap_t::left_iterator l_item_it( m_things.left.find( j->item_uid ) );
 
         if( j->type == JournalItem::CreateItem && l_item_it != m_things.left.end() )
         {
@@ -374,7 +350,7 @@ void zm::MindMatterModel::applyChangeSet( const ChangeSet &changeSet )
             break;
         case JournalItem::Connect:
         {
-            MindMatterModelMapType::left_iterator l_item2_it(
+            uid_mm_bimap_t::left_iterator l_item2_it(
                         m_things.left.find( j->value ) );
             assert( l_item2_it != m_things.left.end() &&
                     "item to connect must exist");
@@ -382,7 +358,7 @@ void zm::MindMatterModel::applyChangeSet( const ChangeSet &changeSet )
         } break;
         case JournalItem::Disconnect:
         {
-            MindMatterModelMapType::left_iterator l_item2_it(
+            uid_mm_bimap_t::left_iterator l_item2_it(
                         m_things.left.find( j->value ) );
             assert( l_item2_it != m_things.left.end() &&
                     "item to disconnect from must exist");
@@ -461,7 +437,7 @@ void zm::MindMatterModel::saveLocalModel( const std::string &filename )
 
     l_yaml_emitter << YAML::BeginSeq;
 
-    BOOST_FOREACH(const MindMatterModelMapType::value_type& i, m_things)
+    BOOST_FOREACH(const uid_mm_bimap_t::value_type& i, m_things)
     {
         l_yaml_emitter << YAML::BeginMap;
 
@@ -508,7 +484,7 @@ void zm::MindMatterModel::saveLocalModel( const std::string &filename )
     }
 }
 
-const zm::MindMatterModel::MindMatterModelMapType & zm::MindMatterModel::things() const
+const zm::MindMatterModel::uid_mm_bimap_t & zm::MindMatterModel::things() const
 {
     return m_things;
 }
@@ -518,16 +494,16 @@ size_t zm::MindMatterModel::getItemCount() const
     return m_things.size();
 }
 
-void zm::MindMatterModel::clear( MindMatterModelMapType &thingsMap )
+void zm::MindMatterModel::clear( uid_mm_bimap_t &thingsMap )
 {
-    BOOST_FOREACH(const MindMatterModelMapType::value_type& i, thingsMap)
+    BOOST_FOREACH(const uid_mm_bimap_t::value_type& i, thingsMap)
     {
         delete i.right;
     }
     thingsMap.clear();
 }
 
-void yamlToThingsMap( YAML::Node yamlNode, zm::MindMatterModel::MindMatterModelMapType &thingsMap )
+void yamlToThingsMap( YAML::Node yamlNode, zm::MindMatterModel::uid_mm_bimap_t &thingsMap )
 {
     BOOST_FOREACH( YAML::Node n, yamlNode )
     {
@@ -579,7 +555,7 @@ void yamlToThingsMap( YAML::Node yamlNode, zm::MindMatterModel::MindMatterModelM
         }
         assert( l_new_thing->hasValue("global_time_created") );
 
-        thingsMap.insert( zm::MindMatterModel::MindMatterModelMapType::value_type( l_uid, l_new_thing ) );
+        thingsMap.insert( zm::MindMatterModel::uid_mm_bimap_t::value_type( l_uid, l_new_thing ) );
     }
 }
 
@@ -598,7 +574,7 @@ std::string zm::MindMatterModel::generateUid()
 
 void zm::MindMatterModel::debug_dump() const
 {
-    BOOST_FOREACH(const MindMatterModelMapType::value_type& i, m_things)
+    BOOST_FOREACH(const uid_mm_bimap_t::value_type& i, m_things)
     {
         tracemessage("%s",i.left.c_str());
     }

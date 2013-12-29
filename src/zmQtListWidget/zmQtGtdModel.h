@@ -83,11 +83,6 @@ public:
         m_gtd_model.sync();
     }
 
-    void merge( const QString &modelFile )
-    {
-        m_gtd_model.merge( modelFile.toUtf8().constData() );
-    }
-
     // todo: eventually provide some sort of export functionality for
     //       development purposes
     // void save( const std::string &filename )

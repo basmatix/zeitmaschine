@@ -98,11 +98,6 @@ public:
         m_things_model.sync();
     }
 
-    void merge( const std::string &modelFile )
-    {
-        m_things_model.merge( modelFile );
-    }
-
 /// const interface
 public:
 

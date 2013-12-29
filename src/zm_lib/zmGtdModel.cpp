@@ -16,7 +16,7 @@ std::list< std::string > zmGtdModel::getInboxItems( bool includeDoneItems ) cons
 {
     std::list< std::string > l_return;
 /*
-    BOOST_FOREACH(const zm::MindMatterModel::MindMatterModelMapType::value_type& i, m_things_model.things() )
+    BOOST_FOREACH(const zm::MindMatterModel::uid_mm_bimap_t::value_type& i, m_things_model.things() )
     {
         if( isInboxItem( i.left )
             && (includeDoneItems       || !isDone(  i.left ) ) )
@@ -32,7 +32,7 @@ std::list< std::string > zmGtdModel::getTaskItems( bool includeStandaloneTasks, 
 {
     std::list< std::string > l_return;
 /*
-    BOOST_FOREACH(const zm::MindMatterModel::MindMatterModelMapType::value_type& i, m_things_model.things() )
+    BOOST_FOREACH(const zm::MindMatterModel::uid_mm_bimap_t::value_type& i, m_things_model.things() )
     {
         if( isTaskItem( i.left, includeStandaloneTasks )
                 && (includeDoneItems       || !isDone(  i.left ) ) )
@@ -48,7 +48,7 @@ std::list< std::string > zmGtdModel::getProjectItems( bool includeStandaloneTask
 {
     std::list< std::string > l_return;
 /*
-    BOOST_FOREACH(const zm::MindMatterModel::MindMatterModelMapType::value_type& i, m_things_model.things() )
+    BOOST_FOREACH(const zm::MindMatterModel::uid_mm_bimap_t::value_type& i, m_things_model.things() )
     {
         if( isProjectItem( i.left, includeStandaloneTasks )
                 && (includeDoneItems       || !isDone(  i.left ) ) )
@@ -64,7 +64,7 @@ std::list< std::string > zmGtdModel::getDoneItems() const
 {
     std::list< std::string > l_return;
 /*
-    BOOST_FOREACH(const zm::MindMatterModel::MindMatterModelMapType::value_type& i, m_things_model.things() )
+    BOOST_FOREACH(const zm::MindMatterModel::uid_mm_bimap_t::value_type& i, m_things_model.things() )
     {
         if( isDone(  i.left ) )
         {
