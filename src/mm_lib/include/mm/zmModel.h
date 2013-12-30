@@ -76,7 +76,7 @@ namespace zm
         bool hasUsedUsername() const;
 
         /// returns the username used by us
-        std::string getUsedUsername() const;
+        //std::string getUsedUsername() const;
 
         /// set the username used by us - should be the system user
         /// name but doesn't have to
@@ -87,7 +87,7 @@ namespace zm
 
         /// returns the hostname used by us - should be the system user
         /// name but doesn't have to
-        std::string getUsedHostname() const;
+        //std::string getUsedHostname() const;
 
         /// set the hostname used by us
         void setUsedHostname( const std::string &hostname );
