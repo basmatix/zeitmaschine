@@ -37,6 +37,40 @@ int main( int arg_n, char **arg_v )
 
 bool mm_persist_and_load()
 {
+    if( boost::filesystem::exists( "./test-localfolder" ) )
+        boost::filesystem::remove_all( "./test-localfolder" );
+
+    zm::MindMatterModel l_m1;
+    l_m1.setLocalFolder( "./test-localfolder" );
+    l_m1.setUsedUsername( "test-user" );
+    l_m1.setUsedHostname( "test-machine" );
+    l_m1.initialize();
+
+    zm::MindMatterModel l_m2;
+    l_m2.setLocalFolder( "./test-localfolder" );
+    l_m2.setUsedUsername( "test-user" );
+    l_m2.setUsedHostname( "test-machine" );
+    l_m2.initialize();
+
+    std::string node1 = l_m1.createNewItem( "node1" );
+
+    test_assert( ! l_m2.equals(l_m1), "model2 should differ from model1");
+    l_m1.persistence_saveLocalModel();
+    l_m2.persistence_loadLocalModel();
+    test_assert( l_m2.equals(l_m1), "model2 should not differ from model1");
+
+    std::string node2 = l_m1.createNewItem( "node2" );
+
+    l_m1.connect(node1, node2);
+
+    test_assert( ! l_m2.equals(l_m1), "model2 should differ from model1");
+    printf("save..\n"); fflush(stdout);
+    l_m1.persistence_saveLocalModel();
+    printf("load..\n"); fflush(stdout);
+    l_m2.persistence_loadLocalModel();
+    test_assert( l_m2.equals(l_m1), "model2 should not differ from model1");
+
+
     return true;
 }
 
@@ -105,7 +139,7 @@ bool mm_diff_and_reapply()
     //
     // save m1
     //
-    l_m1.persistence_localSave();
+    l_m1.persistence_saveLocalModel();
 
     //
     // fork
@@ -172,7 +206,7 @@ bool mm_empty_db_on_load()
 
     // client 1 saves some content
     std::string l_item1 = l_m1.createNewItem( "some first item" );
-    l_m1.persistence_localSave();
+    l_m1.persistence_saveLocalModel();
     //l_m1.save( "tmp_export.yaml" );
 
     zm::MindMatterModel l_m2;
@@ -182,7 +216,7 @@ bool mm_empty_db_on_load()
     l_m2.initialize();
 
     std::string l_item2 = l_m1.createNewItem( "yet some item" );
-    l_m1.persistence_localSave();
+    l_m1.persistence_saveLocalModel();
 
     //l_m2.load( "tmp_export.yaml" );
 
@@ -221,7 +255,7 @@ bool mm_change_while_open()
 
     std::string l_item2 = l_m2.createNewItem( "some concurrent item" );
 
-    l_m2.persistence_localSave();
+    l_m2.persistence_saveLocalModel();
 
     // now the first model decides to dump it's mind
     l_m1.persistence_sync();
