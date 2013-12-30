@@ -1,6 +1,5 @@
+
 *.autosave
-build-release
-build/*.png
 *.user*
 *~
 *.html
@@ -11,9 +10,12 @@ CMakeFiles
 *.cfg
 *.so
 *.a
-pyZm.py
 *.pyc
 *.cxx
+build-release
+build/*.png
+build/asciitest.zip
+build/test-localfolder/
 build/*.cmake
 build/Makefile
 build/moc_*
