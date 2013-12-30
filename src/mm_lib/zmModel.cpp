@@ -604,6 +604,9 @@ void yamlToThingsMap(
         YAML::Node                           yamlNode,
         zm::MindMatterModel::uid_mm_bimap_t &thingsMap )
 {
+    std::map< std::string, std::vector< std::string> > l_connection_uids;
+    std::map< std::string, std::string > l_hashes;
+
     BOOST_FOREACH( YAML::Node n, yamlNode )
     {
         assert( n["caption"] );
@@ -622,19 +625,13 @@ void yamlToThingsMap(
         tracemessage("caption: '%s'", l_caption.c_str());
 
         MindMatter *l_new_thing = new MindMatter( l_caption );
-        /*
-        if( n["attributes"] )
+
+        if( n["connections"] )
         {
-            std::vector< std::string > l_attributes =
+            l_connection_uids[l_uid] =
                     n["attributes"].as< std::vector< std::string > >();
-            for( std::vector< std::string >::const_iterator
-                 a  = l_attributes.begin();
-                 a != l_attributes.end(); ++ a )
-            {
-                l_new_thing->m_attributes.insert( *a );
-            }
         }
-        */
+
         if( n["string_values"] )
         {
             l_new_thing->m_string_values =
@@ -650,15 +647,47 @@ void yamlToThingsMap(
 
         if( n["hash1"] )
         {
-            if(n["hash1"].as< std::string >() != l_new_thing->getHash(true))
-            {
-                tracemessage("saved and loaded hashes differ!");
-                assert( n["hash1"].as< std::string >() == l_new_thing->getHash() );
-            }
+            l_hashes[l_uid] = n["hash1"].as< std::string >();
         }
         assert( l_new_thing->hasValue("global_time_created") );
 
         thingsMap.insert( zm::MindMatterModel::uid_mm_bimap_t::value_type( l_uid, l_new_thing ) );
+    }
+
+    /// since we could not fully process all items yet - connections
+    /// could not be established due to incomplete list of items, we
+    /// postprocess them now and check there hash values
+    BOOST_FOREACH(const zm::MindMatterModel::uid_mm_bimap_t::value_type &i,
+                  thingsMap)
+    {
+        const std::string &l_uid( i.left );
+        zm::MindMatter *l_item( i.right );
+
+        std::map< std::string, std::vector< std::string> >::const_iterator
+                l_connections_it = l_connection_uids.find(l_uid);
+
+        assert(l_connections_it != l_connection_uids.end());
+
+        BOOST_FOREACH( const std::string &other_uid, l_connections_it->second)
+        {
+            zm::MindMatterModel::uid_mm_bimap_t::left_iterator
+                    l_other_it( thingsMap.left.find( other_uid ) );
+
+            assert(l_other_it != thingsMap.left.end());
+
+            l_item->m_neighbours[l_other_it->second] = other_uid;
+        }
+
+        std::map< std::string, std::string >::const_iterator
+                l_hash_it = l_hashes.find(l_uid);
+
+        assert(l_hash_it != l_hashes.end());
+
+        if(l_hash_it->second != l_item->getHash())
+        {
+            tracemessage("saved and loaded hashes differ!");
+            assert(l_hash_it->second == l_item->getHash());
+        }
     }
 }
 
