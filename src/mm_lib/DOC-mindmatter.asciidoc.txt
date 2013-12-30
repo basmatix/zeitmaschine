@@ -27,3 +27,30 @@ to make it unique across devices an users.
 * There's rather a bimap located in zmModel mapping from strings to
   items and vice versa
 ****************************************************************************
+
+
+.*persistence*
+****************************************************************************
+* there are two sorts of persistence
+** full model consisting of 'old' synced and 'new' temporary variant
+** journaling for exchange between clients
+
+.Load on Initialize
+
+* persistence_loadLocalModel()
+* persistence_sync()
+
+.Intermediate Save
+
+* persistence_localSave()
+
+.Intermediate Sync and Shutdown
+
+FullSave()
+   * persistence_localSave() (for safety)
+   * persistence_sync()
+     * pullJournals() (-> loadedJournals)
+     * pushJournal()  (-> loadedJournals)
+     * persistence_localSave( "old" )
+     * rename "new" -> "old"
+****************************************************************************

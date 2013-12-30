@@ -28,10 +28,14 @@ namespace zm
     private:
 
         uid_mm_bimap_t  m_things;
+
+        // used for generating the diff
+        uid_mm_bimap_t  m_old_things;
+
         std::string     m_localFolder;
         std::string     m_localModelFile;
+        std::string     m_localModelFileOld;
 
-        //std::string     m_temporaryJournalFile;
         bool            m_initialized;
         bool            m_dirty;  // maybe we need more
 
@@ -94,19 +98,25 @@ namespace zm
 
     private:
 
+        std::string createJournalFileName() const;
+        std::string createModelFileNameNew() const;
+        std::string createModelFileNameOld() const;
+
+        ChangeSet diff( const uid_mm_bimap_t &other ) const;
+
         void dirty();
 
-        void persistence_loadLocalModel( const std::string &filename );
+        void persistence_loadLocalModel();
 
         void persistence_saveLocalModel( const std::string &filename );
 
         bool persistence_pullJournal();
 
-        //void makeTempJournalStatic();
+        bool persistence_pushJournal();
 
         /// returns a sorted list containing names of journal files
         /// located in the sync folder
-        std::vector< std::string > getJournalFiles();
+        std::vector< std::string > getJournalFiles() const;
 
     /// const interface
     public:
@@ -147,7 +157,7 @@ namespace zm
         std::list< std::string > getNeighbours(
                 const std::string &node_uid ) const;
 
-private:
+    private: // const
         bool _isConnected(
                 uid_mm_bimap_t::left_const_iterator item_it1,
                 uid_mm_bimap_t::left_const_iterator item_it2 ) const;
@@ -190,7 +200,7 @@ private:
         std::string findOrCreateTagItem(
                 const std::string &name );
 
-    private:
+    private: // rw
 
         void _createNewItem(
                 const std::string &uid,
@@ -229,6 +239,10 @@ private:
         static std::string generateUid();
 
         static void clear( uid_mm_bimap_t &thingsMap );
+
+        static bool loadModelFromFile(
+                const std::string   &input_file,
+                uid_mm_bimap_t      &rw_thingsMap );
     };
 }
 
