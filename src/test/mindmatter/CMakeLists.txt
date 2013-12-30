@@ -37,5 +37,6 @@ add_test( mm_low_level_gtd_workflow   ${test_executable} mm_low_level_gtd_workfl
 add_test( mm_connections              ${test_executable} mm_connections )
 add_test( mm_empty_db_on_load         ${test_executable} mm_empty_db_on_load )
 add_test( mm_diff_and_reapply         ${test_executable} mm_diff_and_reapply )
-add_test( mm_things_change_while_open ${test_executable} mm_change_while_open )
+# deactivated because assumptions not valid anymore
+#add_test( mm_things_change_while_open ${test_executable} mm_change_while_open )
 

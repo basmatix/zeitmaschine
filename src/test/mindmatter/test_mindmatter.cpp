@@ -24,7 +24,7 @@ int main( int arg_n, char **arg_v )
 {
     named_function_container l_tests;
 
-    //l_tests["mm_change_while_open"] =       mm_change_while_open;
+    // l_tests["mm_change_while_open"] =       mm_change_while_open;
     l_tests["mm_empty_db_on_load"] =        mm_empty_db_on_load;
     l_tests["mm_low_level_gtd_workflow"] =  mm_low_level_gtd_workflow;
     l_tests["mm_connections"] =             mm_connections;
@@ -98,7 +98,7 @@ bool mm_diff_and_reapply()
     //
     // save m1
     //
-    l_m1.localSave();
+    l_m1.persistence_localSave();
 
     //
     // fork
@@ -121,7 +121,7 @@ bool mm_diff_and_reapply()
 
     // generate a change set
 
-    zm::ChangeSet l_changeset = l_m2.diff( l_m1 );
+    zm::ChangeSet l_changeset = l_m2.diffTo( l_m1 );
 
     // and apply it
     l_m2.applyChangeSet( l_changeset );
@@ -138,9 +138,10 @@ bool mm_diff_and_reapply()
     test_assert( l_m2 != l_m1, "models should differ from each other" );
 
     // generate a change set
-    l_changeset = l_m2.diff( l_m1 );
+    l_changeset = l_m2.diffTo( l_m1 );
 
     // apply
+    l_m2.debug_dump();
     l_m2.applyChangeSet( l_changeset );
 
     // compare
@@ -164,7 +165,7 @@ bool mm_empty_db_on_load()
 
     // client 1 saves some content
     std::string l_item1 = l_m1.createNewItem( "some first item" );
-    l_m1.localSave();
+    l_m1.persistence_localSave();
     //l_m1.save( "tmp_export.yaml" );
 
     zm::MindMatterModel l_m2;
@@ -174,7 +175,7 @@ bool mm_empty_db_on_load()
     l_m2.initialize();
 
     std::string l_item2 = l_m1.createNewItem( "yet some item" );
-    l_m1.localSave();
+    l_m1.persistence_localSave();
 
     //l_m2.load( "tmp_export.yaml" );
 
@@ -188,7 +189,10 @@ bool mm_empty_db_on_load()
 }
 
 bool mm_change_while_open()
-{
+{   /// this test is not more valid in case one local folder is being
+    /// used by one client (e.g. a local server) at a time.
+    /// thus it will likely fail forever
+
     if( boost::filesystem::exists( "./test-localfolder" ) )
         boost::filesystem::remove_all( "./test-localfolder" );
 
@@ -209,15 +213,14 @@ bool mm_change_while_open()
     l_m2.initialize();
 
     std::string l_item2 = l_m2.createNewItem( "some concurrent item" );
-    //l_m2.save( "tmp_export.yaml" );
 
+    l_m2.persistence_localSave();
 
     // now the first model decides to dump it's mind
-    //l_m1.save( "tmp_export.yaml" );
+    l_m1.persistence_sync();
 
     // client 2 (or a third client) starts again and loads the current db
     zm::MindMatterModel l_m3;
-//    std::cout <<  boost_concept_check__LINE__ << std::endl;
 
     test_assert( l_m3.hasItem( l_item1 ), "" );
 
