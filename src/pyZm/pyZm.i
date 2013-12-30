@@ -10,11 +10,13 @@
 %{
 // Includes the header in the wrapper code
 #include <zm/zmGtdModel.h>
+#include <mm/zmModel.h>
+#include <mm/zmChangeSet.h>
 %}
 
 // Parse the header file to generate wrappers
 //#define OUTCHAR char
-//%include "std_string.i"
+%include "std_string.i"
 //%include "typemaps.i"
 //%include "carrays.i"
 //%array_class(int, intArray);
@@ -23,3 +25,5 @@
 //%include "cstring.i"
 
 %include <zm/zmGtdModel.h>
+%include <mm/zmModel.h>
+%include <mm/zmChangeSet.h>
