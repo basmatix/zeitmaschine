@@ -274,16 +274,10 @@ void zm::MindMatterModel::initialize()
 
     if( persistence_pullJournal() )
     {
-        persistence_saveLocalModel( m_localModelFile );
+        persistence_saveLocalModel();
     }
 
     m_initialized = true;
-}
-
-void zm::MindMatterModel::persistence_localSave()
-{
-    /// just for debug purposes - later we will only write the journal
-    persistence_saveLocalModel( m_localModelFile );
 }
 
 void zm::MindMatterModel::persistence_sync()
@@ -292,7 +286,7 @@ void zm::MindMatterModel::persistence_sync()
     //          do all this in an atomic way
 
     /// save the current model for safety reasons
-    persistence_saveLocalModel( m_localModelFile );
+    persistence_saveLocalModel();
 
     /// load remote journals into current model
     persistence_pullJournal();
@@ -300,9 +294,11 @@ void zm::MindMatterModel::persistence_sync()
     /// write journal from old model to current model
     if( persistence_pushJournal() )
     {
-        persistence_saveLocalModel( m_localModelFile );
+        persistence_saveLocalModel();
 
         boost::filesystem::rename( m_localModelFile, m_localModelFileOld );
+
+        // [TODO] - old model should be the synced to the new one here
     }
 }
 
@@ -515,19 +511,18 @@ void zm::MindMatterModel::dirty()
 // info regarding string encoding:
 //    http://code.google.com/p/yaml-cpp/wiki/Strings
 
-void zm::MindMatterModel::persistence_saveLocalModel(
-        const std::string &filename )
+void zm::MindMatterModel::persistence_saveLocalModel()
 {
     /// be careful! if( !m_dirty ) return;
 
 
-    if( !zm::common::create_base_directory( filename ) )
+    if( !zm::common::create_base_directory( m_localModelFile ) )
     {
         // todo: error
         return;
     }
 
-    std::ofstream l_fout( filename.c_str() );
+    std::ofstream l_fout( m_localModelFile.c_str() );
 
     assert( l_fout.is_open() );
 
@@ -564,6 +559,14 @@ void zm::MindMatterModel::persistence_saveLocalModel(
             /// this list is sorted anyway
             l_yaml_emitter << i.right->m_string_values;
         }
+
+        if( ! i.right->m_neighbours.empty() )
+        {
+            l_yaml_emitter << YAML::Key << "connections";
+            l_yaml_emitter << YAML::Value;
+            /// this list is sorted anyway
+            l_yaml_emitter << i.right->getNeighbourUids();
+        }
         l_yaml_emitter << YAML::EndMap;
     }
     l_yaml_emitter << YAML::EndSeq;
@@ -598,7 +601,7 @@ void zm::MindMatterModel::clear( uid_mm_bimap_t &thingsMap )
 }
 
 void yamlToThingsMap(
-        YAML::Node      yamlNode,
+        YAML::Node                           yamlNode,
         zm::MindMatterModel::uid_mm_bimap_t &thingsMap )
 {
     BOOST_FOREACH( YAML::Node n, yamlNode )
@@ -647,7 +650,11 @@ void yamlToThingsMap(
 
         if( n["hash1"] )
         {
-            assert( n["hash1"].as< std::string >() == l_new_thing->getHash() );
+            if(n["hash1"].as< std::string >() != l_new_thing->getHash(true))
+            {
+                tracemessage("saved and loaded hashes differ!");
+                assert( n["hash1"].as< std::string >() == l_new_thing->getHash() );
+            }
         }
         assert( l_new_thing->hasValue("global_time_created") );
 

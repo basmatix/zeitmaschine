@@ -51,7 +51,9 @@ namespace zm
                 const std::string &uid,
                 const MindMatter  &other ) const;
 
-        inline std::string getHash( ) const;
+        inline std::set< std::string > getNeighbourUids() const;
+
+        inline std::string getHash( bool verbose=false ) const;
 
         inline bool operator== ( const MindMatter &other );
 
@@ -189,12 +191,12 @@ zm::journal_item_vec_t zm::MindMatter::toDiff( const std::string &a_uid ) const
     return l_result;
 }
 
-inline std::set< std::string > get_neighbour_uids(
-        const zm::MindMatter::item_uid_map_t &neighbours )
+std::set< std::string > zm::MindMatter::getNeighbourUids() const
 {
     std::set< std::string > l_result;
 
-    BOOST_FOREACH(const zm::MindMatter::item_uid_pair_t l_neighbour, neighbours)
+    BOOST_FOREACH(const zm::MindMatter::item_uid_pair_t l_neighbour,
+                  m_neighbours)
     {
         std::pair< std::set< std::string >::iterator, bool > l_success =
                 l_result.insert(l_neighbour.second);
@@ -269,10 +271,10 @@ zm::journal_item_vec_t zm::MindMatter::diff(
     ///
 
     std::set< std::string > l_this_neighbours(
-                get_neighbour_uids(m_neighbours));
+                getNeighbourUids());
 
     std::set< std::string > l_other_neighbours(
-            get_neighbour_uids(a_other.m_neighbours));
+                a_other.getNeighbourUids());
 
     std::set< std::string > l_only_in_this;
 
@@ -305,26 +307,38 @@ zm::journal_item_vec_t zm::MindMatter::diff(
     return l_result;
 }
 
-std::string zm::MindMatter::getHash( ) const
+inline void hash_add_value(
+        size_t             &hash,
+        const std::string  &value,
+        bool                verbose )
+{
+    if( verbose )
+    {
+        tracemessage("adding '%s' to hash", value.c_str());
+    }
+    boost::hash_combine(hash, value);
+}
+
+std::string zm::MindMatter::getHash( bool a_verbose ) const
 {
     size_t l_hash(0);
 
-    boost::hash_combine(l_hash, m_caption);
+    hash_add_value(l_hash, m_caption, a_verbose);
 
-    /// important: enforce predictable order!
+    /// IMPORTANT: enforce predictable order!
 
-    /// maps should be sorted by key anyway..
-
+    /// maps are sorted by key
     BOOST_FOREACH( const string_value_map_type::value_type &l_value,
                    m_string_values)
     {
-        boost::hash_combine(l_hash, l_value.second);
+        hash_add_value(l_hash, l_value.second, a_verbose);
     }
 
+    /// sets are sorted, too
     BOOST_FOREACH( const std::string &l_uid,
-                   get_neighbour_uids(m_neighbours))
+                   getNeighbourUids())
     {
-        boost::hash_combine(l_hash, l_uid);
+        hash_add_value(l_hash, l_uid, a_verbose);
     }
 
     std::stringstream l_result_stream;

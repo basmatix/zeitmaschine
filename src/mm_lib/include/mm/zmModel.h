@@ -56,14 +56,17 @@ namespace zm
 
         /// defines a (externally synced) folder exchange with other clients
         /// and/or users
-        void addDomainSyncFolder( const std::string &domainName, const std::string &path );
+        void addDomainSyncFolder(
+                const std::string &domainName,
+                const std::string &path );
 
         /// will initialize the model by loading the persistant state using
         /// the given information
         void initialize();
 
-        /// will write recent changes to the journal file
-        void persistence_localSave();
+        /// will write a recent model file without affecting the journals
+        void persistence_saveLocalModel();
+        void persistence_loadLocalModel();
 
         /// make a full model sync.
         /// first load and apply new journal files in the sync folders. Then
@@ -111,10 +114,6 @@ namespace zm
                 const uid_mm_bimap_t &model_to );
 
         void dirty();
-
-        void persistence_loadLocalModel();
-
-        void persistence_saveLocalModel( const std::string &filename );
 
         bool persistence_pullJournal();
 

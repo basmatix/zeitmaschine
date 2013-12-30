@@ -12,7 +12,6 @@
 
 #include <list>
 
-
 #include <assert.h>
 
 class zmGtdModel
@@ -216,7 +215,7 @@ public:
     {
         m_things_model.setCaption( uid, caption );
 
-        m_things_model.persistence_localSave();
+        m_things_model.persistence_saveLocalModel();
     }
 
     //void save( const std::string &filename )
@@ -228,7 +227,7 @@ public:
     {
         m_things_model.eraseItem( uid );
 
-        m_things_model.persistence_localSave();
+        m_things_model.persistence_saveLocalModel();
     }
 };
 
