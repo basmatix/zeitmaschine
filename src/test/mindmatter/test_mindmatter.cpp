@@ -19,6 +19,7 @@ bool mm_empty_db_on_load        ();
 bool mm_low_level_gtd_workflow  ();
 bool mm_connections             ();
 bool mm_diff_and_reapply        ();
+bool mm_persist_and_load        ();
 
 int main( int arg_n, char **arg_v )
 {
@@ -29,8 +30,14 @@ int main( int arg_n, char **arg_v )
     l_tests["mm_low_level_gtd_workflow"] =  mm_low_level_gtd_workflow;
     l_tests["mm_connections"] =             mm_connections;
     l_tests["mm_diff_and_reapply"] =        mm_diff_and_reapply;
+    l_tests["mm_persist_and_load"] =        mm_persist_and_load;
 
     return run_tests( l_tests, arg_n, arg_v );
+}
+
+bool mm_persist_and_load()
+{
+    return true;
 }
 
 bool mm_connections()
