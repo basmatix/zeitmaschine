@@ -92,7 +92,7 @@ namespace zm
         /// set the hostname used by us
         void setUsedHostname( const std::string &hostname );
 
-        ChangeSet diff( const MindMatterModel &other ) const;
+        ChangeSet diffTo( const MindMatterModel &other ) const;
 
         void debug_dump() const;
 
@@ -102,7 +102,12 @@ namespace zm
         std::string createModelFileNameNew() const;
         std::string createModelFileNameOld() const;
 
-        ChangeSet diff( const uid_mm_bimap_t &other ) const;
+        std::vector< std::string > getHandledJournalFilenames();
+        void appendHandledJournalFilename(const std::string &filename);
+
+        static ChangeSet diff(
+                const uid_mm_bimap_t &model_from,
+                const uid_mm_bimap_t &model_to );
 
         void dirty();
 

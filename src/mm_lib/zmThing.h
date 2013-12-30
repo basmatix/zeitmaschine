@@ -189,7 +189,6 @@ zm::journal_item_vec_t zm::MindMatter::toDiff( const std::string &a_uid ) const
     return l_result;
 }
 
-
 inline std::set< std::string > get_neighbour_uids(
         const zm::MindMatter::item_uid_map_t &neighbours )
 {
@@ -308,23 +307,30 @@ zm::journal_item_vec_t zm::MindMatter::diff(
 
 std::string zm::MindMatter::getHash( ) const
 {
-    std::stringstream l_stream;
-    boost::hash< std::string > string_hash;
-    l_stream << string_hash( m_caption );
+    size_t l_hash(0);
+
+    boost::hash_combine(l_hash, m_caption);
 
     /// important: enforce predictable order!
 
     /// maps should be sorted by key anyway..
-    for( string_value_map_type::const_iterator
-         i  = m_string_values.begin();
-         i != m_string_values.end(); ++i )
+
+    BOOST_FOREACH( const string_value_map_type::value_type &l_value,
+                   m_string_values)
     {
-        l_stream << string_hash( i->second );
+        boost::hash_combine(l_hash, l_value.second);
     }
 
-    //TODO: handle neighbours
+    BOOST_FOREACH( const std::string &l_uid,
+                   get_neighbour_uids(m_neighbours))
+    {
+        boost::hash_combine(l_hash, l_uid);
+    }
 
-    return l_stream.str();
+    std::stringstream l_result_stream;
+    l_result_stream << std::hex << l_hash;
+
+    return l_result_stream.str();
 }
 
 bool zm::MindMatter::operator== ( const MindMatter &other )

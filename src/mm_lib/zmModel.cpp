@@ -43,11 +43,11 @@ zm::MindMatterModel::MindMatterModel()
 }
 
 bool zm::MindMatterModel::equals(
-        const zm::MindMatterModel &other,
+        const zm::MindMatterModel &a_other,
         bool tell_why ) const
 {
     /// prune if models differ in size
-    if( m_things.size() != other.m_things.size() )
+    if( m_things.size() != a_other.m_things.size() )
     {
         return false;
     }
@@ -57,10 +57,11 @@ bool zm::MindMatterModel::equals(
     BOOST_FOREACH( const uid_mm_bimap_t::value_type& i, m_things )
     {
         /// find the key in the other map
-        uid_mm_bimap_t::left_const_iterator l_item_it( other.m_things.left.find( i.left ) );
+        uid_mm_bimap_t::left_const_iterator l_item_it(
+                    a_other.m_things.left.find( i.left ) );
 
         /// not found? return false!
-        if( l_item_it == other.m_things.left.end() ) return false;
+        if( l_item_it == a_other.m_things.left.end() ) return false;
 
         /// values differ? return false!
         if( ! i.right->equals( *l_item_it->second, tell_why ) )
@@ -84,22 +85,24 @@ bool zm::MindMatterModel::operator!=( const zm::MindMatterModel &other ) const
     return ! equals( other );
 }
 
-ChangeSet zm::MindMatterModel::diff( const MindMatterModel &a_other ) const
+ChangeSet zm::MindMatterModel::diffTo( const MindMatterModel &a_other ) const
 {
-    return diff(a_other.things());
+    return diff(m_things, a_other.things());
 }
 
-ChangeSet zm::MindMatterModel::diff( const uid_mm_bimap_t &a_other ) const
+ChangeSet zm::MindMatterModel::diff(
+        const uid_mm_bimap_t &model_from,
+        const uid_mm_bimap_t &model_to )
 {
     /// return a set of changes which describes what do we have to change
-    /// on (*this) to get to (other)
+    /// on model_from to get to model_to
 
     ChangeSet l_return;
 
     std::set< std::string > l_done_items;
 
     /// go through all elements of m_things
-    BOOST_FOREACH( const uid_mm_bimap_t::value_type& i, m_things )
+    BOOST_FOREACH( const uid_mm_bimap_t::value_type& i, model_from )
     {
         const std::string &l_this_item_id(i.left);
 
@@ -107,9 +110,9 @@ ChangeSet zm::MindMatterModel::diff( const uid_mm_bimap_t &a_other ) const
 
         /// find the key in the other map
         uid_mm_bimap_t::left_const_iterator l_other_item_it(
-                    a_other.left.find( l_this_item_id ) );
+                    model_to.left.find( l_this_item_id ) );
 
-        if( l_other_item_it == a_other.left.end() )
+        if( l_other_item_it == model_to.left.end() )
         {
             l_return.add_remove_entry( l_this_item_id );
             continue;
@@ -123,7 +126,7 @@ ChangeSet zm::MindMatterModel::diff( const uid_mm_bimap_t &a_other ) const
         }
     }
 
-    BOOST_FOREACH( const uid_mm_bimap_t::value_type& i, a_other )
+    BOOST_FOREACH( const uid_mm_bimap_t::value_type& i, model_to )
     {
         const std::string &l_other_item_id(i.left);
 
@@ -277,38 +280,30 @@ void zm::MindMatterModel::initialize()
     m_initialized = true;
 }
 
-/*
-void zm::MindMatterModel::makeTempJournalStatic()
-{
-    std::string l_filename = createJournalFileName(
-                m_options.getString( "username" ),
-                m_options.getString( "hostname" ));
-
-    m_options.addStringListElement( "read_journal", l_filename );
-
-    l_filename = m_localFolder + "/" + l_filename;
-    boost::filesystem::rename( m_temporaryJournalFile, l_filename );
-}
-*/
-
 void zm::MindMatterModel::persistence_localSave()
 {
     /// just for debug purposes - later we will only write the journal
     persistence_saveLocalModel( m_localModelFile );
-
-    //m_changeSet.write( m_temporaryJournalFile );
 }
 
 void zm::MindMatterModel::persistence_sync()
 {
+    // [TODO] - in case something goes wrong in here we should
+    //          do all this in an atomic way
+
+    /// save the current model for safety reasons
     persistence_saveLocalModel( m_localModelFile );
 
-//    if( m_changeSet.write( m_temporaryJournalFile ) )
-//    {
-//        makeTempJournalStatic();
-//    }
+    /// load remote journals into current model
+    persistence_pullJournal();
 
-//    m_changeSet.clear();
+    /// write journal from old model to current model
+    if( persistence_pushJournal() )
+    {
+        persistence_saveLocalModel( m_localModelFile );
+
+        boost::filesystem::rename( m_localModelFile, m_localModelFileOld );
+    }
 }
 
 bool zm::MindMatterModel::loadModelFromFile(
@@ -361,6 +356,17 @@ void zm::MindMatterModel::persistence_loadLocalModel()
     }
 }
 
+std::vector< std::string > zm::MindMatterModel::getHandledJournalFilenames()
+{
+    return m_options.getStringList("read_journal");
+}
+
+void zm::MindMatterModel::appendHandledJournalFilename(
+        const std::string &a_filename)
+{
+    m_options.addStringListElement( "read_journal", a_filename );
+}
+
 bool zm::MindMatterModel::persistence_pullJournal()
 {
     bool l_importedJournals = false;
@@ -369,9 +375,10 @@ bool zm::MindMatterModel::persistence_pullJournal()
     tracemessage( "found %d journal files", l_journalFiles.size() );
 
     std::vector< std::string > l_alreadyImported =
-            m_options.getStringList("read_journal");
+            getHandledJournalFilenames();
 
-    tracemessage( "%d journal files already imported", l_alreadyImported.size() );
+    tracemessage( "%d journal files already imported",
+                  l_alreadyImported.size() );
 
     BOOST_FOREACH( std::string j, l_journalFiles )
     {
@@ -380,7 +387,7 @@ bool zm::MindMatterModel::persistence_pullJournal()
         {
             tracemessage( "journal '%s' not imported yet", l_filename.c_str() );
             applyChangeSet( ChangeSet( j ) );
-            m_options.addStringListElement( "read_journal", l_filename );
+            appendHandledJournalFilename(l_filename);
             l_importedJournals = true;
         }
     }
@@ -389,10 +396,20 @@ bool zm::MindMatterModel::persistence_pullJournal()
 
 bool zm::MindMatterModel::persistence_pushJournal()
 {
-    uid_mm_bimap_t x;
-    ChangeSet l_changeSet;
+    ChangeSet l_changeSet( diff( m_old_things, m_things ) );
 
-    l_changeSet.write( createJournalFileName() );
+    if(l_changeSet.isEmpty())
+    {
+        return false;
+    }
+
+    std::string l_journal_basename = createJournalFileName();
+
+    std::string l_journal_fullname = m_localFolder + "/" + l_journal_basename;
+
+    l_changeSet.write( l_journal_fullname );
+
+    appendHandledJournalFilename(l_journal_basename);
 
     return true;
 }
@@ -539,20 +556,7 @@ void zm::MindMatterModel::persistence_saveLocalModel(
 
         l_yaml_emitter << YAML::Key << "hash1";
         l_yaml_emitter << YAML::Value << i.right->getHash();
-/*
-        if( ! i.right->m_attributes.empty() )
-        {
-            l_yaml_emitter << YAML::Key << "attributes";
-            l_yaml_emitter << YAML::Value;
-            l_yaml_emitter << YAML::BeginSeq;
-            std::vector< std::string > v;
-            BOOST_FOREACH( const std::string &a, i.right->m_attributes)
-            {
-                l_yaml_emitter << a;
-            }
-            l_yaml_emitter << YAML::EndSeq;
-        }
-*/
+
         if( ! i.right->m_string_values.empty() )
         {
             l_yaml_emitter << YAML::Key << "string_values";

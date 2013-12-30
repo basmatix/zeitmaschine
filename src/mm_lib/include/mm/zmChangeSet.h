@@ -178,6 +178,11 @@ public:
 
     void clear();
 
+    bool isEmpty() const
+    {
+        return m_journal.empty();
+    }
+
 private:
 
     //ChangeSet( const ChangeSet & );
