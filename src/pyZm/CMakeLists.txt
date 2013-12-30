@@ -54,7 +54,7 @@ if( CONFIG_BUILD_PYZM )
     # important: add _ to swig generated python modules
     #set_target_properties( _${PYTHON_ZM_LIBRARY_NAME} PROPERTIES COMPILE_DEFINITIONS "${YSBOX_COMPILE_FLAGS}" )
 
-    swig_link_libraries( ${PYTHON_ZM_LIBRARY_NAME} mm_s zm_s yaml-cpp )
+    swig_link_libraries( ${PYTHON_ZM_LIBRARY_NAME} zm_s mm_s yaml-cpp )
 
     if( NOT MSVC )
          swig_link_libraries( ${PYTHON_ZM_LIBRARY_NAME} ${Boost_LIBRARIES} )
