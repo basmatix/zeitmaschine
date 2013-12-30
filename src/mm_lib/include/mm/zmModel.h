@@ -18,6 +18,7 @@
 namespace zm
 {
     class MindMatter;
+    class ChangeSet;
 
     class MindMatterModel
     {
