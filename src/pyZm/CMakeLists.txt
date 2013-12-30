@@ -9,7 +9,7 @@ project( pyZm )
 
 cmake_minimum_required(VERSION 2.8.11)
 
-option( CONFIG_BUILD_PYZM "build Python module" OFF )
+option( CONFIG_BUILD_PYZM "build Python module" ON )
 if( CONFIG_BUILD_PYZM )
 
     file( GLOB ${PROJECT_NAME}_files
