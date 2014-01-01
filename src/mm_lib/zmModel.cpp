@@ -310,17 +310,19 @@ bool zm::MindMatterModel::loadModelFromFile(
         uid_mm_bimap_t      &thingsMap )
 {
     clear( thingsMap );
+
     if( ! boost::filesystem::exists( input_file ) )
     {
         return false;
     }
-    std::ifstream fin(input_file.c_str());
-    if(!fin)
+    std::ifstream l_yaml_stream(input_file.c_str());
+
+    if(!l_yaml_stream)
     {
         return false;
     }
 
-    YAML::Node l_import = YAML::Load(fin);
+    YAML::Node l_import = YAML::Load(l_yaml_stream);
     yamlToThingsMap( l_import, thingsMap );
 
     return true;
@@ -638,7 +640,7 @@ void yamlToThingsMap(
         if( n["connections"] )
         {
             l_connection_uids[l_uid] =
-                    n["attributes"].as< std::vector< std::string > >();
+                    n["connections"].as< std::vector< std::string > >();
         }
 
         if( n["string_values"] )
@@ -677,16 +679,17 @@ void yamlToThingsMap(
         std::map< std::string, std::vector< std::string> >::const_iterator
                 l_connections_it = l_connection_uids.find(l_uid);
 
-        assert(l_connections_it != l_connection_uids.end());
-
-        BOOST_FOREACH( const std::string &other_uid, l_connections_it->second)
+        if(l_connections_it != l_connection_uids.end())
         {
-            zm::MindMatterModel::uid_mm_bimap_t::left_iterator
-                    l_other_it( thingsMap.left.find( other_uid ) );
+            BOOST_FOREACH( const std::string &other_uid, l_connections_it->second)
+            {
+                zm::MindMatterModel::uid_mm_bimap_t::left_iterator
+                        l_other_it( thingsMap.left.find( other_uid ) );
 
-            assert(l_other_it != thingsMap.left.end());
+                assert(l_other_it != thingsMap.left.end());
 
-            l_item->m_neighbours[l_other_it->second] = other_uid;
+                l_item->m_neighbours[l_other_it->second] = other_uid;
+            }
         }
 
         std::map< std::string, std::string >::const_iterator
