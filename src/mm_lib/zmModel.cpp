@@ -28,8 +28,11 @@ using namespace zm;
 zmOptions m_options;
 
 static void yamlToThingsMap(
-        YAML::Node      yamlNode,
+        const YAML::Node                    &yamlNode,
         zm::MindMatterModel::uid_mm_bimap_t &thingsMap );
+
+static void _debug_dump(
+        const zm::MindMatterModel::uid_mm_bimap_t &thingsMap);
 
 zm::MindMatterModel::MindMatterModel()
     : m_things              ()
@@ -311,7 +314,13 @@ bool zm::MindMatterModel::loadModelFromFile(
     {
         return false;
     }
-    YAML::Node l_import = YAML::LoadFile(input_file);
+    std::ifstream fin(input_file.c_str());
+    if(!fin)
+    {
+        return false;
+    }
+
+    YAML::Node l_import = YAML::Load(fin);
     yamlToThingsMap( l_import, thingsMap );
 
     return true;
@@ -601,7 +610,7 @@ void zm::MindMatterModel::clear( uid_mm_bimap_t &thingsMap )
 }
 
 void yamlToThingsMap(
-        YAML::Node                           yamlNode,
+        const YAML::Node                    &yamlNode,
         zm::MindMatterModel::uid_mm_bimap_t &thingsMap )
 {
     std::map< std::string, std::vector< std::string> > l_connection_uids;
@@ -654,6 +663,8 @@ void yamlToThingsMap(
         thingsMap.insert( zm::MindMatterModel::uid_mm_bimap_t::value_type( l_uid, l_new_thing ) );
     }
 
+    _debug_dump(thingsMap);
+
     /// since we could not fully process all items yet - connections
     /// could not be established due to incomplete list of items, we
     /// postprocess them now and check there hash values
@@ -704,10 +715,16 @@ std::string zm::MindMatterModel::generateUid()
     return l_return;
 }
 
+void _debug_dump(const zm::MindMatterModel::uid_mm_bimap_t &thingsMap)
+{
+    tracemessage(">> dump");
+    BOOST_FOREACH(const zm::MindMatterModel::uid_mm_bimap_t::value_type& i, thingsMap)
+    {
+        tracemessage("  %s",i.left.c_str());
+    }
+}
+
 void zm::MindMatterModel::debug_dump() const
 {
-    BOOST_FOREACH(const uid_mm_bimap_t::value_type& i, m_things)
-    {
-        tracemessage("%s",i.left.c_str());
-    }
+    _debug_dump(m_things);
 }
