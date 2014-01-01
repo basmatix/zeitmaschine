@@ -231,18 +231,22 @@ void zm::MindMatterModel::_eraseItem( uid_mm_bimap_t::left_iterator &item )
     m_things.left.erase( item );
 }
 
-void zm::MindMatterModel::addTag( const std::string &uid, const std::string &attribute )
+void zm::MindMatterModel::addTag(
+        const std::string &uid,
+        const std::string &tag_name )
 {
     uid_mm_bimap_t::left_iterator l_item_it( m_things.left.find( uid ) );
 
     assert( l_item_it != m_things.left.end() );
 
-    _addTag( l_item_it, attribute );
+    _addTag( l_item_it, tag_name );
 
     dirty();
 }
 
-void zm::MindMatterModel::_addTag( uid_mm_bimap_t::left_iterator &item, const std::string &tag_name )
+void zm::MindMatterModel::_addTag(
+        uid_mm_bimap_t::left_iterator   &item,
+        const std::string               &tag_name )
 {
     uid_mm_bimap_t::left_iterator l_tag_it( m_things.left.find( tag_name ) );
 
@@ -258,20 +262,24 @@ void zm::MindMatterModel::_addTag( uid_mm_bimap_t::left_iterator &item, const st
     }
 }
 
-bool zm::MindMatterModel::removeTag( const std::string &uid, const std::string &attribute )
+bool zm::MindMatterModel::removeTag(
+        const std::string &uid,
+        const std::string &tag_name )
 {
     uid_mm_bimap_t::left_iterator l_item_it( m_things.left.find( uid ) );
 
     assert( l_item_it != m_things.left.end() );
 
-    bool l_return = _removeTag( l_item_it, attribute );
+    bool l_return = _removeTag( l_item_it, tag_name );
 
     dirty();
 
     return l_return;
 }
 
-bool zm::MindMatterModel::_removeTag( uid_mm_bimap_t::left_iterator &a_item_it, const std::string &tag_name )
+bool zm::MindMatterModel::_removeTag(
+        uid_mm_bimap_t::left_iterator   &a_item_it,
+        const std::string               &tag_name )
 {
     uid_mm_bimap_t::left_iterator l_tag_it( m_things.left.find( tag_name ) );
 
