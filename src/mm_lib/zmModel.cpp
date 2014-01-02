@@ -706,7 +706,8 @@ void zm::MindMatterModel::yamlToThingsMap(
         {
             l_hashes[l_uid] = n["hash1"].as< std::string >();
         }
-        assert( l_new_thing->hasValue("global_time_created") );
+        assert( l_new_thing->hasValue("global_time_created")
+                || l_uid == l_new_thing->m_caption );
 
         thingsMap.insert(
                     zm::MindMatterModel::uid_mm_bimap_t::value_type(
@@ -773,7 +774,7 @@ void zm::MindMatterModel::yamlToThingsMap(
             if(l_hash_it->second != l_item->createHash())
             {
                 tracemessage("saved and loaded hashes differ!");
-                //assert(l_hash_it->second == l_item->createHash());
+                assert(l_hash_it->second == l_item->createHash());
             }
         }
     }
