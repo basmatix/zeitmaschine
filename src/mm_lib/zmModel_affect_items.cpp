@@ -219,7 +219,10 @@ void zm::MindMatterModel::_createNewItem(
         const std::string &a_time )
 {
     MindMatter *l_new_thing = new MindMatter( a_caption );
-    l_new_thing->addValue( "global_time_created", a_time );
+    if( a_uid != a_caption )
+    {
+        l_new_thing->addValue( "global_time_created", a_time );
+    }
     model.insert( uid_mm_bimap_t::value_type(a_uid,l_new_thing) );
 }
 

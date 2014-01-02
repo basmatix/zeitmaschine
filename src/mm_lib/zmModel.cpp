@@ -30,10 +30,10 @@ static void _debug_dump(
 
 zm::MindMatterModel::MindMatterModel()
     : m_things              ()
-    , m_old_things          ()
+    , m_things_synced          ()
     , m_localFolder         ( "" )
     , m_localModelFile      ( "" )
-    , m_localModelFileOld   ( "" )
+    , m_localModelFileSynced   ( "" )
     , m_initialized         ( false )
     , m_options             ( new zm::zmOptions )
 {
@@ -41,7 +41,7 @@ zm::MindMatterModel::MindMatterModel()
 
 zm::MindMatterModel::~MindMatterModel()
 {
-    clear(m_old_things);
+    clear(m_things_synced);
     clear(m_things);
     delete m_options;
 }
@@ -74,6 +74,10 @@ bool zm::MindMatterModel::equals(
         /// values differ? return false!
         if( ! i.right->equals( *l_item_it->second, tell_why ) )
         {
+            if(tell_why)
+            {
+                tracemessage("at '%s'", i.left.c_str() );
+            }
             return false;
         }
     }
@@ -259,7 +263,7 @@ std::string zm::MindMatterModel::createModelFileNameOld() const
                  << m_options->getString( "username" )
                  << "-"
                  << m_options->getString( "hostname" )
-                 << "-local.yaml";
+                 << "-local-last_synced.yaml";
 
     return l_ssFileName.str();
 }
@@ -275,8 +279,7 @@ void zm::MindMatterModel::initialize()
 
     m_localModelFile = createModelFileNameNew();
 
-    m_localModelFileOld = createModelFileNameOld();
-
+    m_localModelFileSynced = createModelFileNameOld();
 
     persistence_loadLocalModel();
 
@@ -284,6 +287,8 @@ void zm::MindMatterModel::initialize()
     {
         persistence_saveLocalModel();
     }
+
+    debug_dump();
 
     m_initialized = true;
 }
@@ -322,7 +327,7 @@ bool zm::MindMatterModel::persistence_sync()
 
     persistence_saveLocalModel();
 
-    boost::filesystem::rename( m_localModelFile, m_localModelFileOld );
+    boost::filesystem::rename( m_localModelFile, m_localModelFileSynced );
 
     return true;
 }
@@ -360,9 +365,12 @@ void zm::MindMatterModel::persistence_loadLocalModel()
     ///
     /// in case only the old model file exists it acts
 
-    if( boost::filesystem::exists( m_localModelFileOld ) )
+    tracemessage("load new  file: %s", m_localModelFile.c_str());
+    tracemessage("load sync file: %s", m_localModelFileSynced.c_str());
+
+    if( boost::filesystem::exists( m_localModelFileSynced ) )
     {
-        loadModelFromFile(m_localModelFileOld, m_old_things );
+        loadModelFromFile(m_localModelFileSynced, m_things_synced );
 
         if( boost::filesystem::exists( m_localModelFile ) )
         {
@@ -370,17 +378,18 @@ void zm::MindMatterModel::persistence_loadLocalModel()
         }
         else
         {
-            loadModelFromFile(m_localModelFileOld, m_things );
+            loadModelFromFile(m_localModelFileSynced, m_things );
         }
     }
     else
     {
         if( boost::filesystem::exists( m_localModelFile ) )
         {
-            boost::filesystem::rename( m_localModelFile, m_localModelFileOld );
+            boost::filesystem::rename( m_localModelFile, m_localModelFileSynced );
 
-            loadModelFromFile(m_localModelFileOld, m_things );
-            loadModelFromFile(m_localModelFileOld, m_old_things );
+            loadModelFromFile(m_localModelFileSynced, m_things );
+
+            deepCopy(m_things, m_things_synced);
         }
     }
 }
@@ -398,7 +407,7 @@ void zm::MindMatterModel::appendHandledJournalFilename(
 
 ChangeSet zm::MindMatterModel::persistence_pullJournal()
 {
-    assert( equals(m_things, m_old_things, false) );
+    assert( equals(m_things, m_things_synced, true) );
 
     ChangeSet l_result;
     bool l_importedJournals = false;
@@ -426,15 +435,15 @@ ChangeSet zm::MindMatterModel::persistence_pullJournal()
 
     if( l_importedJournals )
     {
-        l_result = diff( m_old_things, m_things );
-        deepCopy(m_things, m_old_things);
+        l_result = diff( m_things_synced, m_things );
+        deepCopy(m_things, m_things_synced);
     }
     return l_result;
 }
 
 ChangeSet zm::MindMatterModel::persistence_pushJournal()
 {
-    ChangeSet l_changeSet( diff( m_old_things, m_things ) );
+    ChangeSet l_changeSet( diff( m_things_synced, m_things ) );
 
     if(l_changeSet.isEmpty())
     {
@@ -454,7 +463,7 @@ ChangeSet zm::MindMatterModel::persistence_pushJournal()
 
     appendHandledJournalFilename(l_journal_basename);
 
-    deepCopy(m_things, m_old_things);
+    deepCopy(m_things, m_things_synced);
 
     return l_changeSet;
 }
@@ -704,8 +713,6 @@ void zm::MindMatterModel::yamlToThingsMap(
                         l_uid, l_new_thing ) );
     }
 
-    _debug_dump(thingsMap);
-
     /// since we could not fully process all items yet - connections
     /// could not be established due to incomplete list of items, we
     /// postprocess them now and check there hash values
@@ -751,17 +758,27 @@ void zm::MindMatterModel::yamlToThingsMap(
             }
         }
 
-        std::map< std::string, std::string >::const_iterator
-                l_hash_it = l_hashes.find(l_uid);
+        ///
+        /// handle hashes
+        ///
 
-        assert(l_hash_it != l_hashes.end());
-
-        if(l_hash_it->second != l_item->createHash())
+        /// tag might have been generated and has no hash yet
+        if(l_uid != l_item->m_caption)
         {
-            tracemessage("saved and loaded hashes differ!");
-            assert(l_hash_it->second == l_item->createHash());
+            std::map< std::string, std::string >::const_iterator
+                    l_hash_it = l_hashes.find(l_uid);
+
+            assert(l_hash_it != l_hashes.end());
+
+            if(l_hash_it->second != l_item->createHash())
+            {
+                tracemessage("saved and loaded hashes differ!");
+                //assert(l_hash_it->second == l_item->createHash());
+            }
         }
     }
+
+    // _debug_dump(thingsMap);
 }
 
 std::string zm::MindMatterModel::generateUid()
@@ -834,7 +851,7 @@ void zm::MindMatterModel::deepCopy(
 void zm::MindMatterModel::duplicateModelTo(MindMatterModel &other) const
 {
     deepCopy(m_things, other.m_things);
-    deepCopy(m_things, other.m_old_things);
+    deepCopy(m_things, other.m_things_synced);
 }
 
 
@@ -853,10 +870,11 @@ void _debug_dump(const zm::MindMatterModel::uid_mm_bimap_t &thingsMap)
             l_neighbours << m.second << ", ";
         }
         l_neighbours << ")";
-        tracemessage("  %s (#%s) %s",
+        tracemessage("  %s (#%s) %s '%s'",
                      i.left.c_str(),
                      i.right->createHash().c_str(),
-                     l_neighbours.str().c_str());
+                     l_neighbours.str().c_str(),
+                     i.right->m_caption.c_str());
     }
 }
 

@@ -39,11 +39,11 @@ namespace zm
 
 
         // used for generating the diff
-        uid_mm_bimap_t  m_old_things;
+        uid_mm_bimap_t  m_things_synced;
 
         std::string     m_localFolder;
         std::string     m_localModelFile;
-        std::string     m_localModelFileOld;
+        std::string     m_localModelFileSynced;
 
         bool            m_initialized;
 
