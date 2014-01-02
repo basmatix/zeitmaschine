@@ -20,25 +20,193 @@ bool mm_low_level_gtd_workflow  ();
 bool mm_connections             ();
 bool mm_diff_and_reapply        ();
 bool mm_persist_and_load        ();
+bool mm_journaled_sync          ();
+bool mm_equality                ();
 
 int main( int arg_n, char **arg_v )
 {
     named_function_container l_tests;
 
     // l_tests["mm_change_while_open"] =       mm_change_while_open;
-    l_tests["mm_empty_db_on_load"] =        mm_empty_db_on_load;
-    l_tests["mm_low_level_gtd_workflow"] =  mm_low_level_gtd_workflow;
+    l_tests["mm_equality"] =                mm_equality;
     l_tests["mm_connections"] =             mm_connections;
+    l_tests["mm_low_level_gtd_workflow"] =  mm_low_level_gtd_workflow;
+    l_tests["mm_empty_db_on_load"] =        mm_empty_db_on_load;
     l_tests["mm_diff_and_reapply"] =        mm_diff_and_reapply;
     l_tests["mm_persist_and_load"] =        mm_persist_and_load;
+    l_tests["mm_journaled_sync"] =          mm_journaled_sync;
 
     return run_tests( l_tests, arg_n, arg_v );
 }
 
+class CleanFolder
+{
+    std::string m_folder;
+
+    void cleanup()
+    {
+        if( boost::filesystem::exists( m_folder ) )
+        {
+            boost::filesystem::remove_all( m_folder );
+        }
+    }
+
+    CleanFolder();
+
+public:
+
+    CleanFolder( const std::string &folder)
+        : m_folder(folder)
+    {cleanup(); }
+
+    ~CleanFolder()
+    {cleanup(); }
+
+    operator std::string &()
+    { return m_folder; }
+};
+
+int  sync_folders(
+        const std::string &a_source_path,
+        const std::string &a_destination_path,
+        const std::string &a_pattern = "*-journal.yaml")
+{
+    const boost::filesystem::path l_source_folder(a_source_path);
+    const boost::filesystem::path l_destination_folder(a_destination_path);
+
+    boost::filesystem::directory_iterator l_end_itr;
+    boost::filesystem::directory_iterator l_fs_itr( l_source_folder );
+
+    int l_result = 0;
+
+    for( ; l_fs_itr != l_end_itr; ++l_fs_itr )
+    {
+        // skip if not a file
+        if( !boost::filesystem::is_regular_file( l_fs_itr->status() ) )
+        {
+            continue;
+        }
+
+        // skip if no match
+        if( !zm::common::matchesWildcards(
+                    l_fs_itr->path().string(),
+                    a_pattern ))
+        {
+            continue;
+        }
+
+        boost::filesystem::path l_dest_file =
+                l_destination_folder / l_fs_itr->path().filename();
+
+        printf("copy '%s' to '%s'\n",
+               l_fs_itr->path().string().c_str(),
+               l_dest_file.string().c_str()); fflush(stdout);
+
+        if( ! boost::filesystem::exists(l_dest_file))
+        {
+            boost::filesystem::copy_file(
+                        l_fs_itr->path(),
+                        l_dest_file );
+            l_result += 1;
+        }
+        else
+        {
+            // todo: check if same, else error
+        }
+    }
+
+    return l_result;
+}
+
+bool mm_equality()
+{
+    CleanFolder fc1("./test-localfolder-1");
+
+    zm::MindMatterModel l_m1;
+    l_m1.setLocalFolder( fc1 );
+    l_m1.setUsedUsername( "test-user" );
+    l_m1.setUsedHostname( "test-machine" );
+    l_m1.initialize();
+
+    zm::MindMatterModel l_m2;
+    l_m2.setLocalFolder( fc1 );
+    l_m2.setUsedUsername( "test-user" );
+    l_m2.setUsedHostname( "test-machine" );
+    l_m2.initialize();
+
+    test_assert(l_m1.createHash() == l_m2.createHash(),
+                "hashes of empty models should be equal");
+
+    std::string node1 = l_m1.createNewItem( "node1" );
+    std::string node2 = l_m1.createNewItem( "node2" );
+    std::string node3 = l_m1.createNewItem( "node3" );
+    l_m1.connect(node2, node3);
+
+    test_assert(l_m1.createHash() != l_m2.createHash(),
+                "hashes of different models should differ");
+
+    l_m1.duplicateModelTo(l_m2);
+
+    l_m1.debug_dump();
+
+    l_m2.debug_dump();
+
+    test_assert(l_m1.createHash() == l_m2.createHash(),
+                "hashes of synced models should be equal");
+
+    return true;
+}
+
+bool mm_journaled_sync()
+{
+    CleanFolder fc1("./test-localfolder-1");
+    CleanFolder fc2("./test-localfolder-2");
+
+    int l_files_copied;
+    bool l_synced;
+
+    zm::MindMatterModel l_m1;
+    l_m1.setLocalFolder( fc1 );
+    l_m1.setUsedUsername( "test-user" );
+    l_m1.setUsedHostname( "test-machine" );
+    l_m1.initialize();
+
+    zm::MindMatterModel l_m2;
+    l_m2.setLocalFolder( fc2 );
+    l_m2.setUsedUsername( "test-user" );
+    l_m2.setUsedHostname( "test-machine" );
+    l_m2.initialize();
+
+    std::string node1 = l_m1.createNewItem( "node1" );
+
+    l_synced = l_m1.persistence_sync();
+    l_files_copied = sync_folders(fc1, fc2);
+    test_assert(l_files_copied == 1, "exactly one file should have been copied");
+    l_synced = l_m2.persistence_sync();
+
+    test_assert( l_m2.equals(l_m1), "model2 should not differ from model1");
+
+    std::string node2 = l_m1.createNewItem( "node2" );
+    std::string node3 = l_m1.createNewItem( "node3" );
+    l_m1.connect(node2, node3);
+
+    l_synced = l_m1.persistence_sync();
+    test_assert( l_synced, "a sync file should have been generated");
+    l_synced = l_m1.persistence_sync();
+    test_assert( ! l_synced, "second sync should have no effect");
+
+    l_files_copied = sync_folders(fc1, fc2);
+    test_assert(l_files_copied == 1, "exactly one file should have been copied")
+    l_m2.persistence_sync();
+
+    test_assert( l_m2.equals(l_m1), "model2 should not differ from model1");
+
+    return true;
+}
+
 bool mm_persist_and_load()
 {
-    if( boost::filesystem::exists( "./test-localfolder" ) )
-        boost::filesystem::remove_all( "./test-localfolder" );
+    CleanFolder fc1("./test-localfolder");
 
     zm::MindMatterModel l_m1;
     l_m1.setLocalFolder( "./test-localfolder" );
@@ -53,15 +221,16 @@ bool mm_persist_and_load()
     l_m2.initialize();
 
     std::string node1 = l_m1.createNewItem( "node1" );
+    std::string node2 = l_m1.createNewItem( "node2" );
 
     test_assert( ! l_m2.equals(l_m1), "model2 should differ from model1");
     l_m1.persistence_saveLocalModel();
     l_m2.persistence_loadLocalModel();
     test_assert( l_m2.equals(l_m1), "model2 should not differ from model1");
 
-    std::string node2 = l_m1.createNewItem( "node2" );
+    std::string node3 = l_m1.createNewItem( "node3" );
 
-    l_m1.connect(node1, node2);
+    l_m1.connect(node1, node3);
 
     test_assert( ! l_m2.equals(l_m1), "model2 should differ from model1");
     printf("save..\n"); fflush(stdout);
@@ -70,17 +239,18 @@ bool mm_persist_and_load()
     l_m2.persistence_loadLocalModel();
     test_assert( l_m2.equals(l_m1), "model2 should not differ from model1");
 
+    l_m1.connect(node1, node2);
+    test_assert( ! l_m2.equals(l_m1), "model2 should differ from model1");
 
     return true;
 }
 
 bool mm_connections()
 {
-    if( boost::filesystem::exists( "./test-localfolder" ) )
-        boost::filesystem::remove_all( "./test-localfolder" );
+    CleanFolder fc1("./test-localfolder");
 
     zm::MindMatterModel l_m1;
-    l_m1.setLocalFolder( "./test-localfolder" );
+    l_m1.setLocalFolder( fc1 );
     l_m1.setUsedUsername( "test-user" );
     l_m1.setUsedHostname( "test-machine" );
     l_m1.initialize();
@@ -108,8 +278,7 @@ bool mm_connections()
 
 bool mm_diff_and_reapply()
 {
-    if( boost::filesystem::exists( "./test-localfolder" ) )
-        boost::filesystem::remove_all( "./test-localfolder" );
+    CleanFolder fc1("./test-localfolder");
 
     // [todo] - test circular dependencies like
     //          [new item 1] <=> [new item 2]
@@ -123,7 +292,7 @@ bool mm_diff_and_reapply()
     // create first model
     //
     zm::MindMatterModel l_m1;
-    l_m1.setLocalFolder( "./test-localfolder" );
+    l_m1.setLocalFolder( fc1 );
     l_m1.setUsedUsername( "test-user" );
     l_m1.setUsedHostname( "test-machine" );
     l_m1.initialize();
@@ -145,7 +314,7 @@ bool mm_diff_and_reapply()
     // fork
     //
     zm::MindMatterModel l_m2;
-    l_m2.setLocalFolder( "./test-localfolder" );
+    l_m2.setLocalFolder( fc1 );
     l_m2.setUsedUsername( "test-user" );
     l_m2.setUsedHostname( "test-machine" );
     l_m2.initialize();
@@ -195,8 +364,7 @@ bool mm_diff_and_reapply()
 
 bool mm_empty_db_on_load()
 {
-    if( boost::filesystem::exists( "./test-localfolder" ) )
-        boost::filesystem::remove_all( "./test-localfolder" );
+    CleanFolder fc1("./test-localfolder");
 
     zm::MindMatterModel l_m1;
     l_m1.setUsedUsername( "test-user" );
@@ -234,8 +402,7 @@ bool mm_change_while_open()
     /// used by one client (e.g. a local server) at a time.
     /// thus it will likely fail forever
 
-    if( boost::filesystem::exists( "./test-localfolder" ) )
-        boost::filesystem::remove_all( "./test-localfolder" );
+    CleanFolder fc1("./test-localfolder");
 
     // client 1 starts and has a model in mind
     zm::MindMatterModel l_m1;
@@ -273,8 +440,7 @@ bool mm_change_while_open()
 
 bool mm_low_level_gtd_workflow()
 {
-    if( boost::filesystem::exists( "./test-localfolder" ) )
-        boost::filesystem::remove_all( "./test-localfolder" );
+    CleanFolder fc1("./test-localfolder");
 
     zm::MindMatterModel l_m1;
 

@@ -40,4 +40,6 @@ add_test( mm_diff_and_reapply         ${test_executable} mm_diff_and_reapply )
 # deactivated because assumptions not valid anymore
 #add_test( mm_things_change_while_open ${test_executable} mm_change_while_open )
 add_test( mm_persist_and_load         ${test_executable} mm_persist_and_load )
+add_test( mm_journaled_sync           ${test_executable} mm_journaled_sync )
+add_test( mm_equality                 ${test_executable} mm_equality )
 
