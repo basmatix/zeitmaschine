@@ -44,6 +44,13 @@ zm::MindMatterModel::MindMatterModel()
 {
 }
 
+zm::MindMatterModel::~MindMatterModel()
+{
+    clear(m_old_things);
+    clear(m_things);
+    delete m_options;
+}
+
 bool zm::MindMatterModel::equals(
         const uid_mm_bimap_t &a_first,
         const uid_mm_bimap_t &a_second,

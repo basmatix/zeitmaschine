@@ -49,6 +49,7 @@ namespace zm
     public:
 
         MindMatterModel();
+        ~MindMatterModel();
 
         bool equals( const MindMatterModel &other, bool tell_why = false ) const;
         bool operator==( const MindMatterModel &other ) const;
