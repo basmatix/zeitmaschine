@@ -19,6 +19,9 @@
 
 namespace boost_ptree = boost::property_tree;
 
+namespace zm
+{
+
 class zmOptions
 {
     boost_ptree::ptree  m_tree;
@@ -138,5 +141,7 @@ private:
         boost::property_tree::json_parser::write_json( m_filename, m_tree );
     }
 };
+
+}
 
 #endif

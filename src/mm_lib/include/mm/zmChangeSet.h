@@ -183,6 +183,11 @@ public:
         return m_journal.empty();
     }
 
+    size_t size() const
+    {
+        return m_journal.size();
+    }
+
 private:
 
     //ChangeSet( const ChangeSet & );

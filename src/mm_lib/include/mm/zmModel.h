@@ -19,6 +19,7 @@ namespace zm
 {
     class MindMatter;
     class ChangeSet;
+    class zmOptions;
 
     class MindMatterModel
     {
@@ -29,6 +30,8 @@ namespace zm
     private:
 
         uid_mm_bimap_t  m_things;
+        zmOptions      *m_options;
+
 
         // used for generating the diff
         uid_mm_bimap_t  m_old_things;
@@ -40,6 +43,9 @@ namespace zm
         bool            m_initialized;
         bool            m_dirty;  // maybe we need more
 
+        MindMatterModel(const MindMatterModel &);
+        MindMatterModel & operator=(const MindMatterModel &);
+
     public:
 
         MindMatterModel();
@@ -48,11 +54,17 @@ namespace zm
         bool operator==( const MindMatterModel &other ) const;
         bool operator!=( const MindMatterModel &other ) const;
 
+        void duplicateModelTo(MindMatterModel &other) const;
+
+        std::string createHash( bool verbose=false ) const;
+
         void setConfigPersistance( bool value );
 
         /// sets the one and only local folder for configuration temorary and
         /// snapshot files
         void setLocalFolder( const std::string &path );
+
+        const std::string & getLocalFolder() const;
 
         /// defines a (externally synced) folder exchange with other clients
         /// and/or users
@@ -72,7 +84,7 @@ namespace zm
         /// first load and apply new journal files in the sync folders. Then
         /// write the local model files and make the temporary journal file
         /// available to the sync folders and
-        void persistence_sync();
+        bool persistence_sync();
 
         void applyChangeSet( const ChangeSet &changeSet );
 
@@ -108,6 +120,10 @@ namespace zm
 
         std::vector< std::string > getHandledJournalFilenames();
         void appendHandledJournalFilename(const std::string &filename);
+
+        static void deepCopy(
+                const uid_mm_bimap_t &source,
+                      uid_mm_bimap_t &dest);
 
         static ChangeSet diff(
                 const uid_mm_bimap_t &model_from,
@@ -223,20 +239,20 @@ namespace zm
                 uid_mm_bimap_t::left_iterator &item,
                 const std::string &tag_name );
 
-        bool _setValue(
+        static bool _setValue(
                 uid_mm_bimap_t::left_iterator &item,
                 const std::string &name,
                 const std::string &value );
 
-        bool _setCaption(
+        static bool _setCaption(
                 uid_mm_bimap_t::left_iterator &item,
                 const std::string &caption );
 
-        void _connect(
+        static void _connect(
                 uid_mm_bimap_t::left_iterator &item1,
                 uid_mm_bimap_t::left_iterator &item2 );
 
-        void _disconnect(
+        static void _disconnect(
                 uid_mm_bimap_t::left_iterator &item1,
                 uid_mm_bimap_t::left_iterator &item2 );
 

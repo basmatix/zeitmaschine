@@ -14,6 +14,10 @@ namespace zm
 {
     class MindMatter
     {
+        /// MindMatter object cannot be copyied because the neighbour map
+        /// map must be constructed from outside
+        MindMatter(const MindMatter &);
+        MindMatter & operator=(const MindMatter &);
 
     public:
 
@@ -53,7 +57,7 @@ namespace zm
 
         inline std::set< std::string > getNeighbourUids() const;
 
-        inline std::string getHash( bool verbose=false ) const;
+        inline std::string createHash( bool verbose=false ) const;
 
         inline bool operator== ( const MindMatter &other );
 
@@ -164,9 +168,24 @@ bool zm::MindMatter::equals( const MindMatter & other, bool tell_why )
         return false;
     }
 
-    //TODO: check string_values
+    if( m_string_values != other.m_string_values )
+    {
+        if(tell_why)
+        {
+            tracemessage( "equals(): string values differ" );
+        }
+        return false;
+    }
 
-    //TODO: check neighbours
+    if( getNeighbourUids() != other.getNeighbourUids() )
+    {
+        if(tell_why)
+        {
+            tracemessage( "equals(): connected neighbours differ" );
+        }
+        return false;
+    }
+
     return true;
 }
 
@@ -319,7 +338,7 @@ inline void hash_add_value(
     boost::hash_combine(hash, value);
 }
 
-std::string zm::MindMatter::getHash( bool a_verbose ) const
+std::string zm::MindMatter::createHash( bool a_verbose ) const
 {
     size_t l_hash(0);
 

@@ -25,7 +25,7 @@ int main( int arg_n, char **arg_v )
 
 bool common_options_basic()
 {
-    zmOptions o1;
+    zm::zmOptions o1;
 
     boost::filesystem::remove( "test.json" );
 
@@ -57,7 +57,7 @@ bool common_options_basic()
     test_assert( o1.getStringList( "group.strings" ) == v,
                  "returning string list should be the one we provided" );
 
-    zmOptions o2;
+    zm::zmOptions o2;
 
     test_assert( o2.hasValue( "first_value" ) == false,
                  "value should be non existent before loading" );

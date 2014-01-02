@@ -65,16 +65,6 @@ bool zm::ChangeSet::write( const std::string &journalFileName )
         case JournalItem::EraseItem:
             l_yaml_emitter << YAML::Value << "EraseItem";
             break;
-//        case JournalItem::AddAttribute:
-//            l_yaml_emitter << YAML::Value << "AddAttribute";
-//            l_yaml_emitter << YAML::Key << "name";
-//            l_yaml_emitter << YAML::Value << j->key;
-//            break;
-//        case JournalItem::RemoveAttribute:
-//            l_yaml_emitter << YAML::Value << "RemoveAttribute";
-//            l_yaml_emitter << YAML::Key << "name";
-//            l_yaml_emitter << YAML::Value << j->key;
-//            break;
         case JournalItem::ChangeCaption:
             l_yaml_emitter << YAML::Value << "ChangeCaption";
             l_yaml_emitter << YAML::Key << "value";
@@ -135,6 +125,16 @@ void zm::ChangeSet::load( const std::string &journalFileName )
             l_newItem = JournalItem::createCreate(
                         l_uid, str(n["caption"]) );
         }
+        else if( l_type == "EraseItem" )
+        {
+            l_newItem = JournalItem::createErase(l_uid);
+        }
+        else if( l_type == "ChangeCaption" )
+        {
+            assert( n["value"] );
+            l_newItem = JournalItem::createChangeCaption(l_uid,
+                        str(n["value"]));
+        }
         else if( l_type == "SetStringValue" )
         {
             assert( n["name"] );
@@ -144,26 +144,11 @@ void zm::ChangeSet::load( const std::string &journalFileName )
                         str(n["name"]),
                         str(n["value"]));
         }
-        else if( l_type == "EraseItem" )
-        {
-            l_newItem = JournalItem::createErase(l_uid);
-        }
-//        if( l_type == "AddAttribute" )
-//        {
-//            assert( n["name"] );
-//            l_newItem = JournalItem::createAddAttribute(l_uid,
-//                        str(n["name"]));
-//        }
-//        if( l_type == "RemoveAttribute" )
-//        {
-//            assert( n["name"] );
-//            l_newItem = JournalItem::createRemoveAttribute(l_uid,
-//                        str(n["name"]));
-//        }
-        else if( l_type == "ChangeCaption" )
+        else if( l_type == "Connect" )
         {
             assert( n["value"] );
-            l_newItem = JournalItem::createChangeCaption(l_uid,
+            l_newItem = JournalItem::createConnect(
+                        l_uid,
                         str(n["value"]));
         }
         else

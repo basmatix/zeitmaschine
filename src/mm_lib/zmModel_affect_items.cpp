@@ -159,7 +159,7 @@ std::list< std::string > zm::MindMatterModel::getNeighbours(
     {
         uid_mm_bimap_t::right_const_iterator i = m_things.right.find(m.first);
         assert( i != m_things.right.end() );
-        //l_result.push_back( i->second  );
+        l_result.push_back( i->second  );
     }
 
     return l_result;
