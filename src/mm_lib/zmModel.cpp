@@ -25,10 +25,6 @@
 #include <stdlib.h>
 using namespace zm;
 
-static void yamlToThingsMap(
-        const YAML::Node                    &yamlNode,
-        zm::MindMatterModel::uid_mm_bimap_t &thingsMap );
-
 static void _debug_dump(
         const zm::MindMatterModel::uid_mm_bimap_t &thingsMap);
 
@@ -39,7 +35,6 @@ zm::MindMatterModel::MindMatterModel()
     , m_localModelFile      ( "" )
     , m_localModelFileOld   ( "" )
     , m_initialized         ( false )
-    , m_dirty               ( false )
     , m_options             ( new zm::zmOptions )
 {
 }
@@ -487,7 +482,7 @@ void zm::MindMatterModel::applyChangeSet( const ChangeSet &changeSet )
         switch( j->type )
         {
         case JournalItem::CreateItem:
-            _createNewItem( j->item_uid, j->value, j->time );
+            _createNewItem( m_things, j->item_uid, j->value, j->time );
             break;
         case JournalItem::SetStringValue:
             _setValue(l_item_it, j->key, j->value );
@@ -513,6 +508,10 @@ void zm::MindMatterModel::applyChangeSet( const ChangeSet &changeSet )
             assert( l_item2_it != m_things.left.end() &&
                     "item to disconnect from must exist");
             _disconnect( l_item_it, l_item2_it );
+        } break;
+        case JournalItem::AddAttribute:
+        {
+            _addTag(m_things, l_item_it, j->key);
         } break;
         }
     }
@@ -551,19 +550,11 @@ std::vector< std::string > zm::MindMatterModel::getJournalFiles() const
     return l_all_matching_files;
 }
 
-void zm::MindMatterModel::dirty()
-{
-    m_dirty = true;
-}
-
 // info regarding string encoding:
 //    http://code.google.com/p/yaml-cpp/wiki/Strings
 
 void zm::MindMatterModel::persistence_saveLocalModel()
 {
-    /// be careful! if( !m_dirty ) return;
-
-
     if( !zm::common::create_base_directory( m_localModelFile ) )
     {
         // todo: error
@@ -648,11 +639,12 @@ void zm::MindMatterModel::clear( uid_mm_bimap_t &thingsMap )
     thingsMap.clear();
 }
 
-void yamlToThingsMap(
-        const YAML::Node                    &yamlNode,
-        zm::MindMatterModel::uid_mm_bimap_t &thingsMap )
+void zm::MindMatterModel::yamlToThingsMap(
+        const YAML::Node    &yamlNode,
+        uid_mm_bimap_t      &thingsMap )
 {
     std::map< std::string, std::vector< std::string> > l_connection_uids;
+    std::map< std::string, std::vector< std::string> > l_tag_names;
     std::map< std::string, std::string > l_hashes;
 
     BOOST_FOREACH( YAML::Node n, yamlNode )
@@ -678,6 +670,14 @@ void yamlToThingsMap(
         {
             l_connection_uids[l_uid] =
                     n["connections"].as< std::vector< std::string > >();
+        }
+
+        /// this is deprecated and just ensures that older models can
+        /// be read
+        if( n["attributes"] )
+        {
+            l_tag_names[l_uid] =
+                    n["attributes"].as< std::vector< std::string > >();
         }
 
         if( n["string_values"] )
@@ -715,6 +715,9 @@ void yamlToThingsMap(
         const std::string &l_uid( i.left );
         zm::MindMatter *l_item( i.right );
 
+        ///
+        /// handle connections
+        ///
         std::map< std::string, std::vector< std::string> >::const_iterator
                 l_connections_it = l_connection_uids.find(l_uid);
 
@@ -728,6 +731,23 @@ void yamlToThingsMap(
                 assert(l_other_it != thingsMap.left.end());
 
                 l_item->m_neighbours[l_other_it->second] = other_uid;
+            }
+        }
+
+        ///
+        /// handle tags (deprecated)
+        ///
+        std::map< std::string, std::vector< std::string> >::const_iterator
+                l_tags_it = l_tag_names.find(l_uid);
+
+        if(l_tags_it != l_tag_names.end())
+        {
+            uid_mm_bimap_t::left_iterator l_item_left_it(
+                        thingsMap.left.find( l_uid ) );
+
+            BOOST_FOREACH( const std::string &tag_name, l_tags_it->second)
+            {
+                _addTag(thingsMap, l_item_left_it, tag_name);
             }
         }
 

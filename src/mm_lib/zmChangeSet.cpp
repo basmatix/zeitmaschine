@@ -12,6 +12,7 @@
 #include "include/mm/zmCommon.h"
 
 #include <fstream>
+#include <iostream>
 #include <string>
 #include <yaml-cpp/yaml.h>
 
@@ -80,6 +81,9 @@ bool zm::ChangeSet::write( const std::string &journalFileName )
             l_yaml_emitter << YAML::Key << "value";
             l_yaml_emitter << YAML::Value << j->value;
             break;
+        case JournalItem::AddAttribute:
+        default:
+            assert(false && "jounal type must be valid");
         }
 
         l_yaml_emitter << YAML::EndMap;
@@ -150,6 +154,13 @@ void zm::ChangeSet::load( const std::string &journalFileName )
             l_newItem = JournalItem::createConnect(
                         l_uid,
                         str(n["value"]));
+        }
+        else if( l_type == "AddAttribute" )
+        {
+            assert( n["name"] );
+            l_newItem = JournalItem::createAddAttribute(
+                        l_uid,
+                        str(n["name"]));
         }
         else
         {

@@ -15,6 +15,11 @@
 #include <string>
 #include <list>
 
+namespace YAML
+{
+    class Node;
+}
+
 namespace zm
 {
     class MindMatter;
@@ -41,7 +46,6 @@ namespace zm
         std::string     m_localModelFileOld;
 
         bool            m_initialized;
-        bool            m_dirty;  // maybe we need more
 
         MindMatterModel(const MindMatterModel &);
         MindMatterModel & operator=(const MindMatterModel &);
@@ -122,6 +126,10 @@ namespace zm
         std::vector< std::string > getHandledJournalFilenames();
         void appendHandledJournalFilename(const std::string &filename);
 
+        static void yamlToThingsMap(
+                const YAML::Node    &yamlNode,
+                uid_mm_bimap_t      &thingsMap );
+
         static void deepCopy(
                 const uid_mm_bimap_t &source,
                       uid_mm_bimap_t &dest);
@@ -134,8 +142,6 @@ namespace zm
                 const uid_mm_bimap_t &a_first,
                 const uid_mm_bimap_t &a_second,
                 bool tell_why);
-
-        void dirty();
 
         ChangeSet persistence_pullJournal();
 
@@ -229,7 +235,13 @@ namespace zm
 
     private: // rw
 
-        void _createNewItem(
+        static std::string _createNewItem(
+                uid_mm_bimap_t    &model,
+                const std::string &caption,
+                const std::string &uid = "" );
+
+        static void _createNewItem(
+                uid_mm_bimap_t    &model,
                 const std::string &uid,
                 const std::string &caption,
                 const std::string &time );
@@ -237,7 +249,8 @@ namespace zm
         void _eraseItem(
                 uid_mm_bimap_t::left_iterator &item );
 
-        void _addTag(
+        static void _addTag(
+                uid_mm_bimap_t                &model,
                 uid_mm_bimap_t::left_iterator &item,
                 const std::string &tag_name );
 

@@ -185,8 +185,17 @@ std::string zm::MindMatterModel::findOrCreateTagItem( const std::string &tag_nam
 ///
 /// write relevant interface
 ///
+std::string zm::MindMatterModel::createNewItem(
+        const std::string &caption,
+        const std::string &uid )
+{
+    return _createNewItem(m_things, caption, uid);
+}
 
-std::string zm::MindMatterModel::createNewItem( const std::string &caption, const std::string &uid )
+std::string zm::MindMatterModel::_createNewItem(
+        uid_mm_bimap_t    &model,
+        const std::string &caption,
+        const std::string &uid )
 {
     std::string l_time = zm::common::time_stamp_iso_ext();
     std::string l_new_key( uid );
@@ -196,20 +205,22 @@ std::string zm::MindMatterModel::createNewItem( const std::string &caption, cons
         l_new_key = generateUid();
     }
 
-    assert( m_things.left.find( l_new_key ) == m_things.left.end() );
+    assert( model.left.find( l_new_key ) == model.left.end() );
 
-    _createNewItem( l_new_key, caption, l_time );
-
-    dirty();
+    _createNewItem( model, l_new_key, caption, l_time );
 
     return l_new_key;
 }
 
-void zm::MindMatterModel::_createNewItem( const std::string &a_uid, const std::string &a_caption, const std::string &a_time )
+void zm::MindMatterModel::_createNewItem(
+        uid_mm_bimap_t    &model,
+        const std::string &a_uid,
+        const std::string &a_caption,
+        const std::string &a_time )
 {
     MindMatter *l_new_thing = new MindMatter( a_caption );
     l_new_thing->addValue( "global_time_created", a_time );
-    m_things.insert( uid_mm_bimap_t::value_type(a_uid,l_new_thing) );
+    model.insert( uid_mm_bimap_t::value_type(a_uid,l_new_thing) );
 }
 
 void zm::MindMatterModel::eraseItem( const std::string &uid )
@@ -219,8 +230,6 @@ void zm::MindMatterModel::eraseItem( const std::string &uid )
     assert( l_item_it != m_things.left.end() );
 
     _eraseItem( l_item_it );
-
-    dirty();
 }
 
 void zm::MindMatterModel::_eraseItem( uid_mm_bimap_t::left_iterator &item )
@@ -239,21 +248,20 @@ void zm::MindMatterModel::addTag(
 
     assert( l_item_it != m_things.left.end() );
 
-    _addTag( l_item_it, tag_name );
-
-    dirty();
+    _addTag( m_things, l_item_it, tag_name );
 }
 
 void zm::MindMatterModel::_addTag(
+        uid_mm_bimap_t                  &model,
         uid_mm_bimap_t::left_iterator   &item,
         const std::string               &tag_name )
 {
-    uid_mm_bimap_t::left_iterator l_tag_it( m_things.left.find( tag_name ) );
+    uid_mm_bimap_t::left_iterator l_tag_it( model.left.find( tag_name ) );
 
-    if( l_tag_it == m_things.left.end() )
+    if( l_tag_it == model.left.end() )
     {
-        std::string n(createNewItem( tag_name, tag_name ));
-        uid_mm_bimap_t::left_iterator i( m_things.left.find( n ) );
+        std::string n(_createNewItem( model, tag_name, tag_name ));
+        uid_mm_bimap_t::left_iterator i( model.left.find( n ) );
         _connect( item, i );
     }
     else
@@ -271,8 +279,6 @@ bool zm::MindMatterModel::removeTag(
     assert( l_item_it != m_things.left.end() );
 
     bool l_return = _removeTag( l_item_it, tag_name );
-
-    dirty();
 
     return l_return;
 }
@@ -324,8 +330,6 @@ void zm::MindMatterModel::connect(
     assert( l_item1_it != m_things.left.end() );
     assert( l_item2_it != m_things.left.end() );
 
-    dirty();
-
     _connect( l_item1_it, l_item2_it );
 }
 
@@ -355,8 +359,6 @@ void zm::MindMatterModel::setValue(
     assert( l_item_it != m_things.left.end() );
 
     if( !_setValue(l_item_it, name, value ) ) return;
-
-    dirty();
 }
 
 bool zm::MindMatterModel::_setValue(
@@ -377,8 +379,6 @@ void zm::MindMatterModel::setCaption( const std::string &uid, const std::string 
     assert( l_item_it != m_things.left.end() );
 
     if( !_setCaption( l_item_it, caption ) ) return;
-
-    dirty();
 }
 
 bool zm::MindMatterModel::_setCaption( uid_mm_bimap_t::left_iterator &item, const std::string &caption )

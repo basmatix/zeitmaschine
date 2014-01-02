@@ -32,7 +32,7 @@ public:
         CreateItem,
         EraseItem,
         SetStringValue,
-//        AddAttribute,
+        AddAttribute,
 //        RemoveAttribute,
         ChangeCaption,
         Connect,
@@ -69,15 +69,15 @@ public:
         return l_result;
     }
 
-//    static journal_ptr_t createAddAttribute(
-//            const std::string &Uid,
-//            const std::string &name)
-//    {
-//        journal_ptr_t l_result =
-//                journal_ptr_t(new JournalItem(Uid, AddAttribute));
-//        l_result->key = name;
-//        return l_result;
-//    }
+    static journal_ptr_t createAddAttribute(
+            const std::string &Uid,
+            const std::string &name)
+    {
+        journal_ptr_t l_result =
+                journal_ptr_t(new JournalItem(Uid, AddAttribute));
+        l_result->key = name;
+        return l_result;
+    }
 
 //    static journal_ptr_t createRemoveAttribute(
 //            const std::string &Uid,
