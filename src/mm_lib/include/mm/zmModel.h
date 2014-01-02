@@ -127,13 +127,18 @@ namespace zm
 
         static ChangeSet diff(
                 const uid_mm_bimap_t &model_from,
-                const uid_mm_bimap_t &model_to );
+                const uid_mm_bimap_t &model_to);
+
+        static bool equals(
+                const uid_mm_bimap_t &a_first,
+                const uid_mm_bimap_t &a_second,
+                bool tell_why);
 
         void dirty();
 
-        bool persistence_pullJournal();
+        ChangeSet persistence_pullJournal();
 
-        bool persistence_pushJournal();
+        ChangeSet persistence_pushJournal();
 
         /// returns a sorted list containing names of journal files
         /// located in the sync folder

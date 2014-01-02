@@ -45,25 +45,26 @@ zm::MindMatterModel::MindMatterModel()
 }
 
 bool zm::MindMatterModel::equals(
-        const zm::MindMatterModel &a_other,
-        bool tell_why ) const
+        const uid_mm_bimap_t &a_first,
+        const uid_mm_bimap_t &a_second,
+        bool tell_why )
 {
     /// prune if models differ in size
-    if( m_things.size() != a_other.m_things.size() )
+    if( a_first.size() != a_second.size() )
     {
         return false;
     }
 
     /// go through all elements of m_things - note that we don't have
     /// to do this for the second model
-    BOOST_FOREACH( const uid_mm_bimap_t::value_type& i, m_things )
+    BOOST_FOREACH( const uid_mm_bimap_t::value_type& i, a_first )
     {
         /// find the key in the other map
         uid_mm_bimap_t::left_const_iterator l_item_it(
-                    a_other.m_things.left.find( i.left ) );
+                    a_second.left.find( i.left ) );
 
         /// not found? return false!
-        if( l_item_it == a_other.m_things.left.end() )
+        if( l_item_it == a_second.left.end() )
         {
             return false;
         }
@@ -78,6 +79,13 @@ bool zm::MindMatterModel::equals(
     /// if we reach this point the maps must be equal
 
     return true;
+}
+
+bool zm::MindMatterModel::equals(
+        const zm::MindMatterModel &a_other,
+        bool tell_why ) const
+{
+    return equals(m_things, a_other.m_things, tell_why);
 }
 
 bool zm::MindMatterModel::operator==( const zm::MindMatterModel &other ) const
@@ -267,32 +275,10 @@ void zm::MindMatterModel::initialize()
 
     m_localModelFileOld = createModelFileNameOld();
 
-    /*
-    /// find the name for the temporary session journal- should be equal
-    /// across sessions and unique for each client
-    // eg. /path/to/zeitmaschine/zm-frans-heizluefter-temp-journal.yaml
-    std::stringstream l_ssTempJournalFile;
-    l_ssTempJournalFile << m_localFolder << "/zm-"
-                        << m_options->getString( "username" )
-                        << "-"
-                        << m_options->getString( "hostname" )
-                        << "-journal-temp.yaml";
-    m_temporaryJournalFile = l_ssTempJournalFile.str();
-
-    if( boost::filesystem::exists( m_temporaryJournalFile ) )
-    {
-        /// there is a temporary journal file which should not be there
-        /// (maybe a leftover after a crash or a debug session)
-        /// make it available for the rest of the world
-        makeTempJournalStatic();
-    }
-
-    tracemessage( "using temp file '%s'", m_temporaryJournalFile.c_str() );
-    */
 
     persistence_loadLocalModel();
 
-    if( persistence_pullJournal() )
+    if( !persistence_pullJournal().isEmpty() )
     {
         persistence_saveLocalModel();
     }
@@ -305,27 +291,38 @@ bool zm::MindMatterModel::persistence_sync()
     // [TODO] - in case something goes wrong in here we should
     //          do all this in an atomic way
 
-    /// NOTE:
+    /// NOTE: we have to solve a tricky problem here. in case we want
+    ///       to achieve a 'pull only' approach without the need to
+    ///       write a journal we need to apply the remote journals to
+    ///       both the new and the old model. otherwise on the next journal
+    ///       export we would replicate the journaling information we just
+    ///       imported when.
+    ///       Importing the jounals on both models would be tricky on the
+    ///       other hand because conflict resolving would have to take place
+    ///       twice, too.
 
     /// save the current model for safety reasons
     persistence_saveLocalModel();
 
-    /// load remote journals into current model
-    persistence_pullJournal();
-
     /// write journal from old model to current model
-    bool l_result = persistence_pushJournal();
-    if( l_result )
+    ChangeSet l_exportedChanges = persistence_pushJournal();
+
+    /// load remote journals into current model
+    ChangeSet l_importedChanges = persistence_pullJournal();
+
+    if( l_exportedChanges.isEmpty() && l_importedChanges.isEmpty() )
     {
-        persistence_saveLocalModel();
-
-        boost::filesystem::rename( m_localModelFile, m_localModelFileOld );
-
-        // [TODO] - should be done with a copy operator
-        loadModelFromFile(m_localModelFileOld, m_old_things);
+        return false;
     }
 
-    return l_result;
+    //[TODO]
+    //resolveConflicts(l_exportedChanges, l_importedChanges);
+
+    persistence_saveLocalModel();
+
+    boost::filesystem::rename( m_localModelFile, m_localModelFileOld );
+
+    return true;
 }
 
 bool zm::MindMatterModel::loadModelFromFile(
@@ -397,8 +394,11 @@ void zm::MindMatterModel::appendHandledJournalFilename(
     m_options->addStringListElement( "read_journal", a_filename );
 }
 
-bool zm::MindMatterModel::persistence_pullJournal()
+ChangeSet zm::MindMatterModel::persistence_pullJournal()
 {
+    assert( equals(m_things, m_old_things, false) );
+
+    ChangeSet l_result;
     bool l_importedJournals = false;
 
     std::vector< std::string > l_journalFiles = getJournalFiles();
@@ -421,17 +421,23 @@ bool zm::MindMatterModel::persistence_pullJournal()
             l_importedJournals = true;
         }
     }
-    return l_importedJournals;
+
+    if( l_importedJournals )
+    {
+        l_result = diff( m_old_things, m_things );
+        deepCopy(m_things, m_old_things);
+    }
+    return l_result;
 }
 
-bool zm::MindMatterModel::persistence_pushJournal()
+ChangeSet zm::MindMatterModel::persistence_pushJournal()
 {
     ChangeSet l_changeSet( diff( m_old_things, m_things ) );
 
     if(l_changeSet.isEmpty())
     {
         tracemessage( "no changes - don't write journal" );
-        return false;
+        return l_changeSet;
     }
 
     std::string l_journal_basename = createJournalFileName();
@@ -446,7 +452,9 @@ bool zm::MindMatterModel::persistence_pushJournal()
 
     appendHandledJournalFilename(l_journal_basename);
 
-    return true;
+    deepCopy(m_things, m_old_things);
+
+    return l_changeSet;
 }
 
 void zm::MindMatterModel::applyChangeSet( const ChangeSet &changeSet )
