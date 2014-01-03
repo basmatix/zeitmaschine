@@ -14,9 +14,12 @@
 
 std::list< std::string > zmGtdModel::getInboxItems( bool includeDoneItems ) const
 {
+    // maybe should be done using http://www.boost.org/doc/libs/1_55_0/libs/iterator/doc/filter_iterator.html
+
     std::list< std::string > l_return;
-/*
-    BOOST_FOREACH(const zm::MindMatterModel::uid_mm_bimap_t::value_type& i, m_things_model.things() )
+
+    BOOST_FOREACH(const zm::MindMatterModel::uid_mm_bimap_t::value_type& i,
+                  m_things_model.things() )
     {
         if( isInboxItem( i.left )
             && (includeDoneItems       || !isDone(  i.left ) ) )
@@ -24,15 +27,16 @@ std::list< std::string > zmGtdModel::getInboxItems( bool includeDoneItems ) cons
             l_return.push_back( i.left );
         }
     }
-*/
+
     return l_return;
 }
 
 std::list< std::string > zmGtdModel::getTaskItems( bool includeStandaloneTasks, bool includeDoneItems ) const
 {
     std::list< std::string > l_return;
-/*
-    BOOST_FOREACH(const zm::MindMatterModel::uid_mm_bimap_t::value_type& i, m_things_model.things() )
+
+    BOOST_FOREACH(const zm::MindMatterModel::uid_mm_bimap_t::value_type& i,
+                  m_things_model.things() )
     {
         if( isTaskItem( i.left, includeStandaloneTasks )
                 && (includeDoneItems       || !isDone(  i.left ) ) )
@@ -40,15 +44,16 @@ std::list< std::string > zmGtdModel::getTaskItems( bool includeStandaloneTasks, 
             l_return.push_back( i.left );
         }
     }
-*/
+
     return l_return;
 }
 
 std::list< std::string > zmGtdModel::getProjectItems( bool includeStandaloneTasks, bool includeDoneItems ) const
 {
     std::list< std::string > l_return;
-/*
-    BOOST_FOREACH(const zm::MindMatterModel::uid_mm_bimap_t::value_type& i, m_things_model.things() )
+
+    BOOST_FOREACH(const zm::MindMatterModel::uid_mm_bimap_t::value_type& i,
+                  m_things_model.things() )
     {
         if( isProjectItem( i.left, includeStandaloneTasks )
                 && (includeDoneItems       || !isDone(  i.left ) ) )
@@ -56,22 +61,23 @@ std::list< std::string > zmGtdModel::getProjectItems( bool includeStandaloneTask
             l_return.push_back( i.left );
         }
     }
-*/
+
     return l_return;
 }
 
 std::list< std::string > zmGtdModel::getDoneItems() const
 {
     std::list< std::string > l_return;
-/*
-    BOOST_FOREACH(const zm::MindMatterModel::uid_mm_bimap_t::value_type& i, m_things_model.things() )
+
+    BOOST_FOREACH(const zm::MindMatterModel::uid_mm_bimap_t::value_type& i,
+                  m_things_model.things() )
     {
         if( isDone(  i.left ) )
         {
             l_return.push_back( i.left );
         }
     }
-*/
+
     return l_return;
 }
 
