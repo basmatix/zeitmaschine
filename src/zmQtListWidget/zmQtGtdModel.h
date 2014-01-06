@@ -83,12 +83,10 @@ public:
         m_gtd_model.sync();
     }
 
-    // todo: eventually provide some sort of export functionality for
-    //       development purposes
-    // void save( const std::string &filename )
-    //{
-    //    m_gtd_model.save( filename );
-    //}
+    void localSave( const std::string &filename = "" )
+    {
+        m_gtd_model.localSave();
+    }
 
 /// const interface
 public:

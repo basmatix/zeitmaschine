@@ -97,6 +97,12 @@ public:
         m_things_model.persistence_sync();
     }
 
+    void localSave( const std::string &filename = "" )
+    {
+        m_things_model.persistence_saveLocalModel();
+    }
+
+
 /// const interface
 public:
 

@@ -26,7 +26,6 @@ zmQtGtdModel::zmQtGtdModel()
     , m_liDone      ( NULL )
 {
     m_wi_map = new zmWidgetItemMap();
-
 }
 
 void zmQtGtdModel::initialize( QTreeWidgetItem *root )
