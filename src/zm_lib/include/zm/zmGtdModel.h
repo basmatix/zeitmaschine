@@ -208,7 +208,8 @@ public:
             const std::string &caption );
 
     void setNote(
-            const std::string &uid, const std::string &value );
+            const std::string &uid,
+            const std::string &value );
 
     void plusOne(
             const std::string &uid );
@@ -227,7 +228,8 @@ public:
             const std::string &project_item,
             const std::string &task_item );
 
-    std::string createProject( const std::string &project_name );
+    std::string createProject(
+            const std::string &project_name );
 
 ///
 /// low level interface - to be vanished

@@ -116,31 +116,38 @@ bool zm::MindMatterModel::_isConnected(
     MindMatter::item_uid_map_t &n1( a_item1_it->second->m_neighbours );
     MindMatter::item_uid_map_t &n2( a_item2_it->second->m_neighbours );
 
+    MindMatter *l_item1_ptr( a_item1_it->second );
+    MindMatter *l_item2_ptr( a_item2_it->second );
+
     // this check is just for performance reasons (we test the
     // smaller set (in case assert expands to void))
     if( n1.size() < n2.size() )
     {
-        if( n1.find( a_item2_it->second ) != n1.end() )
+        if( n1.find( l_item2_ptr ) != n1.end() )
         {
-            assert( n2.find( a_item1_it->second ) != n2.end() );
+            /// assert item1 is in connection list of item2
+            assert( n2.find( l_item1_ptr ) != n2.end() );
             return true;
         }
         else
         {
-            assert( n2.find( a_item1_it->second ) == n2.end() );
+            /// assert item1 is NOT in connection list of item2
+            assert( n2.find( l_item1_ptr ) == n2.end() );
             return false;
         }
     }
     else
     {
-        if( n2.find( a_item1_it->second ) != n2.end() )
+        if( n2.find( l_item1_ptr ) != n2.end() )
         {
-            assert( n1.find( a_item2_it->second ) != n1.end() );
+            /// assert item2 is in connection list of item1
+            assert( n1.find( l_item2_ptr ) != n1.end() );
             return true;
         }
         else
         {
-            assert( n1.find( a_item2_it->second ) == n1.end() );
+            /// assert item2 is NOT in connection list of item1
+            assert( n1.find( l_item2_ptr ) == n1.end() );
             return false;
         }
     }

@@ -199,7 +199,9 @@ void zmGtdModel::setDone( const std::string &task_item )
     m_things_model.connect( task_item, m_item_done );
 
     m_things_model.setValue(
-                task_item, "gtd_time_done", zm::common::time_stamp_iso_ext() );
+                task_item,
+                "gtd_time_done",
+                zm::common::time_stamp_iso_ext() );
 
     m_things_model.persistence_saveLocalModel();
 }

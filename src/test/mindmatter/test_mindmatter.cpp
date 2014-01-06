@@ -66,7 +66,7 @@ public:
     { return m_folder; }
 };
 
-int  sync_folders(
+int sync_folders(
         const std::string &a_source_path,
         const std::string &a_destination_path,
         const std::string &a_pattern = "*-journal.yaml")
