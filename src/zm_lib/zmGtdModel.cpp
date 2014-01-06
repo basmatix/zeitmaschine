@@ -72,7 +72,7 @@ std::list< std::string > zmGtdModel::getDoneItems() const
     BOOST_FOREACH(const zm::MindMatterModel::uid_mm_bimap_t::value_type& i,
                   m_things_model.things() )
     {
-        if( isDone(  i.left ) )
+        if( isDone( i.left ) )
         {
             l_return.push_back( i.left );
         }

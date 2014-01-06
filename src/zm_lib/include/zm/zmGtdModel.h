@@ -71,7 +71,9 @@ public:
         m_things_model.setLocalFolder( path );
     }
 
-    void addDomainSyncFolder( const std::string &domainName, const std::string &path )
+    void addDomainSyncFolder(
+            const std::string &domainName,
+            const std::string &path )
     {
         m_things_model.addDomainSyncFolder( domainName, path );
     }
@@ -120,19 +122,27 @@ public:
         }
     }
 
-    int getImportance( const std::string &uid ) const;
+    int getImportance(
+            const std::string &uid ) const;
 
-    std::list< std::string > getInboxItems( bool includeDoneItems ) const;
+    std::list< std::string > getInboxItems(
+            bool includeDoneItems ) const;
 
-    /// returns a list of UIDs pointing to GTD-Tasks. StandaloneTasks are included by default,
-    /// done items are excluded by default
-    std::list< std::string > getTaskItems( bool includeStandaloneTasks, bool includeDoneItems ) const;
+    /// returns a list of UIDs pointing to GTD-Tasks. StandaloneTasks are
+    /// included by default, done items are excluded by default
+    std::list< std::string > getTaskItems(
+            bool includeStandaloneTasks,
+            bool includeDoneItems ) const;
 
-    std::list< std::string > getProjectItems( bool includeStandaloneTasks, bool includeDoneItems ) const;
+    std::list< std::string > getProjectItems(
+            bool includeStandaloneTasks,
+            bool includeDoneItems ) const;
 
     std::list< std::string > getDoneItems() const;
 
-    bool isTaskItem( const std::string &item, bool includeStandaloneTasks ) const
+    bool isTaskItem(
+            const std::string &item,
+            bool includeStandaloneTasks ) const
     {
         if( !includeStandaloneTasks && m_things_model.hasTag( item, "gtd_project" ) )
         {
@@ -141,14 +151,17 @@ public:
         return m_things_model.hasTag( item, "gtd_task" );
     }
 
-    bool isInboxItem( const std::string &item ) const
+    bool isInboxItem(
+            const std::string &item ) const
     {
         return m_things_model.isConnected( item, m_item_inbox );
         // should be equal to
         //return m_things_model.hasTag( item, "gtd_inbox" );
     }
 
-    bool isProjectItem( const std::string &item, bool includeStandaloneTasks ) const
+    bool isProjectItem(
+            const std::string &item,
+            bool includeStandaloneTasks ) const
     {
         if( !includeStandaloneTasks && m_things_model.hasTag( item, "gtd_task" ) )
         {
@@ -157,12 +170,14 @@ public:
         return m_things_model.hasTag( item, "gtd_project" );
     }
 
-    bool isDone( const std::string &task_item ) const
+    bool isDone(
+            const std::string &task_item ) const
     {
-        return m_things_model.hasTag( task_item, "gtd_item_done" );
+        return m_things_model.hasTag( task_item, "gtd_done" );
     }
 
-    std::string getParentProject( const std::string &task_item ) const
+    std::string getParentProject(
+            const std::string &task_item ) const
     {
         assert( isTaskItem( task_item, false ) );
         assert( m_things_model.hasValue( task_item, "gtd_parent_project" ) );
@@ -170,11 +185,14 @@ public:
         return m_things_model.getValue( task_item, "gtd_parent_project" );
     }
 
-    std::string getNextTask( const std::string &task_item ) const;
+    std::string getNextTask(
+            const std::string &task_item ) const;
 
     std::string orderATask() const;
 
-    bool itemContentMatchesString( const std::string &uid, const std::string &searchString ) const;
+    bool itemContentMatchesString(
+            const std::string &uid,
+            const std::string &searchString ) const;
 
     void print_statistics() const;
 
@@ -186,19 +204,28 @@ public:
 /// save relevant interface
 public:
 
-    std::string createNewInboxItem( const std::string &caption );
+    std::string createNewInboxItem(
+            const std::string &caption );
 
-    void setNote( const std::string &uid, const std::string &value );
+    void setNote(
+            const std::string &uid, const std::string &value );
 
-    void plusOne( const std::string &uid );
+    void plusOne(
+            const std::string &uid );
 
-    void registerItemAsTask( const std::string &task_item, const std::string &project_item );
+    void registerItemAsTask(
+            const std::string &task_item,
+            const std::string &project_item );
 
-    void setDone( const std::string &task_item );
+    void setDone(
+            const std::string &task_item );
 
-    void castToProject( const std::string &item );
+    void castToProject(
+            const std::string &item );
 
-    void setNextTask( const std::string &project_item, const std::string &task_item );
+    void setNextTask(
+            const std::string &project_item,
+            const std::string &task_item );
 
     std::string createProject( const std::string &project_name );
 
@@ -207,17 +234,21 @@ public:
 ///
 public:
 
-    std::time_t getCreationTime( const std::string &uid ) const
+    std::time_t getCreationTime(
+            const std::string &uid ) const
     {
         return m_things_model.getCreationTime( uid );
     }
 
-    const std::string & getCaption( const std::string &uid ) const
+    const std::string & getCaption(
+            const std::string &uid ) const
     {
         return m_things_model.getCaption( uid );
     }
 
-    void setCaption( const std::string &uid, const std::string &caption )
+    void setCaption(
+            const std::string &uid,
+            const std::string &caption )
     {
         m_things_model.setCaption( uid, caption );
 
