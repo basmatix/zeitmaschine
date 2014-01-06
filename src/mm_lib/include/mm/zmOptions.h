@@ -51,7 +51,14 @@ public:
             return;
         }
 
-        boost_ptree::json_parser::read_json( m_filename, m_tree );
+        try
+        {
+            boost_ptree::json_parser::read_json( m_filename, m_tree );
+        }
+        catch( ... )
+        {
+            // [todo] - handle
+        }
     }
 
     bool hasValue( const std::string &key ) const
