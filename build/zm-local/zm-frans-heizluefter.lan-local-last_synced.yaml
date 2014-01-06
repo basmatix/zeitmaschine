@@ -66,7 +66,7 @@
     gtd_item_note: brain
     gtd_time_done: 2013-03-30T12:24:12.715611
   connections:
-    - gtd_item_done
+    - gtd_done
 - uid: 132a6fd748a32668
   caption: iphone-client implementieren
   hash1: fe873339683e3986
@@ -197,7 +197,7 @@
     gtd_item_note: ""
     gtd_time_done: 2013-03-18T23:12:52.909893
   connections:
-    - gtd_item_done
+    - gtd_done
 - uid: 46f97e8c9786649d
   caption: QTreeView verwenden
   hash1: e03fae98725ac31d
@@ -224,7 +224,7 @@
     gtd_item_note: ""
     gtd_time_done: 2013-03-18T23:12:59.774752
   connections:
-    - gtd_item_done
+    - gtd_done
 - uid: 500cb5a9185286a8
   caption: Android-Client bereitstellen
   hash1: e53784f00428aa28
@@ -242,7 +242,7 @@
     gtd_item_note: ""
     gtd_time_done: 2013-03-18T23:13:17.631932
   connections:
-    - gtd_item_done
+    - gtd_done
 - uid: 6214e35f0e3e3813
   caption: Runtime-Konflikte / Merge on save lösen
   hash1: 6a77d40019d139b9
@@ -259,7 +259,7 @@
     gtd_item_note: ""
     gtd_time_done: 2013-03-18T23:13:22.368169
   connections:
-    - gtd_item_done
+    - gtd_done
 - uid: 682ec4f3030aa5e7
   caption: Vorm zm Beenden Notes abspeichern
   hash1: 49eac0f965767864
@@ -293,7 +293,7 @@
     gtd_item_note: ""
     gtd_time_done: 2013-03-31T13:52:27.279569
   connections:
-    - gtd_item_done
+    - gtd_done
 - uid: 74ab2fb0c455f1ae
   caption: Groups haben ein "after" attribut um z.b. "phase1" und "phase2" in zeitliche korrelation zu bringen
   hash1: cc036687afdc69a4
@@ -315,7 +315,7 @@
   hash1: 73e18a1232f93320
   string_values:
     global_time_created: 2013-03-30T16:24:33.347108
-    gtd_item_note: "Schichten:\n\nUI\n--\nQt-GTD\n===\nGTD\n===\nThings\n\n\ngtd_item::setDone():\n> gtd_inbox: NO\n> gtd_item_done: YES\n> gtd_time_done: now()\n\nFarben:\n\nInbox \nProject \nProject ohne First Task\n        darkRed,\nStandalone Project \nTask\nTo Be Done Next Task\nDone\nContext\nGroup\nNote\n\tblack\n\tdarkGray,\ngray,\nlightGray,\n        red,\n        green,\n        blue,\n        cyan,\n        magenta,\n        yellow,\n        darkGreen,\n        darkBlue,\n        darkCyan,\n        darkMagenta,\n        darkYellow,\n"
+    gtd_item_note: "Schichten:\n\nUI\n--\nQt-GTD\n===\nGTD\n===\nThings\n\n\ngtd_item::setDone():\n> gtd_inbox: NO\n> gtd_done: YES\n> gtd_time_done: now()\n\nFarben:\n\nInbox \nProject \nProject ohne First Task\n        darkRed,\nStandalone Project \nTask\nTo Be Done Next Task\nDone\nContext\nGroup\nNote\n\tblack\n\tdarkGray,\ngray,\nlightGray,\n        red,\n        green,\n        blue,\n        cyan,\n        magenta,\n        yellow,\n        darkGreen,\n        darkBlue,\n        darkCyan,\n        darkMagenta,\n        darkYellow,\n"
   connections:
     - gtd_inbox
 - uid: 7bfc9c3530df9c4b
@@ -334,7 +334,7 @@
     gtd_item_note: ""
     gtd_time_done: 2013-03-18T23:13:27.432613
   connections:
-    - gtd_item_done
+    - gtd_done
 - uid: 8a4d1eb5a649faa9
   caption: Tage-Gruppen einführen
   hash1: 65fc51d3b61843eb
@@ -351,7 +351,7 @@
     gtd_item_note: ""
     gtd_time_done: 2013-03-18T23:13:32.008407
   connections:
-    - gtd_item_done
+    - gtd_done
 - uid: 9b39bccc74574e50
   caption: Drag&Drop manipulation
   hash1: a93e0c7c85027985
@@ -360,7 +360,7 @@
     gtd_item_note: ""
     gtd_time_done: 2013-03-18T23:13:37.473124
   connections:
-    - gtd_item_done
+    - gtd_done
 - uid: a14047a6e9f90527
   caption: Note-Text highlighten, zb. mit AsciiDoc
   hash1: d18bb3eb33cdba23
@@ -394,7 +394,7 @@
     gtd_item_note: ""
     gtd_time_done: 2013-03-31T12:31:07.276656
   connections:
-    - gtd_item_done
+    - gtd_done
 - uid: a7003c8ee33f1466
   caption: Scheduler berücksichtigt Kontexte, definierte Prioritäten, +1, Dismisses, Reihenfolgen von Projekten
   hash1: f4b543b00f5c45dd
@@ -411,7 +411,7 @@
     gtd_item_note: ""
     gtd_time_done: 2013-03-28T22:15:57.909564
   connections:
-    - gtd_item_done
+    - gtd_done
 - uid: ae47b48e3470b842
   caption: "Collaboration: bei Aktivität in einem Task durch andere wird dieses hervorgehoben"
   hash1: 2875ef59e998bfed
@@ -510,7 +510,7 @@
     global_time_created: 2013-03-13T08:12:02.088587
     gtd_time_done: 2013-03-13T22:01:49.940226
   connections:
-    - gtd_item_done
+    - gtd_done
 - uid: d006903849837f9d
   caption: Fehler analysieren
   hash1: 51392822c4a2360f
@@ -536,7 +536,7 @@
     global_time_created: 2013-03-18T12:48:53.015026
     gtd_item_note: ""
   connections:
-    - gtd_item_done
+    - gtd_done
 - uid: d902599ec4449bd3
   caption: Beim Suchen ggf. parent-items sichtbar lassen
   hash1: 12cc39028e57fd50
@@ -611,7 +611,7 @@
     gtd_item_note: ""
     gtd_time_done: 2013-03-30T13:03:53.775315
   connections:
-    - gtd_item_done
+    - gtd_done
     - gtd_project
 - uid: e91b5d952f045d3b
   caption: Konzept erarbeiten
@@ -639,7 +639,7 @@
     gtd_item_note: ""
     gtd_time_done: 2013-03-18T23:14:02.682694
   connections:
-    - gtd_item_done
+    - gtd_done
 - uid: ed957b5decec1018
   caption: import/export-Ordner auf Kommandozeile lesen
   hash1: 90c37ee2e85a75b4
@@ -669,6 +669,21 @@
 - uid: gtd_done
   caption: gtd_done
   hash1: ebe55a1b0ddc4799
+    - 0599dbd17f0fddf7
+    - 441a045c65d325c8
+    - 4d6a0f931b79009e
+    - 60ee2a07206332d6
+    - 62782dee7ba6ba82
+    - 71b03b5d545c83ab
+    - 87ceff4a6a501ab7
+    - 99051bad4dc41d82
+    - 9b39bccc74574e50
+    - a6031d07a28441da
+    - ad46330484d4a1d8
+    - ce6525081cfb5c59
+    - d4109d9404ded1a1
+    - e43900584af88584
+    - eb2679ddd7f9ab17
 - uid: gtd_group
   caption: gtd_group
   hash1: dfaa8739e6ebdf87
@@ -717,25 +732,6 @@
     - ea052d41b2edd7fb
     - ed957b5decec1018
     - ff309f238afa6bee
-- uid: gtd_item_done
-  caption: gtd_item_done
-  hash1: 6e2d6554b1de70fe
-  connections:
-    - 0599dbd17f0fddf7
-    - 441a045c65d325c8
-    - 4d6a0f931b79009e
-    - 60ee2a07206332d6
-    - 62782dee7ba6ba82
-    - 71b03b5d545c83ab
-    - 87ceff4a6a501ab7
-    - 99051bad4dc41d82
-    - 9b39bccc74574e50
-    - a6031d07a28441da
-    - ad46330484d4a1d8
-    - ce6525081cfb5c59
-    - d4109d9404ded1a1
-    - e43900584af88584
-    - eb2679ddd7f9ab17
 - uid: gtd_next_task
   caption: gtd_next_task
   hash1: 257e6b697465d6d8

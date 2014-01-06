@@ -71,8 +71,21 @@ int  sync_folders(
         const std::string &a_destination_path,
         const std::string &a_pattern = "*-journal.yaml")
 {
-    const boost::filesystem::path l_source_folder(a_source_path);
-    const boost::filesystem::path l_destination_folder(a_destination_path);
+    boost::filesystem::path l_source_folder(a_source_path);
+    boost::filesystem::path l_destination_folder(a_destination_path);
+
+    l_source_folder /= "sync";
+    l_destination_folder /= "sync";
+
+    if(!boost::filesystem::exists(l_source_folder))
+    {
+        return 0;
+    }
+
+    if(!boost::filesystem::exists(l_destination_folder))
+    {
+        boost::filesystem::create_directory(l_destination_folder);
+    }
 
     boost::filesystem::directory_iterator l_end_itr;
     boost::filesystem::directory_iterator l_fs_itr( l_source_folder );

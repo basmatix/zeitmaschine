@@ -24,7 +24,12 @@
 
 bool zm::ChangeSet::write( const std::string &journalFileName )
 {
-    if( m_journal.size() == 0 ) return false;
+    if( m_journal.size() == 0 )
+    {
+        return false;
+    }
+
+    zm::common::create_base_directory(journalFileName);
 
     std::ofstream l_fout( journalFileName.c_str() );
 

@@ -31,7 +31,8 @@ static void _debug_dump(
 zm::MindMatterModel::MindMatterModel()
     : m_things                  ()
     , m_things_synced           ()
-    , m_localFolder             ( "" )
+    , m_localFolderRoot         ( "" )
+    , m_localFolderSync         ( "" )
     , m_localModelFile          ( "" )
     , m_localModelFileSynced    ( "" )
     , m_initialized             ( false )
@@ -171,7 +172,7 @@ void zm::MindMatterModel::setConfigPersistance( bool value )
 
 const std::string & zm::MindMatterModel::getLocalFolder() const
 {
-    return m_localFolder;
+    return m_localFolderRoot;
 }
 
 void zm::MindMatterModel::setLocalFolder( const std::string &a_path )
@@ -187,8 +188,11 @@ void zm::MindMatterModel::setLocalFolder( const std::string &a_path )
     std::string l_path = a_path;
     std::replace( l_path.begin(), l_path.end(), '\\', '/' );
     if( l_path == "/" ) l_path = "./";
-    m_localFolder = l_path;
-    m_options->load( m_localFolder + "/zm_config.json" );
+
+    m_localFolderRoot = l_path;
+    m_localFolderSync = (boost::filesystem::path(m_localFolderRoot) / "sync").string();
+
+    m_options->load( m_localFolderRoot + "/zm_config.json" );
 }
 
 void zm::MindMatterModel::addDomainSyncFolder(
@@ -239,7 +243,7 @@ std::string zm::MindMatterModel::createJournalFileName() const
                         << "-journal.yaml";
         l_result = l_ssJournalFile.str();
     }
-    while(boost::filesystem::exists(m_localFolder + "/" + l_result));
+    while(boost::filesystem::exists(m_localFolderSync + "/" + l_result));
 
     return l_result;
 }
@@ -247,7 +251,7 @@ std::string zm::MindMatterModel::createJournalFileName() const
 std::string zm::MindMatterModel::createModelFileNameNew() const
 {
     std::stringstream l_ssFileName;
-    l_ssFileName << m_localFolder << "/zm-"
+    l_ssFileName << m_localFolderRoot << "/zm-"
                  << m_options->getString( "username" )
                  << "-"
                  << m_options->getString( "hostname" )
@@ -259,7 +263,7 @@ std::string zm::MindMatterModel::createModelFileNameNew() const
 std::string zm::MindMatterModel::createModelFileNameOld() const
 {
     std::stringstream l_ssFileName;
-    l_ssFileName << m_localFolder << "/zm-"
+    l_ssFileName << m_localFolderRoot << "/zm-"
                  << m_options->getString( "username" )
                  << "-"
                  << m_options->getString( "hostname" )
@@ -455,7 +459,7 @@ ChangeSet zm::MindMatterModel::persistence_pushJournal()
 
     std::string l_journal_basename = createJournalFileName();
 
-    std::string l_journal_fullname = m_localFolder + "/" + l_journal_basename;
+    std::string l_journal_fullname = m_localFolderSync + "/" + l_journal_basename;
 
     tracemessage( "%d changes - write journal '%s'",
                   l_changeSet.size(),
@@ -532,9 +536,9 @@ std::vector< std::string > zm::MindMatterModel::getJournalFiles() const
 {
     std::vector< std::string > l_all_matching_files;
 
-    const std::string target_path( m_localFolder );
+    const std::string target_path( m_localFolderSync );
 
-    if( !boost::filesystem::exists( m_localFolder ) )
+    if( !boost::filesystem::exists( target_path ) )
     {
         return l_all_matching_files;
     }
