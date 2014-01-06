@@ -134,6 +134,11 @@ void zmQtGtdModel::populate()
     {
         addListItem( i );
     }
+
+    BOOST_FOREACH( const std::string& i, getDoneItems() )
+    {
+        addListItem( i );
+    }
 }
 
 zmQtGtdModel::~zmQtGtdModel()

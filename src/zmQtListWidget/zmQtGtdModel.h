@@ -111,6 +111,11 @@ public:
         return m_gtd_model.getInboxItems( includeDoneItems );
     }
 
+    std::list< std::string > getDoneItems() const
+    {
+        return m_gtd_model.getDoneItems();
+    }
+
     std::list< std::string > getTaskItems( bool includeStandaloneTasks, bool includeDoneItems ) const
     {
         return m_gtd_model.getTaskItems( includeStandaloneTasks, includeDoneItems );
