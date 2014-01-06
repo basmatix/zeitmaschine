@@ -62,6 +62,12 @@ else()
     # that uses CMAKE_CONFIGURATION_TYPES and not CMAKE_BUILD_TYPE
 endif()
 
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    add_definitions( -DDEBUG -D_DEBUG )
+else()
+    add_definitions( -DNDEBUG )
+endif()
+
 if( NOT MSVC )
     option( CONFIG_WEFFCPP "set warning level for real developers" ON )
     if( CONFIG_WEFFCPP )
