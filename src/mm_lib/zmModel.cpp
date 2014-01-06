@@ -29,13 +29,13 @@ static void _debug_dump(
         const zm::MindMatterModel::uid_mm_bimap_t &thingsMap);
 
 zm::MindMatterModel::MindMatterModel()
-    : m_things              ()
-    , m_things_synced          ()
-    , m_localFolder         ( "" )
-    , m_localModelFile      ( "" )
-    , m_localModelFileSynced   ( "" )
-    , m_initialized         ( false )
-    , m_options             ( new zm::zmOptions )
+    : m_things                  ()
+    , m_things_synced           ()
+    , m_localFolder             ( "" )
+    , m_localModelFile          ( "" )
+    , m_localModelFileSynced    ( "" )
+    , m_initialized             ( false )
+    , m_options                 ( new zm::zmOptions )
 {
 }
 
@@ -283,10 +283,12 @@ void zm::MindMatterModel::initialize()
 
     persistence_loadLocalModel();
 
-    if( !persistence_pullJournal().isEmpty() )
-    {
-        persistence_saveLocalModel();
-    }
+    // this is currently not possible since a pull can not be done
+    // without a prior push (which is a full sync)
+//    if( !persistence_pullJournal().isEmpty() )
+//    {
+//        persistence_saveLocalModel();
+//    }
 
     debug_dump();
 

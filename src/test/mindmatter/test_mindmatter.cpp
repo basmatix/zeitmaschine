@@ -206,16 +206,19 @@ bool mm_journaled_sync()
 
 bool mm_persist_and_load()
 {
+    /// NOTE: in this example two models act on the same folder which
+    ///       is not intended and will be forbidden soon.
+    ///       dont take this as an example
     CleanFolder fc1("./test-localfolder");
 
     zm::MindMatterModel l_m1;
-    l_m1.setLocalFolder( "./test-localfolder" );
+    l_m1.setLocalFolder( fc1 );
     l_m1.setUsedUsername( "test-user" );
     l_m1.setUsedHostname( "test-machine" );
     l_m1.initialize();
 
     zm::MindMatterModel l_m2;
-    l_m2.setLocalFolder( "./test-localfolder" );
+    l_m2.setLocalFolder( fc1 );
     l_m2.setUsedUsername( "test-user" );
     l_m2.setUsedHostname( "test-machine" );
     l_m2.initialize();
@@ -241,6 +244,16 @@ bool mm_persist_and_load()
 
     l_m1.connect(node1, node2);
     test_assert( ! l_m2.equals(l_m1), "model2 should differ from model1");
+
+
+    /// this piece of code just tests whether it's possible to load
+    /// a model which differs from its last synced state
+    zm::MindMatterModel l_m3;
+    l_m3.setLocalFolder( fc1 );
+    l_m3.setUsedUsername( "test-user" );
+    l_m3.setUsedHostname( "test-machine" );
+    l_m3.initialize();
+    l_m3.persistence_sync();
 
     return true;
 }
@@ -278,6 +291,10 @@ bool mm_connections()
 
 bool mm_diff_and_reapply()
 {
+    /// NOTE: in this example two models act on the same folder which
+    ///       is not intended and will be forbidden soon.
+    ///       dont take this as an example
+
     CleanFolder fc1("./test-localfolder");
 
     // [todo] - test circular dependencies like
@@ -364,12 +381,16 @@ bool mm_diff_and_reapply()
 
 bool mm_empty_db_on_load()
 {
+    /// NOTE: in this example two models act on the same folder which
+    ///       is not intended and will be forbidden soon.
+    ///       dont take this as an example
+
     CleanFolder fc1("./test-localfolder");
 
     zm::MindMatterModel l_m1;
     l_m1.setUsedUsername( "test-user" );
     l_m1.setUsedHostname( "test-machine" );
-    l_m1.setLocalFolder( "./test-localfolder" );
+    l_m1.setLocalFolder( fc1 );
     l_m1.initialize();
 
     // client 1 saves some content
@@ -380,7 +401,7 @@ bool mm_empty_db_on_load()
     zm::MindMatterModel l_m2;
     l_m2.setUsedUsername( "test-user" );
     l_m2.setUsedHostname( "test-machine" );
-    l_m2.setLocalFolder( "./test-localfolder" );
+    l_m2.setLocalFolder( fc1 );
     l_m2.initialize();
 
     std::string l_item2 = l_m1.createNewItem( "yet some item" );
@@ -408,7 +429,7 @@ bool mm_change_while_open()
     zm::MindMatterModel l_m1;
     l_m1.setUsedUsername( "test-user" );
     l_m1.setUsedHostname( "test-machine" );
-    l_m1.setLocalFolder( "./test-localfolder" );
+    l_m1.setLocalFolder( fc1 );
     l_m1.initialize();
 
     std::string l_item1 = l_m1.createNewItem( "some first item" );
@@ -417,7 +438,7 @@ bool mm_change_while_open()
     zm::MindMatterModel l_m2;
     l_m2.setUsedUsername( "test-user" );
     l_m2.setUsedHostname( "test-machine" );
-    l_m2.setLocalFolder( "./test-localfolder" );
+    l_m2.setLocalFolder( fc1 );
     l_m2.initialize();
 
     std::string l_item2 = l_m2.createNewItem( "some concurrent item" );
@@ -444,7 +465,7 @@ bool mm_low_level_gtd_workflow()
 
     zm::MindMatterModel l_m1;
 
-    l_m1.setLocalFolder( "./test-localfolder" );
+    l_m1.setLocalFolder( fc1 );
     l_m1.setUsedUsername( "test-user" );
     l_m1.setUsedHostname( "test-machine" );
     l_m1.initialize();
