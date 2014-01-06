@@ -42,8 +42,28 @@ MainWindow::MainWindow(QWidget *parent)
 
     m_ui->setupUi( this );
 
-    this->setWindowTitle(QApplication::translate("window", "zeitmaschine - built on "__TIMESTAMP__, 0, QApplication::UnicodeUTF8));
+    setWindowTitle(QApplication::translate(
+                       "window",
+                       "zeitmaschine - built on "__TIMESTAMP__,
+                       0, QApplication::UnicodeUTF8));
 
+    ///
+    /// in 'development mode' we want the application to load the projects
+    /// todo list tree rather than the private notes of the developer
+    ///
+#if defined(DEBUG)
+    m_model.setLocalFolder(
+                QApplication::applicationDirPath()
+                + QDir::separator() + ".."
+                + QDir::separator() + "zm-local" );
+#else
+
+    ///
+    /// in case the current path contains a folder named 'zm-local' we
+    /// use this one (since we're still in development mode)
+    /// Otherwise we fall back to the default: we assume 'zm-local' to
+    /// reside in the home folder
+    ///
     if( QDir( QDir::currentPath() + QDir::separator() + "zm-local").exists() )
     {
         m_model.setLocalFolder( QDir::currentPath() + QDir::separator() + "zm-local" );
@@ -52,22 +72,27 @@ MainWindow::MainWindow(QWidget *parent)
     {
         m_model.setLocalFolder( QDir::homePath() + QDir::separator() + "zm-local" );
     }
+#endif
 
     if( !m_model.hasUsedUsername() )
     {
-        bool ok;
-        QString text = QInputDialog::getText( this, tr("QInputDialog::getText()"),
-                                                tr("user name:"), QLineEdit::Normal,
-                                                QDir::home().dirName(), &ok);
-        m_model.setUsedUsername( text );
+        QString l_defaultUserName = QDir::home().dirName();
+        l_defaultUserName = QInputDialog::getText(
+                    this, tr("QInputDialog::getText()"),
+                    tr("user name:"), QLineEdit::Normal,
+                    l_defaultUserName);
+
+        m_model.setUsedUsername( l_defaultUserName );
     }
     if( !m_model.hasUsedHostname() )
     {
-        bool ok;
-        QString text = QInputDialog::getText( this, tr("QInputDialog::getText()"),
-                                                tr("machine name:"), QLineEdit::Normal,
-                                                zm::osal::getHostName().c_str(), &ok);
-        m_model.setUsedHostname( text );
+        QString l_defaultHostName = zm::osal::getHostName().c_str();
+        l_defaultHostName = QInputDialog::getText(
+                    this, tr("QInputDialog::getText()"),
+                    tr("machine name:"), QLineEdit::Normal,
+                    l_defaultHostName);
+
+        m_model.setUsedHostname( l_defaultHostName );
     }
 
     m_model.initialize( m_ui->twTask->invisibleRootItem() );
