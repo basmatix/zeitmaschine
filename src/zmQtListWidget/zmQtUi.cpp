@@ -70,7 +70,7 @@ MainWindow::MainWindow(QWidget *parent)
         m_model.setUsedHostname( text );
     }
 
-    m_model.initialize(  m_ui->twTask->invisibleRootItem() );
+    m_model.initialize( m_ui->twTask->invisibleRootItem() );
 
 }
 
@@ -88,7 +88,7 @@ void MainWindow::closeEvent( QCloseEvent *event )
 {   tracemessage( __FUNCTION__ );
     // this method is being called automatically by Qt
 
-    m_model.sync();
+    m_model.localSave();
 }
 
 void MainWindow::unselect()
@@ -107,6 +107,13 @@ void MainWindow::createInboxItemFromUiElements()
     m_model.addListItem( l_item_uid );
 
     m_ui->leCommand->setText("");
+}
+
+void MainWindow::on_pbSync_clicked()
+{   tracemessage( __FUNCTION__ );
+    // this method is being called automatically by Qt
+
+    m_model.sync();
 }
 
 void MainWindow::on_pbAddInboxItem_clicked()
