@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ROOT item="y" tlversion="1.4.1"
+line0="{*Name*}"
+line1="{*Name*}"
+childtype="INBOX"
+icon="folder_2">
+<Name type="Text" ref="y">Main</Name>
+<GTD9_GROUP item="y"
+line0="{*Name*}"
+line1="{*Name*}"
+childtype="INBOX"
+icon="folder_2">
+<Name type="Text" ref="y">mm_lib (core)</Name>
+<GTD9_GROUP item="y">
+<Name>Encryption</Name>
+</GTD9_GROUP>
+<GTD2_PROJECT item="y"
+line0="{*Priority*}{*Name*}"
+line1="&lt;h4&gt;{*Name*}&lt;/h4&gt;"
+line2="&lt;p&gt;{*Info*}&lt;/p&gt;"
+childtype="PROJECT_GROUP"
+icon="bullet_4">
+<Name type="Text" required="y" ref="y">ensure, a persistence path is only used by one client</Name>
+<Priority type="Number" format="#" prefix="[" suffix="] - " required="y" init="0">0</Priority>
+<Info type="Text" lines="40"></Info>
+</GTD2_PROJECT>
+<GTD2_PROJECT item="y">
+<Name>enable pull without push</Name>
+<Priority>0</Priority>
+</GTD2_PROJECT>
+<GTD2_PROJECT item="y">
+<Name>create a public 'baseline' model which sets a starting point for new clients</Name>
+<Priority>0</Priority>
+<Info>* acts as starting point for all remaining journal files</Info>
+</GTD2_PROJECT>
+<GTD2_PROJECT item="y">
+<Name>create domain concept</Name>
+<Priority>0</Priority>
+<Info>* should be syncable - affect as few nodes as possible
+* could be a relation between items
+* keep domains in mind</Info>
+</GTD2_PROJECT>
+<GTD2_PROJECT item="y">
+<Name>on disconnect only write disconnect log for one node</Name>
+<Priority>0</Priority>
+</GTD2_PROJECT>
+</GTD9_GROUP>
+<GTD9_GROUP item="y">
+<Name>zm_lib (gtd-layer)</Name>
+<GTD2_PROJECT item="y">
+<Name>create ranking concept</Name>
+<Priority>0</Priority>
+<Info>* should be syncable - affect as few nodes as possible
+* could be a relation between items
+* keep domains in mind</Info>
+</GTD2_PROJECT>
+</GTD9_GROUP>
+<GTD9_GROUP item="y">
+<Name>zmQtListWidget (Qt example application)</Name>
+<GTD2_PROJECT item="y">
+<Name>bring 'done' intems into model after startup</Name>
+<Priority>0</Priority>
+</GTD2_PROJECT>
+<GTD2_PROJECT item="y">
+<Name>User-Doku</Name>
+<Priority>0</Priority>
+<Info>- basic workflow beschreiben</Info>
+</GTD2_PROJECT>
+</GTD9_GROUP>
+<GTD9_GROUP item="y">
+<Name>AndroidApp</Name>
+</GTD9_GROUP>
+<GTD9_GROUP item="y">
+<Name>pyZm (Python mm_lib API
+)</Name>
+<GTD2_PROJECT item="y">
+<Name>install to system</Name>
+<Priority>0</Priority>
+</GTD2_PROJECT>
+</GTD9_GROUP>
+<GTD8_LINK item="n"
+line0="{*Name*}"
+line1="{*Name*}"
+icon="bookmark">
+<Name type="InternalLink" html="y" ref="y"></Name>
+</GTD8_LINK>
+<GTD2_PROJECT_SLEEP item="n"
+line0="{*Priority*}{*Name*}"
+line1="&lt;h4&gt;{*Name*}&lt;/h4&gt;"
+line2="&lt;p&gt;{*Info*}&lt;/p&gt;"
+childtype="PROJECT_GROUP"
+icon="bullet_5">
+<Name type="Text" ref="y"></Name>
+<Priority type="Number" format="#" prefix="[" suffix="] - " init="0"></Priority>
+<Info type="Text" lines="40"></Info>
+</GTD2_PROJECT_SLEEP>
+<GTD7_KNOWLEDGE item="n"
+line0="{*Name*}"
+line1="&lt;h4&gt;{*Name*}&lt;/h4&gt;"
+line2="&lt;p&gt;{*Info*}&lt;/p&gt;"
+childtype="KNOWLEDGE"
+icon="note">
+<Name type="Text" ref="y"></Name>
+<Info type="Text" lines="40"></Info>
+</GTD7_KNOWLEDGE>
+<GTD1_ACTION_FIRST item="n"
+line0="{*Name*}"
+line1="&lt;h4&gt;{*Name*}&lt;/h4&gt;"
+line2="&lt;p&gt;{*Info*}&lt;/p&gt;"
+icon="bullet_2">
+<Name type="Text" required="y" ref="y"></Name>
+<Info type="Text" lines="40"></Info>
+</GTD1_ACTION_FIRST>
+<DEFAULT item="n"
+line0="{*Name*}"
+line1="{*Name*}">
+<Name type="Text" ref="y"></Name>
+</DEFAULT>
+<GTD5_DONE item="n"
+line0="{*Name*}"
+line1="{*Name*}"
+icon="check_2">
+<Name type="Text" ref="y"></Name>
+<Info type="Text" lines="40"></Info>
+</GTD5_DONE>
+<GTD9_GROUP_DATE item="n"
+line0="{*Name*}"
+line1="{*Name*}"
+childtype="LINK"
+icon="date_2">
+<Name type="Text" ref="y"></Name>
+</GTD9_GROUP_DATE>
+<GTD1_ACTION item="n"
+line0="{*Name*}"
+line1="&lt;h4&gt;{*Name*}&lt;/h4&gt;"
+line2="&lt;p&gt;{*Info*}&lt;/p&gt;"
+icon="bullet_3">
+<Name type="Text" required="y" ref="y"></Name>
+<Info type="Text" lines="40"></Info>
+</GTD1_ACTION>
+<GTD6_PERSON item="n"
+line0="{*Name*}"
+line1="{*Name*}"
+childtype="ACTION"
+icon="person">
+<Name type="Text" ref="y"></Name>
+</GTD6_PERSON>
+<INBOX item="n"
+line0="{*Name*}"
+line1="{*Name*}"
+icon="bullet_1">
+<Name type="Text" ref="y"></Name>
+<Info type="Text" lines="40"></Info>
+</INBOX>
+</ROOT>
