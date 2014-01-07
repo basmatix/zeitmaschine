@@ -17,7 +17,7 @@
 #include <QtGui/QTreeWidgetItem>
 
 zmQtGtdModel::zmQtGtdModel()
-    : m_gtd_model()
+    : m_gtd_model   ()
     , m_wi_map      ( NULL )
     , m_liToday     ( NULL )
     , m_liInbox     ( NULL )
