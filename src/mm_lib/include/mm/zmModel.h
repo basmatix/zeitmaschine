@@ -36,7 +36,7 @@ namespace zm
 
         uid_mm_bimap_t  m_things;
         zmOptions      *m_options;
-
+        std::set< std::string > m_read_journals;
 
         // used for generating the diff
         uid_mm_bimap_t  m_things_synced;
@@ -123,8 +123,9 @@ namespace zm
         std::string createJournalFileName() const;
         std::string createModelFileNameNew() const;
         std::string createModelFileNameOld() const;
+        std::string createJournalListFileName() const;
 
-        std::vector< std::string > getHandledJournalFilenames();
+        const std::set< std::string > & getHandledJournalFilenames();
         void appendHandledJournalFilename(const std::string &filename);
 
         static void yamlToThingsMap(

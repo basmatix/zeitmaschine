@@ -272,6 +272,14 @@ std::string zm::MindMatterModel::createModelFileNameOld() const
     return l_ssFileName.str();
 }
 
+std::string zm::MindMatterModel::createJournalListFileName() const
+{
+    std::stringstream l_ssFileName;
+    l_ssFileName << m_localFolderRoot << "/zm-read_journals.txt";
+
+    return l_ssFileName.str();
+}
+
 void zm::MindMatterModel::initialize()
 {
     srand( time( NULL ) * rand()  );
@@ -400,15 +408,35 @@ void zm::MindMatterModel::persistence_loadLocalModel()
     }
 }
 
-std::vector< std::string > zm::MindMatterModel::getHandledJournalFilenames()
+const std::set< std::string > & zm::MindMatterModel::getHandledJournalFilenames()
 {
-    return m_options->getStringList("read_journal");
+    if(m_read_journals.empty())
+    {
+        std::ifstream l_file(createJournalListFileName().c_str());
+        if(!l_file.is_open())
+        {
+            return m_read_journals;
+        }
+        std::string l_line;
+        while (std::getline(l_file, l_line))
+        {
+            m_read_journals.insert(l_line);
+        }
+    }
+    return m_read_journals;
 }
 
 void zm::MindMatterModel::appendHandledJournalFilename(
         const std::string &a_filename)
 {
-    m_options->addStringListElement( "read_journal", a_filename );
+    m_read_journals.insert(a_filename);
+
+    std::ofstream l_file(createJournalListFileName().c_str());
+
+    BOOST_FOREACH( const std::string &l_line, m_read_journals)
+    {
+        l_file << l_line << std::endl;
+    }
 }
 
 ChangeSet zm::MindMatterModel::persistence_pullJournal()
@@ -421,13 +449,13 @@ ChangeSet zm::MindMatterModel::persistence_pullJournal()
     std::vector< std::string > l_journalFiles = getJournalFiles();
     tracemessage( "found %d journal files", l_journalFiles.size() );
 
-    std::vector< std::string > l_alreadyImported =
+    const std::set< std::string > & l_alreadyImported =
             getHandledJournalFilenames();
 
     tracemessage( "%d journal files already imported",
                   l_alreadyImported.size() );
 
-    BOOST_FOREACH( std::string j, l_journalFiles )
+    BOOST_FOREACH( const std::string &j, l_journalFiles )
     {
         std::string l_filename = boost::filesystem::path( j ).filename().string();
         if( std::find( l_alreadyImported.begin(), l_alreadyImported.end(), l_filename) == l_alreadyImported.end() )
