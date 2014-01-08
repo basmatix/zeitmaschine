@@ -10,6 +10,10 @@
 
 #include <iostream>
 #include <fstream>
+
+///http://www.robertnitsch.de/notes/cpp/cpp11_boost_filesystem_undefined_reference_copy_file
+#define BOOST_NO_SCOPED_ENUMS
+//#define BOOST_NO_CXX11_SCOPED_ENUMS
 #include <boost/filesystem/operations.hpp>
 
 #include "../testing.h"
