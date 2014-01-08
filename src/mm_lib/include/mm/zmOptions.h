@@ -75,7 +75,7 @@ public:
     {
         return m_tree.get< long >( key );
     }
-
+/*
     std::vector< std::string > getStringList( const std::string &key ) const
     {
         boost::optional< const boost_ptree::ptree& > l_existing_child
@@ -104,7 +104,7 @@ public:
 
         if( l_existing_child )
         {
-            l_existing_child.get().push_back(std::make_pair( "", value));
+            l_existing_child.get().push_back(std::make_pair( std::string(""), value));
         }
         else
         {
@@ -115,7 +115,7 @@ public:
 
         if( m_autosave ) save( m_filename );
     }
-
+*/
     void setString( const std::string &key, const std::string &value )
     {
         m_tree.put( key, value );

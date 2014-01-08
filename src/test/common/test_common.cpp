@@ -51,12 +51,13 @@ bool common_options_basic()
     v.push_back("hallo");
     v.push_back("welt");
 
+    /*
     o1.addStringListElement("group.strings",v[0]);
     o1.addStringListElement("group.strings",v[1]);
 
     test_assert( o1.getStringList( "group.strings" ) == v,
                  "returning string list should be the one we provided" );
-
+    */
     zm::zmOptions o2;
 
     test_assert( o2.hasValue( "first_value" ) == false,
