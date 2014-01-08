@@ -42,9 +42,11 @@ MainWindow::MainWindow(QWidget *parent)
 
     m_ui->setupUi( this );
 
+    QString l_windowtitle;
+    l_windowtitle.sprintf("zeitmaschine - built on %s",__TIMESTAMP__);
     setWindowTitle(QApplication::translate(
                        "window",
-                       "zeitmaschine - built on "__TIMESTAMP__,
+                       l_windowtitle.toAscii().constData(),
                        0, QApplication::UnicodeUTF8));
 
     ///
