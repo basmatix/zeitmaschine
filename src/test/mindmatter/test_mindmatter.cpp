@@ -26,6 +26,7 @@ bool mm_diff_and_reapply        ();
 bool mm_persist_and_load        ();
 bool mm_journaled_sync          ();
 bool mm_equality                ();
+bool mm_baseline                ();
 
 int main( int arg_n, char **arg_v )
 {
@@ -39,6 +40,7 @@ int main( int arg_n, char **arg_v )
     l_tests["mm_diff_and_reapply"] =        mm_diff_and_reapply;
     l_tests["mm_persist_and_load"] =        mm_persist_and_load;
     l_tests["mm_journaled_sync"] =          mm_journaled_sync;
+    l_tests["mm_baseline"] =                mm_baseline;
 
     return run_tests( l_tests, arg_n, arg_v );
 }
@@ -535,6 +537,27 @@ bool mm_low_level_gtd_workflow()
 
     /// decide item3 to be the first step to take
     l_m1.connect( l_gtd_item3, l_item_next_task );
+
+    return true;
+}
+
+bool mm_baseline()
+{
+    /// a baseline ensures there is a "starting" model to create the
+    /// local model from
+    /// it's important to ensure that models created from the last
+    /// baseline contain exactly the same information as the source
+    /// model and those which have been synced incrementally
+
+    CleanFolder fc1("./test-localfolder-1");
+    CleanFolder fc2("./test-localfolder-2");
+
+    zm::MindMatterModel l_m1;
+    l_m1.setLocalFolder( fc1 );
+    l_m1.setUsedUsername( "test-user" );
+    l_m1.setUsedHostname( "test-machine" );
+    l_m1.initialize();
+
 
     return true;
 }

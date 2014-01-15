@@ -35,6 +35,7 @@ zm::MindMatterModel::MindMatterModel()
     , m_localFolderSync         ( "" )
     , m_localModelFile          ( "" )
     , m_localModelFileSynced    ( "" )
+    , m_read_journals           ()
     , m_initialized             ( false )
     , m_options                 ( new zm::zmOptions )
 {
@@ -293,10 +294,14 @@ void zm::MindMatterModel::initialize()
 
     m_localModelFileSynced = createModelFileNameOld();
 
-    persistence_loadLocalModel();
+    if( !persistence_loadLocalModel() )
+    {
+        persistance_loadBaseLine();
+    }
 
     // this is currently not possible since a pull can not be done
-    // without a prior push (which is a full sync)
+    // without a prior push (which is a full sync, which should only
+    // be done intentionally)
 //    if( !persistence_pullJournal().isEmpty() )
 //    {
 //        persistence_saveLocalModel();
@@ -369,7 +374,7 @@ bool zm::MindMatterModel::loadModelFromFile(
     return true;
 }
 
-void zm::MindMatterModel::persistence_loadLocalModel()
+bool zm::MindMatterModel::persistence_loadLocalModel()
 {
     /// we try to load the new model file into the new model structure
     /// and the old file model into the old model structure
@@ -382,17 +387,22 @@ void zm::MindMatterModel::persistence_loadLocalModel()
     tracemessage("load new  file: %s", m_localModelFile.c_str());
     tracemessage("load sync file: %s", m_localModelFileSynced.c_str());
 
+    bool l_result = false;
+
     if( boost::filesystem::exists( m_localModelFileSynced ) )
     {
-        loadModelFromFile(m_localModelFileSynced, m_things_synced );
+        l_result |=
+                loadModelFromFile(m_localModelFileSynced, m_things_synced );
 
         if( boost::filesystem::exists( m_localModelFile ) )
         {
-            loadModelFromFile(m_localModelFile, m_things );
+            l_result |=
+                loadModelFromFile(m_localModelFile, m_things );
         }
         else
         {
-            loadModelFromFile(m_localModelFileSynced, m_things );
+            l_result |=
+                loadModelFromFile(m_localModelFileSynced, m_things );
         }
     }
     else
@@ -401,11 +411,23 @@ void zm::MindMatterModel::persistence_loadLocalModel()
         {
             boost::filesystem::rename( m_localModelFile, m_localModelFileSynced );
 
-            loadModelFromFile(m_localModelFileSynced, m_things );
+            l_result |=
+                loadModelFromFile(m_localModelFileSynced, m_things );
 
             deepCopy(m_things, m_things_synced);
         }
     }
+    return l_result;
+}
+
+bool zm::MindMatterModel::persistance_loadBaseLine()
+{
+    return false;
+}
+
+bool zm::MindMatterModel::persistance_loadCreateBaseLine()
+{
+    return false;
 }
 
 const std::set< std::string > & zm::MindMatterModel::getHandledJournalFilenames()
@@ -651,6 +673,17 @@ void zm::MindMatterModel::persistence_saveLocalModel()
         }
         l_yaml_emitter << YAML::EndMap;
     }
+
+    BOOST_FOREACH(const std::string &i, m_read_journals)
+    {
+        l_yaml_emitter << YAML::BeginMap;
+
+        l_yaml_emitter << YAML::Key << "read";
+        l_yaml_emitter << YAML::Value << i;
+
+        l_yaml_emitter << YAML::EndMap;
+    }
+
     l_yaml_emitter << YAML::EndSeq;
 
     try
@@ -692,60 +725,73 @@ void zm::MindMatterModel::yamlToThingsMap(
 
     BOOST_FOREACH( YAML::Node n, yamlNode )
     {
-        assert( n["caption"] );
-
-        std::string l_uid = n.Tag();
+        // [todo] should be xor
+        assert( n["uid"] || n["read"] );
 
         if( n["uid"] )
         {
-            l_uid = n["uid"].as< std::string >();
-        }
+            assert( n["caption"] );
 
-        assert( l_uid != "" && l_uid != "?" );
+            std::string l_uid = n.Tag();
 
-        std::string l_caption = n["caption"].as< std::string >();
-
-        tracemessage("caption: '%s'", l_caption.c_str());
-
-        MindMatter *l_new_thing = new MindMatter( l_caption );
-
-        if( n["connections"] )
-        {
-            l_connection_uids[l_uid] =
-                    n["connections"].as< std::vector< std::string > >();
-        }
-
-        /// this is deprecated and just ensures that older models can
-        /// be read
-        if( n["attributes"] )
-        {
-            l_tag_names[l_uid] =
-                    n["attributes"].as< std::vector< std::string > >();
-        }
-
-        if( n["string_values"] )
-        {
-            l_new_thing->m_string_values =
-                n["string_values"].as< MindMatter::string_value_map_type >();
-
-            BOOST_FOREACH(
-                const MindMatter::string_value_map_type::value_type &a,
-                l_new_thing->m_string_values )
+            if( n["uid"] )
             {
-                std::cout << a.first << ": " << a.second << std::endl;
+                l_uid = n["uid"].as< std::string >();
             }
-        }
 
-        if( n["hash1"] )
+            assert( l_uid != "" && l_uid != "?" );
+
+            std::string l_caption = n["caption"].as< std::string >();
+
+            tracemessage("caption: '%s'", l_caption.c_str());
+
+            MindMatter *l_new_thing = new MindMatter( l_caption );
+
+            if( n["connections"] )
+            {
+                l_connection_uids[l_uid] =
+                        n["connections"].as< std::vector< std::string > >();
+            }
+
+            /// this is deprecated and just ensures that older models can
+            /// be read
+            if( n["attributes"] )
+            {
+                l_tag_names[l_uid] =
+                        n["attributes"].as< std::vector< std::string > >();
+            }
+
+            if( n["string_values"] )
+            {
+                l_new_thing->m_string_values =
+                    n["string_values"].as< MindMatter::string_value_map_type >();
+
+                BOOST_FOREACH(
+                    const MindMatter::string_value_map_type::value_type &a,
+                    l_new_thing->m_string_values )
+                {
+                    std::cout << a.first << ": " << a.second << std::endl;
+                }
+            }
+
+            if( n["hash1"] )
+            {
+                l_hashes[l_uid] = n["hash1"].as< std::string >();
+            }
+            assert( l_new_thing->hasValue("global_time_created")
+                    || l_uid == l_new_thing->m_caption );
+
+            thingsMap.insert(
+                        zm::MindMatterModel::uid_mm_bimap_t::value_type(
+                            l_uid, l_new_thing ) );
+        }
+        /*
+        else if(n["read"])
         {
-            l_hashes[l_uid] = n["hash1"].as< std::string >();
+            std::string bla = n["read"].as< std::string >();
+            m_read_journals.insert(bla);
         }
-        assert( l_new_thing->hasValue("global_time_created")
-                || l_uid == l_new_thing->m_caption );
-
-        thingsMap.insert(
-                    zm::MindMatterModel::uid_mm_bimap_t::value_type(
-                        l_uid, l_new_thing ) );
+        */
     }
 
     /// since we could not fully process all items yet - connections

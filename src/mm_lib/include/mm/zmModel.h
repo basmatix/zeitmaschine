@@ -84,7 +84,12 @@ namespace zm
 
         /// will write a recent model file without affecting the journals
         void persistence_saveLocalModel();
-        void persistence_loadLocalModel();
+
+        /// loads
+        bool persistence_loadLocalModel();
+
+        bool persistance_loadBaseLine();
+        bool persistance_loadCreateBaseLine();
 
         /// make a full model sync.
         /// first load and apply new journal files in the sync folders. Then
