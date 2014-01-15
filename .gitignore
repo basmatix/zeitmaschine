@@ -11,7 +11,8 @@ CMakeFiles
 *.a
 *.pyc
 *.cxx
-build-release
+zm
+build-*
 build/*.png
 build/asciitest.zip
 build/*.cmake
