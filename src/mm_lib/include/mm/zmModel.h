@@ -30,16 +30,37 @@ namespace zm
     {
     public:
 
-        typedef boost::bimaps::bimap< std::string, MindMatter * > uid_mm_bimap_t;
+
+        class ModelData
+                : public boost::bimaps::bimap< std::string, MindMatter * >
+        {
+            typedef boost::bimaps::bimap< std::string, MindMatter * > uid_mm_bimap_t;
+            uid_mm_bimap_t m_data;
+        public:
+            /*
+            typedef uid_mm_bimap_t::left_const_iterator left_const_iterator;
+            typedef uid_mm_bimap_t::left_iterator left_iterator;
+            typedef uid_mm_bimap_t::value_type value_type;
+            virtual ~ModelData(){};
+            size_t size() const
+            {
+                return m_data.size();
+            }
+            left_iterator begin();
+            left_iterator end();
+            */
+        };
 
     private:
 
-        uid_mm_bimap_t  m_things;
-        zmOptions      *m_options;
+        ModelData          m_things;
         std::set< std::string > m_read_journals;
 
         // used for generating the diff
-        uid_mm_bimap_t  m_things_synced;
+        ModelData          m_things_synced;
+
+        zmOptions      *m_options;
+
 
         std::string     m_localFolderRoot;
         std::string     m_localFolderSync;
@@ -135,19 +156,19 @@ namespace zm
 
         static void yamlToThingsMap(
                 const YAML::Node    &yamlNode,
-                uid_mm_bimap_t      &thingsMap );
+                ModelData      &thingsMap );
 
         static void deepCopy(
-                const uid_mm_bimap_t &source,
-                      uid_mm_bimap_t &dest);
+                const ModelData &source,
+                      ModelData &dest);
 
         static ChangeSet diff(
-                const uid_mm_bimap_t &model_from,
-                const uid_mm_bimap_t &model_to);
+                const ModelData &model_from,
+                const ModelData &model_to);
 
         static bool equals(
-                const uid_mm_bimap_t &a_first,
-                const uid_mm_bimap_t &a_second,
+                const ModelData &a_first,
+                const ModelData &a_second,
                 bool tell_why);
 
         ChangeSet persistence_pullJournal();
@@ -161,7 +182,7 @@ namespace zm
     /// const interface
     public:
 
-        const uid_mm_bimap_t & things() const;
+        const ModelData & things() const;
 
         size_t getItemCount() const;
 
@@ -199,8 +220,8 @@ namespace zm
 
     private: // const
         bool _isConnected(
-                uid_mm_bimap_t::left_const_iterator item_it1,
-                uid_mm_bimap_t::left_const_iterator item_it2 ) const;
+                ModelData::left_const_iterator item_it1,
+                ModelData::left_const_iterator item_it2 ) const;
 
     /// write relevant interface
     public:
@@ -243,53 +264,53 @@ namespace zm
     private: // rw
 
         static std::string _createNewItem(
-                uid_mm_bimap_t    &model,
+                ModelData    &model,
                 const std::string &caption,
                 const std::string &uid = "" );
 
         static void _createNewItem(
-                uid_mm_bimap_t    &model,
+                ModelData    &model,
                 const std::string &uid,
                 const std::string &caption,
                 const std::string &time );
 
         void _eraseItem(
-                uid_mm_bimap_t::left_iterator &item );
+                ModelData::left_iterator &item );
 
         static void _addTag(
-                uid_mm_bimap_t                &model,
-                uid_mm_bimap_t::left_iterator &item,
+                ModelData                &model,
+                ModelData::left_iterator &item,
                 const std::string &tag_name );
 
         bool _removeTag(
-                uid_mm_bimap_t::left_iterator &item,
+                ModelData::left_iterator &item,
                 const std::string &tag_name );
 
         static bool _setValue(
-                uid_mm_bimap_t::left_iterator &item,
+                ModelData::left_iterator &item,
                 const std::string &name,
                 const std::string &value );
 
         static bool _setCaption(
-                uid_mm_bimap_t::left_iterator &item,
+                ModelData::left_iterator &item,
                 const std::string &caption );
 
         static void _connect(
-                uid_mm_bimap_t::left_iterator &item1,
-                uid_mm_bimap_t::left_iterator &item2 );
+                ModelData::left_iterator &item1,
+                ModelData::left_iterator &item2 );
 
         static void _disconnect(
-                uid_mm_bimap_t::left_iterator &item1,
-                uid_mm_bimap_t::left_iterator &item2 );
+                ModelData::left_iterator &item1,
+                ModelData::left_iterator &item2 );
 
         // returns 16x8 bit
         static std::string generateUid();
 
-        static void clear( uid_mm_bimap_t &thingsMap );
+        static void clear( ModelData &thingsMap );
 
         static bool loadModelFromFile(
                 const std::string   &input_file,
-                uid_mm_bimap_t      &rw_thingsMap );
+                ModelData      &rw_thingsMap );
     };
 }
 

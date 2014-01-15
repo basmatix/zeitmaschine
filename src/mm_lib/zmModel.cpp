@@ -26,7 +26,7 @@
 using namespace zm;
 
 static void _debug_dump(
-        const zm::MindMatterModel::uid_mm_bimap_t &thingsMap);
+        const zm::MindMatterModel::ModelData &thingsMap);
 
 zm::MindMatterModel::MindMatterModel()
     : m_things                  ()
@@ -49,8 +49,8 @@ zm::MindMatterModel::~MindMatterModel()
 }
 
 bool zm::MindMatterModel::equals(
-        const uid_mm_bimap_t &a_first,
-        const uid_mm_bimap_t &a_second,
+        const ModelData &a_first,
+        const ModelData &a_second,
         bool tell_why )
 {
     /// prune if models differ in size
@@ -61,10 +61,10 @@ bool zm::MindMatterModel::equals(
 
     /// go through all elements of m_things - note that we don't have
     /// to do this for the second model
-    BOOST_FOREACH( const uid_mm_bimap_t::value_type& i, a_first )
+    BOOST_FOREACH( const ModelData::value_type& i, a_first )
     {
         /// find the key in the other map
-        uid_mm_bimap_t::left_const_iterator l_item_it(
+        ModelData::left_const_iterator l_item_it(
                     a_second.left.find( i.left ) );
 
         /// not found? return false!
@@ -112,8 +112,8 @@ ChangeSet zm::MindMatterModel::diffTo( const MindMatterModel &a_other ) const
 }
 
 ChangeSet zm::MindMatterModel::diff(
-        const uid_mm_bimap_t &model_from,
-        const uid_mm_bimap_t &model_to )
+        const ModelData &model_from,
+        const ModelData &model_to )
 {
     /// return a set of changes which describes what do we have to change
     /// on model_from to get to model_to
@@ -123,14 +123,14 @@ ChangeSet zm::MindMatterModel::diff(
     std::set< std::string > l_done_items;
 
     /// go through all elements of m_things
-    BOOST_FOREACH( const uid_mm_bimap_t::value_type& i, model_from )
+    BOOST_FOREACH( const ModelData::value_type& i, model_from )
     {
         const std::string &l_this_item_id(i.left);
 
         l_done_items.insert( l_this_item_id );
 
         /// find the key in the other map
-        uid_mm_bimap_t::left_const_iterator l_other_item_it(
+        ModelData::left_const_iterator l_other_item_it(
                     model_to.left.find( l_this_item_id ) );
 
         if( l_other_item_it == model_to.left.end() )
@@ -147,7 +147,7 @@ ChangeSet zm::MindMatterModel::diff(
         }
     }
 
-    BOOST_FOREACH( const uid_mm_bimap_t::value_type& i, model_to )
+    BOOST_FOREACH( const ModelData::value_type& i, model_to )
     {
         const std::string &l_other_item_id(i.left);
 
@@ -353,7 +353,7 @@ bool zm::MindMatterModel::persistence_sync()
 
 bool zm::MindMatterModel::loadModelFromFile(
         const std::string   &input_file,
-        uid_mm_bimap_t      &thingsMap )
+        ModelData      &thingsMap )
 {
     clear( thingsMap );
 
@@ -528,7 +528,7 @@ void zm::MindMatterModel::applyChangeSet( const ChangeSet &changeSet )
 {
     BOOST_FOREACH( const journal_ptr_t &j, changeSet.getJournal() )
     {
-        uid_mm_bimap_t::left_iterator l_item_it( m_things.left.find( j->item_uid ) );
+        ModelData::left_iterator l_item_it( m_things.left.find( j->item_uid ) );
 
         if( j->type == JournalItem::CreateItem && l_item_it != m_things.left.end() )
         {
@@ -560,7 +560,7 @@ void zm::MindMatterModel::applyChangeSet( const ChangeSet &changeSet )
             break;
         case JournalItem::Connect:
         {
-            uid_mm_bimap_t::left_iterator l_item2_it(
+            ModelData::left_iterator l_item2_it(
                         m_things.left.find( j->value ) );
             assert( l_item2_it != m_things.left.end() &&
                     "item to connect must exist");
@@ -568,7 +568,7 @@ void zm::MindMatterModel::applyChangeSet( const ChangeSet &changeSet )
         } break;
         case JournalItem::Disconnect:
         {
-            uid_mm_bimap_t::left_iterator l_item2_it(
+            ModelData::left_iterator l_item2_it(
                         m_things.left.find( j->value ) );
             assert( l_item2_it != m_things.left.end() &&
                     "item to disconnect from must exist");
@@ -643,7 +643,7 @@ void zm::MindMatterModel::persistence_saveLocalModel()
 
     l_yaml_emitter << YAML::BeginSeq;
 
-    BOOST_FOREACH(const uid_mm_bimap_t::value_type& i, m_things)
+    BOOST_FOREACH(const ModelData::value_type& i, m_things)
     {
         l_yaml_emitter << YAML::BeginMap;
 
@@ -696,7 +696,7 @@ void zm::MindMatterModel::persistence_saveLocalModel()
     }
 }
 
-const zm::MindMatterModel::uid_mm_bimap_t & zm::MindMatterModel::things() const
+const zm::MindMatterModel::ModelData & zm::MindMatterModel::things() const
 {
     return m_things;
 }
@@ -706,9 +706,9 @@ size_t zm::MindMatterModel::getItemCount() const
     return m_things.size();
 }
 
-void zm::MindMatterModel::clear( uid_mm_bimap_t &thingsMap )
+void zm::MindMatterModel::clear( ModelData &thingsMap )
 {
-    BOOST_FOREACH(const uid_mm_bimap_t::value_type& i, thingsMap)
+    BOOST_FOREACH(const ModelData::value_type& i, thingsMap)
     {
         delete i.right;
     }
@@ -717,7 +717,7 @@ void zm::MindMatterModel::clear( uid_mm_bimap_t &thingsMap )
 
 void zm::MindMatterModel::yamlToThingsMap(
         const YAML::Node    &yamlNode,
-        uid_mm_bimap_t      &thingsMap )
+        ModelData      &thingsMap )
 {
     std::map< std::string, std::vector< std::string> > l_connection_uids;
     std::map< std::string, std::vector< std::string> > l_tag_names;
@@ -782,7 +782,7 @@ void zm::MindMatterModel::yamlToThingsMap(
                     || l_uid == l_new_thing->m_caption );
 
             thingsMap.insert(
-                        zm::MindMatterModel::uid_mm_bimap_t::value_type(
+                        zm::MindMatterModel::ModelData::value_type(
                             l_uid, l_new_thing ) );
         }
         /*
@@ -797,7 +797,7 @@ void zm::MindMatterModel::yamlToThingsMap(
     /// since we could not fully process all items yet - connections
     /// could not be established due to incomplete list of items, we
     /// postprocess them now and check there hash values
-    BOOST_FOREACH(const zm::MindMatterModel::uid_mm_bimap_t::value_type &i,
+    BOOST_FOREACH(const zm::MindMatterModel::ModelData::value_type &i,
                   thingsMap)
     {
         const std::string &l_uid( i.left );
@@ -813,7 +813,7 @@ void zm::MindMatterModel::yamlToThingsMap(
         {
             BOOST_FOREACH( const std::string &other_uid, l_connections_it->second)
             {
-                zm::MindMatterModel::uid_mm_bimap_t::left_iterator
+                zm::MindMatterModel::ModelData::left_iterator
                         l_other_it( thingsMap.left.find( other_uid ) );
 
                 assert(l_other_it != thingsMap.left.end());
@@ -830,7 +830,7 @@ void zm::MindMatterModel::yamlToThingsMap(
 
         if(l_tags_it != l_tag_names.end())
         {
-            uid_mm_bimap_t::left_iterator l_item_left_it(
+            ModelData::left_iterator l_item_left_it(
                         thingsMap.left.find( l_uid ) );
 
             BOOST_FOREACH( const std::string &tag_name, l_tags_it->second)
@@ -879,7 +879,7 @@ std::string zm::MindMatterModel::createHash( bool verbose) const
 {
     size_t l_hash(0);
 
-    BOOST_FOREACH(const zm::MindMatterModel::uid_mm_bimap_t::value_type &i,
+    BOOST_FOREACH(const zm::MindMatterModel::ModelData::value_type &i,
                   m_things)
     {
         boost::hash_combine(l_hash, i.left);
@@ -893,25 +893,25 @@ std::string zm::MindMatterModel::createHash( bool verbose) const
 }
 
 void zm::MindMatterModel::deepCopy(
-        const uid_mm_bimap_t &a_source,
-              uid_mm_bimap_t &a_dest)
+        const ModelData &a_source,
+              ModelData &a_dest)
 {
     clear(a_dest);
 
-    BOOST_FOREACH(const zm::MindMatterModel::uid_mm_bimap_t::value_type &i,
+    BOOST_FOREACH(const zm::MindMatterModel::ModelData::value_type &i,
                   a_source)
     {
         MindMatter *l_new_thing = new MindMatter(i.right->m_caption);
         l_new_thing->m_string_values = i.right->m_string_values;
 
         a_dest.insert(
-                    zm::MindMatterModel::uid_mm_bimap_t::value_type(
+                    zm::MindMatterModel::ModelData::value_type(
                         i.left, l_new_thing ) );
     }
-    BOOST_FOREACH(const zm::MindMatterModel::uid_mm_bimap_t::value_type &i,
+    BOOST_FOREACH(const zm::MindMatterModel::ModelData::value_type &i,
                   a_source)
     {
-        uid_mm_bimap_t::left_iterator l_dest_first_item_it(
+        ModelData::left_iterator l_dest_first_item_it(
                     a_dest.left.find( i.left ) );
 
         assert( l_dest_first_item_it != a_dest.left.end() );
@@ -919,7 +919,7 @@ void zm::MindMatterModel::deepCopy(
         BOOST_FOREACH(const MindMatter::item_uid_pair_t l_neighbour,
                       i.right->m_neighbours)
         {
-            uid_mm_bimap_t::left_iterator l_dest_second_item_it(
+            ModelData::left_iterator l_dest_second_item_it(
                         a_dest.left.find( l_neighbour.second ) );
 
             assert( l_dest_second_item_it != a_dest.left.end() );
@@ -936,11 +936,11 @@ void zm::MindMatterModel::duplicateModelTo(MindMatterModel &other) const
 }
 
 
-void _debug_dump(const zm::MindMatterModel::uid_mm_bimap_t &thingsMap)
+void _debug_dump(const zm::MindMatterModel::ModelData &thingsMap)
 {
     tracemessage(">> dump");
 
-    BOOST_FOREACH(const zm::MindMatterModel::uid_mm_bimap_t::value_type& i,
+    BOOST_FOREACH(const zm::MindMatterModel::ModelData::value_type& i,
                   thingsMap)
     {
         std::ostringstream l_neighbours;
