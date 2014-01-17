@@ -25,8 +25,8 @@
 #include <stdlib.h>
 using namespace zm;
 
-static void _debug_dump(
-        const zm::MindMatterModel::ModelData &thingsMap);
+//static void _debug_dump(
+//        const zm::MindMatterModel::ModelData &thingsMap);
 
 zm::MindMatterModel::MindMatterModel()
     : m_things                  ()
@@ -35,7 +35,7 @@ zm::MindMatterModel::MindMatterModel()
     , m_localFolderSync         ( "" )
     , m_localModelFile          ( "" )
     , m_localModelFileSynced    ( "" )
-    , m_read_journals           ()
+    //, m_read_journals           ()
     , m_initialized             ( false )
     , m_options                 ( new zm::zmOptions )
 {
@@ -429,7 +429,7 @@ bool zm::MindMatterModel::persistance_loadCreateBaseLine()
 {
     return false;
 }
-
+/*
 const std::set< std::string > & zm::MindMatterModel::getHandledJournalFilenames()
 {
     if(m_read_journals.empty())
@@ -447,7 +447,6 @@ const std::set< std::string > & zm::MindMatterModel::getHandledJournalFilenames(
     }
     return m_read_journals;
 }
-
 void zm::MindMatterModel::appendHandledJournalFilename(
         const std::string &a_filename)
 {
@@ -460,6 +459,7 @@ void zm::MindMatterModel::appendHandledJournalFilename(
         l_file << l_line << std::endl;
     }
 }
+*/
 
 ChangeSet zm::MindMatterModel::persistence_pullJournal()
 {
@@ -472,7 +472,7 @@ ChangeSet zm::MindMatterModel::persistence_pullJournal()
     tracemessage( "found %d journal files", l_journalFiles.size() );
 
     const std::set< std::string > & l_alreadyImported =
-            getHandledJournalFilenames();
+            m_things.m_read_journals;
 
     tracemessage( "%d journal files already imported",
                   l_alreadyImported.size() );
@@ -484,7 +484,7 @@ ChangeSet zm::MindMatterModel::persistence_pullJournal()
         {
             tracemessage( "journal '%s' not imported yet", l_filename.c_str() );
             applyChangeSet( ChangeSet( j ) );
-            appendHandledJournalFilename(l_filename);
+            m_things.m_read_journals.insert(l_filename);
             l_importedJournals = true;
         }
     }
@@ -517,7 +517,7 @@ ChangeSet zm::MindMatterModel::persistence_pushJournal()
 
     l_changeSet.write( l_journal_fullname );
 
-    appendHandledJournalFilename(l_journal_basename);
+    m_things.m_read_journals.insert(l_journal_basename);
 
     deepCopy(m_things, m_things_synced);
 
@@ -674,7 +674,7 @@ void zm::MindMatterModel::persistence_saveLocalModel()
         l_yaml_emitter << YAML::EndMap;
     }
 
-    BOOST_FOREACH(const std::string &i, m_read_journals)
+    BOOST_FOREACH(const std::string &i, m_things.m_read_journals)
     {
         l_yaml_emitter << YAML::BeginMap;
 
@@ -936,12 +936,12 @@ void zm::MindMatterModel::duplicateModelTo(MindMatterModel &other) const
 }
 
 
-void _debug_dump(const zm::MindMatterModel::ModelData &thingsMap)
+void zm::MindMatterModel::ModelData::debug_dump() const
 {
     tracemessage(">> dump");
 
     BOOST_FOREACH(const zm::MindMatterModel::ModelData::value_type& i,
-                  thingsMap)
+                  m_data)
     {
         std::ostringstream l_neighbours;
         l_neighbours << "(";
@@ -961,5 +961,5 @@ void _debug_dump(const zm::MindMatterModel::ModelData &thingsMap)
 
 void zm::MindMatterModel::debug_dump() const
 {
-    _debug_dump(m_things);
+    m_things.debug_dump();
 }

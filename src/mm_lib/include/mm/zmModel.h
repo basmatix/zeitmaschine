@@ -39,10 +39,13 @@ namespace zm
 
         public:
 
+            std::set< std::string > m_read_journals;
+
             ModelData()
                 : m_data    ()
                 , right     (m_data.right)
                 , left      (m_data.left)
+                , m_read_journals()
             { }
 
             typedef uid_mm_bimap_t::left_const_iterator left_const_iterator;
@@ -68,15 +71,17 @@ namespace zm
             uid_mm_bimap_t::left_map  &left;
             uid_mm_bimap_t::right_map &right;
 
+        public:
+            void debug_dump() const;
+
         };
 
     private:
 
-        ModelData          m_things;
-        std::set< std::string > m_read_journals;
+        ModelData       m_things;
 
         // used for generating the diff
-        ModelData          m_things_synced;
+        ModelData       m_things_synced;
 
         zmOptions      *m_options;
 
@@ -170,8 +175,8 @@ namespace zm
         std::string createModelFileNameOld() const;
         std::string createJournalListFileName() const;
 
-        const std::set< std::string > & getHandledJournalFilenames();
-        void appendHandledJournalFilename(const std::string &filename);
+//        const std::set< std::string > & getHandledJournalFilenames();
+//        void appendHandledJournalFilename(const std::string &filename);
 
         static void yamlToThingsMap(
                 const YAML::Node    &yamlNode,
