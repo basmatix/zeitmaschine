@@ -56,6 +56,20 @@ bool zm::MindMatterModel::equals(
     /// prune if models differ in size
     if( a_first.size() != a_second.size() )
     {
+        if(tell_why)
+        {
+            tracemessage("MindMatterModels have different model size" );
+        }
+        return false;
+    }
+
+    /// prune if models differ in size
+    if( a_first.m_read_journals.size() != a_second.m_read_journals.size() )
+    {
+        if(tell_why)
+        {
+            tracemessage("MindMatterModel have different journal history size");
+        }
         return false;
     }
 
@@ -70,6 +84,12 @@ bool zm::MindMatterModel::equals(
         /// not found? return false!
         if( l_item_it == a_second.left.end() )
         {
+            if(tell_why)
+            {
+                tracemessage("MindMatterModels differ: item %s not found in "
+                             "second model",
+                             i.left.c_str() );
+            }
             return false;
         }
 
@@ -82,6 +102,15 @@ bool zm::MindMatterModel::equals(
             }
             return false;
         }
+    }
+
+    if( a_first.m_read_journals != a_second.m_read_journals )
+    {
+        if(tell_why)
+        {
+            tracemessage("MindMatterModels have different journal history");
+        }
+        return false;
     }
 
     /// if we reach this point the maps must be equal
@@ -785,13 +814,11 @@ void zm::MindMatterModel::yamlToThingsMap(
                         zm::MindMatterModel::ModelData::value_type(
                             l_uid, l_new_thing ) );
         }
-        /*
         else if(n["read"])
         {
             std::string bla = n["read"].as< std::string >();
-            m_read_journals.insert(bla);
+            thingsMap.m_read_journals.insert(bla);
         }
-        */
     }
 
     /// since we could not fully process all items yet - connections
@@ -927,6 +954,7 @@ void zm::MindMatterModel::deepCopy(
             _connect(l_dest_first_item_it, l_dest_second_item_it);
         }
     }
+    a_dest.m_read_journals = a_source.m_read_journals;
 }
 
 void zm::MindMatterModel::duplicateModelTo(MindMatterModel &other) const
