@@ -1,0 +1,575 @@
+/// -*- coding: utf-8 -*-
+///
+/// file: zmModel.cpp
+///
+/// Copyright (C) 2013 Frans Fuerst
+///
+
+#include <mm/zmModel.h>
+
+#include "zmThing.h"
+
+#include <mm/zmTrace.h>
+//#include <mm/zmOsal.h>
+//#include <mm/zmOptions.h>
+
+//#include <fstream>
+//#include <string>
+#include <yaml-cpp/yaml.h>
+
+//#include <algorithm>
+#include <boost/foreach.hpp>
+#include <boost/filesystem.hpp>
+//#include <boost/thread.hpp>
+
+//#include <stdlib.h>
+using namespace zm;
+
+bool zm::MindMatterModel::persistence_sync()
+{
+    // [TODO] - in case something goes wrong in here we should
+    //          do all this in an atomic way
+
+    /// NOTE: we have to solve a tricky problem here. in case we want
+    ///       to achieve a 'pull only' approach without the need to
+    ///       write a journal we need to apply the remote journals to
+    ///       both the new and the old model. otherwise on the next journal
+    ///       export we would replicate the journaling information we just
+    ///       imported when.
+    ///       Importing the jounals on both models would be tricky on the
+    ///       other hand because conflict resolving would have to take place
+    ///       twice, too.
+
+    /// save the current model for safety reasons
+    persistence_saveLocalModel();
+
+    /// write journal from old model to current model
+    ChangeSet l_exportedChanges = persistence_pushJournal();
+
+    /// load remote journals into current model
+    ChangeSet l_importedChanges = persistence_pullJournal();
+
+    if( l_exportedChanges.isEmpty() && l_importedChanges.isEmpty() )
+    {
+        return false;
+    }
+
+    //[TODO]
+    //resolveConflicts(l_exportedChanges, l_importedChanges);
+
+    persistence_saveLocalModel();
+
+    boost::filesystem::rename( m_localModelFile, m_localModelFileSynced );
+
+    return true;
+}
+
+bool zm::MindMatterModel::loadModelFromFile(
+        const std::string   &input_file,
+        ModelData      &thingsMap )
+{
+    clear( thingsMap );
+
+    if( ! boost::filesystem::exists( input_file ) )
+    {
+        return false;
+    }
+    std::ifstream l_yaml_stream(input_file.c_str());
+
+    if(!l_yaml_stream)
+    {
+        return false;
+    }
+
+    YAML::Node l_import = YAML::Load(l_yaml_stream);
+    yamlToThingsMap( l_import, thingsMap );
+
+    return true;
+}
+
+bool zm::MindMatterModel::persistence_loadLocalModel()
+{
+    /// we try to load the new model file into the new model structure
+    /// and the old file model into the old model structure
+    ///
+    /// in case the old model file does not exist, the new model file
+    /// becomes the old one
+    ///
+    /// in case only the old model file exists it acts
+
+    tracemessage("load new  file: %s", m_localModelFile.c_str());
+    tracemessage("load sync file: %s", m_localModelFileSynced.c_str());
+
+    bool l_result = false;
+
+    if( boost::filesystem::exists( m_localModelFileSynced ) )
+    {
+        l_result |=
+                loadModelFromFile(m_localModelFileSynced, m_things_synced );
+
+        if( boost::filesystem::exists( m_localModelFile ) )
+        {
+            l_result |=
+                loadModelFromFile(m_localModelFile, m_things );
+        }
+        else
+        {
+            l_result |=
+                loadModelFromFile(m_localModelFileSynced, m_things );
+        }
+    }
+    else
+    {
+        if( boost::filesystem::exists( m_localModelFile ) )
+        {
+            boost::filesystem::rename( m_localModelFile, m_localModelFileSynced );
+
+            l_result |=
+                loadModelFromFile(m_localModelFileSynced, m_things );
+
+            deepCopy(m_things, m_things_synced);
+        }
+    }
+    return l_result;
+}
+
+bool zm::MindMatterModel::persistance_loadSnapshot()
+{
+    std::set<std::string> l_snapshotfiles =
+            zm::common::get_files_in_dir(
+                m_localFolderSync, "snapshot-*.yaml");
+
+    if(l_snapshotfiles.empty())
+    {
+        return false;
+    }
+
+    const std::string &l_filename = *(l_snapshotfiles.rbegin());
+
+    loadModelFromFile(l_filename, m_things);
+
+    deepCopy(m_things, m_things_synced);
+
+    return true;
+}
+
+bool zm::MindMatterModel::persistance_createSnapshot()
+{
+    _saveModel(m_things, createSnapshotFileName());
+
+    return true;
+}
+
+ChangeSet zm::MindMatterModel::persistence_pullJournal()
+{
+    assert( equals(m_things, m_things_synced, true) );
+
+    ChangeSet l_result;
+    bool l_importedJournals = false;
+
+    std::vector< std::string > l_journalFiles = getJournalFiles();
+    tracemessage( "found %d journal files", l_journalFiles.size() );
+
+    const std::set< std::string > & l_alreadyImported =
+            m_things.m_read_journals;
+
+    tracemessage( "%d journal files already imported",
+                  l_alreadyImported.size() );
+
+    BOOST_FOREACH( const std::string &j, l_journalFiles )
+    {
+        std::string l_filename = boost::filesystem::path( j ).filename().string();
+        if( std::find( l_alreadyImported.begin(), l_alreadyImported.end(), l_filename) == l_alreadyImported.end() )
+        {
+            tracemessage( "journal '%s' not imported yet", l_filename.c_str() );
+            applyChangeSet( ChangeSet( j ) );
+            m_things.m_read_journals.insert(l_filename);
+            l_importedJournals = true;
+        }
+    }
+
+    if( l_importedJournals )
+    {
+        l_result = diff( m_things_synced, m_things );
+        deepCopy(m_things, m_things_synced);
+    }
+    return l_result;
+}
+
+ChangeSet zm::MindMatterModel::persistence_pushJournal()
+{
+    ChangeSet l_changeSet( diff( m_things_synced, m_things ) );
+
+    if(l_changeSet.isEmpty())
+    {
+        tracemessage( "no changes - don't write journal" );
+        return l_changeSet;
+    }
+
+    std::string l_journal_basename = createJournalFileName();
+
+    std::string l_journal_fullname = m_localFolderSync + "/" + l_journal_basename;
+
+    tracemessage( "%d changes - write journal '%s'",
+                  l_changeSet.size(),
+                  l_journal_basename.c_str() );
+
+    l_changeSet.write( l_journal_fullname );
+
+    m_things.m_read_journals.insert(l_journal_basename);
+
+    deepCopy(m_things, m_things_synced);
+
+    return l_changeSet;
+}
+
+void zm::MindMatterModel::applyChangeSet( const ChangeSet &changeSet )
+{
+    BOOST_FOREACH( const journal_ptr_t &j, changeSet.getJournal() )
+    {
+        ModelData::left_iterator l_item_it( m_things.left.find( j->item_uid ) );
+
+        if( j->type == JournalItem::CreateItem && l_item_it != m_things.left.end() )
+        {
+            tracemessage( "WARNING: tried to create already existant item '%s'",
+                          j->item_uid.c_str() );
+            continue;
+        }
+
+        if( j->type != JournalItem::CreateItem && l_item_it == m_things.left.end() )
+        {
+            tracemessage( "WARNING: trying to modify item non existent item '%s'",
+                          j->item_uid.c_str() );
+            assert( j->type == JournalItem::CreateItem || l_item_it != m_things.left.end() );
+        }
+
+        switch( j->type )
+        {
+        case JournalItem::CreateItem:
+            _createNewItem( m_things, j->item_uid, j->value, j->time );
+            break;
+        case JournalItem::SetStringValue:
+            _setValue(l_item_it, j->key, j->value );
+            break;
+        case JournalItem::EraseItem:
+            _eraseItem( l_item_it );
+            break;
+        case JournalItem::ChangeCaption:
+            _setCaption( l_item_it, j->value );
+            break;
+        case JournalItem::Connect:
+        {
+            ModelData::left_iterator l_item2_it(
+                        m_things.left.find( j->value ) );
+            assert( l_item2_it != m_things.left.end() &&
+                    "item to connect must exist");
+            _connect( l_item_it, l_item2_it );
+        } break;
+        case JournalItem::Disconnect:
+        {
+            ModelData::left_iterator l_item2_it(
+                        m_things.left.find( j->value ) );
+            assert( l_item2_it != m_things.left.end() &&
+                    "item to disconnect from must exist");
+            _disconnect( l_item_it, l_item2_it );
+        } break;
+        case JournalItem::AddAttribute:
+        {
+            _addTag(m_things, l_item_it, j->key);
+        } break;
+        }
+    }
+}
+
+std::vector< std::string > zm::MindMatterModel::getJournalFiles() const
+{
+    std::vector< std::string > l_all_matching_files;
+
+    const std::string target_path( m_localFolderSync );
+
+    if( !boost::filesystem::exists( target_path ) )
+    {
+        return l_all_matching_files;
+    }
+
+    const std::string my_filter( "*-journal.yaml" );
+
+
+    boost::filesystem::directory_iterator end_itr; // Default ctor yields past-the-end
+    for( boost::filesystem::directory_iterator i( target_path ); i != end_itr; ++i )
+    {
+        tracemessage( "%s", i->path().string().c_str() );
+        // skip if not a file
+        if( !boost::filesystem::is_regular_file( i->status() ) ) continue;
+
+        // skip if no match
+        if( !zm::common::matchesWildcards( i->path().string(), my_filter )) continue;
+
+        // file matches, store it
+        l_all_matching_files.push_back( i->path().string() );
+    }
+
+    std::sort( l_all_matching_files.begin(), l_all_matching_files.end() );
+
+    return l_all_matching_files;
+}
+
+// info regarding string encoding:
+//    http://code.google.com/p/yaml-cpp/wiki/Strings
+
+void zm::MindMatterModel::persistence_saveLocalModel()
+{
+    _saveModel(m_things, m_localModelFile);
+}
+
+void zm::MindMatterModel::_saveModel(
+        const ModelData &a_model,
+        const std::string &a_filename)
+{
+    if( !zm::common::create_base_directory( a_filename ) )
+    {
+        // todo: error
+        return;
+    }
+
+    std::ofstream l_fout( a_filename.c_str() );
+
+    assert( l_fout.is_open() );
+
+    if( a_model.empty() )
+    {
+        return;
+    }
+
+    /// NOTE: we do the yaml exporting here semi manually
+    ///       because this way we can ensure consistent
+    ///       order of items between savings
+
+    YAML::Emitter l_yaml_emitter( l_fout );
+
+    l_yaml_emitter << YAML::BeginSeq;
+
+    BOOST_FOREACH(const ModelData::value_type& i, a_model)
+    {
+        l_yaml_emitter << YAML::BeginMap;
+
+        l_yaml_emitter << YAML::Key << "uid";
+        l_yaml_emitter << YAML::Value << i.left;
+
+        l_yaml_emitter << YAML::Key << "caption";
+        l_yaml_emitter << YAML::Value << i.right->m_caption;
+
+        l_yaml_emitter << YAML::Key << "hash1";
+        l_yaml_emitter << YAML::Value << i.right->createHash();
+
+        if( ! i.right->m_string_values.empty() )
+        {
+            l_yaml_emitter << YAML::Key << "string_values";
+            l_yaml_emitter << YAML::Value;
+            /// this list is sorted anyway
+            l_yaml_emitter << i.right->m_string_values;
+        }
+
+        if( ! i.right->m_neighbours.empty() )
+        {
+            l_yaml_emitter << YAML::Key << "connections";
+            l_yaml_emitter << YAML::Value;
+            /// this list is sorted anyway
+            l_yaml_emitter << YAML::BeginSeq;
+            BOOST_FOREACH(const std::string &uid, i.right->getNeighbourUids())
+            {
+                l_yaml_emitter << YAML::BeginMap;
+                l_yaml_emitter << YAML::Key << uid;
+                l_yaml_emitter << YAML::Value << 1;
+                l_yaml_emitter << YAML::EndMap;
+            }
+
+            l_yaml_emitter << YAML::EndSeq;
+        }
+        l_yaml_emitter << YAML::EndMap;
+    }
+
+    BOOST_FOREACH(const std::string &i, a_model.m_read_journals)
+    {
+        l_yaml_emitter << YAML::BeginMap;
+
+        l_yaml_emitter << YAML::Key << "read";
+        l_yaml_emitter << YAML::Value << i;
+
+        l_yaml_emitter << YAML::EndMap;
+    }
+
+    l_yaml_emitter << YAML::EndSeq;
+
+    try
+    {
+        l_fout << std::endl;
+    }
+    catch( ... )
+    {
+        std::cerr << "writing failed" << std::endl;
+    }
+}
+
+void zm::MindMatterModel::yamlToThingsMap(
+        const YAML::Node    &yamlNode,
+        ModelData      &thingsMap )
+{
+    std::map< std::string, std::vector< std::string> > l_connection_uids;
+    std::map< std::string, std::vector< std::string> > l_tag_names;
+    std::map< std::string, std::string > l_hashes;
+
+    BOOST_FOREACH( YAML::Node n, yamlNode )
+    {
+        // [todo] should be xor
+        assert( n["uid"] || n["read"] );
+
+        if( n["uid"] )
+        {
+            assert( n["caption"] );
+
+            std::string l_uid = n.Tag();
+
+            if( n["uid"] )
+            {
+                l_uid = n["uid"].as< std::string >();
+            }
+
+            assert( l_uid != "" && l_uid != "?" );
+
+            std::string l_caption = n["caption"].as< std::string >();
+
+            tracemessage("caption: '%s'", l_caption.c_str());
+
+            MindMatter *l_new_thing = new MindMatter( l_caption );
+
+            if( n["connections"] )
+            {
+                typedef std::pair<std::string, int> conn_t;
+                std::vector< std::string > l_connections;
+                /*
+                BOOST_FOREACH( YAML::Node l_conn, n["connections"] )
+                {
+                    l_conn
+                }
+                */
+                std::vector< conn_t > l_bla =
+                        n["connections"].as< std::vector< conn_t > >();
+
+
+                BOOST_FOREACH( const conn_t &x, l_bla)
+                {
+                    tracemessage("%s %d", x.first.c_str(), x.second);
+                    l_connections.push_back(x.first);
+                }
+
+                l_connection_uids[l_uid] = l_connections;
+            }
+
+            /// this is deprecated and just ensures that older models can
+            /// be read
+            if( n["attributes"] )
+            {
+                l_tag_names[l_uid] =
+                        n["attributes"].as< std::vector< std::string > >();
+            }
+
+            if( n["string_values"] )
+            {
+                l_new_thing->m_string_values =
+                    n["string_values"].as< MindMatter::string_value_map_type >();
+
+                BOOST_FOREACH(
+                    const MindMatter::string_value_map_type::value_type &a,
+                    l_new_thing->m_string_values )
+                {
+                    std::cout << a.first << ": " << a.second << std::endl;
+                }
+            }
+
+            if( n["hash1"] )
+            {
+                l_hashes[l_uid] = n["hash1"].as< std::string >();
+            }
+            assert( l_new_thing->hasValue("global_time_created")
+                    || l_uid == l_new_thing->m_caption );
+
+            thingsMap.insert(
+                        zm::MindMatterModel::ModelData::value_type(
+                            l_uid, l_new_thing ) );
+        }
+        else if(n["read"])
+        {
+            std::string bla = n["read"].as< std::string >();
+            thingsMap.m_read_journals.insert(bla);
+        }
+    }
+
+    /// since we could not fully process all items yet - connections
+    /// could not be established due to incomplete list of items, we
+    /// postprocess them now and check there hash values
+    BOOST_FOREACH(const zm::MindMatterModel::ModelData::value_type &i,
+                  thingsMap)
+    {
+        const std::string &l_uid( i.left );
+        zm::MindMatter *l_item( i.right );
+
+        ///
+        /// handle connections
+        ///
+        std::map< std::string, std::vector< std::string> >::const_iterator
+                l_connections_it = l_connection_uids.find(l_uid);
+
+        if(l_connections_it != l_connection_uids.end())
+        {
+            BOOST_FOREACH( const std::string &other_uid, l_connections_it->second)
+            {
+                zm::MindMatterModel::ModelData::left_iterator
+                        l_other_it( thingsMap.left.find( other_uid ) );
+
+                assert(l_other_it != thingsMap.left.end());
+
+                l_item->m_neighbours[l_other_it->second] = other_uid;
+            }
+        }
+
+        ///
+        /// handle tags (deprecated)
+        ///
+        std::map< std::string, std::vector< std::string> >::const_iterator
+                l_tags_it = l_tag_names.find(l_uid);
+
+        if(l_tags_it != l_tag_names.end())
+        {
+            ModelData::left_iterator l_item_left_it(
+                        thingsMap.left.find( l_uid ) );
+
+            BOOST_FOREACH( const std::string &tag_name, l_tags_it->second)
+            {
+                _addTag(thingsMap, l_item_left_it, tag_name);
+            }
+        }
+
+        ///
+        /// handle hashes
+        ///
+
+        /// tag might have been generated and has no hash yet
+        if(l_uid != l_item->m_caption)
+        {
+            std::map< std::string, std::string >::const_iterator
+                    l_hash_it = l_hashes.find(l_uid);
+
+            assert(l_hash_it != l_hashes.end());
+
+            if(l_hash_it->second != l_item->createHash())
+            {
+                tracemessage("saved and loaded hashes differ!");
+                assert(l_hash_it->second == l_item->createHash());
+            }
+        }
+    }
+
+    // _debug_dump(thingsMap);
+}
+
