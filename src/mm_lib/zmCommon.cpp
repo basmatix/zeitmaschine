@@ -9,6 +9,7 @@
 
 #include <boost/date_time.hpp>
 #include <boost/regex.hpp>
+#include <boost/foreach.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>
 
@@ -120,5 +121,55 @@ std::vector<std::string> zm::common::split(
 {
     std::vector<std::string> l_result;
     boost::split(l_result, input, boost::is_any_of(separators));
+    return l_result;
+}
+
+std::set< std::string > zm::common::get_files_in_dir(
+        const std::string &a_directory,
+        const std::string &a_wildcardPattern)
+{
+
+    std::set< std::string > l_result;
+
+    boost::filesystem::path l_folder(a_directory);
+
+    if(!boost::filesystem::exists(l_folder))
+    {
+        return l_result;
+    }
+
+    boost::filesystem::directory_iterator l_end_itr;
+    boost::filesystem::directory_iterator l_fs_itr( l_folder );
+
+    for( ; l_fs_itr != l_end_itr; ++l_fs_itr )
+    {
+        // skip if not a file
+        if( !boost::filesystem::is_regular_file( l_fs_itr->status() ) )
+        {
+            continue;
+        }
+
+        bool l_match = false;
+
+        /// match against all provided patterns
+        BOOST_FOREACH(const std::string&l_pattern,
+                      zm::common::split(a_wildcardPattern, ";"))
+        {
+            if( zm::common::matchesWildcards(
+                        l_fs_itr->path().filename().string(),
+                        l_pattern ))
+            {
+                l_match = true;
+                break;
+            }
+        }
+        if(!l_match)
+        {
+            continue;
+        }
+
+        l_result.insert(l_fs_itr->path().string());
+   }
+
     return l_result;
 }

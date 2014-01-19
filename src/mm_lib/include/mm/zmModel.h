@@ -133,8 +133,8 @@ namespace zm
         /// loads
         bool persistence_loadLocalModel();
 
-        bool persistance_loadBaseLine();
-        bool persistance_createBaseLine();
+        bool persistance_loadSnapshot();
+        bool persistance_createSnapshot();
 
         /// make a full model sync.
         /// first load and apply new journal files in the sync folders. Then
@@ -174,6 +174,7 @@ namespace zm
         std::string createModelFileNameNew() const;
         std::string createModelFileNameOld() const;
         std::string createJournalListFileName() const;
+        std::string createSnapshotFileName() const;
 
 //        const std::set< std::string > & getHandledJournalFilenames();
 //        void appendHandledJournalFilename(const std::string &filename);
@@ -181,6 +182,11 @@ namespace zm
         static void yamlToThingsMap(
                 const YAML::Node    &yamlNode,
                 ModelData      &thingsMap );
+
+        // todo - refactor name
+        static void _saveModel(
+                const ModelData   &model,
+                const std::string &filename);
 
         static void deepCopy(
                 const ModelData &source,

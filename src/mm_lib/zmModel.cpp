@@ -290,6 +290,17 @@ std::string zm::MindMatterModel::createModelFileNameNew() const
     return l_ssFileName.str();
 }
 
+std::string zm::MindMatterModel::createSnapshotFileName() const
+{
+    std::stringstream l_ssFileName;
+    l_ssFileName << m_localFolderSync << "/snapshot"
+                 << "-"
+                 << zm::common::time_stamp_iso()
+                 << ".yaml";
+
+    return l_ssFileName.str();
+}
+
 std::string zm::MindMatterModel::createModelFileNameOld() const
 {
     std::stringstream l_ssFileName;
@@ -326,7 +337,7 @@ void zm::MindMatterModel::initialize()
     if( !persistence_loadLocalModel() )
     {
         // should only be done on syncing
-        // persistance_loadBaseLine();
+        persistance_loadSnapshot();
     }
 
     // this is currently not possible since a pull can not be done
@@ -450,47 +461,32 @@ bool zm::MindMatterModel::persistence_loadLocalModel()
     return l_result;
 }
 
-bool zm::MindMatterModel::persistance_loadBaseLine()
+bool zm::MindMatterModel::persistance_loadSnapshot()
 {
+    std::set<std::string> l_snapshotfiles =
+            zm::common::get_files_in_dir(
+                m_localFolderSync, "snapshot-*.yaml");
 
-    return false;
-}
-
-bool zm::MindMatterModel::persistance_createBaseLine()
-{
-    return false;
-}
-/*
-const std::set< std::string > & zm::MindMatterModel::getHandledJournalFilenames()
-{
-    if(m_read_journals.empty())
+    if(l_snapshotfiles.empty())
     {
-        std::ifstream l_file(createJournalListFileName().c_str());
-        if(!l_file.is_open())
-        {
-            return m_read_journals;
-        }
-        std::string l_line;
-        while (std::getline(l_file, l_line))
-        {
-            m_read_journals.insert(l_line);
-        }
+        return false;
     }
-    return m_read_journals;
+
+    const std::string &l_filename = *(l_snapshotfiles.rbegin());
+
+    loadModelFromFile(l_filename, m_things);
+
+    deepCopy(m_things, m_things_synced);
+
+    return true;
 }
-void zm::MindMatterModel::appendHandledJournalFilename(
-        const std::string &a_filename)
+
+bool zm::MindMatterModel::persistance_createSnapshot()
 {
-    m_read_journals.insert(a_filename);
+    _saveModel(m_things, createSnapshotFileName());
 
-    std::ofstream l_file(createJournalListFileName().c_str());
-
-    BOOST_FOREACH( const std::string &l_line, m_read_journals)
-    {
-        l_file << l_line << std::endl;
-    }
+    return true;
 }
-*/
 
 ChangeSet zm::MindMatterModel::persistence_pullJournal()
 {
@@ -651,17 +647,24 @@ std::vector< std::string > zm::MindMatterModel::getJournalFiles() const
 
 void zm::MindMatterModel::persistence_saveLocalModel()
 {
-    if( !zm::common::create_base_directory( m_localModelFile ) )
+    _saveModel(m_things, m_localModelFile);
+}
+
+void zm::MindMatterModel::_saveModel(
+        const ModelData &a_model,
+        const std::string &a_filename)
+{
+    if( !zm::common::create_base_directory( a_filename ) )
     {
         // todo: error
         return;
     }
 
-    std::ofstream l_fout( m_localModelFile.c_str() );
+    std::ofstream l_fout( a_filename.c_str() );
 
     assert( l_fout.is_open() );
 
-    if( m_things.empty() )
+    if( a_model.empty() )
     {
         return;
     }
@@ -674,7 +677,7 @@ void zm::MindMatterModel::persistence_saveLocalModel()
 
     l_yaml_emitter << YAML::BeginSeq;
 
-    BOOST_FOREACH(const ModelData::value_type& i, m_things)
+    BOOST_FOREACH(const ModelData::value_type& i, a_model)
     {
         l_yaml_emitter << YAML::BeginMap;
 
@@ -705,7 +708,7 @@ void zm::MindMatterModel::persistence_saveLocalModel()
         l_yaml_emitter << YAML::EndMap;
     }
 
-    BOOST_FOREACH(const std::string &i, m_things.m_read_journals)
+    BOOST_FOREACH(const std::string &i, a_model.m_read_journals)
     {
         l_yaml_emitter << YAML::BeginMap;
 

@@ -99,6 +99,11 @@ public:
         m_things_model.persistence_sync();
     }
 
+    void createSnapshot()
+    {
+        m_things_model.persistance_createSnapshot();
+    }
+
     void localSave( const std::string &filename = "" )
     {
         m_things_model.persistence_saveLocalModel();

@@ -26,7 +26,7 @@ bool mm_diff_and_reapply        ();
 bool mm_persist_and_load        ();
 bool mm_journaled_sync          ();
 bool mm_equality                ();
-bool mm_baseline                ();
+bool mm_snapshot                ();
 
 int main( int arg_n, char **arg_v )
 {
@@ -40,7 +40,7 @@ int main( int arg_n, char **arg_v )
     l_tests["mm_diff_and_reapply"] =        mm_diff_and_reapply;
     l_tests["mm_persist_and_load"] =        mm_persist_and_load;
     l_tests["mm_journaled_sync"] =          mm_journaled_sync;
-    l_tests["mm_baseline"] =                mm_baseline;
+    l_tests["mm_snapshot"] =                mm_snapshot;
 
     return run_tests( l_tests, arg_n, arg_v );
 }
@@ -75,10 +75,13 @@ public:
 int sync_folders(
         const std::string &a_source_path,
         const std::string &a_destination_path,
-        const std::string &a_pattern = "*-journal.yaml;*-baseline.yaml")
+        const std::string &a_pattern = "*-journal.yaml;snapshot-*.yaml")
 {
     boost::filesystem::path l_source_folder(a_source_path);
     boost::filesystem::path l_destination_folder(a_destination_path);
+
+    std::vector<std::string> l_patternlist(
+                zm::common::split(a_pattern, ";"));
 
     l_source_folder /= "sync";
     l_destination_folder /= "sync";
@@ -109,10 +112,14 @@ int sync_folders(
         bool l_match = false;
 
         /// match against all provided patterns
-        BOOST_FOREACH(const std::string&l_pattern, zm::common::split(a_pattern, ";"))
+        BOOST_FOREACH(const std::string&l_pattern, l_patternlist)
         {
+            printf("'%s' '%s'",
+                   l_pattern.c_str(),
+                   l_fs_itr->path().filename().string().c_str());fflush(stdout);
+
             if( zm::common::matchesWildcards(
-                        l_fs_itr->path().string(),
+                        l_fs_itr->path().filename().string(),
                         l_pattern ))
             {
                 l_match = true;
@@ -552,12 +559,12 @@ bool mm_low_level_gtd_workflow()
     return true;
 }
 
-bool mm_baseline()
+bool mm_snapshot()
 {
-    /// a baseline ensures there is a "starting" model to create the
+    /// a snapshot ensures there is a "starting" model to create the
     /// local model from
     /// it's important to ensure that models created from the last
-    /// baseline contain exactly the same information as the source
+    /// snapshot contain exactly the same information as the source
     /// model and those which have been synced incrementally
 
     CleanFolder fc1("./test-localfolder-1");
@@ -577,6 +584,7 @@ bool mm_baseline()
     bool l_files_copied;
 
     l_synced = l_m1.persistence_sync();
+    test_assert( l_synced, "files should have been synced" );
 
     std::string l_item3 = l_m1.createNewItem( "du" );
     l_m1.connect(l_item2, l_item3);
@@ -584,6 +592,7 @@ bool mm_baseline()
     l_synced = l_m1.persistence_sync();
 
     l_files_copied = sync_folders(fc1, fc2);
+    test_assert( l_synced, "files should have been synced" );
 
     zm::MindMatterModel l_m2;
     l_m2.setLocalFolder( fc2 );
@@ -593,14 +602,21 @@ bool mm_baseline()
 
     l_synced = l_m2.persistence_sync();
 
-    test_assert( l_m1.equals( l_m2, true),
-                 "" );
+    test_assert( l_m1.equals( l_m2, true), "models should be equal" );
+    test_assert( l_m2.equals( l_m1, true), "models should be equal" );
+
+    l_m2.persistance_createSnapshot();
+
+    l_files_copied = sync_folders(fc2, fc3, "snapshot-*.yaml");
+    test_assert( l_synced, "files should have been synced" );
 
     zm::MindMatterModel l_m3;
-    l_m3.setLocalFolder( fc2 );
+    l_m3.setLocalFolder( fc3 );
     l_m3.setUsedUsername( "test-user" );
     l_m3.setUsedHostname( "test-machine" );
     l_m3.initialize();
+
+    test_assert( l_m3.equals( l_m1, true), "models should be equal" );
 
     return true;
 }

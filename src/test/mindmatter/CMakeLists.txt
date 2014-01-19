@@ -42,5 +42,5 @@ add_test( mm_diff_and_reapply         ${test_executable} mm_diff_and_reapply )
 add_test( mm_persist_and_load         ${test_executable} mm_persist_and_load )
 add_test( mm_journaled_sync           ${test_executable} mm_journaled_sync )
 add_test( mm_equality                 ${test_executable} mm_equality )
-add_test( mm_baseline                 ${test_executable} mm_baseline )
+add_test( mm_snapshot                 ${test_executable} mm_snapshot )
 

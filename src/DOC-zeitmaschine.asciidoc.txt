@@ -14,11 +14,13 @@ will be accessed by Debug builds automatically.
 However until most important scheduling features are available, the next
 steps in development are listed here, too.
 
-* Create a "baseline model" if none exists
+* Create a "snapshot model" if none exists
 * Find a way to model subfolder relations, e.g.
   - have directed connections
   - have a "parent" property   (bad, since object resides in just one folder)
   - have "children" properties (requires lists)
+
+
 
 requirements
 ------------

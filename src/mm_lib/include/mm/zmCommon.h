@@ -10,6 +10,7 @@
 
 #include <string>
 #include <vector>
+#include <set>
 #include <ctime>
 
 namespace boost{ namespace posix_time{
@@ -41,6 +42,10 @@ bool matchesWildcards(
 std::vector<std::string> split(
         const std::string &input,
         const char *separators);
+
+std::set< std::string > get_files_in_dir(
+        const std::string &directory,
+        const std::string &wildcardPattern);
 
 }
 }
