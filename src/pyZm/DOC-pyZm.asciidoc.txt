@@ -34,11 +34,11 @@ node2 = model.createNewItem( "node2" )
 node3 = model.createNewItem( "node3" )
 
 model.connect( node1, node2 )
+cond1 = model.isConnected(node1, node2)
+TEST( cond1, "node1 and node2 should be connected after connection" )
 
-#_EST( l_m1.isConnected(node1, node2), "node1 and node2 should be connected after connection" )
+#_EST( model.isConnected(node2, node1), "node1 and node2 should be connected after connection" )
 
-#_EST( l_m1.isConnected(node2, node1), "node1 and node2 should be connected after connection" )
-
-#_EST( not l_m1.isConnected(node1, node3), "node1 and node2 should be connected after connection" )
+#_EST( not model.isConnected(node1, node3), "node1 and node2 should be connected after connection" )
 ----
 
