@@ -75,6 +75,8 @@ private slots:
 
     void on_pbSync_clicked();
 
+    void on_pbSnapshot_clicked();
+
     void on_leCommand_textChanged ( const QString & text );
 
 #if 0

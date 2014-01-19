@@ -143,6 +143,13 @@ void MainWindow::on_pbSync_clicked()
     m_model.sync();
 }
 
+void MainWindow::on_pbSnapshot_clicked()
+{   tracemessage( __FUNCTION__ );
+    // this method is being called automatically by Qt
+
+    m_model.createSnapshot();
+}
+
 void MainWindow::on_pbAddInboxItem_clicked()
 {   //tracemessage( __FUNCTION__ );
     // this method is being called automatically by Qt

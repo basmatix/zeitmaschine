@@ -83,6 +83,11 @@ public:
         m_gtd_model.sync();
     }
 
+    void createSnapshot()
+    {
+        m_gtd_model.createSnapshot();
+    }
+
     void localSave( const std::string &filename = "" )
     {
         m_gtd_model.localSave();

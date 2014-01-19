@@ -261,6 +261,13 @@
                  </property>
                 </widget>
                </item>
+               <item>
+                <widget class="QPushButton" name="pbSnapshot">
+                 <property name="text">
+                  <string>snapshot</string>
+                 </property>
+                </widget>
+               </item>
               </layout>
              </widget>
             </item>
