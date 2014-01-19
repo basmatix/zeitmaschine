@@ -325,7 +325,8 @@ void zm::MindMatterModel::initialize()
 
     if( !persistence_loadLocalModel() )
     {
-        persistance_loadBaseLine();
+        // should only be done on syncing
+        // persistance_loadBaseLine();
     }
 
     // this is currently not possible since a pull can not be done
@@ -451,10 +452,11 @@ bool zm::MindMatterModel::persistence_loadLocalModel()
 
 bool zm::MindMatterModel::persistance_loadBaseLine()
 {
+
     return false;
 }
 
-bool zm::MindMatterModel::persistance_loadCreateBaseLine()
+bool zm::MindMatterModel::persistance_createBaseLine()
 {
     return false;
 }

@@ -75,7 +75,7 @@ public:
 int sync_folders(
         const std::string &a_source_path,
         const std::string &a_destination_path,
-        const std::string &a_pattern = "*-journal.yaml")
+        const std::string &a_pattern = "*-journal.yaml;*-baseline.yaml")
 {
     boost::filesystem::path l_source_folder(a_source_path);
     boost::filesystem::path l_destination_folder(a_destination_path);
@@ -90,7 +90,7 @@ int sync_folders(
 
     if(!boost::filesystem::exists(l_destination_folder))
     {
-        boost::filesystem::create_directory(l_destination_folder);
+        boost::filesystem::create_directories(l_destination_folder);
     }
 
     boost::filesystem::directory_iterator l_end_itr;
@@ -106,13 +106,24 @@ int sync_folders(
             continue;
         }
 
-        // skip if no match
-        if( !zm::common::matchesWildcards(
-                    l_fs_itr->path().string(),
-                    a_pattern ))
+        bool l_match = false;
+
+        /// match against all provided patterns
+        BOOST_FOREACH(const std::string&l_pattern, zm::common::split(a_pattern, ";"))
+        {
+            if( zm::common::matchesWildcards(
+                        l_fs_itr->path().string(),
+                        l_pattern ))
+            {
+                l_match = true;
+                break;
+            }
+        }
+        if(!l_match)
         {
             continue;
         }
+
 
         boost::filesystem::path l_dest_file =
                 l_destination_folder / l_fs_itr->path().filename();
@@ -551,6 +562,7 @@ bool mm_baseline()
 
     CleanFolder fc1("./test-localfolder-1");
     CleanFolder fc2("./test-localfolder-2");
+    CleanFolder fc3("./test-localfolder-3");
 
     zm::MindMatterModel l_m1;
     l_m1.setLocalFolder( fc1 );
@@ -558,6 +570,37 @@ bool mm_baseline()
     l_m1.setUsedHostname( "test-machine" );
     l_m1.initialize();
 
+    std::string l_item_inbox = l_m1.findOrCreateTagItem( "huhu" );
+    std::string l_item2 = l_m1.createNewItem( "hallo" );
+
+    bool l_synced;
+    bool l_files_copied;
+
+    l_synced = l_m1.persistence_sync();
+
+    std::string l_item3 = l_m1.createNewItem( "du" );
+    l_m1.connect(l_item2, l_item3);
+
+    l_synced = l_m1.persistence_sync();
+
+    l_files_copied = sync_folders(fc1, fc2);
+
+    zm::MindMatterModel l_m2;
+    l_m2.setLocalFolder( fc2 );
+    l_m2.setUsedUsername( "test-user" );
+    l_m2.setUsedHostname( "test-machine" );
+    l_m2.initialize();
+
+    l_synced = l_m2.persistence_sync();
+
+    test_assert( l_m1.equals( l_m2, true),
+                 "" );
+
+    zm::MindMatterModel l_m3;
+    l_m3.setLocalFolder( fc2 );
+    l_m3.setUsedUsername( "test-user" );
+    l_m3.setUsedHostname( "test-machine" );
+    l_m3.initialize();
 
     return true;
 }

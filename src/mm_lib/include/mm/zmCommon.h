@@ -9,6 +9,7 @@
 #define ZMCOMMON_H
 
 #include <string>
+#include <vector>
 #include <ctime>
 
 namespace boost{ namespace posix_time{
@@ -32,7 +33,14 @@ std::time_t pt_to_time_t(const boost::posix_time::ptime& pt);
 
 void escapeRegex( std::string &regex );
 
-bool matchesWildcards( const std::string &text, std::string wildcardPattern, bool caseSensitive = true);
+bool matchesWildcards(
+        const std::string &text,
+        const std::string &wildcardPattern,
+        bool caseSensitive = true);
+
+std::vector<std::string> split(
+        const std::string &input,
+        const char *separators);
 
 }
 }

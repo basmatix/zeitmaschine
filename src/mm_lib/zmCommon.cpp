@@ -10,6 +10,7 @@
 #include <boost/date_time.hpp>
 #include <boost/regex.hpp>
 #include <boost/filesystem.hpp>
+#include <boost/algorithm/string.hpp>
 
 bool zm::common::create_base_directory( const std::string& filename )
 {
@@ -92,16 +93,32 @@ void zm::common::escapeRegex( std::string &regex )
     boost::replace_all(regex, "/", "\\/");
 }
 
-bool zm::common::matchesWildcards( const std::string &text, std::string wildcardPattern, bool caseSensitive )
+bool zm::common::matchesWildcards(
+        const std::string &text,
+        const std::string &wildcardPattern,
+        bool caseSensitive )
 {
+    std::string l_pattern(wildcardPattern);
     // Escape all regex special chars
-    escapeRegex(wildcardPattern);
+    escapeRegex(l_pattern);
 
     // Convert chars '*?' back to their regex equivalents
-    boost::replace_all(wildcardPattern, "\\?", ".");
-    boost::replace_all(wildcardPattern, "\\*", ".*");
+    boost::replace_all(l_pattern, "\\?", ".");
+    boost::replace_all(l_pattern, "\\*", ".*");
 
-    boost::regex pattern(wildcardPattern, caseSensitive ? boost::regex::normal : boost::regex::icase);
+    boost::regex pattern(l_pattern,
+                         caseSensitive ?
+                             boost::regex::normal :
+                             boost::regex::icase);
 
     return regex_match(text, pattern);
+}
+
+std::vector<std::string> zm::common::split(
+        const std::string &input,
+        const char *separators)
+{
+    std::vector<std::string> l_result;
+    boost::split(l_result, input, boost::is_any_of(separators));
+    return l_result;
 }

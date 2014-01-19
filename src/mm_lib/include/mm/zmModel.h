@@ -134,7 +134,7 @@ namespace zm
         bool persistence_loadLocalModel();
 
         bool persistance_loadBaseLine();
-        bool persistance_loadCreateBaseLine();
+        bool persistance_createBaseLine();
 
         /// make a full model sync.
         /// first load and apply new journal files in the sync folders. Then
