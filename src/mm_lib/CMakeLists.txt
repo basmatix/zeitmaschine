@@ -18,6 +18,7 @@ file( GLOB ${PROJECT_NAME}_files
     zmOsal.cpp
     zmModel.cpp
     zmModel_affect_items.cpp
+    zmModel_persistence.cpp
     zmChangeSet.cpp
     zmCommon.cpp
     include/*/*.h
