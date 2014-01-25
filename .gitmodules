@@ -3,7 +3,7 @@
 	url = https://github.com/mrtazz/json-cpp.git
 [submodule "src/submodules/yaml-cpp"]
 	path = src/submodules/yaml-cpp
-	url = gitosis@git.scitics.de:yaml-cpp
+	url = git@git.scitics.de:yaml-cpp
 [submodule "src/submodules/asciitest"]
 	path = src/submodules/asciitest
-	url = gitosis@git.scitics.de:asciitest
+	url = git@git.scitics.de:asciitest
