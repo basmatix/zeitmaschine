@@ -113,8 +113,8 @@ bool zm::MindMatterModel::_isConnected(
         ModelData::left_const_iterator a_item1_it,
         ModelData::left_const_iterator a_item2_it ) const
 {
-    MindMatter::item_uid_map_t &n1( a_item1_it->second->m_neighbours );
-    MindMatter::item_uid_map_t &n2( a_item2_it->second->m_neighbours );
+    MindMatter::item_neighbour_map_t &n1( a_item1_it->second->m_neighbours );
+    MindMatter::item_neighbour_map_t &n2( a_item2_it->second->m_neighbours );
 
     MindMatter *l_item1_ptr( a_item1_it->second );
     MindMatter *l_item2_ptr( a_item2_it->second );
@@ -161,7 +161,7 @@ std::list< std::string > zm::MindMatterModel::getNeighbours(
     ModelData::left_const_iterator l_item_it( m_things.left.find( node_uid ) );
     assert( l_item_it != m_things.left.end() );
 
-    BOOST_FOREACH( const MindMatter::item_uid_pair_t &m,
+    BOOST_FOREACH( const MindMatter::item_neighbour_pair_t &m,
                    l_item_it->second->m_neighbours)
     {
         ModelData::right_const_iterator i = m_things.right.find(m.first);
@@ -347,8 +347,8 @@ void zm::MindMatterModel::_connect(
         ModelData::left_iterator &item1,
         ModelData::left_iterator &item2 )
 {
-    item1->second->m_neighbours[item2->second] = item2->first;
-    item2->second->m_neighbours[item1->second] = item1->first;
+    item1->second->m_neighbours[item2->second] = zm::MindMatter::neighbour_t(item2->first, 0);
+    item2->second->m_neighbours[item1->second] = zm::MindMatter::neighbour_t(item1->first, 0);
 }
 
 void zm::MindMatterModel::_disconnect(

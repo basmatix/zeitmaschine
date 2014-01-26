@@ -530,7 +530,7 @@ void zm::MindMatterModel::yamlToThingsMap(
 
                 assert(l_other_it != thingsMap.left.end());
 
-                l_item->m_neighbours[l_other_it->second] = other_uid;
+                l_item->m_neighbours[l_other_it->second] = zm::MindMatter::neighbour_t(other_uid, 0);
             }
         }
 

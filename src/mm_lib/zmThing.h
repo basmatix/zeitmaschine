@@ -20,14 +20,15 @@ namespace zm
         MindMatter & operator=(const MindMatter &);
 
     public:
-
-        typedef std::map< std::string, std::string >   string_value_map_type;
-        typedef std::pair< MindMatter *, std::string > item_uid_pair_t;
-        typedef std::map< MindMatter *, std::string >  item_uid_map_t;
+        typedef std::string                             uid_t;
+        typedef std::pair< uid_t, int >                 neighbour_t;
+        typedef std::map< std::string, std::string >    string_value_map_type;
+        typedef std::pair< MindMatter *, neighbour_t >  item_neighbour_pair_t;
+        typedef std::map< MindMatter *, neighbour_t >   item_neighbour_map_t;
 
         std::string                 m_caption;    // [todo] - should be value
         string_value_map_type       m_string_values;
-        item_uid_map_t              m_neighbours;
+        item_neighbour_map_t        m_neighbours;
 
     public:
 
@@ -201,10 +202,10 @@ zm::journal_item_vec_t zm::MindMatter::toDiff( const std::string &a_uid ) const
                                a_uid, l_entry.first, l_entry.second));
     }
 
-    BOOST_FOREACH(const item_uid_pair_t l_neighbour, m_neighbours)
+    BOOST_FOREACH(const item_neighbour_pair_t l_neighbour, m_neighbours)
     {
         l_result.push_back(JournalItem::createConnect(
-                               a_uid, l_neighbour.second));
+                               a_uid, l_neighbour.second.first));
     }
 
     return l_result;
@@ -214,11 +215,11 @@ std::set< std::string > zm::MindMatter::getNeighbourUids() const
 {
     std::set< std::string > l_result;
 
-    BOOST_FOREACH(const zm::MindMatter::item_uid_pair_t l_neighbour,
+    BOOST_FOREACH(const zm::MindMatter::item_neighbour_pair_t l_neighbour,
                   m_neighbours)
     {
         std::pair< std::set< std::string >::iterator, bool > l_success =
-                l_result.insert(l_neighbour.second);
+                l_result.insert(l_neighbour.second.first);
 
         assert( l_success.second );
     }

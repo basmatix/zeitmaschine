@@ -425,11 +425,11 @@ void zm::MindMatterModel::deepCopy(
 
         assert( l_dest_first_item_it != a_dest.left.end() );
 
-        BOOST_FOREACH(const MindMatter::item_uid_pair_t l_neighbour,
+        BOOST_FOREACH(const MindMatter::item_neighbour_pair_t l_neighbour,
                       i.right->m_neighbours)
         {
             ModelData::left_iterator l_dest_second_item_it(
-                        a_dest.left.find( l_neighbour.second ) );
+                        a_dest.left.find( l_neighbour.second.first ) );
 
             assert( l_dest_second_item_it != a_dest.left.end() );
 
@@ -454,10 +454,10 @@ void zm::MindMatterModel::ModelData::debug_dump() const
     {
         std::ostringstream l_neighbours;
         l_neighbours << "(";
-        BOOST_FOREACH( const MindMatter::item_uid_pair_t &m,
+        BOOST_FOREACH( const MindMatter::item_neighbour_pair_t &m,
                        i.right->m_neighbours)
         {
-            l_neighbours << m.second << ", ";
+            l_neighbours << m.second.first << "(" << m.second.second << ")" << ", ";
         }
         l_neighbours << ")";
         tracemessage("  %s (#%s) %s '%s'",
