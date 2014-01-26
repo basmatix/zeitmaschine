@@ -35,6 +35,8 @@ if( CONFIG_BUILD_PYZM )
         ${ZM_INCLUDE_DIR}
     )
 
+    include_directories( SYSTEM "${Boost_INCLUDE_DIR}" )
+
     set( PYTHON_ZM_LIBRARY_NAME "pyZm" )
 
     set( SWIG_MODULE_${PYTHON_ZM_LIBRARY_NAME}_EXTRA_DEPS "${ZM_INCLUDE_DIR}/zm/zmGtdModel.h" )

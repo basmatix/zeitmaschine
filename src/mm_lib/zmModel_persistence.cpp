@@ -260,10 +260,10 @@ void zm::MindMatterModel::applyChangeSet( const ChangeSet &changeSet )
         case JournalItem::Connect:
         {
             ModelData::left_iterator l_item2_it(
-                        m_things.left.find( j->value ) );
+                        m_things.left.find( j->key ) );
             assert( l_item2_it != m_things.left.end() &&
                     "item to connect must exist");
-            _connect( l_item_it, l_item2_it );
+            _connectDuplex( l_item_it, l_item2_it, Directed );
         } break;
         case JournalItem::Disconnect:
         {

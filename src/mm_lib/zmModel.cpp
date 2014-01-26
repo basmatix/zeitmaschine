@@ -407,8 +407,7 @@ void zm::MindMatterModel::deepCopy(
 {
     clear(a_dest);
 
-    BOOST_FOREACH(const zm::MindMatterModel::ModelData::value_type &i,
-                  a_source)
+    for(const zm::MindMatterModel::ModelData::value_type &i: a_source)
     {
         MindMatter *l_new_thing = new MindMatter(i.right->m_caption);
         l_new_thing->m_string_values = i.right->m_string_values;
@@ -417,23 +416,25 @@ void zm::MindMatterModel::deepCopy(
                     zm::MindMatterModel::ModelData::value_type(
                         i.left, l_new_thing ) );
     }
-    BOOST_FOREACH(const zm::MindMatterModel::ModelData::value_type &i,
-                  a_source)
+
+    for(const zm::MindMatterModel::ModelData::value_type &i: a_source)
     {
         ModelData::left_iterator l_dest_first_item_it(
                     a_dest.left.find( i.left ) );
 
         assert( l_dest_first_item_it != a_dest.left.end() );
 
-        BOOST_FOREACH(const MindMatter::item_neighbour_pair_t l_neighbour,
-                      i.right->m_neighbours)
+        for(const auto & l_neighbour: i.right->m_neighbours)
         {
             ModelData::left_iterator l_dest_second_item_it(
                         a_dest.left.find( l_neighbour.second.first ) );
 
             assert( l_dest_second_item_it != a_dest.left.end() );
 
-            _connect(l_dest_first_item_it, l_dest_second_item_it);
+            _connectSingle(
+                        l_dest_first_item_it,
+                        l_dest_second_item_it,
+                        l_neighbour.second.second);
         }
     }
     a_dest.m_read_journals = a_source.m_read_journals;

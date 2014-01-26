@@ -32,7 +32,7 @@ public:
         CreateItem,
         EraseItem,
         SetStringValue,
-        AddAttribute,
+        AddAttribute, //deprecated
 //        RemoveAttribute,
         ChangeCaption,
         Connect,
@@ -105,7 +105,7 @@ public:
     {
         journal_ptr_t l_result =
                 journal_ptr_t(new JournalItem(item_uid, Connect));
-        l_result->value = other_item_uid;
+        l_result->key = other_item_uid;
         return l_result;
     }
 
@@ -120,7 +120,6 @@ public:
     }
 
     std::string       item_uid;
-    //std::string       other_item_uid;
     ChangeType        type;
     std::string       time;
     std::string       key;

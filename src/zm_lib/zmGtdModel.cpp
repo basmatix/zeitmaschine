@@ -148,7 +148,7 @@ std::string zmGtdModel::createNewInboxItem( const std::string &caption )
                   caption.c_str(),
                   l_item_uid .c_str() );
 
-    m_things_model.connect( l_item_uid, m_item_inbox );
+    m_things_model.connectDirected( l_item_uid, m_item_inbox );
 
     m_things_model.persistence_saveLocalModel();
 
@@ -187,8 +187,8 @@ void zmGtdModel::registerItemAsTask( const std::string &task_item, const std::st
     assert( isProjectItem( project_item, false ) );
 
     m_things_model.disconnect( task_item, m_item_inbox );
-    m_things_model.connect( task_item, m_item_task );
-    m_things_model.connect( task_item, project_item );
+    m_things_model.connectDirected( task_item, m_item_task );
+    m_things_model.connectDirected( task_item, project_item );
 
     m_things_model.persistence_saveLocalModel();
 }
@@ -196,7 +196,7 @@ void zmGtdModel::registerItemAsTask( const std::string &task_item, const std::st
 void zmGtdModel::setDone( const std::string &task_item )
 {
     m_things_model.disconnect( task_item, m_item_inbox );
-    m_things_model.connect( task_item, m_item_done );
+    m_things_model.connectDirected( task_item, m_item_done );
 
     m_things_model.setValue(
                 task_item,
@@ -211,7 +211,7 @@ void zmGtdModel::castToProject( const std::string &item )
     assert( isInboxItem( item ) );
 
     m_things_model.disconnect( item, m_item_inbox );
-    m_things_model.connect( item, m_item_project );
+    m_things_model.connectDirected( item, m_item_project );
 
     m_things_model.persistence_saveLocalModel();
 }
@@ -226,7 +226,7 @@ void zmGtdModel::setNextTask( const std::string &project_item, const std::string
     {
         m_things_model.disconnect( l_currentNextTask, m_item_next_task );
     }
-    m_things_model.connect( task_item, m_item_next_task );
+    m_things_model.connectDirected( task_item, m_item_next_task );
 
     m_things_model.persistence_saveLocalModel();
 }
@@ -235,7 +235,7 @@ void zmGtdModel::setNextTask( const std::string &project_item, const std::string
     {
         std::string l_item_uid = m_things_model.createNewItem( project_name );
 
-        m_things_model.connect( project_name, m_item_project );
+        m_things_model.connectDirected( project_name, m_item_project );
 
         m_things_model.persistence_saveLocalModel();
 

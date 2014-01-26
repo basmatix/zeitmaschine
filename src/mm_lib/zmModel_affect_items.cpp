@@ -272,11 +272,11 @@ void zm::MindMatterModel::_addTag(
     {
         std::string n(_createNewItem( model, tag_name, tag_name ));
         ModelData::left_iterator i( model.left.find( n ) );
-        _connect( item, i );
+        _connectDuplex( item, i, Directed );
     }
     else
     {
-        _connect( item, l_tag_it );
+        _connectDuplex( item, l_tag_it, Directed );
     }
 }
 
@@ -327,7 +327,7 @@ void zm::MindMatterModel::disconnect( const std::string &node1_uid, const std::s
     _disconnect(l_item2_it, l_item1_it);
 }
 
-void zm::MindMatterModel::connect(
+void zm::MindMatterModel::connectDirected(
         const std::string &a_node1_uid,
         const std::string &a_node2_uid )
 {
@@ -340,15 +340,27 @@ void zm::MindMatterModel::connect(
     assert( l_item1_it != m_things.left.end() );
     assert( l_item2_it != m_things.left.end() );
 
-    _connect( l_item1_it, l_item2_it );
+    _connectDuplex( l_item1_it, l_item2_it, Directed );
 }
 
-void zm::MindMatterModel::_connect(
+void zm::MindMatterModel::_connectDuplex(
         ModelData::left_iterator &item1,
-        ModelData::left_iterator &item2 )
+        ModelData::left_iterator &item2,
+        zm::MindMatterModel::ConnectionType type)
 {
-    item1->second->m_neighbours[item2->second] = zm::MindMatter::neighbour_t(item2->first, 0);
-    item2->second->m_neighbours[item1->second] = zm::MindMatter::neighbour_t(item1->first, 0);
+    assert(item1->second->m_neighbours.find(item2->second) == item1->second->m_neighbours.end());
+    assert(item2->second->m_neighbours.find(item1->second) == item2->second->m_neighbours.end());
+    assert(type == Directed);
+    item1->second->m_neighbours[item2->second] = zm::MindMatter::neighbour_t(item2->first, 2);
+    item2->second->m_neighbours[item1->second] = zm::MindMatter::neighbour_t(item1->first, 1);
+}
+
+void zm::MindMatterModel::_connectSingle(
+        ModelData::left_iterator &item1,
+        ModelData::left_iterator &item2,
+        int type)
+{
+    item1->second->m_neighbours[item2->second] = zm::MindMatter::neighbour_t(item2->first, type);
 }
 
 void zm::MindMatterModel::_disconnect(

@@ -76,6 +76,13 @@ namespace zm
 
         };
 
+        enum ConnectionType
+        {
+            Undefined = 0,
+            Undirected = 1,
+            Directed = 2
+        };
+
     private:
 
         ModelData       m_things;
@@ -280,7 +287,7 @@ namespace zm
                 const std::string &uid,
                 const std::string &caption );
 
-        void connect(
+        void connectDirected(
                 const std::string &node1_uid,
                 const std::string &node2_uid );
 
@@ -325,9 +332,15 @@ namespace zm
                 ModelData::left_iterator &item,
                 const std::string &caption );
 
-        static void _connect(
+        static void _connectDuplex(
                 ModelData::left_iterator &item1,
-                ModelData::left_iterator &item2 );
+                ModelData::left_iterator &item2,
+                ConnectionType type);
+
+        static void _connectSingle(
+                ModelData::left_iterator &item1,
+                ModelData::left_iterator &item2,
+                int type);
 
         static void _disconnect(
                 ModelData::left_iterator &item1,

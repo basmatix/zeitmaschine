@@ -177,7 +177,7 @@ bool mm_equality()
     std::string node1 = l_m1.createNewItem( "node1" );
     std::string node2 = l_m1.createNewItem( "node2" );
     std::string node3 = l_m1.createNewItem( "node3" );
-    l_m1.connect(node2, node3);
+    l_m1.connectDirected(node2, node3);
 
     test_assert(l_m1.createHash() != l_m2.createHash(),
                 "hashes of different models should differ");
@@ -225,7 +225,7 @@ bool mm_journaled_sync()
 
     std::string node2 = l_m1.createNewItem( "node2" );
     std::string node3 = l_m1.createNewItem( "node3" );
-    l_m1.connect(node2, node3);
+    l_m1.connectDirected(node2, node3);
 
     l_synced = l_m1.persistence_sync();
     test_assert( l_synced, "a sync file should have been generated");
@@ -270,7 +270,7 @@ bool mm_persist_and_load()
 
     std::string node3 = l_m1.createNewItem( "node3" );
 
-    l_m1.connect(node1, node3);
+    l_m1.connectDirected(node1, node3);
 
     test_assert( ! l_m2.equals(l_m1), "model2 should differ from model1");
     printf("save..\n"); fflush(stdout);
@@ -279,7 +279,7 @@ bool mm_persist_and_load()
     l_m2.persistence_loadLocalModel();
     test_assert( l_m2.equals(l_m1), "model2 should not differ from model1");
 
-    l_m1.connect(node1, node2);
+    l_m1.connectDirected(node1, node2);
     test_assert( ! l_m2.equals(l_m1), "model2 should differ from model1");
 
 
@@ -312,7 +312,7 @@ bool mm_connections()
     std::string node2 = l_m1.createNewItem( "node2" );
     std::string node3 = l_m1.createNewItem( "node3" );
 
-    l_m1.connect( node1, node2 );
+    l_m1.connectDirected( node1, node2 );
 
     test_assert( l_m1.isConnected(node1, node2),
                  "node1 and node2 should be connected after connection" );
@@ -340,6 +340,8 @@ bool mm_diff_and_reapply()
     // [todo] - test deleted connections
     // [todo] - test tags across different 'devices'
     // [todo] - test deletion of string values
+    // [todo] - remove connections
+    // [todo] - change connection type
 
 
     //
@@ -397,7 +399,7 @@ bool mm_diff_and_reapply()
     // some more modification
     std::string item2 = l_m1.createNewItem("yet some new item");
 
-    l_m1.connect(item1, item2);
+    l_m1.connectDirected(item1, item2);
 
     test_assert( l_m2 != l_m1, "models should differ from each other" );
 
@@ -537,24 +539,24 @@ bool mm_low_level_gtd_workflow()
 
     /// find two subtasks
     std::string l_gtd_item2 = l_m1.createNewItem("gemeinsames Datum finden");
-    l_m1.connect( l_gtd_item2, l_item_inbox );
+    l_m1.connectDirected( l_gtd_item2, l_item_inbox );
 
     std::string l_gtd_item3 = l_m1.createNewItem("Urlaubsort bestimmen");
-    l_m1.connect( l_gtd_item3, l_item_inbox );
+    l_m1.connectDirected( l_gtd_item3, l_item_inbox );
 
 
     /// make them tasks and connect them with task1
-    l_m1.connect( l_gtd_item2, l_item_task );
+    l_m1.connectDirected( l_gtd_item2, l_item_task );
     l_m1.disconnect( l_gtd_item2, l_item_inbox );
-    l_m1.connect( l_gtd_item2, l_gtd_item1 );
+    l_m1.connectDirected( l_gtd_item2, l_gtd_item1 );
 
-    l_m1.connect( l_gtd_item3, l_item_task );
+    l_m1.connectDirected( l_gtd_item3, l_item_task );
     l_m1.disconnect( l_gtd_item3, l_item_inbox );
-    l_m1.connect( l_gtd_item3, l_gtd_item1 );
+    l_m1.connectDirected( l_gtd_item3, l_gtd_item1 );
 
 
     /// decide item3 to be the first step to take
-    l_m1.connect( l_gtd_item3, l_item_next_task );
+    l_m1.connectDirected( l_gtd_item3, l_item_next_task );
 
     return true;
 }
@@ -587,7 +589,7 @@ bool mm_snapshot()
     test_assert( l_synced, "files should have been synced" );
 
     std::string l_item3 = l_m1.createNewItem( "du" );
-    l_m1.connect(l_item2, l_item3);
+    l_m1.connectDirected(l_item2, l_item3);
 
     l_synced = l_m1.persistence_sync();
 
