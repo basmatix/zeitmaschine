@@ -372,19 +372,16 @@ void zm::MindMatterModel::_saveModel(
 
         if( ! i.right->m_neighbours.empty() )
         {
-            l_yaml_emitter << YAML::Key << "connections";
-            l_yaml_emitter << YAML::Value;
-            /// this list is sorted anyway
-            l_yaml_emitter << YAML::BeginSeq;
-            BOOST_FOREACH(const std::string &uid, i.right->getNeighbourUids())
+            std::map<std::string, int> l_temp_neighbour_map;
+
+            for(auto a:i.right->getNeighbourUids())
             {
-                l_yaml_emitter << YAML::BeginMap;
-                l_yaml_emitter << YAML::Key << uid;
-                l_yaml_emitter << YAML::Value << 1;
-                l_yaml_emitter << YAML::EndMap;
+                l_temp_neighbour_map[a] = 0;
             }
 
-            l_yaml_emitter << YAML::EndSeq;
+            l_yaml_emitter << YAML::Key << "connections";
+            l_yaml_emitter << YAML::Value;
+            l_yaml_emitter << l_temp_neighbour_map;
         }
         l_yaml_emitter << YAML::EndMap;
     }
@@ -445,22 +442,14 @@ void zm::MindMatterModel::yamlToThingsMap(
 
             if( n["connections"] )
             {
-                typedef std::pair<std::string, int> conn_t;
-                std::vector< std::string > l_connections;
-                /*
-                BOOST_FOREACH( YAML::Node l_conn, n["connections"] )
-                {
-                    l_conn
-                }
-                */
-                std::vector< conn_t > l_bla =
-                        n["connections"].as< std::vector< conn_t > >();
+                typedef std::map<std::string, int> conn_t;
 
+                std::vector< std::string> l_connections;
 
-                BOOST_FOREACH( const conn_t &x, l_bla)
+                for( auto l_conn: n["connections"].as< conn_t >())
                 {
-                    tracemessage("%s %d", x.first.c_str(), x.second);
-                    l_connections.push_back(x.first);
+                    tracemessage("%s %d", l_conn.first.c_str(), l_conn.second);
+                    l_connections.push_back(l_conn.first);
                 }
 
                 l_connection_uids[l_uid] = l_connections;
