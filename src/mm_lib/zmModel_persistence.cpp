@@ -446,10 +446,22 @@ void zm::MindMatterModel::yamlToThingsMap(
 
                 std::vector< std::string> l_connections;
 
-                for( auto l_conn: n["connections"].as< conn_t >())
+                try
                 {
-                    tracemessage("%s %d", l_conn.first.c_str(), l_conn.second);
-                    l_connections.push_back(l_conn.first);
+                    for( auto l_conn: n["connections"].as< conn_t >())
+                    {
+                        tracemessage("%s %d", l_conn.first.c_str(), l_conn.second);
+                        l_connections.push_back(l_conn.first);
+                    }
+                }
+                catch( YAML::Exception &e )
+                {
+                    /// fallback to older
+                    for( auto l_conn: n["connections"].as< std::vector< std::string > >())
+                    {
+                        tracemessage("%s", l_conn.c_str());
+                        l_connections.push_back(l_conn);
+                    }
                 }
 
                 l_connection_uids[l_uid] = l_connections;
