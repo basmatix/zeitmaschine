@@ -1,0 +1,27 @@
+- update: 159cf68d53df5e8e
+  time: 2014-01-26T19:01:25.580653
+  type: CreateItem
+  caption: beim disconnect bleiben ursprüngliche Rollen der items bestehen
+- update: 04a842e656639b07
+  time: 2014-01-26T19:01:25.580235
+  type: SetStringValue
+  name: gtd_item_note
+  value: brain jkhkhljkhjk
+- update: gtd_inbox
+  time: 2014-01-26T19:01:25.580597
+  type: Connect
+  value: 159cf68d53df5e8e
+- update: 159cf68d53df5e8e
+  time: 2014-01-26T19:01:25.580660
+  type: SetStringValue
+  name: global_time_created
+  value: 2014-01-06T23:09:18.055753
+- update: 159cf68d53df5e8e
+  time: 2014-01-26T19:01:25.580665
+  type: SetStringValue
+  name: gtd_item_note
+  value: aktuell wird ein disconnect von gtd_inbox vorgenommen, was in jedem Fall falsch ist
+- update: 159cf68d53df5e8e
+  time: 2014-01-26T19:01:25.580670
+  type: Connect
+  value: gtd_inbox
