@@ -7,7 +7,7 @@
 
 #include "include/mm/zmChangeSet.h"
 
-//#include "zmTrace.h"
+#include "include/mm/zmTrace.h"
 //#include "osal.h"
 #include "include/mm/zmCommon.h"
 
@@ -160,6 +160,13 @@ void zm::ChangeSet::load( const std::string &journalFileName )
                         l_uid,
                         str(n["value"]));
         }
+        else if( l_type == "Disonnect" )
+        {
+            assert( n["value"] );
+            l_newItem = JournalItem::createDisconnect(
+                        l_uid,
+                        str(n["value"]));
+        }
         else if( l_type == "AddAttribute" )
         {
             assert( n["name"] );
@@ -169,6 +176,7 @@ void zm::ChangeSet::load( const std::string &journalFileName )
         }
         else
         {
+            tracemessage("type = '%s'", l_type.c_str());
             assert( false && "type is not being handled" );
         }
         l_newItem->time = str(n["time"]);
