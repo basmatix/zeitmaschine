@@ -8,6 +8,7 @@ CMakeFiles
 *.cbp
 *.cfg
 *.so
+*.s
 *.a
 *.pyc
 *.cxx
