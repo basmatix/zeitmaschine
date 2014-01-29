@@ -11,6 +11,8 @@
 
 #include "zmCommon.h"
 
+#include "zmTypes.h"
+
 #include <string>
 #include <list>
 #include <boost/shared_ptr.hpp>
@@ -101,11 +103,12 @@ public:
 
     static journal_ptr_t createConnect(
             const std::string &item_uid,
-            const std::string &other_item_uid)
+            const neighbour_t &other_item_uid)
     {
         journal_ptr_t l_result =
                 journal_ptr_t(new JournalItem(item_uid, Connect));
-        l_result->key = other_item_uid;
+        l_result->key = other_item_uid.first;
+        l_result->value = other_item_uid.second;
         return l_result;
     }
 

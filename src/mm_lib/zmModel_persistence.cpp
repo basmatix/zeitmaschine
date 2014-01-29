@@ -478,10 +478,9 @@ void zm::MindMatterModel::yamlToThingsMap(
             if( n["string_values"] )
             {
                 l_new_thing->m_string_values =
-                    n["string_values"].as< MindMatter::string_value_map_type >();
+                    n["string_values"].as< string_value_map_type >();
 
-                BOOST_FOREACH(
-                    const MindMatter::string_value_map_type::value_type &a,
+                for( const string_value_map_type::value_type &a:
                     l_new_thing->m_string_values )
                 {
                     std::cout << a.first << ": " << a.second << std::endl;
@@ -523,14 +522,14 @@ void zm::MindMatterModel::yamlToThingsMap(
 
         if(l_connections_it != l_connection_uids.end())
         {
-            BOOST_FOREACH( const std::string &other_uid, l_connections_it->second)
+            for( const std::string &other_uid: l_connections_it->second)
             {
                 zm::MindMatterModel::ModelData::left_iterator
                         l_other_it( thingsMap.left.find( other_uid ) );
 
                 assert(l_other_it != thingsMap.left.end());
 
-                l_item->m_neighbours[l_other_it->second] = zm::MindMatter::neighbour_t(other_uid, 0);
+                l_item->m_neighbours[l_other_it->second] = zm::neighbour_t(other_uid, 0);
             }
         }
 

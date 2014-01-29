@@ -175,7 +175,7 @@ ChangeSet zm::MindMatterModel::diff(
         }
     }
 
-    BOOST_FOREACH( const ModelData::value_type& i, model_to )
+    for( const ModelData::value_type& i: model_to )
     {
         const std::string &l_other_item_id(i.left);
 
@@ -188,7 +188,7 @@ ChangeSet zm::MindMatterModel::diff(
         /// (*this) - so just upate l_return to contain i
 
         /// insert i into l_return
-        l_return.append( i.right->toDiff(l_other_item_id) );
+        l_return.append( i.right->toJournal(l_other_item_id) );
     }
 
     return l_return;
@@ -450,13 +450,11 @@ void zm::MindMatterModel::ModelData::debug_dump() const
 {
     tracemessage(">> dump");
 
-    BOOST_FOREACH(const zm::MindMatterModel::ModelData::value_type& i,
-                  m_data)
+    for(const zm::MindMatterModel::ModelData::value_type& i: m_data)
     {
         std::ostringstream l_neighbours;
         l_neighbours << "(";
-        BOOST_FOREACH( const MindMatter::item_neighbour_pair_t &m,
-                       i.right->m_neighbours)
+        for( const item_neighbour_pair_t &m: i.right->m_neighbours)
         {
             l_neighbours << m.second.first << "(" << m.second.second << ")" << ", ";
         }

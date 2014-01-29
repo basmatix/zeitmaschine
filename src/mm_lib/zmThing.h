@@ -5,6 +5,7 @@
 #define THING_H
 
 #include "mm/zmChangeSet.h"
+#include "mm/zmTypes.h"
 
 #include <set>
 #include <string>
@@ -20,11 +21,6 @@ namespace zm
         MindMatter & operator=(const MindMatter &);
 
     public:
-        typedef std::string                             uid_t;
-        typedef std::pair< uid_t, int >                 neighbour_t;
-        typedef std::map< std::string, std::string >    string_value_map_type;
-        typedef std::pair< MindMatter *, neighbour_t >  item_neighbour_pair_t;
-        typedef std::map< MindMatter *, neighbour_t >   item_neighbour_map_t;
 
         std::string                 m_caption;    // [todo] - should be value
         string_value_map_type       m_string_values;
@@ -49,7 +45,7 @@ namespace zm
         inline bool equals( const MindMatter & other, bool tell_why = false );
 
         /// returns a journal creating this item
-        inline journal_item_vec_t toDiff( const std::string &uid ) const;
+        inline journal_item_vec_t toJournal( const std::string &uid ) const;
 
         /// returns a journal which would turn this item into the other
         inline journal_item_vec_t diff(
@@ -190,22 +186,22 @@ bool zm::MindMatter::equals( const MindMatter & other, bool tell_why )
     return true;
 }
 
-zm::journal_item_vec_t zm::MindMatter::toDiff( const std::string &a_uid ) const
+zm::journal_item_vec_t zm::MindMatter::toJournal( const std::string &a_uid ) const
 {
     journal_item_vec_t l_result;
 
     l_result.push_back(JournalItem::createCreate(a_uid, m_caption));
 
-    BOOST_FOREACH(const string_value_map_type::value_type &l_entry, m_string_values)
+    for(const string_value_map_type::value_type &l_entry: m_string_values)
     {
         l_result.push_back(JournalItem::createSetStringValue(
                                a_uid, l_entry.first, l_entry.second));
     }
 
-    BOOST_FOREACH(const item_neighbour_pair_t l_neighbour, m_neighbours)
+    for(const item_neighbour_pair_t l_neighbour: m_neighbours)
     {
         l_result.push_back(JournalItem::createConnect(
-                               a_uid, l_neighbour.second.first));
+                               a_uid, l_neighbour.second));
     }
 
     return l_result;
@@ -215,7 +211,7 @@ std::set< std::string > zm::MindMatter::getNeighbourUids() const
 {
     std::set< std::string > l_result;
 
-    BOOST_FOREACH(const zm::MindMatter::item_neighbour_pair_t l_neighbour,
+    for(const zm::item_neighbour_pair_t l_neighbour:
                   m_neighbours)
     {
         std::pair< std::set< std::string >::iterator, bool > l_success =
@@ -249,7 +245,7 @@ zm::journal_item_vec_t zm::MindMatter::diff(
     std::set< std::string > l_done_keys;
 
     /// go through all elements of m_string_values
-    BOOST_FOREACH( const string_value_map_type::value_type &i, m_string_values )
+    for( const string_value_map_type::value_type &i: m_string_values )
     {
         const std::string &l_key(i.first);
 
@@ -272,7 +268,7 @@ zm::journal_item_vec_t zm::MindMatter::diff(
         }
     }
 
-    BOOST_FOREACH( const string_value_map_type::value_type &i, a_other.m_string_values )
+    for( const string_value_map_type::value_type &i: a_other.m_string_values )
     {
         const std::string &l_other_key(i.first);
 
@@ -312,13 +308,13 @@ zm::journal_item_vec_t zm::MindMatter::diff(
                 std::inserter(
                     l_only_in_other, l_only_in_other.end()));
 
-    BOOST_FOREACH( const std::string &i, l_only_in_this )
+    for( const std::string &i: l_only_in_this )
     {
         l_result.push_back(JournalItem::createDisconnect(
                                a_uid, i));
     }
 
-    BOOST_FOREACH( const std::string &i, l_only_in_other )
+    for( const std::string &i: l_only_in_other )
     {
         l_result.push_back(JournalItem::createConnect(
                                a_uid, i));

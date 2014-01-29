@@ -33,7 +33,7 @@ find_package(
     REQUIRED
   )
 
-option( CONFIG_CPP11 "compile with c++11 options" OFF )
+option( CONFIG_CPP11 "compile with c++11 options" ON )
 if( CONFIG_CPP11 )
     if(${CMAKE_CXX_COMPILER_ID} MATCHES Clang)
         set( CMAKE_CXX_FLAGS "-std=c++11 -stdlib=libstdc++" )

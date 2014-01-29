@@ -43,7 +43,7 @@ bool zm::ChangeSet::write( const std::string &journalFileName )
 
     l_yaml_emitter << YAML::BeginSeq;
 
-    BOOST_FOREACH(const journal_ptr_t &j, m_journal)
+    for(const journal_ptr_t &j: m_journal)
     {
         l_yaml_emitter << YAML::BeginMap;
 
@@ -78,11 +78,13 @@ bool zm::ChangeSet::write( const std::string &journalFileName )
             break;
         case JournalItem::Connect:
             l_yaml_emitter << YAML::Value << "Connect";
+            l_yaml_emitter << YAML::Key << "key";
+            l_yaml_emitter << YAML::Value << j->key;
             l_yaml_emitter << YAML::Key << "value";
             l_yaml_emitter << YAML::Value << j->value;
             break;
         case JournalItem::Disconnect:
-            l_yaml_emitter << YAML::Value << "Disonnect";
+            l_yaml_emitter << YAML::Value << "Disconnect";
             l_yaml_emitter << YAML::Key << "value";
             l_yaml_emitter << YAML::Value << j->value;
             break;
@@ -119,7 +121,7 @@ void zm::ChangeSet::load( const std::string &journalFileName )
         return;
     }
     YAML::Node l_import = YAML::LoadFile( journalFileName );
-    BOOST_FOREACH( YAML::Node n, l_import )
+    for( YAML::Node n: l_import )
     {
         assert( n["update"] );
         assert( n["type"] );
@@ -156,11 +158,21 @@ void zm::ChangeSet::load( const std::string &journalFileName )
         else if( l_type == "Connect" )
         {
             assert( n["value"] );
-            l_newItem = JournalItem::createConnect(
-                        l_uid,
-                        str(n["value"]));
+            if(n["key"])
+            {
+                l_newItem = JournalItem::createConnect(
+                            l_uid,
+                            zm::neighbour_t(str(n["key"]), n["value"].as<int>()));
+            }
+            else
+            {
+                // old deprecated way: only uid is given as value
+                l_newItem = JournalItem::createConnect(
+                            l_uid,
+                            zm::neighbour_t(str(n["value"]), 1));
+            }
         }
-        else if( l_type == "Disonnect" )
+        else if( l_type == "Disconnect" )
         {
             assert( n["value"] );
             l_newItem = JournalItem::createDisconnect(

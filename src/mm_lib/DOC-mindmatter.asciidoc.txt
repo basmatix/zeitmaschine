@@ -54,3 +54,40 @@ FullSave()
      * persistence_saveLocalModel( "old" )
      * rename "new" -> "old"
 ****************************************************************************
+
+
+.*persistence yaml data format*
+****************************************************************************
+    =====================================================
+
+    - uid: aaaaaaaaa
+      caption: some text
+    - uid: bbbbbbbbb
+      caption: some differnt text
+
+    == becomes ==========================================
+
+    - uid: aaaaaaaaa
+      caption: some text
+      connections:
+        bbbbbbbbb: 1
+
+    - uid: bbbbbbbbb
+      caption: some differnt text
+      connections:
+        aaaaaaaaa: 2
+
+    == diff =============================================
+
+    - update: aaaaaaaaa
+      type: Connect
+      key: bbbbbbbbb
+      value: 1
+
+    - update: bbbbbbbbb
+      type: Connect
+      key: aaaaaaaaa
+      value: 2
+
+    =====================================================
+****************************************************************************
