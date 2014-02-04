@@ -52,7 +52,7 @@ namespace zm
                 const std::string &uid,
                 const MindMatter  &other ) const;
 
-        inline std::set< std::string > getNeighbourUids() const;
+        inline std::map< uid_t, int > getNeighbours() const;
 
         inline std::string createHash( bool verbose=false ) const;
 
@@ -174,7 +174,7 @@ bool zm::MindMatter::equals( const MindMatter & other, bool tell_why )
         return false;
     }
 
-    if( getNeighbourUids() != other.getNeighbourUids() )
+    if( getNeighbours() != other.getNeighbours() )
     {
         if(tell_why)
         {
@@ -207,15 +207,14 @@ zm::journal_item_vec_t zm::MindMatter::toJournal( const std::string &a_uid ) con
     return l_result;
 }
 
-std::set< std::string > zm::MindMatter::getNeighbourUids() const
+std::map< zm::uid_t, int > zm::MindMatter::getNeighbours() const
 {
-    std::set< std::string > l_result;
+    std::map< uid_t, int > l_result;
 
-    for(const zm::item_neighbour_pair_t l_neighbour:
-                  m_neighbours)
+    for(const zm::item_neighbour_pair_t l_neighbour: m_neighbours)
     {
-        std::pair< std::set< std::string >::iterator, bool > l_success =
-                l_result.insert(l_neighbour.second.first);
+        std::pair< std::map< uid_t, int >::iterator, bool > l_success =
+                l_result.insert(l_neighbour.second);
 
         assert( l_success.second );
     }
@@ -286,13 +285,11 @@ zm::journal_item_vec_t zm::MindMatter::diff(
     /// compare connections
     ///
 
-    std::set< std::string > l_this_neighbours(
-                getNeighbourUids());
+    std::map< uid_t, int > l_this_neighbours( getNeighbours());
 
-    std::set< std::string > l_other_neighbours(
-                a_other.getNeighbourUids());
+    std::map< uid_t, int > l_other_neighbours( a_other.getNeighbours());
 
-    std::set< std::string > l_only_in_this;
+    std::map< uid_t, int > l_only_in_this;
 
     std::set_difference(
                 l_this_neighbours.begin(), l_this_neighbours.end(),
@@ -300,7 +297,7 @@ zm::journal_item_vec_t zm::MindMatter::diff(
                 std::inserter(
                     l_only_in_this, l_only_in_this.end()));
 
-    std::set< std::string > l_only_in_other;
+    std::map< uid_t, int > l_only_in_other;
 
     std::set_difference(
                 l_other_neighbours.begin(), l_other_neighbours.end(),
@@ -308,16 +305,20 @@ zm::journal_item_vec_t zm::MindMatter::diff(
                 std::inserter(
                     l_only_in_other, l_only_in_other.end()));
 
-    for( const std::string &i: l_only_in_this )
+    /// create a disconnect entry for every neighbour which is not in
+    /// destination neighbour set
+    for( const std::pair< uid_t, int > &i: l_only_in_this )
     {
-        l_result.push_back(JournalItem::createDisconnect(
-                               a_uid, i));
+        l_result.push_back(JournalItem::createDisconnect(a_uid, i.first));
     }
 
-    for( const std::string &i: l_only_in_other )
+    // [todo] - compare all similar neigbours regarding type
+    assert(false);
+
+    /// copy every neigbour from destination which is not in current set
+    for( const std::pair< uid_t, int > &i: l_only_in_other )
     {
-        l_result.push_back(JournalItem::createConnect(
-                               a_uid, i));
+        l_result.push_back(JournalItem::createConnect(a_uid, i));
     }
 
     return l_result;
@@ -335,6 +336,18 @@ inline void hash_add_value(
     boost::hash_combine(hash, value);
 }
 
+inline void hash_add_value(
+        size_t      &hash,
+        int          value,
+        bool         verbose )
+{
+    if( verbose )
+    {
+        tracemessage("adding '%d' to hash", value);
+    }
+    boost::hash_combine(hash, value);
+}
+
 std::string zm::MindMatter::createHash( bool a_verbose ) const
 {
     size_t l_hash(0);
@@ -344,17 +357,16 @@ std::string zm::MindMatter::createHash( bool a_verbose ) const
     /// IMPORTANT: enforce predictable order!
 
     /// maps are sorted by key
-    BOOST_FOREACH( const string_value_map_type::value_type &l_value,
-                   m_string_values)
+    for( const string_value_map_type::value_type &l_value: m_string_values)
     {
         hash_add_value(l_hash, l_value.second, a_verbose);
     }
 
     /// sets are sorted, too
-    BOOST_FOREACH( const std::string &l_uid,
-                   getNeighbourUids())
+    for( const std::pair< uid_t, int > &l_uid: getNeighbours())
     {
-        hash_add_value(l_hash, l_uid, a_verbose);
+        hash_add_value(l_hash, l_uid.first, a_verbose);
+        hash_add_value(l_hash, l_uid.second, a_verbose);
     }
 
     std::stringstream l_result_stream;

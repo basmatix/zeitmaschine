@@ -372,16 +372,18 @@ void zm::MindMatterModel::_saveModel(
 
         if( ! i.right->m_neighbours.empty() )
         {
+            /*
             std::map<std::string, int> l_temp_neighbour_map;
 
-            for(auto a:i.right->getNeighbourUids())
+            for(const std::pair<uid_t, int> &a: i.right->getNeighbours())
             {
                 l_temp_neighbour_map[a] = 0;
             }
+            */
 
             l_yaml_emitter << YAML::Key << "connections";
             l_yaml_emitter << YAML::Value;
-            l_yaml_emitter << l_temp_neighbour_map;
+            l_yaml_emitter << i.right->getNeighbours();
         }
         l_yaml_emitter << YAML::EndMap;
     }
