@@ -18,7 +18,7 @@
 #include <yaml-cpp/yaml.h>
 
 //#include <algorithm>
-#include <boost/foreach.hpp>
+//#include <boost/foreach.hpp>
 #include <boost/filesystem.hpp>
 //#include <boost/thread.hpp>
 
@@ -176,7 +176,7 @@ ChangeSet zm::MindMatterModel::persistence_pullJournal()
     tracemessage( "%d journal files already imported",
                   l_alreadyImported.size() );
 
-    BOOST_FOREACH( const std::string &j, l_journalFiles )
+    for( const std::string &j: l_journalFiles )
     {
         std::string l_filename = boost::filesystem::path( j ).filename().string();
         if( std::find( l_alreadyImported.begin(), l_alreadyImported.end(), l_filename) == l_alreadyImported.end() )
@@ -225,7 +225,7 @@ ChangeSet zm::MindMatterModel::persistence_pushJournal()
 
 void zm::MindMatterModel::applyChangeSet( const ChangeSet &changeSet )
 {
-    BOOST_FOREACH( const journal_ptr_t &j, changeSet.getJournal() )
+    for( const journal_ptr_t &j: changeSet.getJournal() )
     {
         ModelData::left_iterator l_item_it( m_things.left.find( j->item_uid ) );
 
@@ -300,10 +300,16 @@ std::vector< std::string > zm::MindMatterModel::getJournalFiles() const
     {
         tracemessage( "%s", i->path().string().c_str() );
         // skip if not a file
-        if( !boost::filesystem::is_regular_file( i->status() ) ) continue;
+        if( !boost::filesystem::is_regular_file( i->status() ) )
+        {
+            continue;
+        }
 
         // skip if no match
-        if( !zm::common::matchesWildcards( i->path().string(), my_filter )) continue;
+        if( !zm::common::matchesWildcards( i->path().string(), my_filter ))
+        {
+            continue;
+        }
 
         // file matches, store it
         l_all_matching_files.push_back( i->path().string() );
@@ -328,7 +334,7 @@ void zm::MindMatterModel::_saveModel(
 {
     if( !zm::common::create_base_directory( a_filename ) )
     {
-        // todo: error
+        // [todo]: handle/show error
         return;
     }
 
@@ -349,7 +355,7 @@ void zm::MindMatterModel::_saveModel(
 
     l_yaml_emitter << YAML::BeginSeq;
 
-    BOOST_FOREACH(const ModelData::value_type& i, a_model)
+    for(const ModelData::value_type& i: a_model)
     {
         l_yaml_emitter << YAML::BeginMap;
 
@@ -388,7 +394,7 @@ void zm::MindMatterModel::_saveModel(
         l_yaml_emitter << YAML::EndMap;
     }
 
-    BOOST_FOREACH(const std::string &i, a_model.m_read_journals)
+    for(const std::string &i: a_model.m_read_journals)
     {
         l_yaml_emitter << YAML::BeginMap;
 
@@ -418,7 +424,7 @@ void zm::MindMatterModel::yamlToThingsMap(
     std::map< std::string, std::vector< std::string> > l_tag_names;
     std::map< std::string, std::string > l_hashes;
 
-    BOOST_FOREACH( YAML::Node n, yamlNode )
+    for( YAML::Node n: yamlNode )
     {
         // [todo] should be xor
         assert( n["uid"] || n["read"] );
@@ -510,8 +516,7 @@ void zm::MindMatterModel::yamlToThingsMap(
     /// since we could not fully process all items yet - connections
     /// could not be established due to incomplete list of items, we
     /// postprocess them now and check there hash values
-    BOOST_FOREACH(const zm::MindMatterModel::ModelData::value_type &i,
-                  thingsMap)
+    for(const zm::MindMatterModel::ModelData::value_type &i: thingsMap)
     {
         const std::string &l_uid( i.left );
         zm::MindMatter *l_item( i.right );
@@ -546,7 +551,7 @@ void zm::MindMatterModel::yamlToThingsMap(
             ModelData::left_iterator l_item_left_it(
                         thingsMap.left.find( l_uid ) );
 
-            BOOST_FOREACH( const std::string &tag_name, l_tags_it->second)
+            for( const std::string &tag_name: l_tags_it->second)
             {
                 _addTag(thingsMap, l_item_left_it, tag_name);
             }

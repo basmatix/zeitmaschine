@@ -347,9 +347,16 @@ void zm::MindMatterModel::_connectDuplex(
         ModelData::left_iterator &item2,
         zm::MindMatterModel::ConnectionType type)
 {
-    assert(item1->second->m_neighbours.find(item2->second) == item1->second->m_neighbours.end());
-    assert(item2->second->m_neighbours.find(item1->second) == item2->second->m_neighbours.end());
+    // for now assert Directed connections - this is not meant to persist
     assert(type == Directed);
+
+    // assert changes: eighter there is no connection yet or the types differ
+    assert(item1->second->m_neighbours.find(item2->second) == item1->second->m_neighbours.end()
+           || item1->second->m_neighbours[item2->second].second != 2);
+
+    assert(item2->second->m_neighbours.find(item1->second) == item2->second->m_neighbours.end()
+           || item2->second->m_neighbours[item1->second].second != 1);
+
     item1->second->m_neighbours[item2->second] = zm::neighbour_t(item2->first, 2);
     item2->second->m_neighbours[item1->second] = zm::neighbour_t(item1->first, 1);
 }

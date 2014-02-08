@@ -74,7 +74,7 @@ bool zm::MindMatterModel::equals(
 
     /// go through all elements of m_things - note that we don't have
     /// to do this for the second model
-    BOOST_FOREACH( const ModelData::value_type& i, a_first )
+    for( const ModelData::value_type& i: a_first )
     {
         /// find the key in the other map
         ModelData::left_const_iterator l_item_it(
@@ -97,7 +97,7 @@ bool zm::MindMatterModel::equals(
         {
             if(tell_why)
             {
-                tracemessage("at '%s'", i.left.c_str() );
+                tracemessage("items '%s' differ in both models", i.left.c_str() );
             }
             return false;
         }

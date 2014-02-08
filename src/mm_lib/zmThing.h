@@ -39,7 +39,7 @@ namespace zm
         // [todo] - should be visitor stuff
         inline static bool stringFind(const std::string &bigString, const std::string &pattern);
 
-        // todo: should be visitor stuff
+        // [todo] - should be visitor stuff
         inline bool contentMatchesString( const std::string &searchString ) const;
 
         inline bool equals( const MindMatter & other, bool tell_why = false );
@@ -53,6 +53,10 @@ namespace zm
                 const MindMatter  &other ) const;
 
         inline std::map< uid_t, int > getNeighbours() const;
+
+        inline std::set< uid_t > getNeighbourUids() const;
+
+        inline int getConnectionType(const uid_t &uid) const;
 
         inline std::string createHash( bool verbose=false ) const;
 
@@ -221,6 +225,35 @@ std::map< zm::uid_t, int > zm::MindMatter::getNeighbours() const
     return l_result;
 }
 
+int zm::MindMatter::getConnectionType(const uid_t &uid) const
+{
+    // I know this is not efficient - we solve this as soon as needed
+
+    for(const zm::item_neighbour_pair_t l_neighbour: m_neighbours)
+    {
+        if( l_neighbour.second.first == uid)
+        {
+            return l_neighbour.second.second;
+        }
+    }
+    assert(false && "provided uid has been found in neighbours");
+    return 0;
+}
+
+std::set< zm::uid_t > zm::MindMatter::getNeighbourUids() const
+{
+    std::set< uid_t > l_result;
+
+    for(const zm::item_neighbour_pair_t l_neighbour: m_neighbours)
+    {
+        std::pair< std::set< uid_t >::iterator, bool > l_success =
+                l_result.insert(l_neighbour.second.first);
+
+        assert( l_success.second );
+    }
+    return l_result;
+}
+
 zm::journal_item_vec_t zm::MindMatter::diff(
         const std::string &a_uid,
         const MindMatter  &a_other ) const
@@ -285,11 +318,10 @@ zm::journal_item_vec_t zm::MindMatter::diff(
     /// compare connections
     ///
 
-    std::map< uid_t, int > l_this_neighbours( getNeighbours());
+    std::set< uid_t > l_this_neighbours( getNeighbourUids());
+    std::set< uid_t > l_other_neighbours( a_other.getNeighbourUids());
 
-    std::map< uid_t, int > l_other_neighbours( a_other.getNeighbours());
-
-    std::map< uid_t, int > l_only_in_this;
+    std::set< uid_t > l_only_in_this;
 
     std::set_difference(
                 l_this_neighbours.begin(), l_this_neighbours.end(),
@@ -297,7 +329,7 @@ zm::journal_item_vec_t zm::MindMatter::diff(
                 std::inserter(
                     l_only_in_this, l_only_in_this.end()));
 
-    std::map< uid_t, int > l_only_in_other;
+    std::set< uid_t > l_only_in_other;
 
     std::set_difference(
                 l_other_neighbours.begin(), l_other_neighbours.end(),
@@ -305,20 +337,39 @@ zm::journal_item_vec_t zm::MindMatter::diff(
                 std::inserter(
                     l_only_in_other, l_only_in_other.end()));
 
+    std::set< uid_t > l_in_both;
+
+    std::set_intersection(
+                l_other_neighbours.begin(), l_other_neighbours.end(),
+                l_this_neighbours.begin(), l_this_neighbours.end(),
+                std::inserter(
+                    l_in_both, l_in_both.end()));
+
     /// create a disconnect entry for every neighbour which is not in
     /// destination neighbour set
-    for( const std::pair< uid_t, int > &i: l_only_in_this )
+    for( const uid_t &i: l_only_in_this )
     {
-        l_result.push_back(JournalItem::createDisconnect(a_uid, i.first));
+        l_result.push_back(JournalItem::createDisconnect(a_uid, i));
     }
 
-    // [todo] - compare all similar neigbours regarding type
-    assert(false);
+    /// create new connections in case types differ
+    for( const uid_t &i: l_in_both )
+    {
+        if(getConnectionType(i) == a_other.getConnectionType(i))
+        {
+            continue;
+        }
+        l_result.push_back(JournalItem::createConnect(
+                               a_uid,
+                               neighbour_t(i, a_other.getConnectionType(i))));
+    }
 
     /// copy every neigbour from destination which is not in current set
-    for( const std::pair< uid_t, int > &i: l_only_in_other )
+    for( const uid_t &i: l_only_in_other )
     {
-        l_result.push_back(JournalItem::createConnect(a_uid, i));
+        l_result.push_back(JournalItem::createConnect(
+                               a_uid,
+                               neighbour_t(i, a_other.getConnectionType(i))));
     }
 
     return l_result;

@@ -8,9 +8,9 @@
 
 %module pyZm
 %{
-// Includes the header in the wrapper code
+// includes the header in the wrapper code
+
 #include <zm/zmGtdModel.h>
-//#include <mm/zmTypes.h>
 #include <mm/zmModel.h>
 #include <mm/zmChangeSet.h>
 %}

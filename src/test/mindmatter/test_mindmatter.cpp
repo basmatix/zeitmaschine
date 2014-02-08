@@ -407,13 +407,13 @@ bool mm_diff_and_reapply()
     l_changeset = l_m2.diffTo( l_m1 );
 
     // apply
+    l_m1.debug_dump();
     l_m2.debug_dump();
     l_m2.applyChangeSet( l_changeset );
 
     // compare
     test_assert( l_m2.equals( l_m1, true ),
                  "both model should hold same data after applying changeset" );
-
 
     return true;
 }
