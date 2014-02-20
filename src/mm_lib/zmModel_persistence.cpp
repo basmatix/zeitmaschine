@@ -263,7 +263,8 @@ void zm::MindMatterModel::applyChangeSet( const ChangeSet &changeSet )
                         m_things.left.find( j->key ) );
             assert( l_item2_it != m_things.left.end() &&
                     "item to connect must exist");
-            _connectDuplex( l_item_it, l_item2_it, Directed );
+            //_connectDuplex( l_item_it, l_item2_it, Directed );
+            _connectSingle( l_item_it, l_item2_it, atoi(j->value.c_str()));
         } break;
         case JournalItem::Disconnect:
         {

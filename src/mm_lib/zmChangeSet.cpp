@@ -207,7 +207,7 @@ void zm::ChangeSet::clear()
     m_journal.clear();
 }
 
-void  zm::ChangeSet::append(journal_item_vec_t a_changes)
+void zm::ChangeSet::append(journal_item_vec_t a_changes)
 {
     /// inserts a_changes into m_journal like
     /// m_journal.insert(m_journal.end(), changes.begin(), changes.end());
@@ -223,5 +223,24 @@ void  zm::ChangeSet::append(journal_item_vec_t a_changes)
         {
             m_journal.push_back(l_change);
         }
+    }
+}
+
+void zm::ChangeSet::debug_dump() const
+{
+    BOOST_FOREACH( const journal_item_vec_t::value_type &l_change, m_journal)
+    {
+        tracemessage("  on %s: (t:%s, k:%s, v:%s)",
+                     l_change->item_uid.c_str(),
+                     l_change->type == JournalItem::CreateItem     ? "CreateItem    " :
+                     l_change->type == JournalItem::EraseItem      ? "EraseItem     " :
+                     l_change->type == JournalItem::SetStringValue ? "SetStringValue" :
+                     l_change->type == JournalItem::AddAttribute   ? "AddAttribute  " :
+                     l_change->type == JournalItem::ChangeCaption  ? "ChangeCaption " :
+                     l_change->type == JournalItem::Connect        ? "Connect       " :
+                     l_change->type == JournalItem::Disconnect     ? "Disconnect    " :
+                                                                     "invalid",
+                     l_change->key.c_str(),
+                     l_change->value.c_str());
     }
 }

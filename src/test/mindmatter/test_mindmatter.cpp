@@ -404,12 +404,16 @@ bool mm_diff_and_reapply()
     test_assert( l_m2 != l_m1, "models should differ from each other" );
 
     // generate a change set
-    l_changeset = l_m2.diffTo( l_m1 );
-
-    // apply
     l_m1.debug_dump();
     l_m2.debug_dump();
+    l_changeset = l_m2.diffTo( l_m1 );
+    l_changeset.debug_dump();
+
+    // apply
     l_m2.applyChangeSet( l_changeset );
+
+    l_m1.debug_dump();
+    l_m2.debug_dump();
 
     // compare
     test_assert( l_m2.equals( l_m1, true ),

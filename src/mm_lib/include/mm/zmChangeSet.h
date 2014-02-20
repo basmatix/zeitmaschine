@@ -108,7 +108,7 @@ public:
         journal_ptr_t l_result =
                 journal_ptr_t(new JournalItem(item_uid, Connect));
         l_result->key = other_item_uid.first;
-        l_result->value = other_item_uid.second;
+        l_result->value = std::to_string(other_item_uid.second);
         return l_result;
     }
 
@@ -189,6 +189,8 @@ public:
     {
         return m_journal.size();
     }
+
+    void debug_dump() const;
 
 private:
 
