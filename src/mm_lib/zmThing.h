@@ -423,6 +423,10 @@ std::string zm::MindMatter::createHash( bool a_verbose ) const
     std::stringstream l_result_stream;
     l_result_stream << std::hex << l_hash;
 
+    if( a_verbose )
+    {
+        tracemessage("generated hash: '%s'", l_result_stream.str().c_str());
+    }
     return l_result_stream.str();
 }
 

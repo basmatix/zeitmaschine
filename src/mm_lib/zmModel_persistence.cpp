@@ -573,6 +573,9 @@ void zm::MindMatterModel::yamlToThingsMap(
             if(l_hash_it->second != l_item->createHash())
             {
                 tracemessage("saved and loaded hashes differ!");
+                tracemessage("'%s' != '%s'",
+                             l_hash_it->second.c_str(),
+                             l_item->createHash(true).c_str());
                 assert(l_hash_it->second == l_item->createHash());
             }
         }
