@@ -418,27 +418,29 @@ void zm::MindMatterModel::_saveModel(
 }
 
 void zm::MindMatterModel::yamlToThingsMap(
-        const YAML::Node    &yamlNode,
-        ModelData      &thingsMap )
+        const YAML::Node    &a_yamlNode,
+        ModelData           &a_thingsMap )
 {
-    std::map< std::string, std::vector< std::string> > l_connection_uids;
-    std::map< std::string, std::vector< std::string> > l_tag_names;
-    std::map< std::string, std::string > l_hashes;
+    typedef std::map< uid_t, int > conn_t;
 
-    for( YAML::Node n: yamlNode )
+    std::map< uid_t, conn_t > l_connection_uids;
+    std::map< uid_t, std::vector< uid_t > > l_tag_names;
+    std::map< uid_t, std::string > l_hashes;
+
+    for( YAML::Node n: a_yamlNode )
     {
-        // [todo] should be xor
-        assert( n["uid"] || n["read"] );
+        // means 'uid' in n xor 'read' in n
+        assert( !(n["uid"]) != !(n["read"]) );
 
         if( n["uid"] )
         {
             assert( n["caption"] );
 
-            std::string l_uid = n.Tag();
+            uid_t l_uid = n.Tag();
 
             if( n["uid"] )
             {
-                l_uid = n["uid"].as< std::string >();
+                l_uid = n["uid"].as< uid_t >();
             }
 
             assert( l_uid != "" && l_uid != "?" );
@@ -451,29 +453,22 @@ void zm::MindMatterModel::yamlToThingsMap(
 
             if( n["connections"] )
             {
-                typedef std::map<std::string, int> conn_t;
-
-                std::vector< std::string> l_connections;
-
                 try
                 {
-                    for( auto l_conn: n["connections"].as< conn_t >())
-                    {
-                        tracemessage("%s %d", l_conn.first.c_str(), l_conn.second);
-                        l_connections.push_back(l_conn.first);
-                    }
+                    l_connection_uids[l_uid] = n["connections"].as< conn_t >();
                 }
                 catch( YAML::Exception &e )
                 {
-                    /// fallback to older
-                    for( auto l_conn: n["connections"].as< std::vector< std::string > >())
+                    conn_t l_connections;
+                    /// fallback to older syntax
+                    for( const uid_t &l_conn: n["connections"].as< std::vector< uid_t > >())
                     {
                         tracemessage("%s", l_conn.c_str());
-                        l_connections.push_back(l_conn);
+                        l_connections[l_conn] = 0;
                     }
+                    l_connection_uids[l_uid] = l_connections;
                 }
 
-                l_connection_uids[l_uid] = l_connections;
             }
 
             /// this is deprecated and just ensures that older models can
@@ -481,7 +476,7 @@ void zm::MindMatterModel::yamlToThingsMap(
             if( n["attributes"] )
             {
                 l_tag_names[l_uid] =
-                        n["attributes"].as< std::vector< std::string > >();
+                        n["attributes"].as< std::vector< uid_t > >();
             }
 
             if( n["string_values"] )
@@ -503,21 +498,21 @@ void zm::MindMatterModel::yamlToThingsMap(
             assert( l_new_thing->hasValue("global_time_created")
                     || l_uid == l_new_thing->m_caption );
 
-            thingsMap.insert(
+            a_thingsMap.insert(
                         zm::MindMatterModel::ModelData::value_type(
                             l_uid, l_new_thing ) );
         }
         else if(n["read"])
         {
             std::string bla = n["read"].as< std::string >();
-            thingsMap.m_read_journals.insert(bla);
+            a_thingsMap.m_read_journals.insert(bla);
         }
     }
 
     /// since we could not fully process all items yet - connections
     /// could not be established due to incomplete list of items, we
     /// postprocess them now and check there hash values
-    for(const zm::MindMatterModel::ModelData::value_type &i: thingsMap)
+    for(const zm::MindMatterModel::ModelData::value_type &i: a_thingsMap)
     {
         const std::string &l_uid( i.left );
         zm::MindMatter *l_item( i.right );
@@ -525,19 +520,19 @@ void zm::MindMatterModel::yamlToThingsMap(
         ///
         /// handle connections
         ///
-        std::map< std::string, std::vector< std::string> >::const_iterator
+        std::map< uid_t, conn_t >::const_iterator
                 l_connections_it = l_connection_uids.find(l_uid);
 
         if(l_connections_it != l_connection_uids.end())
         {
-            for( const std::string &other_uid: l_connections_it->second)
+            for( const neighbour_t &other_uid: l_connections_it->second)
             {
                 zm::MindMatterModel::ModelData::left_iterator
-                        l_other_it( thingsMap.left.find( other_uid ) );
+                        l_other_it( a_thingsMap.left.find( other_uid.first ) );
 
-                assert(l_other_it != thingsMap.left.end());
+                assert(l_other_it != a_thingsMap.left.end());
 
-                l_item->m_neighbours[l_other_it->second] = zm::neighbour_t(other_uid, 0);
+                l_item->m_neighbours[l_other_it->second] = other_uid;
             }
         }
 
@@ -550,11 +545,11 @@ void zm::MindMatterModel::yamlToThingsMap(
         if(l_tags_it != l_tag_names.end())
         {
             ModelData::left_iterator l_item_left_it(
-                        thingsMap.left.find( l_uid ) );
+                        a_thingsMap.left.find( l_uid ) );
 
             for( const std::string &tag_name: l_tags_it->second)
             {
-                _addTag(thingsMap, l_item_left_it, tag_name);
+                _addTag(a_thingsMap, l_item_left_it, tag_name);
             }
         }
 
