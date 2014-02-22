@@ -406,7 +406,7 @@ void zm::MindMatterModel::_saveModel(
     }
     catch( ... )
     {
-        std::cerr << "writing failed" << std::endl;
+        trace_e("writing failed");
     }
 }
 

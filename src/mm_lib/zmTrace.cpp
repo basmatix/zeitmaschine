@@ -35,3 +35,16 @@ void trace_i( const char * a_format, ... )
     printf( "%s\n", l_buffer );
     fflush( stdout );
 }
+
+void trace_e( const char * a_format, ... )
+{
+    if(g_trace_level < 2) return;
+
+    char l_buffer[1024];
+    va_list l_args;
+    va_start (l_args, a_format);
+    vsprintf ( l_buffer, a_format, l_args );
+    va_end( l_args );
+    printf( "%s\n", l_buffer );
+    fflush( stdout );
+}

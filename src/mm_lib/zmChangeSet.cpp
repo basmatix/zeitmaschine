@@ -103,7 +103,7 @@ bool zm::ChangeSet::write( const std::string &journalFileName )
     }
     catch( ... )
     {
-        std::cerr << "writing failed" << std::endl;
+        trace_e("writing failed");
     }
     return true;
 }
