@@ -11,23 +11,37 @@ import logging
 
 import pyZm
 
-def list_all():
 
-    model = pyZm.MindMatterModel()
-    #model.setLocalFolder( "./test-localfolder" )
-    #model.setUsedUsername( "test-user" )
-    #model.setUsedHostname( "test-machine" )
-    model.disableHashChecking()
-    #model.setTraceLevel(4)
-    model.initialize()
+def list_all(model):
+
     print model.getItemCount()
 
 def main():
     parser = OptionParser()
+    parser.add_option("-r", "--root", dest="root",
+                      help="set root folder", metavar="PATH")
     parser.add_option("-v", "--verbose", dest="verbose", default=False,
                       action="store_true", help="set verbosity on", metavar="verbosity")
+    parser.add_option("-d", "--disable-hash-check", dest="no_check_hash", default=False,
+                      action="store_true", help="disabling checking checksums on startup")
     (options, args) = parser.parse_args()
-    list_all()
+    
+    print args
+
+    model = pyZm.MindMatterModel()
+    
+    if options.root:
+        #print options.root
+        model.setLocalFolder(options.root)
+    if options.no_check_hash:
+        model.disableHashChecking()
+    
+    model.initialize()
+    #model.setUsedUsername( "test-user" )
+    #model.setUsedHostname( "test-machine" )
+    #model.setTraceLevel(4)
+    
+    list_all(model)
     
     
 if __name__ == "__main__":
