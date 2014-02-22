@@ -39,7 +39,9 @@ if( CONFIG_BUILD_PYZM )
 
     set( PYTHON_ZM_LIBRARY_NAME "pyZm" )
 
-    set( SWIG_MODULE_${PYTHON_ZM_LIBRARY_NAME}_EXTRA_DEPS "${ZM_INCLUDE_DIR}/zm/zmGtdModel.h" )
+    set( SWIG_MODULE_${PYTHON_ZM_LIBRARY_NAME}_EXTRA_DEPS
+        "${ZM_INCLUDE_DIR}/zm/zmGtdModel.h"
+        "${MM_INCLUDE_DIR}/mm/zmModel.h" )
 
     set_source_files_properties( pyZm.i PROPERTIES CPLUSPLUS ON )
 
