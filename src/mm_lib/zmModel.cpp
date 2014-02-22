@@ -38,6 +38,8 @@ zm::MindMatterModel::MindMatterModel()
     , m_initialized             ( false )
     , m_options                 ( new zm::zmOptions )
 {
+    tracemessage("hostname: %s", zm::osal::getHostName().c_str());
+    tracemessage("username: %s", zm::osal::getUserName().c_str());
 }
 
 zm::MindMatterModel::~MindMatterModel()
@@ -45,6 +47,78 @@ zm::MindMatterModel::~MindMatterModel()
     clear(m_things_synced);
     clear(m_things);
     delete m_options;
+}
+
+void zm::MindMatterModel::setLocalFolder( const std::string &a_path )
+{
+    tracemessage( "privateDir: %s", a_path.c_str() );
+
+    // handle cases: path contains "\"
+    //               path == ""
+    //               path == "/"
+    //               path doesn't end with "/"
+    // todo: there might be a boost::filesystem call for this
+
+    std::string l_path = a_path;
+    std::replace( l_path.begin(), l_path.end(), '\\', '/' );
+    if( l_path == "/" ) l_path = "./";
+
+    m_localFolderRoot = l_path;
+    m_localFolderSync = (boost::filesystem::path(m_localFolderRoot) / "sync").string();
+
+    m_options->load( m_localFolderRoot + "/zm_config.json" );
+}
+
+void zm::MindMatterModel::initialize()
+{
+    /// setLocalFolder() has not been called yet. use the default folder
+    if(m_localFolderRoot == "")
+    {
+        setLocalFolder( ( boost::filesystem::path(
+                              m_localFolderRoot) / "zm-local").string() );
+        if(not hasUsedUsername())
+        {
+            setUsedUsername(zm::osal::getUserName());
+        }
+        if(not hasUsedHostname())
+        {
+            setUsedUsername(zm::osal::getHostName());
+        }
+    }
+
+    srand( time( NULL ) * rand()  );
+
+    /// find the name for the local model file - should be equal
+    /// across sessions and unique for each client
+    // <local folder>/zm-<user>-<client>-<zm-domain>-local.yaml
+    // eg. /path/to/zeitmaschine/zm-frans-heizluefter-private-local.yaml
+
+
+
+    tracemessage("options: username: %s", m_options->getString("username").c_str());
+    tracemessage("options: hostname: %s", m_options->getString("hostname").c_str());
+
+    m_localModelFile = createModelFileNameNew();
+
+    m_localModelFileSynced = createModelFileNameOld();
+
+    if( !persistence_loadLocalModel() )
+    {
+        // should only be done on syncing
+        persistance_loadSnapshot();
+    }
+
+    // this is currently not possible since a pull can not be done
+    // without a prior push (which is a full sync, which should only
+    // be done intentionally)
+//    if( !persistence_pullJournal().isEmpty() )
+//    {
+//        persistence_saveLocalModel();
+//    }
+
+    debug_dump();
+
+    m_initialized = true;
 }
 
 bool zm::MindMatterModel::equals(
@@ -204,26 +278,6 @@ const std::string & zm::MindMatterModel::getLocalFolder() const
     return m_localFolderRoot;
 }
 
-void zm::MindMatterModel::setLocalFolder( const std::string &a_path )
-{
-    tracemessage( "privateDir: %s", a_path.c_str() );
-
-    // handle cases: path contains "\"
-    //               path == ""
-    //               path == "/"
-    //               path doesn't end with "/"
-    // todo: there might be a boost::filesystem call for this
-
-    std::string l_path = a_path;
-    std::replace( l_path.begin(), l_path.end(), '\\', '/' );
-    if( l_path == "/" ) l_path = "./";
-
-    m_localFolderRoot = l_path;
-    m_localFolderSync = (boost::filesystem::path(m_localFolderRoot) / "sync").string();
-
-    m_options->load( m_localFolderRoot + "/zm_config.json" );
-}
-
 void zm::MindMatterModel::addDomainSyncFolder(
         const std::string &domainName,
         const std::string &path )
@@ -318,38 +372,6 @@ std::string zm::MindMatterModel::createJournalListFileName() const
     l_ssFileName << m_localFolderRoot << "/zm-read_journals.txt";
 
     return l_ssFileName.str();
-}
-
-void zm::MindMatterModel::initialize()
-{
-    srand( time( NULL ) * rand()  );
-
-    /// find the name for the local model file - should be equal
-    /// across sessions and unique for each client
-    // <local folder>/zm-<user>-<client>-<zm-domain>-local.yaml
-    // eg. /path/to/zeitmaschine/zm-frans-heizluefter-private-local.yaml
-
-    m_localModelFile = createModelFileNameNew();
-
-    m_localModelFileSynced = createModelFileNameOld();
-
-    if( !persistence_loadLocalModel() )
-    {
-        // should only be done on syncing
-        persistance_loadSnapshot();
-    }
-
-    // this is currently not possible since a pull can not be done
-    // without a prior push (which is a full sync, which should only
-    // be done intentionally)
-//    if( !persistence_pullJournal().isEmpty() )
-//    {
-//        persistence_saveLocalModel();
-//    }
-
-    debug_dump();
-
-    m_initialized = true;
 }
 
 const zm::MindMatterModel::ModelData & zm::MindMatterModel::things() const
