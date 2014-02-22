@@ -20,6 +20,8 @@ std::string getHostName();
 
 std::string getUserName();
 
+std::string getHomePath();
+
 }
 }
 

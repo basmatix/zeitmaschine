@@ -19,6 +19,11 @@ std::string zm::osal::getUserName()
     return std::string( getlogin() );
 }
 
+std::string zm::osal::getHomePath()
+{
+    return std::string(getenv("HOME"));
+}
+
 #endif
 
 #ifdef WIN32
@@ -52,6 +57,12 @@ std::string zm::osal::getUserName()
 {
     return "";
 }
+
+std::string zm::osal::getHomePath()
+{
+    return std::string() + getenv("HOMEDRIVE") + getenv("HOMEPATH");
+}
+
 /*
 // http://stackoverflow.com/questions/11587426/get-current-username-in-c-on-windows
 char username[UNLEN+1];
