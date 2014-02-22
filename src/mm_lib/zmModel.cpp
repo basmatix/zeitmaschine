@@ -87,14 +87,14 @@ void zm::MindMatterModel::initialize()
     {
         setLocalFolder( ( boost::filesystem::path(
                               m_localFolderRoot) / "zm-local").string() );
-        if(not hasUsedUsername())
-        {
-            setUsedUsername(zm::osal::getUserName());
-        }
-        if(not hasUsedHostname())
-        {
-            setUsedUsername(zm::osal::getHostName());
-        }
+    }
+    if(not hasUsedUsername())
+    {
+        setUsedUsername(zm::osal::getUserName());
+    }
+    if(not hasUsedHostname())
+    {
+        setUsedHostname(zm::osal::getHostName());
     }
 
     srand( time( NULL ) * rand()  );
