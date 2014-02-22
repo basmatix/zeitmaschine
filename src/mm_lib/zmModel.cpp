@@ -37,6 +37,7 @@ zm::MindMatterModel::MindMatterModel()
     , m_localModelFileSynced    ( "" )
     , m_initialized             ( false )
     , m_options                 ( new zm::zmOptions )
+    , m_checkHashes             ( true )
 {
     tracemessage("hostname: %s", zm::osal::getHostName().c_str());
     tracemessage("username: %s", zm::osal::getUserName().c_str());
@@ -67,6 +68,11 @@ void zm::MindMatterModel::setLocalFolder( const std::string &a_path )
     m_localFolderSync = (boost::filesystem::path(m_localFolderRoot) / "sync").string();
 
     m_options->load( m_localFolderRoot + "/zm_config.json" );
+}
+
+void zm::MindMatterModel::disableHashChecking()
+{
+    m_checkHashes = false;
 }
 
 void zm::MindMatterModel::initialize()

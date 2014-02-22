@@ -99,6 +99,7 @@ namespace zm
         std::string     m_localModelFileSynced;
 
         bool            m_initialized;
+        bool            m_checkHashes;
 
         MindMatterModel(const MindMatterModel &);
         MindMatterModel & operator=(const MindMatterModel &);
@@ -107,14 +108,6 @@ namespace zm
 
         MindMatterModel();
         ~MindMatterModel();
-
-        bool equals( const MindMatterModel &other, bool tell_why = false ) const;
-        bool operator==( const MindMatterModel &other ) const;
-        bool operator!=( const MindMatterModel &other ) const;
-
-        void duplicateModelTo(MindMatterModel &other) const;
-
-        std::string createHash( bool verbose=false ) const;
 
         void setConfigPersistance( bool value );
 
@@ -130,9 +123,19 @@ namespace zm
                 const std::string &domainName,
                 const std::string &path );
 
+        void disableHashChecking();
+
         /// will initialize the model by loading the persistant state using
         /// the given information
         void initialize();
+
+        bool equals( const MindMatterModel &other, bool tell_why = false ) const;
+        bool operator==( const MindMatterModel &other ) const;
+        bool operator!=( const MindMatterModel &other ) const;
+
+        void duplicateModelTo(MindMatterModel &other) const;
+
+        std::string createHash( bool verbose=false ) const;
 
         /// will write a recent model file without affecting the journals
         void persistence_saveLocalModel();
@@ -187,8 +190,9 @@ namespace zm
 //        void appendHandledJournalFilename(const std::string &filename);
 
         static void yamlToThingsMap(
-                const YAML::Node    &yamlNode,
-                ModelData      &thingsMap );
+                const YAML::Node  &yamlNode,
+                ModelData         &thingsMap,
+                bool               checkHashes);
 
         // todo - refactor name
         static void _saveModel(
@@ -353,7 +357,8 @@ namespace zm
 
         static bool loadModelFromFile(
                 const std::string   &input_file,
-                ModelData      &rw_thingsMap );
+                ModelData           &rw_thingsMap,
+                bool                 checkHashes);
     };
 }
 

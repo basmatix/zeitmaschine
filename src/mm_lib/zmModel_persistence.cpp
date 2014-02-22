@@ -10,19 +10,11 @@
 #include "zmThing.h"
 
 #include <mm/zmTrace.h>
-//#include <mm/zmOsal.h>
-//#include <mm/zmOptions.h>
 
-//#include <fstream>
-//#include <string>
 #include <yaml-cpp/yaml.h>
 
-//#include <algorithm>
-//#include <boost/foreach.hpp>
 #include <boost/filesystem.hpp>
-//#include <boost/thread.hpp>
 
-//#include <stdlib.h>
 using namespace zm;
 
 bool zm::MindMatterModel::persistence_sync()
@@ -65,16 +57,17 @@ bool zm::MindMatterModel::persistence_sync()
 }
 
 bool zm::MindMatterModel::loadModelFromFile(
-        const std::string   &input_file,
-        ModelData      &thingsMap )
+        const std::string   &a_input_file,
+        ModelData           &a_thingsMap,
+        bool                 a_checkHashes)
 {
-    clear( thingsMap );
+    clear( a_thingsMap );
 
-    if( ! boost::filesystem::exists( input_file ) )
+    if( ! boost::filesystem::exists( a_input_file ) )
     {
         return false;
     }
-    std::ifstream l_yaml_stream(input_file.c_str());
+    std::ifstream l_yaml_stream(a_input_file.c_str());
 
     if(!l_yaml_stream)
     {
@@ -82,7 +75,7 @@ bool zm::MindMatterModel::loadModelFromFile(
     }
 
     YAML::Node l_import = YAML::Load(l_yaml_stream);
-    yamlToThingsMap( l_import, thingsMap );
+    yamlToThingsMap( l_import, a_thingsMap, a_checkHashes );
 
     return true;
 }
@@ -105,17 +98,17 @@ bool zm::MindMatterModel::persistence_loadLocalModel()
     if( boost::filesystem::exists( m_localModelFileSynced ) )
     {
         l_result |=
-                loadModelFromFile(m_localModelFileSynced, m_things_synced );
+                loadModelFromFile(m_localModelFileSynced, m_things_synced, m_checkHashes );
 
         if( boost::filesystem::exists( m_localModelFile ) )
         {
             l_result |=
-                loadModelFromFile(m_localModelFile, m_things );
+                loadModelFromFile(m_localModelFile, m_things, m_checkHashes );
         }
         else
         {
             l_result |=
-                loadModelFromFile(m_localModelFileSynced, m_things );
+                loadModelFromFile(m_localModelFileSynced, m_things, m_checkHashes );
         }
     }
     else
@@ -125,7 +118,7 @@ bool zm::MindMatterModel::persistence_loadLocalModel()
             boost::filesystem::rename( m_localModelFile, m_localModelFileSynced );
 
             l_result |=
-                loadModelFromFile(m_localModelFileSynced, m_things );
+                loadModelFromFile(m_localModelFileSynced, m_things, m_checkHashes );
 
             deepCopy(m_things, m_things_synced);
         }
@@ -146,7 +139,7 @@ bool zm::MindMatterModel::persistance_loadSnapshot()
 
     const std::string &l_filename = *(l_snapshotfiles.rbegin());
 
-    loadModelFromFile(l_filename, m_things);
+    loadModelFromFile(l_filename, m_things, m_checkHashes);
 
     deepCopy(m_things, m_things_synced);
 
@@ -419,7 +412,8 @@ void zm::MindMatterModel::_saveModel(
 
 void zm::MindMatterModel::yamlToThingsMap(
         const YAML::Node    &a_yamlNode,
-        ModelData           &a_thingsMap )
+        ModelData           &a_thingsMap,
+        bool                a_checkHashes)
 {
     typedef std::map< uid_t, int > conn_t;
 
@@ -558,7 +552,7 @@ void zm::MindMatterModel::yamlToThingsMap(
         ///
 
         /// tag might have been generated and has no hash yet
-        if(l_uid != l_item->m_caption)
+        if(a_checkHashes and l_uid != l_item->m_caption)
         {
             std::map< std::string, std::string >::const_iterator
                     l_hash_it = l_hashes.find(l_uid);
