@@ -8,18 +8,16 @@
 #ifndef ZMTRACE_H
 #define ZMTRACE_H
 
-#include <stdarg.h>
-#include <stdio.h>
+//0: off
+//1: critical
+//2: error
+//3: warning
+//4: info
+//5: debug
+//6: debug2
 
-inline static void tracemessage( const char * a_format, ... )
-{
-    char l_buffer[1024];
-    va_list l_args;
-    va_start (l_args, a_format);
-    vsprintf ( l_buffer, a_format, l_args );
-    va_end( l_args );
-    printf( "%s\n", l_buffer );
-    fflush( stdout );
-}
+void set_trace_level( int level );
+
+void trace_i( const char * a_format, ... );
 
 #endif

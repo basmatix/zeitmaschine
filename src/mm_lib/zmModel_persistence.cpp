@@ -90,8 +90,8 @@ bool zm::MindMatterModel::persistence_loadLocalModel()
     ///
     /// in case only the old model file exists it acts
 
-    tracemessage("load new  file: %s", m_localModelFile.c_str());
-    tracemessage("load sync file: %s", m_localModelFileSynced.c_str());
+    trace_i("load new  file: %s", m_localModelFile.c_str());
+    trace_i("load sync file: %s", m_localModelFileSynced.c_str());
 
     bool l_result = false;
 
@@ -161,12 +161,12 @@ ChangeSet zm::MindMatterModel::persistence_pullJournal()
     bool l_importedJournals = false;
 
     std::vector< std::string > l_journalFiles = getJournalFiles();
-    tracemessage( "found %d journal files", l_journalFiles.size() );
+    trace_i( "found %d journal files", l_journalFiles.size() );
 
     const std::set< std::string > & l_alreadyImported =
             m_things.m_read_journals;
 
-    tracemessage( "%d journal files already imported",
+    trace_i( "%d journal files already imported",
                   l_alreadyImported.size() );
 
     for( const std::string &j: l_journalFiles )
@@ -174,7 +174,7 @@ ChangeSet zm::MindMatterModel::persistence_pullJournal()
         std::string l_filename = boost::filesystem::path( j ).filename().string();
         if( std::find( l_alreadyImported.begin(), l_alreadyImported.end(), l_filename) == l_alreadyImported.end() )
         {
-            tracemessage( "journal '%s' not imported yet", l_filename.c_str() );
+            trace_i( "journal '%s' not imported yet", l_filename.c_str() );
             applyChangeSet( ChangeSet( j ) );
             m_things.m_read_journals.insert(l_filename);
             l_importedJournals = true;
@@ -195,7 +195,7 @@ ChangeSet zm::MindMatterModel::persistence_pushJournal()
 
     if(l_changeSet.isEmpty())
     {
-        tracemessage( "no changes - don't write journal" );
+        trace_i( "no changes - don't write journal" );
         return l_changeSet;
     }
 
@@ -203,7 +203,7 @@ ChangeSet zm::MindMatterModel::persistence_pushJournal()
 
     std::string l_journal_fullname = m_localFolderSync + "/" + l_journal_basename;
 
-    tracemessage( "%d changes - write journal '%s'",
+    trace_i( "%d changes - write journal '%s'",
                   l_changeSet.size(),
                   l_journal_basename.c_str() );
 
@@ -224,14 +224,14 @@ void zm::MindMatterModel::applyChangeSet( const ChangeSet &changeSet )
 
         if( j->type == JournalItem::CreateItem && l_item_it != m_things.left.end() )
         {
-            tracemessage( "WARNING: tried to create already existant item '%s'",
+            trace_i( "WARNING: tried to create already existant item '%s'",
                           j->item_uid.c_str() );
             continue;
         }
 
         if( j->type != JournalItem::CreateItem && l_item_it == m_things.left.end() )
         {
-            tracemessage( "WARNING: trying to modify item non existent item '%s'",
+            trace_i( "WARNING: trying to modify item non existent item '%s'",
                           j->item_uid.c_str() );
             assert( j->type == JournalItem::CreateItem || l_item_it != m_things.left.end() );
         }
@@ -292,7 +292,7 @@ std::vector< std::string > zm::MindMatterModel::getJournalFiles() const
     boost::filesystem::directory_iterator end_itr; // Default ctor yields past-the-end
     for( boost::filesystem::directory_iterator i( target_path ); i != end_itr; ++i )
     {
-        tracemessage( "%s", i->path().string().c_str() );
+        trace_i( "%s", i->path().string().c_str() );
         // skip if not a file
         if( !boost::filesystem::is_regular_file( i->status() ) )
         {
@@ -441,7 +441,7 @@ void zm::MindMatterModel::yamlToThingsMap(
 
             std::string l_caption = n["caption"].as< std::string >();
 
-            tracemessage("caption: '%s'", l_caption.c_str());
+            trace_i("caption: '%s'", l_caption.c_str());
 
             MindMatter *l_new_thing = new MindMatter( l_caption );
 
@@ -457,7 +457,7 @@ void zm::MindMatterModel::yamlToThingsMap(
                     /// fallback to older syntax
                     for( const uid_t &l_conn: n["connections"].as< std::vector< uid_t > >())
                     {
-                        tracemessage("%s", l_conn.c_str());
+                        trace_i("%s", l_conn.c_str());
                         l_connections[l_conn] = 0;
                     }
                     l_connection_uids[l_uid] = l_connections;
@@ -481,7 +481,7 @@ void zm::MindMatterModel::yamlToThingsMap(
                 for( const string_value_map_type::value_type &a:
                     l_new_thing->m_string_values )
                 {
-                    std::cout << a.first << ": " << a.second << std::endl;
+                    trace_i("%s: %d", a.first.c_str(), a.second.c_str());
                 }
             }
 
@@ -561,8 +561,8 @@ void zm::MindMatterModel::yamlToThingsMap(
 
             if(l_hash_it->second != l_item->createHash())
             {
-                tracemessage("saved and loaded hashes differ!");
-                tracemessage("'%s' != '%s'",
+                trace_i("saved and loaded hashes differ!");
+                trace_i("'%s' != '%s'",
                              l_hash_it->second.c_str(),
                              l_item->createHash(true).c_str());
                 assert(l_hash_it->second == l_item->createHash());

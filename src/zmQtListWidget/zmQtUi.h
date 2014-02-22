@@ -81,56 +81,56 @@ private slots:
 
 #if 0
     void on_twTask_itemActivated( QTreeWidgetItem *item, int )
-    {   tracemessage( __FUNCTION__ );
+    {   trace_i( __FUNCTION__ );
         //std::cout << index. << std::endl;;
         //m_ui->twTask->currentItemChanged();
     }
 
     void on_twTask_clicked( const QModelIndex &index )
-    {   tracemessage( __FUNCTION__ );
+    {   trace_i( __FUNCTION__ );
         //std::cout << index. << std::endl;;
     }
 
     void on_twTask_doubleClicked( const QModelIndex &index )
-    {   tracemessage( __FUNCTION__ );
+    {   trace_i( __FUNCTION__ );
         //std::cout << index. << std::endl;;
 
         //m_ui->twTask->edit(index);
     }
 
     void on_twTask_itemDoubleClicked( QTreeWidgetItem *item, int column )
-    {   tracemessage( __FUNCTION__ );
+    {   trace_i( __FUNCTION__ );
         //std::cout << index. << std::endl;;
 
     }
 
     void update()
-    {   tracemessage( __FUNCTION__ );
+    {   trace_i( __FUNCTION__ );
         //m_ui->lblTask->setText( QString().sprintf("%d",m_model.getCurrentTaskDuration()) );
-        //tracemessage( "%d",m_model.getCurrentTaskDuration() );
+        //trace_i( "%d",m_model.getCurrentTaskDuration() );
     }
 
     void on_twTask_itemSelectionChanged ()
-    {   tracemessage( __FUNCTION__ );
+    {   trace_i( __FUNCTION__ );
     }
 
     void on_leCommand_cursorPositionChanged ( int, int )
-    {   tracemessage( __FUNCTION__ );
+    {   trace_i( __FUNCTION__ );
     }
 
     void on_leCommand_editingFinished ()
     {
-        tracemessage( __FUNCTION__ );
+        trace_i( __FUNCTION__ );
     }
 
     void on_leCommand_selectionChanged ()
     {
-        tracemessage( __FUNCTION__ );
+        trace_i( __FUNCTION__ );
     }
 
     void on_leCommand_textEdited ( const QString & text )
     {
-        tracemessage( __FUNCTION__ );
+        trace_i( __FUNCTION__ );
     }
 
 #endif

@@ -80,7 +80,7 @@ void zmQtGtdModel::addListItem( const std::string uid )
 
     l_item->decorate();
 
-    //tracemessage( "adding item %s / %d to list (%s)",
+    //trace_i( "adding item %s / %d to list (%s)",
     //              uid.c_str(),
     //              l_creationTime,
     //              m_model.getCaption( uid ).toAscii().constData()  );

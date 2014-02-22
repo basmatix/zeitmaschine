@@ -39,8 +39,8 @@ zm::MindMatterModel::MindMatterModel()
     , m_options                 ( new zm::zmOptions )
     , m_checkHashes             ( true )
 {
-    tracemessage("hostname: %s", zm::osal::getHostName().c_str());
-    tracemessage("username: %s", zm::osal::getUserName().c_str());
+    trace_i("hostname: %s", zm::osal::getHostName().c_str());
+    trace_i("username: %s", zm::osal::getUserName().c_str());
 }
 
 zm::MindMatterModel::~MindMatterModel()
@@ -50,9 +50,14 @@ zm::MindMatterModel::~MindMatterModel()
     delete m_options;
 }
 
+void zm::MindMatterModel::setTraceLevel(int level)
+{
+    set_trace_level(level);
+}
+
 void zm::MindMatterModel::setLocalFolder( const std::string &a_path )
 {
-    tracemessage( "privateDir: %s", a_path.c_str() );
+    trace_i( "privateDir: %s", a_path.c_str() );
 
     // handle cases: path contains "\"
     //               path == ""
@@ -101,8 +106,8 @@ void zm::MindMatterModel::initialize()
 
 
 
-    tracemessage("options: username: %s", m_options->getString("username").c_str());
-    tracemessage("options: hostname: %s", m_options->getString("hostname").c_str());
+    trace_i("options: username: %s", m_options->getString("username").c_str());
+    trace_i("options: hostname: %s", m_options->getString("hostname").c_str());
 
     m_localModelFile = createModelFileNameNew();
 
@@ -137,7 +142,7 @@ bool zm::MindMatterModel::equals(
     {
         if(tell_why)
         {
-            tracemessage("MindMatterModels have different model size" );
+            trace_i("MindMatterModels have different model size" );
         }
         return false;
     }
@@ -147,7 +152,7 @@ bool zm::MindMatterModel::equals(
     {
         if(tell_why)
         {
-            tracemessage("MindMatterModel have different journal history size");
+            trace_i("MindMatterModel have different journal history size");
         }
         return false;
     }
@@ -165,7 +170,7 @@ bool zm::MindMatterModel::equals(
         {
             if(tell_why)
             {
-                tracemessage("MindMatterModels differ: item %s not found in "
+                trace_i("MindMatterModels differ: item %s not found in "
                              "second model",
                              i.left.c_str() );
             }
@@ -177,7 +182,7 @@ bool zm::MindMatterModel::equals(
         {
             if(tell_why)
             {
-                tracemessage("items '%s' differ in both models", i.left.c_str() );
+                trace_i("items '%s' differ in both models", i.left.c_str() );
             }
             return false;
         }
@@ -187,7 +192,7 @@ bool zm::MindMatterModel::equals(
     {
         if(tell_why)
         {
-            tracemessage("MindMatterModels have different journal history");
+            trace_i("MindMatterModels have different journal history");
         }
         return false;
     }
@@ -288,7 +293,7 @@ void zm::MindMatterModel::addDomainSyncFolder(
         const std::string &domainName,
         const std::string &path )
 {
-    tracemessage( "new domain: %s %s", domainName.c_str(), path.c_str() );
+    trace_i( "new domain: %s %s", domainName.c_str(), path.c_str() );
 }
 
 bool zm::MindMatterModel::hasUsedUsername() const
@@ -476,7 +481,7 @@ void zm::MindMatterModel::duplicateModelTo(MindMatterModel &other) const
 
 void zm::MindMatterModel::ModelData::debug_dump() const
 {
-    tracemessage(">> dump");
+    trace_i(">> dump");
 
     for(const zm::MindMatterModel::ModelData::value_type& i: m_data)
     {
@@ -487,7 +492,7 @@ void zm::MindMatterModel::ModelData::debug_dump() const
             l_neighbours << m.second.first << "(" << m.second.second << ")" << ", ";
         }
         l_neighbours << ")";
-        tracemessage("  %s (#%s) %s '%s'",
+        trace_i("  %s (#%s) %s '%s'",
                      i.left.c_str(),
                      i.right->createHash().c_str(),
                      l_neighbours.str().c_str(),

@@ -127,24 +127,24 @@ void zmGtdModel::print_statistics() const
     size_t l_project_items = l_projects.size();
     size_t l_done_items = l_done.size();
 
-    tracemessage( "total items:........ %d", l_total_items );
-    tracemessage( "gtd items:.......... %d",
+    trace_i( "total items:........ %d", l_total_items );
+    trace_i( "gtd items:.......... %d",
                   l_inbox_items + l_project_items + l_task_items + l_done_items );
-    tracemessage( " gtd inbox items:... %d", l_inbox_items );
+    trace_i( " gtd inbox items:... %d", l_inbox_items );
 
-    tracemessage( " gtd project items:. %d", l_project_items );
+    trace_i( " gtd project items:. %d", l_project_items );
     BOOST_FOREACH( std::string s, l_projects )
     {
-        tracemessage( "    %s: '%s'", s.c_str(), m_things_model.getCaption( s ).c_str() );
+        trace_i( "    %s: '%s'", s.c_str(), m_things_model.getCaption( s ).c_str() );
     }
-    tracemessage( " gtd task items:.... %d", l_task_items );
-    tracemessage( " gtd items done:     %d", l_done_items );
+    trace_i( " gtd task items:.... %d", l_task_items );
+    trace_i( " gtd items done:     %d", l_done_items );
 }
 
 std::string zmGtdModel::createNewInboxItem( const std::string &caption )
 {
     std::string l_item_uid = m_things_model.createNewItem( caption );
-    tracemessage( "GTD: new inbox item %s: '%s'",
+    trace_i( "GTD: new inbox item %s: '%s'",
                   caption.c_str(),
                   l_item_uid .c_str() );
 
@@ -157,7 +157,7 @@ std::string zmGtdModel::createNewInboxItem( const std::string &caption )
 
 void zmGtdModel::setNote( const std::string &uid, const std::string &value )
 {
-    tracemessage( "GTD: setting note for item %s (%s): '%s'",
+    trace_i( "GTD: setting note for item %s (%s): '%s'",
                   uid.c_str(),
                   m_things_model.getCaption( uid ).c_str(),
                   value.c_str() );

@@ -145,7 +145,7 @@ bool zm::MindMatter::equals( const MindMatter & other, bool tell_why )
     {
         if(tell_why)
         {
-            tracemessage( "equals(): captions differ. '%s'<>'%s'",
+            trace_i( "equals(): captions differ. '%s'<>'%s'",
                           m_caption.c_str(), other.m_caption.c_str() );
         }
         return false;
@@ -155,7 +155,7 @@ bool zm::MindMatter::equals( const MindMatter & other, bool tell_why )
     {
         if(tell_why)
         {
-            tracemessage( "equals(): sizes of string values differ." );
+            trace_i( "equals(): sizes of string values differ." );
         }
         return false;
     }
@@ -164,7 +164,7 @@ bool zm::MindMatter::equals( const MindMatter & other, bool tell_why )
     {
         if(tell_why)
         {
-            tracemessage( "equals(): sizes of m_neighbours differ." );
+            trace_i( "equals(): sizes of m_neighbours differ." );
         }
         return false;
     }
@@ -173,7 +173,7 @@ bool zm::MindMatter::equals( const MindMatter & other, bool tell_why )
     {
         if(tell_why)
         {
-            tracemessage( "equals(): string values differ" );
+            trace_i( "equals(): string values differ" );
         }
         return false;
     }
@@ -182,7 +182,7 @@ bool zm::MindMatter::equals( const MindMatter & other, bool tell_why )
     {
         if(tell_why)
         {
-            tracemessage( "equals(): connected neighbours differ" );
+            trace_i( "equals(): connected neighbours differ" );
         }
         return false;
     }
@@ -382,7 +382,7 @@ inline void hash_add_value(
 {
     if( verbose )
     {
-        tracemessage("adding '%s' to hash", value.c_str());
+        trace_i("adding '%s' to hash", value.c_str());
     }
     boost::hash_combine(hash, value);
 }
@@ -394,7 +394,7 @@ inline void hash_add_value(
 {
     if( verbose )
     {
-        tracemessage("adding '%d' to hash", value);
+        trace_i("adding '%d' to hash", value);
     }
     boost::hash_combine(hash, value);
 }
@@ -425,7 +425,7 @@ std::string zm::MindMatter::createHash( bool a_verbose ) const
 
     if( a_verbose )
     {
-        tracemessage("generated hash: '%s'", l_result_stream.str().c_str());
+        trace_i("generated hash: '%s'", l_result_stream.str().c_str());
     }
     return l_result_stream.str();
 }

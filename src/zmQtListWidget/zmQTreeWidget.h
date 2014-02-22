@@ -101,7 +101,7 @@ public:
         //int otherNumber = other.text(sortCol).toInt();
         const zmQTreeWidgetItem * l_this = reinterpret_cast< const zmQTreeWidgetItem *>(this);
         const zmQTreeWidgetItem * l_that = reinterpret_cast< const zmQTreeWidgetItem *>(&other);
-        // tracemessage("compare %d and %d",
+        // trace_i("compare %d and %d",
         //              l_this->getCreationTime(),
         //              l_that->getCreationTime() );
         return l_this->getCreationTime() < l_that->getCreationTime();

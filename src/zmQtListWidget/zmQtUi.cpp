@@ -38,7 +38,7 @@ MainWindow::MainWindow(QWidget *parent)
     , m_model              ()
     , m_selected_thing     ( "" )
     , m_selected_twItem    ( NULL )
-{   tracemessage( __FUNCTION__ );
+{   trace_i( __FUNCTION__ );
 
     m_ui->setupUi( this );
 
@@ -107,12 +107,12 @@ MainWindow::~MainWindow()
 }
 
 void MainWindow::updateGui()
-{   tracemessage( __FUNCTION__ );
+{   trace_i( __FUNCTION__ );
 
 }
 
 void MainWindow::closeEvent( QCloseEvent *event )
-{   tracemessage( __FUNCTION__ );
+{   trace_i( __FUNCTION__ );
     // this method is being called automatically by Qt
 
     m_model.localSave();
@@ -137,35 +137,35 @@ void MainWindow::createInboxItemFromUiElements()
 }
 
 void MainWindow::on_pbSync_clicked()
-{   tracemessage( __FUNCTION__ );
+{   trace_i( __FUNCTION__ );
     // this method is being called automatically by Qt
 
     m_model.sync();
 }
 
 void MainWindow::on_pbSnapshot_clicked()
-{   tracemessage( __FUNCTION__ );
+{   trace_i( __FUNCTION__ );
     // this method is being called automatically by Qt
 
     m_model.createSnapshot();
 }
 
 void MainWindow::on_pbAddInboxItem_clicked()
-{   //tracemessage( __FUNCTION__ );
+{   //trace_i( __FUNCTION__ );
     // this method is being called automatically by Qt
 
     createInboxItemFromUiElements();
 }
 
 void MainWindow::on_leCommand_returnPressed()
-{   //tracemessage( __FUNCTION__ );
+{   //trace_i( __FUNCTION__ );
     // this method is being called automatically by Qt
 
     createInboxItemFromUiElements();
 }
 
 void MainWindow::on_twTask_currentItemChanged( QTreeWidgetItem *current, QTreeWidgetItem *previous )
-{   //tracemessage( __FUNCTION__ );
+{   //trace_i( __FUNCTION__ );
 
     if( m_model.m_wi_map->contains( previous ) )
     {
@@ -186,7 +186,7 @@ void MainWindow::on_twTask_currentItemChanged( QTreeWidgetItem *current, QTreeWi
 
         m_selected_twItem = (zmQTreeWidgetItem *)current;
         m_selected_thing = m_model.m_wi_map->get( m_selected_twItem );
-        tracemessage( "clicked on item %s (%s)",
+        trace_i( "clicked on item %s (%s)",
                       m_selected_thing.c_str(),
                       m_model.getCaption( m_selected_thing ).toAscii().constData()  );
     }
@@ -200,14 +200,14 @@ void MainWindow::on_twTask_currentItemChanged( QTreeWidgetItem *current, QTreeWi
 }
 
 void MainWindow::on_twTask_itemChanged( QTreeWidgetItem *item )
-{   //tracemessage( __FUNCTION__ );
+{   //trace_i( __FUNCTION__ );
 
     if( m_model.m_wi_map->contains( item ) )
     {
         std::string l_thing = m_model.m_wi_map->get( item );
         QString l_new_caption = item->text(0);
 
-        tracemessage( "changing item text from '%s' to '%s'",
+        trace_i( "changing item text from '%s' to '%s'",
                       m_model.getCaption( l_thing ).toAscii().constData(),
                       l_new_caption.toAscii().constData() );
         m_model.setCaption( l_thing, l_new_caption );
@@ -216,7 +216,7 @@ void MainWindow::on_twTask_itemChanged( QTreeWidgetItem *item )
 }
 
 void MainWindow::on_twTask_itemDropped( QTreeWidgetItem *item, QTreeWidgetItem *target )
-{   //tracemessage( __FUNCTION__ );
+{   //trace_i( __FUNCTION__ );
 
     if( !m_model.m_wi_map->contains( item ) )
     {
@@ -230,7 +230,7 @@ void MainWindow::on_twTask_itemDropped( QTreeWidgetItem *item, QTreeWidgetItem *
     std::string l_source = m_model.m_wi_map->get( item );
     std::string l_target = m_model.m_wi_map->get( target );
 
-    tracemessage( "dragged '%s' to '%s'",
+    trace_i( "dragged '%s' to '%s'",
                   m_model.getCaption( l_source ).toAscii().constData(),
                   m_model.getCaption( l_target ).toAscii().constData() );
 
@@ -250,12 +250,12 @@ void MainWindow::on_twTask_itemDropped( QTreeWidgetItem *item, QTreeWidgetItem *
 }
 
 void MainWindow::on_pbClose_clicked()
-{   tracemessage( __FUNCTION__ );
+{   trace_i( __FUNCTION__ );
 
     //QMutexLocker monitor( &m_mutex );
     if( m_selected_thing == "" ) return;
 
-    tracemessage( "set item to DONE: %s (%s)",
+    trace_i( "set item to DONE: %s (%s)",
                   m_selected_thing.c_str(),
                   m_model.getCaption( m_selected_thing ).toAscii().constData()  );
 
@@ -273,11 +273,11 @@ void MainWindow::on_pbClose_clicked()
 }
 
 void MainWindow::on_pbDelete_clicked()
-{   tracemessage( __FUNCTION__ );
+{   trace_i( __FUNCTION__ );
 
     if( m_selected_thing == "" ) return;
 
-    tracemessage( "erase item: %s (%s)",
+    trace_i( "erase item: %s (%s)",
                   m_selected_thing.c_str(),
                   m_model.getCaption( m_selected_thing ).toAscii().constData()  );
 
@@ -294,11 +294,11 @@ void MainWindow::on_pbDelete_clicked()
 
 
 void MainWindow::on_pbPlusOne_clicked()
-{   tracemessage( __FUNCTION__ );
+{   trace_i( __FUNCTION__ );
 
     if( m_selected_thing == "" ) return;
 
-    tracemessage( "plus one item %s (%s)",
+    trace_i( "plus one item %s (%s)",
                   m_selected_thing.c_str(),
                   m_model.getCaption( m_selected_thing ).toAscii().constData()  );
 
@@ -307,7 +307,7 @@ void MainWindow::on_pbPlusOne_clicked()
 }
 
 void MainWindow::on_pbMakeProject_clicked()
-{   tracemessage( __FUNCTION__ );
+{   trace_i( __FUNCTION__ );
 
     QString l_project_name = m_ui->leCommand->text();
 
@@ -323,7 +323,7 @@ void MainWindow::on_pbMakeProject_clicked()
         assert( m_model.m_wi_map->get( m_selected_thing ) == m_selected_twItem );
         if( m_model.isInboxItem( m_selected_thing ))
         {
-            tracemessage( "turn item into project: %s (%s)",
+            trace_i( "turn item into project: %s (%s)",
                           m_selected_thing.c_str(),
                           m_model.getCaption( m_selected_thing ).toAscii().constData()  );
 
@@ -348,7 +348,7 @@ void MainWindow::on_pbMakeProject_clicked()
     }
     else
     {
-        tracemessage( "create project '%s' from magic line",
+        trace_i( "create project '%s' from magic line",
                       l_project_name.toAscii().constData() );
 
         std::string l_item_uid = m_model.createProject( l_project_name );
@@ -375,7 +375,7 @@ void MainWindow::on_pbMakeNextAction_clicked()
 
         std::string l_formerNextTask = m_model.getNextTask( l_parentProject );
 
-        tracemessage( "define item %s (%s) to be next item for %s (%s)",
+        trace_i( "define item %s (%s) to be next item for %s (%s)",
                       m_selected_thing.c_str(),
                       m_model.getCaption( m_selected_thing ).toAscii().constData(),
                       l_parentProject.c_str(),
@@ -400,7 +400,7 @@ void MainWindow::on_pbMakeNextAction_clicked()
 }
 
 void MainWindow::on_pbMakeAction_clicked()
-{   tracemessage( __FUNCTION__ );
+{   trace_i( __FUNCTION__ );
 
     QString l_project_name = m_ui->leCommand->text();
 
@@ -416,7 +416,7 @@ void MainWindow::on_pbMakeAction_clicked()
         assert( m_model.m_wi_map->get( m_selected_thing ) == m_selected_twItem );
         if( m_model.isInboxItem( m_selected_thing ))
         {
-            tracemessage( "turn item into project: %s (%s)",
+            trace_i( "turn item into project: %s (%s)",
                           m_selected_thing.c_str(),
                           m_model.getCaption( m_selected_thing ).toAscii().constData()  );
 
@@ -441,7 +441,7 @@ void MainWindow::on_pbMakeAction_clicked()
     }
     else
     {
-        tracemessage( "create project '%s' from magic line",
+        trace_i( "create project '%s' from magic line",
                       l_project_name.toAscii().constData() );
 
         std::string l_item_uid = m_model.createProject( l_project_name );
@@ -466,7 +466,7 @@ void MainWindow::on_pbOrder_clicked()
 }
 
 void MainWindow::on_leCommand_textChanged ( const QString & text )
-{   //tracemessage( __FUNCTION__ );
+{   //trace_i( __FUNCTION__ );
     // this method is being called automatically by Qt
     QString l_search_string = text.toLower();
     for( QMap< std::string, zmQTreeWidgetItem * >::iterator

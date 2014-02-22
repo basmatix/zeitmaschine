@@ -125,6 +125,8 @@ namespace zm
 
         void disableHashChecking();
 
+        void setTraceLevel(int level);
+
         /// will initialize the model by loading the persistant state using
         /// the given information
         void initialize();

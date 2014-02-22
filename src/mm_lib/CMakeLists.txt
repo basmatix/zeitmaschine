@@ -21,6 +21,7 @@ file( GLOB ${PROJECT_NAME}_files
     zmModel_persistence.cpp
     zmChangeSet.cpp
     zmCommon.cpp
+    zmTrace.cpp
     include/*/*.h
 )
 

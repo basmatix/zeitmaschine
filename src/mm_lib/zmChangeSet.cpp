@@ -188,7 +188,7 @@ void zm::ChangeSet::load( const std::string &journalFileName )
         }
         else
         {
-            tracemessage("type = '%s'", l_type.c_str());
+            trace_i("type = '%s'", l_type.c_str());
             assert( false && "type is not being handled" );
         }
         l_newItem->time = str(n["time"]);
@@ -230,7 +230,7 @@ void zm::ChangeSet::debug_dump() const
 {
     BOOST_FOREACH( const journal_item_vec_t::value_type &l_change, m_journal)
     {
-        tracemessage("  on %s: (t:%s, k:%s, v:%s)",
+        trace_i("  on %s: (t:%s, k:%s, v:%s)",
                      l_change->item_uid.c_str(),
                      l_change->type == JournalItem::CreateItem     ? "CreateItem    " :
                      l_change->type == JournalItem::EraseItem      ? "EraseItem     " :
