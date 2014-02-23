@@ -395,6 +395,17 @@ size_t zm::MindMatterModel::getItemCount() const
     return m_things.size();
 }
 
+std::vector< zm::uid_t > zm::MindMatterModel::getItems() const
+{
+    std::vector< zm::uid_t > l_result;
+    for(const ModelData::value_type &i: m_things)
+    {
+        l_result.push_back(i.left);
+    }
+
+    return l_result;
+}
+
 void zm::MindMatterModel::clear( ModelData &thingsMap )
 {
     BOOST_FOREACH(const ModelData::value_type& i, thingsMap)

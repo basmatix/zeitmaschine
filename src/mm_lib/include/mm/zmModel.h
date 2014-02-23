@@ -225,9 +225,12 @@ namespace zm
     /// const interface
     public:
 
+        // should be deprecated
         const ModelData & things() const;
 
         size_t getItemCount() const;
+
+        std::vector< std::string > getItems() const;
 
         std::time_t getCreationTime(
                 const std::string &uid ) const;

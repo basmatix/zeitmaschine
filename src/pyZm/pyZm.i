@@ -7,6 +7,19 @@
 
 
 %module pyZm
+
+%include "std_string.i"
+%include "std_vector.i"
+%include "std_map.i"
+%include "std_pair.i"
+%include "boost_shared_ptr.i"
+
+//%array_class(int, intArray);
+//%array_class(double, doubleArray);
+//%array_class(char, charArray);
+
+//%shared_ptr(TokenizedText)
+
 %{
 // includes the header in the wrapper code
 
@@ -15,16 +28,9 @@
 #include <mm/zmChangeSet.h>
 %}
 
-// Parse the header file to generate wrappers
-//#define OUTCHAR char
-%include "std_string.i"
-//%include "typemaps.i"
-//%include "carrays.i"
-//%array_class(int, intArray);
-//%array_class(double, doubleArray);
-//%array_class(char, charArray);
-//%include "cstring.i"
+%template()         std::vector<std::string>;
 
+// Parse the header file to generate wrappers
 %include <zm/zmGtdModel.h>
 %include <mm/zmTypes.h>
 %include <mm/zmModel.h>
