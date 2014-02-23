@@ -11,10 +11,18 @@ import logging
 
 import pyZm
 
+def yield_n(string, length):
+    if len(string) <= length:
+        return string + '.' * (length - len(string))
+    else:
+        return string[:length]
 
 def list_all(model):
 
     print model.getItemCount()
+
+    for i in model.getItems():
+        print i[:6], yield_n(model.getCaption(i), 30)
 
 def main():
     parser = OptionParser()
