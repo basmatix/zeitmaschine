@@ -86,7 +86,7 @@ void zm::MindMatterModel::initialize()
     if(m_localFolderRoot == "")
     {
         setLocalFolder( ( boost::filesystem::path(
-                              m_localFolderRoot) / "zm-local").string() );
+                              zm::osal::getHomePath()) / "zm-local").string() );
     }
     if(not hasUsedUsername())
     {
