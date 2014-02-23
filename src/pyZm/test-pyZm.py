@@ -33,8 +33,9 @@ def main():
     parser.add_option("-d", "--disable-hash-check", dest="no_check_hash", default=False,
                       action="store_true", help="disabling checking checksums on startup")
     (options, args) = parser.parse_args()
-    
-    print args
+
+    if args is not []:
+        print args
 
     model = pyZm.MindMatterModel()
     
@@ -43,14 +44,20 @@ def main():
         model.setLocalFolder(options.root)
     if options.no_check_hash:
         model.disableHashChecking()
+    if options.verbose:
+        model.setTraceLevel(4)
     
     model.initialize()
-    #model.setUsedUsername( "test-user" )
-    #model.setUsedHostname( "test-machine" )
-    #model.setTraceLevel(4)
-    
+
+    if args != [] and args[0] == "add":
+        text = " ".join(args[1:])
+        print("'%s'" % text)
+        new_item = model.createNewItem(text)
+        print new_item
+        
     list_all(model)
     
+    model.persistence_saveLocalModel()
     
 if __name__ == "__main__":
     logging.basicConfig(
