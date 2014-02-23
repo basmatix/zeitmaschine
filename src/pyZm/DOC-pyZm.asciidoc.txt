@@ -33,7 +33,7 @@ node1 = model.createNewItem( "node1" )
 node2 = model.createNewItem( "node2" )
 node3 = model.createNewItem( "node3" )
 
-model.connect( node1, node2 )
+model.connectDirected( node1, node2 )
 cond1 = model.isConnected(node1, node2)
 TEST( cond1, "node1 and node2 should be connected after connection" )
 
