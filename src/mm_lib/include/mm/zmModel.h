@@ -109,6 +109,12 @@ namespace zm
         MindMatterModel();
         ~MindMatterModel();
 
+        static boost::shared_ptr<MindMatterModel> create()
+        {
+            return boost::shared_ptr<MindMatterModel>(
+                        new MindMatterModel() );
+        }
+
         void setConfigPersistance( bool value );
 
         /// sets the one and only local folder for configuration temorary and

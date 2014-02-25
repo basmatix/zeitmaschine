@@ -37,27 +37,35 @@ def main():
     if args is not []:
         print args
 
-    model = pyZm.MindMatterModel()
-    
+    model_basic = pyZm.MindMatterModel.create()
+    gtd_model = pyZm.zmGtdModel(model_basic)
+
     if options.root:
         #print options.root
-        model.setLocalFolder(options.root)
+        gtd_model.setLocalFolder(options.root)
     if options.no_check_hash:
-        model.disableHashChecking()
+        gtd_model.disableHashChecking()
     if options.verbose:
-        model.setTraceLevel(4)
+        gtd_model.setTraceLevel(4)
     
-    model.initialize()
+    gtd_model.initialize()
+    print("use root folder: '%s'" % model_basic.getLocalFolder())
 
     if args != [] and args[0] == "add":
         text = " ".join(args[1:])
         print("'%s'" % text)
-        new_item = model.createNewItem(text)
+        new_item = gtd_model.createNewItem(text)
+        print new_item
+
+    if args != [] and args[0] == "add":
+        text = " ".join(args[1:])
+        print("'%s'" % text)
+        new_item = gtd_model.createNewItem(text)
         print new_item
         
-    list_all(model)
+    list_all(gtd_model)
     
-    model.persistence_saveLocalModel()
+    gtd_model.localSave()
     
 if __name__ == "__main__":
     logging.basicConfig(

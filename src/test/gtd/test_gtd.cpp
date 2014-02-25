@@ -32,7 +32,7 @@ int main( int arg_n, char **arg_v )
 
 bool gtd_basic_workflow()
 {
-    zmGtdModel l_m1;
+    zmGtdModel l_m1(zm::MindMatterModel::create());
 
     boost::filesystem::remove_all( "./test-localfolder" );
     l_m1.setLocalFolder( "./test-localfolder" );

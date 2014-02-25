@@ -13,10 +13,11 @@
 #include <list>
 
 #include <assert.h>
+#include <boost/shared_ptr.hpp>
 
 class zmGtdModel
 {
-    zm::MindMatterModel m_things_model;
+    boost::shared_ptr< zm::MindMatterModel > m_p_things_model;
     std::string m_item_inbox;
     std::string m_item_task;
     std::string m_item_next_task;
@@ -30,7 +31,22 @@ class zmGtdModel
 public:
 
     zmGtdModel()
-        : m_things_model    ()
+        : m_p_things_model  ()
+        , m_item_inbox      ()
+        , m_item_task       ()
+        , m_item_next_task  ()
+        , m_item_project    ()
+        , m_item_group      ()
+        , m_item_done       ()
+        , m_item_knowledge  ()
+        , m_item_person     ()
+    {
+        m_p_things_model = boost::shared_ptr< zm::MindMatterModel >(
+                    new zm::MindMatterModel() );
+    }
+
+    zmGtdModel(boost::shared_ptr< zm::MindMatterModel > model)
+        : m_p_things_model  (model)
         , m_item_inbox      ()
         , m_item_task       ()
         , m_item_next_task  ()
@@ -41,85 +57,104 @@ public:
         , m_item_person     ()
     {}
 
+    void disableHashChecking()
+    {
+        m_p_things_model->disableHashChecking();
+    }
+
+    void setTraceLevel(int level)
+    {
+        m_p_things_model->setTraceLevel(level);
+    }
+
     bool hasUsedUsername() const
     {
-        return m_things_model.hasUsedUsername();
+        return m_p_things_model->hasUsedUsername();
     }
 
     bool hasUsedHostname() const
     {
-        return m_things_model.hasUsedHostname();
+        return m_p_things_model->hasUsedHostname();
     }
 
     void setUsedUsername( const std::string &username )
     {
-        m_things_model.setUsedUsername( username );
+        m_p_things_model->setUsedUsername( username );
     }
 
     void setUsedHostname( const std::string &hostname )
     {
-        m_things_model.setUsedHostname( hostname );
+        m_p_things_model->setUsedHostname( hostname );
     }
 
     void setConfigPersistance( bool value )
     {
-        m_things_model.setConfigPersistance( value );
+        m_p_things_model->setConfigPersistance( value );
     }
 
     void setLocalFolder( const std::string &path )
     {
-        m_things_model.setLocalFolder( path );
+        m_p_things_model->setLocalFolder( path );
     }
 
     void addDomainSyncFolder(
             const std::string &domainName,
             const std::string &path )
     {
-        m_things_model.addDomainSyncFolder( domainName, path );
+        m_p_things_model->addDomainSyncFolder( domainName, path );
     }
 
     void initialize()
     {
-        m_things_model.initialize();
+        m_p_things_model->initialize();
 
-        m_item_inbox =      m_things_model.findOrCreateTagItem( "gtd_inbox" );
-        m_item_task =       m_things_model.findOrCreateTagItem( "gtd_task" );
-        m_item_next_task =  m_things_model.findOrCreateTagItem( "gtd_next_task" );
-        m_item_project =    m_things_model.findOrCreateTagItem( "gtd_project" );
-        m_item_group =      m_things_model.findOrCreateTagItem( "gtd_group" );
-        m_item_done =       m_things_model.findOrCreateTagItem( "gtd_done" );
-        m_item_knowledge =  m_things_model.findOrCreateTagItem( "knowledge" );
-        m_item_person =     m_things_model.findOrCreateTagItem( "person" );
+        m_item_inbox =      m_p_things_model->findOrCreateTagItem( "gtd_inbox" );
+        m_item_task =       m_p_things_model->findOrCreateTagItem( "gtd_task" );
+        m_item_next_task =  m_p_things_model->findOrCreateTagItem( "gtd_next_task" );
+        m_item_project =    m_p_things_model->findOrCreateTagItem( "gtd_project" );
+        m_item_group =      m_p_things_model->findOrCreateTagItem( "gtd_group" );
+        m_item_done =       m_p_things_model->findOrCreateTagItem( "gtd_done" );
+        m_item_knowledge =  m_p_things_model->findOrCreateTagItem( "knowledge" );
+        m_item_person =     m_p_things_model->findOrCreateTagItem( "person" );
 
         print_statistics();
     }
 
     void sync()
     {
-        m_things_model.persistence_sync();
+        m_p_things_model->persistence_sync();
     }
 
     void createSnapshot()
     {
-        m_things_model.persistance_createSnapshot();
+        m_p_things_model->persistance_createSnapshot();
     }
 
     void localSave( const std::string &filename = "" )
     {
-        m_things_model.persistence_saveLocalModel();
+        m_p_things_model->persistence_saveLocalModel();
     }
-
 
 /// const interface
 public:
+
+    size_t getItemCount() const
+    {
+        return m_p_things_model->getItemCount();
+    }
+
+    std::vector< std::string > getItems() const
+    {
+        return m_p_things_model->getItems();
+    }
 
     std::string getNote( const std::string &uid ) const
     {
         if( uid == "" ) return "";
 
-        if( m_things_model.hasValue( uid, "gtd_item_note" ))
+        if( m_p_things_model->hasValue( uid, "gtd_item_note" ))
         {
-            return m_things_model.getValue( uid, "gtd_item_note" );
+            return m_p_things_model->getValue( uid, "gtd_item_note" );
         }
         else
         {
@@ -149,45 +184,45 @@ public:
             const std::string &item,
             bool includeStandaloneTasks ) const
     {
-        if( !includeStandaloneTasks && m_things_model.hasTag( item, "gtd_project" ) )
+        if( !includeStandaloneTasks && m_p_things_model->hasTag( item, "gtd_project" ) )
         {
             return false;
         }
-        return m_things_model.hasTag( item, "gtd_task" );
+        return m_p_things_model->hasTag( item, "gtd_task" );
     }
 
     bool isInboxItem(
             const std::string &item ) const
     {
-        return m_things_model.isConnected( item, m_item_inbox );
+        return m_p_things_model->isConnected( item, m_item_inbox );
         // should be equal to
-        //return m_things_model.hasTag( item, "gtd_inbox" );
+        //return m_p_things_model->hasTag( item, "gtd_inbox" );
     }
 
     bool isProjectItem(
             const std::string &item,
             bool includeStandaloneTasks ) const
     {
-        if( !includeStandaloneTasks && m_things_model.hasTag( item, "gtd_task" ) )
+        if( !includeStandaloneTasks && m_p_things_model->hasTag( item, "gtd_task" ) )
         {
             return false;
         }
-        return m_things_model.hasTag( item, "gtd_project" );
+        return m_p_things_model->hasTag( item, "gtd_project" );
     }
 
     bool isDone(
             const std::string &task_item ) const
     {
-        return m_things_model.hasTag( task_item, "gtd_done" );
+        return m_p_things_model->hasTag( task_item, "gtd_done" );
     }
 
     std::string getParentProject(
             const std::string &task_item ) const
     {
         assert( isTaskItem( task_item, false ) );
-        assert( m_things_model.hasValue( task_item, "gtd_parent_project" ) );
+        assert( m_p_things_model->hasValue( task_item, "gtd_parent_project" ) );
 
-        return m_things_model.getValue( task_item, "gtd_parent_project" );
+        return m_p_things_model->getValue( task_item, "gtd_parent_project" );
     }
 
     std::string getNextTask(
@@ -203,7 +238,7 @@ public:
 
     bool empty() const
     {
-        return m_things_model.getItemCount() == 8;
+        return m_p_things_model->getItemCount() == 8;
     }
 
 /// save relevant interface
@@ -244,34 +279,34 @@ public:
     std::time_t getCreationTime(
             const std::string &uid ) const
     {
-        return m_things_model.getCreationTime( uid );
+        return m_p_things_model->getCreationTime( uid );
     }
 
     const std::string & getCaption(
             const std::string &uid ) const
     {
-        return m_things_model.getCaption( uid );
+        return m_p_things_model->getCaption( uid );
     }
 
     void setCaption(
             const std::string &uid,
             const std::string &caption )
     {
-        m_things_model.setCaption( uid, caption );
+        m_p_things_model->setCaption( uid, caption );
 
-        m_things_model.persistence_saveLocalModel();
+        m_p_things_model->persistence_saveLocalModel();
     }
 
     //void save( const std::string &filename )
     //{
-    //    return m_things_model.save( filename );
+    //    return m_p_things_model->save( filename );
     //}
 
     void eraseItem( const std::string &uid )
     {
-        m_things_model.eraseItem( uid );
+        m_p_things_model->eraseItem( uid );
 
-        m_things_model.persistence_saveLocalModel();
+        m_p_things_model->persistence_saveLocalModel();
     }
 };
 

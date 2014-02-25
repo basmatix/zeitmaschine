@@ -18,7 +18,7 @@
 //%array_class(double, doubleArray);
 //%array_class(char, charArray);
 
-//%shared_ptr(TokenizedText)
+%shared_ptr(zm::MindMatterModel)
 
 %{
 // includes the header in the wrapper code

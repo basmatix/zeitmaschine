@@ -14,6 +14,7 @@ if( CONFIG_BUILD_PYZM )
 
     file( GLOB ${PROJECT_NAME}_files
         CMakeLists.txt
+        test-pyZm.py
         *.txt
         *.h
         DOC-*
