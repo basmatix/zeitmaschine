@@ -13,16 +13,24 @@ import pyZm
 
 def yield_n(string, length):
     if len(string) <= length:
-        return string + '.' * (length - len(string))
+        return string + '.' * (length - len(string)) 
     else:
         return string[:length]
 
 def list_all(model):
 
-    print model.getItemCount()
+    logging.debug("found %d items total", model.getItemCount())
 
-    for i in model.getItems():
-        print i[:6], yield_n(model.getCaption(i), 30)
+#    for i in model.getItems():
+#        print i[:6], yield_n(model.getCaption(i), 30)
+    print     ("ID    TYPE   CAPTION" )
+    print     ("----  -----  ----" )
+    for i in model.getInboxItems(False):
+        print ("%s  [INB]  %s" % (i[:4], yield_n(model.getCaption(i), 30)))
+    for i in model.getTaskItems(True, False):
+        print ("%s  [TASK] %s" % (i[:4], yield_n(model.getCaption(i), 30)))
+    for i in model.getProjectItems(True, False):
+        print ("%s  [PROJ] %s" % (i[:4], yield_n(model.getCaption(i), 14)))
 
 def main():
     parser = OptionParser()
@@ -34,9 +42,6 @@ def main():
                       action="store_true", help="disabling checking checksums on startup")
     (options, args) = parser.parse_args()
 
-    if args is not []:
-        print args
-
     model_basic = pyZm.MindMatterModel.create()
     gtd_model = pyZm.zmGtdModel(model_basic)
 
@@ -47,21 +52,24 @@ def main():
         gtd_model.disableHashChecking()
     if options.verbose:
         gtd_model.setTraceLevel(4)
-    
+        logging.getLogger().setLevel(logging.DEBUG)
+
+    if args is not []:
+        logging.debug("positional args: %s", args)
+
     gtd_model.initialize()
-    print("use root folder: '%s'" % model_basic.getLocalFolder())
+
+    logging.debug("use root folder '%s'",model_basic.getLocalFolder())
 
     if args != [] and args[0] == "add":
         text = " ".join(args[1:])
-        print("'%s'" % text)
         new_item = gtd_model.createNewItem(text)
-        print new_item
+        logging.info("created new item %s with caption '%s'", new_item, text )
 
-    if args != [] and args[0] == "add":
+    if args != [] and args[0] == "task":
         text = " ".join(args[1:])
-        print("'%s'" % text)
-        new_item = gtd_model.createNewItem(text)
-        print new_item
+        new_item = gtd_model.createNewInboxItem(text)
+        logging.info("created new item %s with caption '%s'", new_item, text)
         
     list_all(gtd_model)
     
@@ -69,9 +77,9 @@ def main():
     
 if __name__ == "__main__":
     logging.basicConfig(
-        format="%(asctime)s [test] %(levelname)s %(message)s",
+        format="%(asctime)s %(levelname)s %(message)s",
         datefmt="%y%m%d-%H%M%S",
-        level=logging.DEBUG)
+        level=logging.WARNING)
     logging.addLevelName( logging.CRITICAL, "(CRITICAL)" )
     logging.addLevelName( logging.ERROR,    "(EE)" )
     logging.addLevelName( logging.WARNING,  "(WW)" )
