@@ -1,0 +1,44 @@
+python interface to zeitmaschine
+================================
+
+1. aim and todo
+---------------
+
+The SWIG based python bindings for zeitmaschine exist for two reasons:
+
+First of all of course Python is a great language and I want to be able
+to use zeimaschine features from within Python.
+
+The second reason is I believe that providing generic interfaces to your
+library makes it better.
+* the interface becomes cleaner because it makes less use of tricky
+  error prone technology
+* the file stucture becomes more modular
+* different environments let hidden design flaws and bugs become visible
+
+Last but not least I want to make use of asciitest bringing working real
+life examples which also act as tests into your documentation.
+
+["asciitest", "example_test", "python"]
+----
+# at this place zmPy has already been imported
+
+model = pyZm.MindMatterModel()
+model.setLocalFolder( "./test-localfolder" )
+model.setUsedUsername( "test-user" )
+model.setUsedHostname( "test-machine" )
+model.initialize()
+
+node1 = model.createNewItem( "node1" )
+node2 = model.createNewItem( "node2" )
+node3 = model.createNewItem( "node3" )
+
+model.connectDirected( node1, node2 )
+cond1 = model.isConnected(node1, node2)
+TEST( cond1, "node1 and node2 should be connected after connection" )
+
+#_EST( model.isConnected(node2, node1), "node1 and node2 should be connected after connection" )
+
+#_EST( not model.isConnected(node1, node3), "node1 and node2 should be connected after connection" )
+----
+
