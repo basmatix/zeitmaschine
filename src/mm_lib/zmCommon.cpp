@@ -173,3 +173,14 @@ std::set< std::string > zm::common::get_files_in_dir(
 
     return l_result;
 }
+
+std::string zm::common::to_string(int value)
+{
+#   if defined(ANDROID)
+        std::stringstream l_stream;
+        l_stream << value;
+        return l_stream.str();
+#   else
+        return std::to_string(value);
+#   endif
+}

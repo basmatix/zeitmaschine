@@ -32,6 +32,8 @@ std::string time_stamp_iso();
 
 std::time_t pt_to_time_t(const boost::posix_time::ptime& pt);
 
+std::string to_string(int value);
+
 void escapeRegex( std::string &regex );
 
 bool matchesWildcards(

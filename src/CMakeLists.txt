@@ -9,29 +9,56 @@ project( zeitmaschine )
 
 cmake_minimum_required(VERSION 2.8)
 
-#if( WIN32 )
-#    set( Boost_USE_STATIC_LIBS   ON  )  # on windows shared libraries seem to be not very well supported - diable them
-#else()
-#    set( Boost_USE_STATIC_LIBS   OFF )  # shared boost libs -otherwise we would have to recompile boost with -fPIC
-#    add_definitions( -DBOOST_ALL_NO_LIB -DBOOST_ALL_DYN_LINK )
-#endif()
-#set( Boost_FIND_REQUIRED TRUE)
-#set( Boost_USE_MULTITHREADED     ON  )  # better it is..
-#set( Boost_USE_STATIC_RUNTIME    ON  )  # don't have the system runtimes linked
+if(ANDROID)
+    message(STATUS "This is an Android build")
+    include_directories("${ANDROID_NDK_TOOLCHAIN_ROOT}/include/c++/4.8")
+    include_directories("${ANDROID_NDK_TOOLCHAIN_ROOT}/include/c++/4.8/arm-linux-androideabi")
+    set(YAML_CPP_BUILD_TOOLS OFF)
+    set( Boost_USE_STATIC_LIBS   ON )  # shared boost libs -otherwise we would have to recompile boost with -fPIC
+    #add_definitions( -DBOOST_ALL_NO_LIB -DBOOST_ALL_DYN_LINK )
+    #set( Boost_USE_MULTITHREADED     ON  )  # better it is..
+    #set( Boost_USE_STATIC_RUNTIME    ON  )  # don't have the system runtimes linked
+    set(Boost_COMPILER -gcc)
+    find_host_package(
+            Boost 1.47
+        COMPONENTS
+            filesystem
+            #serialization
+            system
+            #program_options
+            #thread
+            #iostreams
+            date_time
+            regex
+        REQUIRED
+    )
+else()
+    #if( WIN32 )
+    #    set( Boost_USE_STATIC_LIBS   ON  )  # on windows shared libraries seem to be not very well supported - diable them
+    #else()
+    #    set( Boost_USE_STATIC_LIBS   OFF )  # shared boost libs -otherwise we would have to recompile boost with -fPIC
+    #    add_definitions( -DBOOST_ALL_NO_LIB -DBOOST_ALL_DYN_LINK )
+    #endif()
+    #set( Boost_FIND_REQUIRED TRUE)
+    #set( Boost_USE_MULTITHREADED     ON  )  # better it is..
+    #set( Boost_USE_STATIC_RUNTIME    ON  )  # don't have the system runtimes linked
 
-find_package(
-        Boost 1.47
-    COMPONENTS
-        filesystem
-        #serialization
-        system
-        #program_options
-        #thread
-        #iostreams
-        date_time
-        regex
-    REQUIRED
-  )
+    find_package(
+            Boost 1.47
+        COMPONENTS
+            filesystem
+            #serialization
+            system
+            #program_options
+            #thread
+            #iostreams
+            date_time
+            regex
+        REQUIRED
+      )
+
+endif()
+
 
 if( NOT MSVC )
     set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -flto")
@@ -40,8 +67,16 @@ endif()
 option( CONFIG_CPP11 "compile with c++11 options" ON )
 if( CONFIG_CPP11 )
     if(${CMAKE_CXX_COMPILER_ID} MATCHES Clang)
-        set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -stdlib=libstdc++" )
+        set( CMAKE_CXX_FLAGS      "${CMAKE_CXX_FLAGS} -std=c++11 -stdlib=libstdc++" )
         set( CMAKE_CXX_LINK_FLAGS "${CMAKE_CXX_LINK_FLAGS} -std=c++11 -stdlib=libstdc++" )
+    elseif(ANDROID)
+        # this is dirty - should abort
+
+        #set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DGXX_EXPERIMENTAL_CXX0X" )
+
+        set( CMAKE_CXX_FLAGS      "${CMAKE_CXX_FLAGS} -std=c++11" )
+        set( CMAKE_CXX_LINK_FLAGS "${CMAKE_CXX_LINK_FLAGS} -std=c++11" )
+
     elseif( ${CMAKE_CXX_COMPILER_ID} STREQUAL GNU )
         include( CheckCXXCompilerFlag )
         check_cxx_compiler_flag(-std=c++11 HAVE_STD11)
@@ -113,16 +148,18 @@ add_subdirectory( mm_lib )
 
 add_subdirectory( zm_lib )
 
-#add_subdirectory( zmQt )
-add_subdirectory( zmQtListWidget )
+if(NOT ANDROID)
+    #add_subdirectory( zmQt )
+    add_subdirectory( zmQtListWidget )
 
-#add_subdirectory( zm_qt_mvc_stub )
+    #add_subdirectory( zm_qt_mvc_stub )
 
-add_subdirectory( zm_tool )
+    add_subdirectory( zm_tool )
 
-add_subdirectory( pyZm )
+    add_subdirectory( pyZm )
 
-add_subdirectory( test )
+    add_subdirectory( test )
+endif()
 
 if(CONFIG_BUILD_PYZM)
     option(CONFIG_HAVE_ASCIITEST "let asciidoc with asciitest create docs and tests" ON)

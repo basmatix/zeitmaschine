@@ -5,23 +5,30 @@
 
 #ifdef __unix__
 
-#include <unistd.h>
+//#include <unistd.h>
+#include <cstdlib>
 
 std::string zm::osal::getHostName()
 {
-    char l_hostname[1024];
-    gethostname(l_hostname,1024);
-    return std::string( l_hostname );
+    // not available in android
+    //char l_hostname[1024];
+    //gethostname(l_hostname, 1024);
+
+    return std::string(std::getenv("HOSTNAME"));
 }
 
 std::string zm::osal::getUserName()
 {
-    return std::string( getlogin() );
+    // not available in android
+    //return std::string( getlogin() );
+
+    // todo test if this should be USERNAME
+    return std::string(std::getenv("USER"));
 }
 
 std::string zm::osal::getHomePath()
 {
-    return std::string(getenv("HOME"));
+    return std::string(std::getenv("HOME"));
 }
 
 #endif

@@ -23,8 +23,8 @@ namespace zm
 class JournalItem;
 class MindMatter;
 
-typedef std::list< boost::shared_ptr<JournalItem> >   journal_item_vec_t;
-typedef boost::shared_ptr< JournalItem >                journal_ptr_t;
+typedef std::list< boost::shared_ptr<JournalItem> > journal_item_vec_t;
+typedef boost::shared_ptr< JournalItem >            journal_ptr_t;
 
 class JournalItem
 {
@@ -34,7 +34,7 @@ public:
         CreateItem,
         EraseItem,
         SetStringValue,
-        AddAttribute, //deprecated
+        AddAttribute, // deprecated!
 //        RemoveAttribute,
         ChangeCaption,
         Connect,
@@ -108,7 +108,7 @@ public:
         journal_ptr_t l_result =
                 journal_ptr_t(new JournalItem(item_uid, Connect));
         l_result->key = other_item_uid.first;
-        l_result->value = std::to_string(other_item_uid.second);
+        l_result->value = zm::common::to_string(other_item_uid.second);
         return l_result;
     }
 
