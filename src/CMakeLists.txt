@@ -148,6 +148,8 @@ add_subdirectory( mm_lib )
 
 add_subdirectory( zm_lib )
 
+add_subdirectory( javaZm )
+
 if(NOT ANDROID)
     #add_subdirectory( zmQt )
     add_subdirectory( zmQtListWidget )

@@ -375,7 +375,7 @@ bool mm_diff_and_reapply()
     l_m2.setUsedHostname( "test-machine" );
     l_m2.initialize();
 
-    test_assert( l_m2 == l_m1,
+    test_assert( l_m2.equals( l_m1 ),
                  "both model should hold same data" );
 
 
@@ -383,7 +383,7 @@ bool mm_diff_and_reapply()
 
     std::string item1 = l_m1.createNewItem("some new item");
 
-    test_assert( l_m2 != l_m1, "models should differ from each other" );
+    test_assert( not l_m2.equals( l_m1 ), "models should differ from each other" );
 
     // generate a change set
 
@@ -401,7 +401,7 @@ bool mm_diff_and_reapply()
 
     l_m1.connectDirected(item1, item2);
 
-    test_assert( l_m2 != l_m1, "models should differ from each other" );
+    test_assert( not l_m2.equals( l_m1 ), "models should differ from each other" );
 
     // generate a change set
     l_m1.debug_dump();

@@ -104,6 +104,10 @@ namespace zm
         MindMatterModel(const MindMatterModel &);
         MindMatterModel & operator=(const MindMatterModel &);
 
+        // forbidden because some languages don't support it (we want to SWIG)
+        bool operator==( const MindMatterModel &other ) const;
+        bool operator!=( const MindMatterModel &other ) const;
+
     public:
 
         MindMatterModel();
@@ -138,8 +142,6 @@ namespace zm
         void initialize();
 
         bool equals( const MindMatterModel &other, bool tell_why = false ) const;
-        bool operator==( const MindMatterModel &other ) const;
-        bool operator!=( const MindMatterModel &other ) const;
 
         void duplicateModelTo(MindMatterModel &other) const;
 
