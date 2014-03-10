@@ -21,23 +21,27 @@ if( CONFIG_BUILD_JAVAZM )
         *asciidoc.txt
     )
 
-    find_package( JNI REQUIRED )
-    # does not work on MacOS - have another check
-    if( NOT EXISTS "${JAVA_INCLUDE_PATH}/jni.h" )
+    if(NOT ANDROID)
+        #jni is available by default on android
 
-        message( FATAL_ERROR "JNI not found. Probably you need to install Java SDK." )
+        find_package( JNI REQUIRED )
+        # does not work on MacOS - have another check
+        if( NOT EXISTS "${JAVA_INCLUDE_PATH}/jni.h" )
 
-        if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-            message( WARNING "Running on Mac OS, you probably need Java OS X Developer package, too." )
+            message( FATAL_ERROR "JNI not found. Probably you need to install Java SDK." )
+
+            if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+                message( WARNING "Running on Mac OS, you probably need Java OS X Developer package, too." )
+            endif()
+
+            add_custom_target( ${PROJECT_NAME}_DEACTIVATED SOURCES ${${PROJECT_NAME}_FILES})
+
         endif()
 
-        add_custom_target( ${PROJECT_NAME}_DEACTIVATED SOURCES ${${PROJECT_NAME}_FILES})
-
+        include_directories(
+            ${JNI_INCLUDE_DIRS}
+        )
     endif()
-
-    include_directories(
-        ${JNI_INCLUDE_DIRS}
-    )
 
     find_package( SWIG REQUIRED )
     include( ${SWIG_USE_FILE} )
@@ -64,7 +68,7 @@ if( CONFIG_BUILD_JAVAZM )
     # disable Weffc++ for swig generated file
     if( NOT MSVC )
         set_source_files_properties(
-            ${CMAKE_CURRENT_BINARY_DIR}/pyZmPYTHON_wrap.cxx
+            ${CMAKE_CURRENT_BINARY_DIR}/javaZmJAVA_wrap.cxx
             PROPERTIES COMPILE_FLAGS -Wno-effc++
         )
     endif()

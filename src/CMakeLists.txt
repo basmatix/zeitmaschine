@@ -13,7 +13,7 @@ if(ANDROID)
     message(STATUS "This is an Android build")
     include_directories("${ANDROID_NDK_TOOLCHAIN_ROOT}/include/c++/4.8")
     include_directories("${ANDROID_NDK_TOOLCHAIN_ROOT}/include/c++/4.8/arm-linux-androideabi")
-    set(YAML_CPP_BUILD_TOOLS OFF)
+    set( YAML_CPP_BUILD_TOOLS OFF)
     set( Boost_USE_STATIC_LIBS   ON )  # shared boost libs -otherwise we would have to recompile boost with -fPIC
     #add_definitions( -DBOOST_ALL_NO_LIB -DBOOST_ALL_DYN_LINK )
     #set( Boost_USE_MULTITHREADED     ON  )  # better it is..
@@ -32,6 +32,11 @@ if(ANDROID)
             regex
         REQUIRED
     )
+
+    # won't help
+    #    set(SWIG_EXECUTABLE "/usr/bin/swig" )
+    #    set(SWIG_DIR "/usr/share/swig/2.0.11")
+
 else()
     #if( WIN32 )
     #    set( Boost_USE_STATIC_LIBS   ON  )  # on windows shared libraries seem to be not very well supported - diable them
