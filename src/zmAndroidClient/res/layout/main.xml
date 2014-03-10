@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    >
+    
+    <EditText
+        android:id="@+id/editText1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" 
+ 		android:layout_alignParentBottom="true"
+ 		android:singleLine="true" 
+ 		android:minHeight="50dp" 
+  		android:imeOptions="actionGo"
+  		android:inputType="textNoSuggestions"
+  		/>
+    
+    <ListView
+        android:id="@android:id/list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/editText1"
+		/>
+    
+</RelativeLayout>

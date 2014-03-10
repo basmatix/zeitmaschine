@@ -12,7 +12,6 @@ CMakeFiles
 *.a
 *.pyc
 *.cxx
-zm
 build-*
 build/*.png
 build/asciitest.zip
@@ -33,3 +32,5 @@ build/zm_tool
 build/zmQt
 build/DartConfiguration.tcl
 build/documentation/
+build/callgrind*
+build/javaZm
