@@ -27,6 +27,7 @@ bool mm_persist_and_load        ();
 bool mm_journaled_sync          ();
 bool mm_equality                ();
 bool mm_snapshot                ();
+bool mm_subfolders              ();
 
 int main( int arg_n, char **arg_v )
 {
@@ -41,6 +42,7 @@ int main( int arg_n, char **arg_v )
     l_tests["mm_persist_and_load"] =        mm_persist_and_load;
     l_tests["mm_journaled_sync"] =          mm_journaled_sync;
     l_tests["mm_snapshot"] =                mm_snapshot;
+    l_tests["mm_subfolders"] =              mm_subfolders;
 
     return run_tests( l_tests, arg_n, arg_v );
 }
@@ -624,5 +626,33 @@ bool mm_snapshot()
 
     test_assert( l_m3.equals( l_m1, true), "models should be equal" );
 
+    return true;
+}
+
+bool mm_subfolders()
+{
+    CleanFolder fc1("./test-localfolder");
+
+    zm::MindMatterModel l_m1;
+    l_m1.setLocalFolder( fc1 );
+    l_m1.setUsedUsername( "test-user" );
+    l_m1.setUsedHostname( "test-machine" );
+    l_m1.initialize();
+
+    test_assert( l_m1.getItemCount() == 0,
+                 "nodes should be empty for the test" );
+
+    std::string node1 = l_m1.createNewItem( "node1" );
+
+    std::string node2 = l_m1.createNewItem( "folder1" );
+
+    l_m1.putIntoFolder(node1, node2);
+
+    zm::uid_lst_t l( {"eins","zwei"} );
+
+    zm::uid_lst_t l_return = l_m1.getFolderChildren(node2);
+
+    test_assert(l_return == zm::uid_lst_t({"eins","zwei"}),"bla");
+    // todo subfolders
     return true;
 }

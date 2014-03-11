@@ -43,4 +43,5 @@ add_test( mm_persist_and_load         ${test_executable} mm_persist_and_load )
 add_test( mm_journaled_sync           ${test_executable} mm_journaled_sync )
 add_test( mm_equality                 ${test_executable} mm_equality )
 add_test( mm_snapshot                 ${test_executable} mm_snapshot )
+add_test( mm_subfolders               ${test_executable} mm_subfolders )
 
