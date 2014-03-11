@@ -240,6 +240,9 @@ namespace zm
 
         std::vector< std::string > getItems() const;
 
+        uid_lst_t getFolderChildren( 
+                const uid_t &folder_item ) const;
+
         std::time_t getCreationTime(
                 const std::string &uid ) const;
 
@@ -290,6 +293,13 @@ namespace zm
         void addTag(
                 const std::string &uid,
                 const std::string &tag_name );
+
+        void becomeFolder(
+                const uid_t &item );
+
+        void putIntoFolder(
+                const uid_t &item,
+                const uid_t &folder);
 
         bool removeTag(
                 const std::string &uid,

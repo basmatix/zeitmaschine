@@ -14,6 +14,12 @@
 
 using namespace zm;
 
+zm::uid_lst_t zm::MindMatterModel::getFolderChildren( const zm::uid_t &folder_item ) const
+{
+    uid_lst_t l_result;
+    return l_result;
+}
+
 std::time_t zm::MindMatterModel::getCreationTime( const std::string &uid ) const
 {
     ModelData::left_const_iterator l_item_it( m_things.left.find( uid ) );
@@ -277,6 +283,21 @@ void zm::MindMatterModel::_addTag(
     {
         _connectDuplex( item, l_tag_it, Directed );
     }
+}
+
+void zm::MindMatterModel::becomeFolder(
+        const uid_t &item )
+{
+    // todo: should not be possible if already connected bidirectionally with folder
+    addTag(item, "tsk_folder");
+}
+
+void zm::MindMatterModel::putIntoFolder(
+        const uid_t &item,
+        const uid_t &folder)
+{
+    // todo: what should happen if folders get connected bidirectionally
+    connectDirected(folder, item);
 }
 
 bool zm::MindMatterModel::removeTag(
