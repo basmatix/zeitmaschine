@@ -395,9 +395,9 @@ size_t zm::MindMatterModel::getItemCount() const
     return m_things.size();
 }
 
-std::vector< zm::uid_t > zm::MindMatterModel::getItems() const
+uid_lst_t zm::MindMatterModel::getItems() const
 {
-    std::vector< zm::uid_t > l_result;
+    uid_lst_t l_result;
     for(const ModelData::value_type &i: m_things)
     {
         l_result.push_back(i.left);

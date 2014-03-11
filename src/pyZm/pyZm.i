@@ -10,7 +10,7 @@
 
 %include "std_string.i"
 %include "std_vector.i"
-%include "std_list.i"
+//%include "std_list.i"
 %include "std_map.i"
 %include "std_pair.i"
 %include "boost_shared_ptr.i"
@@ -30,7 +30,7 @@
 %}
 
 %template()         std::vector<std::string>;
-%template()         std::list<std::string>;
+//%template()         std::list<std::string>;
 
 // Parse the header file to generate wrappers
 %include <zm/zmGtdModel.h>

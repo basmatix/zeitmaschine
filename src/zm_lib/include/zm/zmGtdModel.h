@@ -143,7 +143,7 @@ public:
         return m_p_things_model->getItemCount();
     }
 
-    std::vector< std::string > getItems() const
+    zm::uid_lst_t getItems() const
     {
         return m_p_things_model->getItems();
     }
@@ -165,20 +165,20 @@ public:
     int getImportance(
             const std::string &uid ) const;
 
-    std::list< std::string > getInboxItems(
+    zm::uid_lst_t getInboxItems(
             bool includeDoneItems ) const;
 
     /// returns a list of UIDs pointing to GTD-Tasks. StandaloneTasks are
     /// included by default, done items are excluded by default
-    std::list< std::string > getTaskItems(
+    zm::uid_lst_t getTaskItems(
             bool includeStandaloneTasks,
             bool includeDoneItems ) const;
 
-    std::list< std::string > getProjectItems(
+    zm::uid_lst_t getProjectItems(
             bool includeStandaloneTasks,
             bool includeDoneItems ) const;
 
-    std::list< std::string > getDoneItems() const;
+    zm::uid_lst_t getDoneItems() const;
 
     bool isTaskItem(
             const std::string &item,

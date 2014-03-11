@@ -12,11 +12,11 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/foreach.hpp>
 
-std::list< std::string > zmGtdModel::getInboxItems( bool includeDoneItems ) const
+zm::uid_lst_t zmGtdModel::getInboxItems( bool includeDoneItems ) const
 {
     // maybe should be done using http://www.boost.org/doc/libs/1_55_0/libs/iterator/doc/filter_iterator.html
 
-    std::list< std::string > l_return;
+    zm::uid_lst_t l_return;
 
     BOOST_FOREACH(const zm::MindMatterModel::ModelData::value_type& i,
                   m_p_things_model->things() )
@@ -31,9 +31,9 @@ std::list< std::string > zmGtdModel::getInboxItems( bool includeDoneItems ) cons
     return l_return;
 }
 
-std::list< std::string > zmGtdModel::getTaskItems( bool includeStandaloneTasks, bool includeDoneItems ) const
+zm::uid_lst_t zmGtdModel::getTaskItems( bool includeStandaloneTasks, bool includeDoneItems ) const
 {
-    std::list< std::string > l_return;
+    zm::uid_lst_t l_return;
 
     BOOST_FOREACH(const zm::MindMatterModel::ModelData::value_type& i,
                   m_p_things_model->things() )
@@ -48,9 +48,9 @@ std::list< std::string > zmGtdModel::getTaskItems( bool includeStandaloneTasks, 
     return l_return;
 }
 
-std::list< std::string > zmGtdModel::getProjectItems( bool includeStandaloneTasks, bool includeDoneItems ) const
+zm::uid_lst_t zmGtdModel::getProjectItems( bool includeStandaloneTasks, bool includeDoneItems ) const
 {
-    std::list< std::string > l_return;
+    zm::uid_lst_t l_return;
 
     BOOST_FOREACH(const zm::MindMatterModel::ModelData::value_type& i,
                   m_p_things_model->things() )
@@ -65,9 +65,9 @@ std::list< std::string > zmGtdModel::getProjectItems( bool includeStandaloneTask
     return l_return;
 }
 
-std::list< std::string > zmGtdModel::getDoneItems() const
+zm::uid_lst_t zmGtdModel::getDoneItems() const
 {
-    std::list< std::string > l_return;
+    zm::uid_lst_t l_return;
 
     BOOST_FOREACH(const zm::MindMatterModel::ModelData::value_type& i,
                   m_p_things_model->things() )
@@ -94,11 +94,11 @@ std::string zmGtdModel::getNextTask( const std::string &task_item ) const
 
 std::string zmGtdModel::orderATask() const
 {
-    std::list< std::string > l_possibleTasks = getTaskItems( true, false );
+    zm::uid_lst_t l_possibleTasks = getTaskItems( true, false );
 
     int taskId = rand() % l_possibleTasks.size();
 
-    std::list< std::string >::const_iterator it = l_possibleTasks.begin();
+    zm::uid_lst_t::const_iterator it = l_possibleTasks.begin();
 
     for( int i = 0; i < taskId; ++i )
     {
@@ -115,10 +115,10 @@ bool zmGtdModel::itemContentMatchesString( const std::string &uid, const std::st
 
 void zmGtdModel::print_statistics() const
 {
-    std::list< std::string > l_inbox = getInboxItems( false );
-    std::list< std::string > l_tasks = getTaskItems( false, false );
-    std::list< std::string > l_projects = getProjectItems( false, false );
-    std::list< std::string > l_done = getDoneItems();
+    zm::uid_lst_t l_inbox = getInboxItems( false );
+    zm::uid_lst_t l_tasks = getTaskItems( false, false );
+    zm::uid_lst_t l_projects = getProjectItems( false, false );
+    zm::uid_lst_t l_done = getDoneItems();
 
     size_t l_total_items = m_p_things_model->getItemCount();
 

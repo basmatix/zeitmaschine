@@ -238,7 +238,7 @@ namespace zm
 
         size_t getItemCount() const;
 
-        std::vector< std::string > getItems() const;
+        uid_lst_t getItems() const;
 
         uid_lst_t getFolderChildren( 
                 const uid_t &folder_item ) const;
@@ -272,7 +272,7 @@ namespace zm
                 const std::string &node1_uid,
                 const std::string &node2_uid ) const;
 
-        std::list< std::string > getNeighbours(
+        uid_lst_t getNeighbours(
                 const std::string &node_uid ) const;
 
     private: // const

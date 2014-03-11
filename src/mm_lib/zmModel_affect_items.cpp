@@ -159,10 +159,10 @@ bool zm::MindMatterModel::_isConnected(
     }
 }
 
-std::list< std::string > zm::MindMatterModel::getNeighbours(
+zm::uid_lst_t zm::MindMatterModel::getNeighbours(
         const std::string &node_uid ) const
 {
-    std::list< std::string > l_result;
+    zm::uid_lst_t l_result;
 
     ModelData::left_const_iterator l_item_it( m_things.left.find( node_uid ) );
     assert( l_item_it != m_things.left.end() );

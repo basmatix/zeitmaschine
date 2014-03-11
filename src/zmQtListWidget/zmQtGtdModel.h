@@ -111,22 +111,22 @@ public:
         return m_gtd_model.getImportance( uid );
     }
 
-    std::list< std::string > getInboxItems( bool includeDoneItems ) const
+    zm::uid_lst_t getInboxItems( bool includeDoneItems ) const
     {
         return m_gtd_model.getInboxItems( includeDoneItems );
     }
 
-    std::list< std::string > getDoneItems() const
+    zm::uid_lst_t getDoneItems() const
     {
         return m_gtd_model.getDoneItems();
     }
 
-    std::list< std::string > getTaskItems( bool includeStandaloneTasks, bool includeDoneItems ) const
+    zm::uid_lst_t getTaskItems( bool includeStandaloneTasks, bool includeDoneItems ) const
     {
         return m_gtd_model.getTaskItems( includeStandaloneTasks, includeDoneItems );
     }
 
-    std::list< std::string > getProjectItems( bool includeStandaloneTasks, bool includeDoneItems ) const
+    zm::uid_lst_t getProjectItems( bool includeStandaloneTasks, bool includeDoneItems ) const
     {
         return m_gtd_model.getProjectItems( includeStandaloneTasks, includeDoneItems );
     }
