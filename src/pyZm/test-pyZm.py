@@ -8,12 +8,13 @@
 from optparse import OptionParser
 import sys
 import logging
+import colorama
 
 import pyZm
 
-def yield_n(string, length):
+def yield_n(string, length, padding=' '):
     if len(string) <= length:
-        return string + '.' * (length - len(string)) 
+        return string + padding * (length - len(string.decode('utf-8')))
     else:
         return string[:length]
 
@@ -26,11 +27,11 @@ def list_all(model):
     print     ("ID    TYPE   CAPTION" )
     print     ("----  -----  ----" )
     for i in model.getInboxItems(False):
-        print ("%s  [INB]  %s" % (i[:4], yield_n(model.getCaption(i), 30)))
+        print(colorama.Fore.RED + "%s  [INB]  %s" % (i[:4], yield_n(model.getCaption(i), 80, ' ')))
     for i in model.getTaskItems(True, False):
-        print ("%s  [TASK] %s" % (i[:4], yield_n(model.getCaption(i), 30)))
+        print (colorama.Fore.BLUE + "%s  [TASK] %s" % (i[:4], yield_n(model.getCaption(i), 80, '.')))
     for i in model.getProjectItems(True, False):
-        print ("%s  [PROJ] %s" % (i[:4], yield_n(model.getCaption(i), 14)))
+        print ("%s  [PROJ] %s" % (i[:4], yield_n(model.getCaption(i), 80, '.')))
 
 def main():
     parser = OptionParser()
@@ -76,6 +77,7 @@ def main():
     gtd_model.localSave()
     
 if __name__ == "__main__":
+    colorama.init(autoreset=True)
     logging.basicConfig(
         format="%(asctime)s %(levelname)s %(message)s",
         datefmt="%y%m%d-%H%M%S",
