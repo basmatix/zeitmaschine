@@ -57,6 +57,8 @@ if( CONFIG_BUILD_JAVAZM )
 
     set( JAVA_ZM_LIBRARY_NAME "javaZm" )
 
+    set(CMAKE_SWIG_FLAGS -package zm.client.jni)
+
     set( SWIG_MODULE_${JAVA_ZM_LIBRARY_NAME}_EXTRA_DEPS
         "${ZM_INCLUDE_DIR}/zm/zmGtdModel.h"
         "${MM_INCLUDE_DIR}/mm/zmModel.h" )
@@ -78,8 +80,6 @@ if( CONFIG_BUILD_JAVAZM )
 
     swig_link_libraries( ${JAVA_ZM_LIBRARY_NAME} zm_s mm_s yaml-cpp )
 
-    get_target_property(TARGET_LOCATION ${JAVA_ZM_LIBRARY_NAME} LOCATION)
-    message( WARNING "XXXXX ${TARGET_LOCATION}")
     if( NOT MSVC )
          swig_link_libraries( ${JAVA_ZM_LIBRARY_NAME} ${Boost_LIBRARIES} )
     endif()
