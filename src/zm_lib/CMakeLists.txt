@@ -33,5 +33,3 @@ include_directories(
 add_library( zm_s STATIC  ${${PROJECT_NAME}_files} )
 
 set_target_properties( zm_s PROPERTIES COMPILE_FLAGS -fPIC )
-
-link_directories( ${Boost_LIBRARY_DIRS} )

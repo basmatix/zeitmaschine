@@ -57,8 +57,8 @@ add_executable( zm
 
 target_link_libraries( zm
     ${QT_LIBRARIES}
-    ${Boost_LIBRARIES}
     mm_s
     zm_s
     yaml-cpp
+    ${Boost_LIBRARIES}
 )
