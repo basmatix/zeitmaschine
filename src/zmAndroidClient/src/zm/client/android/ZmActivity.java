@@ -7,6 +7,7 @@ import java.util.List;
 
 import android.app.ListActivity;
 import android.os.Bundle;
+import android.os.Debug;
 import android.os.Environment;
 import android.widget.AdapterView;
 import android.widget.EditText;
@@ -20,7 +21,9 @@ import android.view.Menu;
 import android.view.View;
 import android.view.View.OnKeyListener;
 import android.widget.ArrayAdapter;
+import android.util.Log;
 
+import zm.client.jni.*;
 /// sources:
 /// http://www.mikeplate.com/2010/01/21/show-a-context-menu-for-long-clicks-in-an-android-listview/
 
@@ -29,7 +32,7 @@ public class ZmActivity
 	extends ListActivity 
 	implements TextWatcher, OnKeyListener 
 {
-	//static { System.loadLibrary("zmCoreWrapper"); }
+	static { System.loadLibrary("javaZm"); }
 
 	///
 	/// native methods
@@ -82,6 +85,28 @@ public class ZmActivity
 		//			 Environment.getExternalStorageDirectory().toString());
 
 		setListContent( "" );
+		
+		MindMatterModel theModel;
+		
+	    try {
+	    	Log.w("myApp", "no network");
+	    	
+			//theModel = MindMatterModel.create_new();
+			theModel = MindMatterModel.create();
+			theModel.setTraceLevel(4);
+			theModel.initialize();
+
+			theModel.createNewItem("Get milk!");
+			//MindMatterModel theModel = new MindMatterModel();
+						
+			theModel.createNewItem("test");
+			
+	    } catch (Exception e) {
+	        // gib die Fehlermeldung aus
+	        System.out.println("ERROR: "+e.getMessage());
+	    }		
+		
+		
 	}
 	
 	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) 
