@@ -7,7 +7,6 @@ CMakeFiles
 *.pc
 *.cbp
 *.cfg
-*.so
 *.s
 *.a
 *.pyc
