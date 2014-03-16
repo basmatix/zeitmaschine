@@ -49,6 +49,10 @@ std::set< std::string > get_files_in_dir(
         const std::string &directory,
         const std::string &wildcardPattern);
 
+void copy_file(
+        const std::string &file_src,
+        const std::string &file_dest);
+
 }
 }
 #endif
