@@ -28,6 +28,12 @@ using namespace zm;
 //static void _debug_dump(
 //        const zm::MindMatterModel::ModelData &thingsMap);
 
+boost::shared_ptr< zm::MindMatterModel > zm::MindMatterModel::create()
+{
+    return boost::shared_ptr<MindMatterModel>(
+                new MindMatterModel() );
+}
+
 zm::MindMatterModel::MindMatterModel()
     : m_things                  ()
     , m_things_synced           ()
@@ -39,8 +45,6 @@ zm::MindMatterModel::MindMatterModel()
     , m_options                 ( new zm::zmOptions )
     , m_checkHashes             ( true )
 {
-    trace_i("hostname: %s", zm::osal::getHostName().c_str());
-    trace_i("username: %s", zm::osal::getUserName().c_str());
 }
 
 zm::MindMatterModel::~MindMatterModel()
@@ -82,6 +86,10 @@ void zm::MindMatterModel::disableHashChecking()
 
 void zm::MindMatterModel::initialize()
 {
+    trace_i("hostname: %s", zm::osal::getHostName().c_str());
+    trace_i("username: %s", zm::osal::getUserName().c_str());
+    trace_i("homepath: %s", zm::osal::getHomePath().c_str());
+
     /// setLocalFolder() has not been called yet. use the default folder
     if(m_localFolderRoot == "")
     {
@@ -103,8 +111,6 @@ void zm::MindMatterModel::initialize()
     /// across sessions and unique for each client
     // <local folder>/zm-<user>-<client>-<zm-domain>-local.yaml
     // eg. /path/to/zeitmaschine/zm-frans-heizluefter-private-local.yaml
-
-
 
     trace_i("options: username: %s", m_options->getString("username").c_str());
     trace_i("options: hostname: %s", m_options->getString("hostname").c_str());
@@ -500,7 +506,8 @@ void zm::MindMatterModel::ModelData::debug_dump() const
         l_neighbours << "(";
         for( const item_neighbour_pair_t &m: i.right->m_neighbours)
         {
-            l_neighbours << m.second.first << "(" << m.second.second << ")" << ", ";
+            l_neighbours << m.second.first << "(" << m.second.second << ")"
+                         << ", ";
         }
         l_neighbours << ")";
         trace_i("  %s (#%s) %s '%s'",

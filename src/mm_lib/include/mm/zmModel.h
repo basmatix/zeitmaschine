@@ -113,11 +113,7 @@ namespace zm
         MindMatterModel();
         ~MindMatterModel();
 
-        static boost::shared_ptr<MindMatterModel> create()
-        {
-            return boost::shared_ptr<MindMatterModel>(
-                        new MindMatterModel() );
-        }
+        static boost::shared_ptr< MindMatterModel > create();
 
         void setConfigPersistance( bool value );
 
