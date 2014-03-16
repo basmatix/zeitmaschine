@@ -174,6 +174,23 @@ std::set< std::string > zm::common::get_files_in_dir(
     return l_result;
 }
 
+void zm::common::copy_file(
+        const std::string &a_file_src,
+        const std::string &a_file_dest)
+{
+    /// on Android copy_file seems to not exist even if BOOST_NO_SCOPED_ENUMS
+    /// or BOOST_NO_CXX11_SCOPED_ENUMS are being defined
+#   if defined(ANDROID)
+        std::ifstream  l_src(a_file_src,  std::ios::binary);
+        std::ofstream  l_dst(a_file_dest, std::ios::binary);
+
+        l_dst << l_src.rdbuf();
+#   else
+        boost::filesystem::copy_file( a_file_src, a_file_dest );
+#   endif
+
+}
+
 std::string zm::common::to_string(int value)
 {
 #   if defined(ANDROID)

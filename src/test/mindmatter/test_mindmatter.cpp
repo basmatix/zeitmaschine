@@ -11,9 +11,6 @@
 #include <iostream>
 #include <fstream>
 
-///http://www.robertnitsch.de/notes/cpp/cpp11_boost_filesystem_undefined_reference_copy_file
-#define BOOST_NO_SCOPED_ENUMS
-#define BOOST_NO_CXX11_SCOPED_ENUMS
 #include <boost/filesystem/operations.hpp>
 
 #include "../testing.h"
@@ -143,9 +140,9 @@ int sync_folders(
 
         if( ! boost::filesystem::exists(l_dest_file))
         {
-            boost::filesystem::copy_file(
-                        l_fs_itr->path(),
-                        l_dest_file );
+            zm::common::copy_file(
+                        l_fs_itr->path().string(),
+                        l_dest_file.string());
             l_result += 1;
         }
         else
