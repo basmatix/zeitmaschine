@@ -3,9 +3,27 @@
 
 #include <mm/zmOsal.h>
 
-#ifdef __unix__
+#if defined(ANDROID)
 
-//#include <unistd.h>
+#include <cstdlib>
+
+std::string zm::osal::getHostName()
+{
+    return "android_host";
+}
+
+std::string zm::osal::getUserName()
+{
+    return "android_user";
+}
+
+std::string zm::osal::getHomePath()
+{
+    return std::string(std::getenv("EXTERNAL_STORAGE"));
+}
+
+#elif defined(__unix__)
+
 #include <cstdlib>
 
 std::string zm::osal::getHostName()
@@ -13,7 +31,6 @@ std::string zm::osal::getHostName()
     // not available in android
     //char l_hostname[1024];
     //gethostname(l_hostname, 1024);
-
     return std::string(std::getenv("HOSTNAME"));
 }
 
