@@ -22,13 +22,11 @@ include_directories(
     "${MM_INCLUDE_DIR}"
 )
 
-link_directories( ${Boost_LIBRARY_DIRS} )
-
 add_executable( ${PROJECT_NAME} ${PROJECT_NAME}.cpp )
 
 target_link_libraries( ${PROJECT_NAME}
-    ${Boost_LIBRARIES}
     mm_s
+    ${common_libraries}
 )
 
 get_target_property(TARGET_LOCATION ${PROJECT_NAME} LOCATION)

@@ -14,7 +14,6 @@
 
 # general include directories
 include_directories( SYSTEM "${Boost_INCLUDE_DIR}" )
-link_directories( ${Boost_LIBRARY_DIRS} )
 
 include_directories( SYSTEM
     "${YAML_CPP_INCLUDE_DIR}"
@@ -27,10 +26,10 @@ include_directories(
 
 add_executable( test_gtd test_gtd.cpp )
 target_link_libraries( test_gtd
-    ${Boost_LIBRARIES}
     mm_s
     zm_s
     yaml-cpp
+    ${common_libraries}
 )
 
 set( test_executable "${CMAKE_CURRENT_BINARY_DIR}/test_gtd" )

@@ -10,9 +10,12 @@ project( zeitmaschine )
 cmake_minimum_required(VERSION 2.8)
 
 if(ANDROID)
+    list(APPEND common_libraries log)
     message(STATUS "This is an Android build")
     include_directories("${ANDROID_NDK_TOOLCHAIN_ROOT}/include/c++/4.8")
     include_directories("${ANDROID_NDK_TOOLCHAIN_ROOT}/include/c++/4.8/arm-linux-androideabi")
+    #link_directories( "${ANDROID_NDK_TOOLCHAIN_ROOT}/sysroot/usr/lib/" )
+
     set( YAML_CPP_BUILD_TOOLS OFF)
     set( Boost_USE_STATIC_LIBS   ON )  # shared boost libs -otherwise we would have to recompile boost with -fPIC
     #add_definitions( -DBOOST_ALL_NO_LIB -DBOOST_ALL_DYN_LINK )
@@ -38,6 +41,7 @@ if(ANDROID)
     #    set(SWIG_DIR "/usr/share/swig/2.0.11")
 
 else()
+    set( Boost_USE_STATIC_LIBS   ON )  # shared boost libs -otherwise we would have to recompile boost with -fPIC
     #if( WIN32 )
     #    set( Boost_USE_STATIC_LIBS   ON  )  # on windows shared libraries seem to be not very well supported - diable them
     #else()
@@ -51,7 +55,6 @@ else()
     find_package(
             Boost 1.47
         COMPONENTS
-            filesystem
             #serialization
             system
             #program_options
@@ -59,10 +62,15 @@ else()
             #iostreams
             date_time
             regex
+            filesystem
         REQUIRED
       )
 
 endif()
+
+link_directories( ${Boost_LIBRARY_DIRS} )
+
+list(APPEND common_libraries ${Boost_LIBRARIES})
 
 
 if( NOT MSVC )
@@ -105,6 +113,9 @@ else()
     # Using a multi-configuration generator eg MSVC or Xcode
     # that uses CMAKE_CONFIGURATION_TYPES and not CMAKE_BUILD_TYPE
 endif()
+
+# http://www.robertnitsch.de/notes/cpp/cpp11_boost_filesystem_undefined_reference_copy_file
+add_definitions( -DBOOST_NO_SCOPED_ENUMS -DBOOST_NO_CXX11_SCOPED_ENUMS )
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     add_definitions( -DDEBUG -D_DEBUG )
@@ -165,8 +176,9 @@ if(NOT ANDROID)
 
     add_subdirectory( pyZm )
 
-    add_subdirectory( test )
 endif()
+
+add_subdirectory( test )
 
 if(CONFIG_BUILD_PYZM)
     option(CONFIG_HAVE_ASCIITEST "let asciidoc with asciitest create docs and tests" ON)

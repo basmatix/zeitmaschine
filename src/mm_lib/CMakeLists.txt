@@ -36,5 +36,3 @@ include_directories(SYSTEM
 add_library( mm_s STATIC  ${${PROJECT_NAME}_files} )
 
 set_target_properties( mm_s PROPERTIES COMPILE_FLAGS -fPIC )
-
-link_directories( ${Boost_LIBRARY_DIRS} )

@@ -78,10 +78,9 @@ if( CONFIG_BUILD_JAVAZM )
     # important: add _ to swig generated python modules
     #set_target_properties( _${PYTHON_ZM_LIBRARY_NAME} PROPERTIES COMPILE_DEFINITIONS "${YSBOX_COMPILE_FLAGS}" )
 
-    swig_link_libraries( ${JAVA_ZM_LIBRARY_NAME} zm_s mm_s yaml-cpp )
-
-    if( NOT MSVC )
-         swig_link_libraries( ${JAVA_ZM_LIBRARY_NAME} ${Boost_LIBRARIES} )
-    endif()
+    swig_link_libraries( ${JAVA_ZM_LIBRARY_NAME}
+        zm_s mm_s yaml-cpp
+        ${common_libraries}
+    )
 
 endif()
