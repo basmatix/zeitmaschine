@@ -610,7 +610,7 @@ bool mm_snapshot()
     test_assert( l_m1.equals( l_m2, true), "models should be equal" );
     test_assert( l_m2.equals( l_m1, true), "models should be equal" );
 
-    l_m2.persistance_createSnapshot();
+    l_m2.persistence_createSnapshot();
 
     l_files_copied = sync_folders(fc2, fc3, "snapshot-*.yaml");
     test_assert( l_synced, "files should have been synced" );

@@ -126,7 +126,7 @@ bool zm::MindMatterModel::persistence_loadLocalModel()
     return l_result;
 }
 
-bool zm::MindMatterModel::persistance_loadSnapshot()
+bool zm::MindMatterModel::persistence_loadSnapshot()
 {
     std::set<std::string> l_snapshotfiles =
             zm::common::get_files_in_dir(
@@ -146,7 +146,7 @@ bool zm::MindMatterModel::persistance_loadSnapshot()
     return true;
 }
 
-bool zm::MindMatterModel::persistance_createSnapshot()
+bool zm::MindMatterModel::persistence_createSnapshot()
 {
     _saveModel(m_things, createSnapshotFileName());
 
@@ -573,3 +573,32 @@ void zm::MindMatterModel::yamlToThingsMap(
     // _debug_dump(thingsMap);
 }
 
+/// for convenience: see persistence_saveLocalModel()
+void zm::MindMatterModel::saveLocal()
+{
+    return persistence_saveLocalModel();
+}
+
+/// for convenience: see persistence_loadLocalModel()
+bool zm::MindMatterModel::loadLocal()
+{
+    return persistence_loadLocalModel();
+}
+
+/// for convenience: see persistence_loadSnapshot()
+bool zm::MindMatterModel::loadSnapshot()
+{
+    return persistence_loadSnapshot();
+}
+
+/// for convenience: see persistence_createSnapshot()
+bool zm::MindMatterModel::createSnapshot()
+{
+    return persistence_createSnapshot();
+}
+
+/// for convenience: see persistence_sync()
+bool zm::MindMatterModel::sync()
+{
+    return persistence_sync();
+}

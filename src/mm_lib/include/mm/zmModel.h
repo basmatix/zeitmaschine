@@ -117,11 +117,13 @@ namespace zm
 
         boost::shared_ptr< MindMatterModel > base();
 
-        void setConfigpersistence( bool value );
+        void setConfigpersistence(
+                bool value );
 
         /// sets the one and only local folder for configuration temorary and
         /// snapshot files
-        void setLocalFolder( const std::string &path );
+        void setLocalFolder(
+                const std::string &path );
 
         const std::string & getLocalFolder() const;
 
@@ -133,18 +135,22 @@ namespace zm
 
         void disableHashChecking();
 
-        void setTraceLevel(int level);
+        void setTraceLevel(
+                int level);
 
         /// will initialize the model by loading the persistant state using
         /// the given information
         void initialize();
 
         /// compares the model with another one and returns true if equal
-        bool equals( const MindMatterModel &other, bool tell_why = false ) const;
+        bool equals(
+                const MindMatterModel &other, bool tell_why = false ) const;
 
-        void duplicateModelTo(MindMatterModel &other) const;
+        void duplicateModelTo(
+                      MindMatterModel &other) const;
 
-        std::string createHash( bool verbose=false ) const;
+        std::string createHash(
+                bool verbose=false ) const;
 
         /// will write a recent model file without affecting the journals
         void persistence_saveLocalModel();
@@ -179,7 +185,8 @@ namespace zm
         /// for convenience: see persistence_sync()
         bool sync();
 
-        void applyChangeSet( const ChangeSet &changeSet );
+        void applyChangeSet(
+                const ChangeSet &changeSet );
 
         /// returns whether there is a valid username stored
         bool hasUsedUsername() const;
@@ -189,7 +196,8 @@ namespace zm
 
         /// set the username used by us - should be the system user
         /// name but doesn't have to
-        void setUsedUsername( const std::string &username );
+        void setUsedUsername(
+                const std::string &username );
 
         /// returns whether there is a valid hostname stored
         bool hasUsedHostname() const;
@@ -199,9 +207,11 @@ namespace zm
         //std::string getUsedHostname() const;
 
         /// set the hostname used by us
-        void setUsedHostname( const std::string &hostname );
+        void setUsedHostname(
+                const std::string &hostname );
 
-        ChangeSet diffTo( const MindMatterModel &other ) const;
+        ChangeSet diffTo(
+                const MindMatterModel &other ) const;
 
         void debug_dump() const;
 
@@ -251,6 +261,9 @@ namespace zm
         const ModelData & things() const;
 
         size_t getItemCount() const;
+
+        uid_lst_t query(
+                const std::string &query_str) const;
 
         uid_lst_t getItems() const;
 

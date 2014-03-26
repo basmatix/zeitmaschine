@@ -18,7 +18,7 @@ int main(int argc, char *argv[])
     }
     m_model.setLocalFolder( QDir::currentPath() + QDir::separator() + "zm-local" );
 
-    m_model.setConfigPersistance( false );
+    m_model.setConfigpersistence( false );
 
     m_model.setUsedUsername("frans");
     m_model.setUsedHostname("heizluefter");

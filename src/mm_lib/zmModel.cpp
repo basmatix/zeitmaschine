@@ -426,7 +426,7 @@ void zm::MindMatterModel::clear( ModelData &thingsMap )
     thingsMap.clear();
 }
 
-std::string zm::MindMatterModel::generateUid()
+zm::uid_t zm::MindMatterModel::generateUid()
 {
     std::string l_return;
     l_return.reserve(16);
@@ -526,4 +526,9 @@ void zm::MindMatterModel::ModelData::debug_dump() const
 void zm::MindMatterModel::debug_dump() const
 {
     m_things.debug_dump();
+}
+
+uid_lst_t zm::MindMatterModel::query(const std::string &query_str) const
+{
+
 }
