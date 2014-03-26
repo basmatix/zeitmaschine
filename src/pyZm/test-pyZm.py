@@ -20,7 +20,7 @@ def yield_n(string, length, padding=' '):
 
 def list_all(model):
 
-    logging.debug("found %d items total", model.getItemCount())
+    logging.debug("found %d items total", model.base().getItemCount())
 
 #    for i in model.getItems():
 #        print i[:6], yield_n(model.getCaption(i), 30)
@@ -31,16 +31,51 @@ def list_all(model):
     for i in model.getTaskItems(True, False):
         print (colorama.Fore.BLUE + "%s  [TASK] %s" % (i[:4], yield_n(model.getCaption(i), 80, '.')))
     for i in model.getProjectItems(True, False):
-        print ("%s  [PROJ] %s" % (i[:4], yield_n(model.getCaption(i), 80, '.')))
+        print ("%s  [PROJ] %s" % (i[:4], yield_n(model.base().getCaption(i), 80, '.')))
+
+
+def operate(gtd_model, args):
+
+    """ add
+        add task
+    """
+
+    if not args == []:
+
+        if args[0] == "add":
+            text = " ".join(args[1:])
+            new_item = gtd_model.createNewItem(text)
+            logging.info("created new item %s with caption '%s'", new_item, text )
+
+        if args[0] == "task":
+            text = " ".join(args[1:])
+            new_item = gtd_model.createNewInboxItem(text)
+            logging.info("created new item %s with caption '%s'", new_item, text)
+
+    list_all(gtd_model)
+
+    gtd_model.base().saveLocal()
+
 
 def main():
+
     parser = OptionParser()
+
     parser.add_option("-r", "--root", dest="root",
                       help="set root folder", metavar="PATH")
-    parser.add_option("-v", "--verbose", dest="verbose", default=False,
-                      action="store_true", help="set verbosity on", metavar="verbosity")
-    parser.add_option("-d", "--disable-hash-check", dest="no_check_hash", default=False,
-                      action="store_true", help="disabling checking checksums on startup")
+
+    parser.add_option("-v", "--verbose", dest="verbose",
+                      default=False, action="store_true",
+                      help="set verbosity on", metavar="verbosity")
+
+    parser.add_option("-d", "--disable-hash-check", dest="no_check_hash",
+                      default=False, action="store_true",
+                      help="disable checksum check on load")
+
+    parser.add_option("-n", "--no-auto-save", dest="auto_save",
+                      default=True, action="store_false",
+                      help="disabling checking checksums on startup")
+
     (options, args) = parser.parse_args()
 
     model_basic = pyZm.MindMatterModel.create()
@@ -62,19 +97,7 @@ def main():
 
     logging.debug("use root folder '%s'",model_basic.getLocalFolder())
 
-    if args != [] and args[0] == "add":
-        text = " ".join(args[1:])
-        new_item = gtd_model.createNewItem(text)
-        logging.info("created new item %s with caption '%s'", new_item, text )
-
-    if args != [] and args[0] == "task":
-        text = " ".join(args[1:])
-        new_item = gtd_model.createNewInboxItem(text)
-        logging.info("created new item %s with caption '%s'", new_item, text)
-        
-    list_all(gtd_model)
-    
-    gtd_model.localSave()
+    operate(gtd_model, args)
     
 if __name__ == "__main__":
     colorama.init(autoreset=True)

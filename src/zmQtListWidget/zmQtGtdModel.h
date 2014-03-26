@@ -28,48 +28,48 @@ class zmQtGtdModel
 public:
 
     zmWidgetItemMap *m_wi_map;
-    QTreeWidgetItem    *m_liToday;
-    QTreeWidgetItem    *m_liInbox;
-    QTreeWidgetItem    *m_liProjects;
-    QTreeWidgetItem    *m_liContexts;
-    QTreeWidgetItem    *m_liDone;
+    QTreeWidgetItem *m_liToday;
+    QTreeWidgetItem *m_liInbox;
+    QTreeWidgetItem *m_liProjects;
+    QTreeWidgetItem *m_liContexts;
+    QTreeWidgetItem *m_liDone;
 
     zmQtGtdModel();
     virtual ~zmQtGtdModel();
 
     bool hasUsedUsername() const
     {
-        return m_gtd_model.hasUsedUsername();
+        return m_gtd_model.base()->hasUsedUsername();
     }
 
     bool hasUsedHostname() const
     {
-        return m_gtd_model.hasUsedHostname();
+        return m_gtd_model.base()->hasUsedHostname();
     }
 
     void setUsedUsername( const QString &username )
     {
-        m_gtd_model.setUsedUsername( username.toUtf8().constData() );
+        m_gtd_model.base()->setUsedUsername( username.toUtf8().constData() );
     }
 
     void setUsedHostname( const QString &hostname )
     {
-        m_gtd_model.setUsedHostname( hostname.toUtf8().constData() );
+        m_gtd_model.base()->setUsedHostname( hostname.toUtf8().constData() );
     }
 
-    void setConfigPersistance( bool value )
+    void setConfigpersistence( bool value )
     {
-        m_gtd_model.setConfigPersistance( value );
+        m_gtd_model.base()->setConfigpersistence( value );
     }
 
     void setLocalFolder( const QString &path )
     {
-        m_gtd_model.setLocalFolder( path.toUtf8().constData() );
+        m_gtd_model.base()->setLocalFolder( path.toUtf8().constData() );
     }
 
     void addDomainSyncFolder( const QString &domainName, const QString &path )
     {
-        m_gtd_model.addDomainSyncFolder( domainName.toUtf8().constData(), path.toUtf8().constData() );
+        m_gtd_model.base()->addDomainSyncFolder( domainName.toUtf8().constData(), path.toUtf8().constData() );
     }
 
     void initialize( QTreeWidgetItem *root );
@@ -80,17 +80,17 @@ public:
 
     void sync()
     {
-        m_gtd_model.sync();
+        m_gtd_model.base()->persistence_sync();
     }
 
     void createSnapshot()
     {
-        m_gtd_model.createSnapshot();
+        m_gtd_model.base()->persistence_createSnapshot();
     }
 
     void localSave( const std::string &filename = "" )
     {
-        m_gtd_model.localSave();
+        m_gtd_model.base()->persistence_saveLocalModel();
     }
 
 /// const interface
@@ -103,7 +103,7 @@ public:
 
     std::time_t getCreationTime( const std::string &uid ) const
     {
-        return m_gtd_model.getCreationTime( uid );
+        return m_gtd_model.base()->getCreationTime( uid );
     }
 
     int getImportance( const std::string &uid ) const
@@ -168,7 +168,7 @@ public:
 
     const QString getCaption( const std::string &uid ) const
     {
-        return QString::fromUtf8( m_gtd_model.getCaption( uid ).c_str() );
+        return QString::fromUtf8( m_gtd_model.base()->getCaption( uid ).c_str() );
     }
 
     bool itemContentMatchesString( const std::string &uid, const QString &searchString ) const
@@ -221,12 +221,12 @@ public:
 
     void setCaption( const std::string &uid, const QString &caption )
     {
-        return m_gtd_model.setCaption( uid, caption.toUtf8().constData() );
+        return m_gtd_model.base()->setCaption( uid, caption.toUtf8().constData() );
     }
 
     void eraseItem( const std::string &uid )
     {
-        m_gtd_model.eraseItem( uid );
+        m_gtd_model.base()->eraseItem( uid );
     }
 };
 

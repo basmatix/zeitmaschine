@@ -1,0 +1,38 @@
+zeitmaschine - architectural blog
+=================================
+:toc:
+:icons:
+:numbered:
+
+//=-~^+
+
+2014.03.26 - should the distinct model views provide the generic interface?
+---------------------------------------------------------------------------
+
+Option 1: No - have model and gtdModel and handle them independently
+
+Option 2: Yes - only have gtdModel which provides full generic model interface
+
+Option 3: Both - let both models provide a base() which returns the
+                 generic model
+
+Option 3 sounds promising because it provides all advantages
+
+
+why to use smart_ptr on SWIG interface
+--------------------------------------
+
+currently no clue
+
+
+solve the conflict problem with immutable files
+-----------------------------------------------
+
+stub: use generic file sync tools like dropbox, sparkleshare, git etc.
+      without the need to handle conflicts on file system basis
+
+
+automatic save?
+---------------
+
+no

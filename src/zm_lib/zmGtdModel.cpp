@@ -12,6 +12,74 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/foreach.hpp>
 
+zmGtdModel::zmGtdModel()
+    : m_p_things_model  ()
+    , m_item_inbox      ()
+    , m_item_task       ()
+    , m_item_next_task  ()
+    , m_item_project    ()
+    , m_item_group      ()
+    , m_item_done       ()
+    , m_item_knowledge  ()
+    , m_item_person     ()
+{
+    m_p_things_model = boost::shared_ptr< zm::MindMatterModel >(
+                new zm::MindMatterModel() );
+}
+
+zmGtdModel::zmGtdModel(
+        boost::shared_ptr< zm::MindMatterModel > model)
+    : m_p_things_model  (model)
+    , m_item_inbox      ()
+    , m_item_task       ()
+    , m_item_next_task  ()
+    , m_item_project    ()
+    , m_item_group      ()
+    , m_item_done       ()
+    , m_item_knowledge  ()
+    , m_item_person     ()
+{}
+
+const boost::shared_ptr< zm::MindMatterModel > zmGtdModel::base() const
+{
+    return m_p_things_model;
+}
+
+boost::shared_ptr< zm::MindMatterModel > zmGtdModel::base()
+{
+    return m_p_things_model;
+}
+
+void zmGtdModel::initialize()
+{
+    m_p_things_model->initialize();
+
+    m_item_inbox =      m_p_things_model->findOrCreateTagItem( "gtd_inbox" );
+    m_item_task =       m_p_things_model->findOrCreateTagItem( "gtd_task" );
+    m_item_next_task =  m_p_things_model->findOrCreateTagItem( "gtd_next_task" );
+    m_item_project =    m_p_things_model->findOrCreateTagItem( "gtd_project" );
+    m_item_group =      m_p_things_model->findOrCreateTagItem( "gtd_group" );
+    m_item_done =       m_p_things_model->findOrCreateTagItem( "gtd_done" );
+    m_item_knowledge =  m_p_things_model->findOrCreateTagItem( "knowledge" );
+    m_item_person =     m_p_things_model->findOrCreateTagItem( "person" );
+
+    print_statistics();
+}
+
+std::string zmGtdModel::getNote( const std::string &uid ) const
+{
+    if( uid == "" ) return "";
+
+    if( m_p_things_model->hasValue( uid, "gtd_item_note" ))
+    {
+        return m_p_things_model->getValue( uid, "gtd_item_note" );
+    }
+    else
+    {
+        return "";
+    }
+}
+
 zm::uid_lst_t zmGtdModel::getInboxItems( bool includeDoneItems ) const
 {
     // maybe should be done using http://www.boost.org/doc/libs/1_55_0/libs/iterator/doc/filter_iterator.html
@@ -81,7 +149,52 @@ zm::uid_lst_t zmGtdModel::getDoneItems() const
     return l_return;
 }
 
-std::string zmGtdModel::getNextTask( const std::string &task_item ) const
+bool zmGtdModel::isTaskItem(
+        const std::string &item,
+        bool includeStandaloneTasks ) const
+{
+    if( !includeStandaloneTasks && m_p_things_model->hasTag( item, "gtd_project" ) )
+    {
+        return false;
+    }
+    return m_p_things_model->hasTag( item, "gtd_task" );
+}
+
+bool zmGtdModel::isInboxItem(
+        const std::string &item ) const
+{
+    return m_p_things_model->isConnected( item, m_item_inbox );
+    // should be equal to
+    //return m_p_things_model->hasTag( item, "gtd_inbox" );
+}
+
+bool zmGtdModel::isProjectItem(
+        const std::string &item,
+        bool includeStandaloneTasks ) const
+{
+    if( !includeStandaloneTasks && m_p_things_model->hasTag( item, "gtd_task" ) )
+    {
+        return false;
+    }
+    return m_p_things_model->hasTag( item, "gtd_project" );
+}
+
+bool zmGtdModel::isDone(
+        const std::string &task_item ) const
+{
+    return m_p_things_model->hasTag( task_item, "gtd_done" );
+}
+
+zm::uid_t zmGtdModel::getParentProject(
+        const std::string &task_item ) const
+{
+    assert( isTaskItem( task_item, false ) );
+    assert( m_p_things_model->hasValue( task_item, "gtd_parent_project" ) );
+
+    return m_p_things_model->getValue( task_item, "gtd_parent_project" );
+}
+
+zm::uid_t zmGtdModel::getNextTask( const std::string &task_item ) const
 {
     assert( isProjectItem( task_item, false ) );
     if( !m_p_things_model->hasValue( task_item, "gtd_next_task" ) )
@@ -150,8 +263,6 @@ std::string zmGtdModel::createNewInboxItem( const std::string &caption )
 
     m_p_things_model->connectDirected( l_item_uid, m_item_inbox );
 
-    m_p_things_model->persistence_saveLocalModel();
-
     return l_item_uid;
 }
 
@@ -163,8 +274,6 @@ void zmGtdModel::setNote( const std::string &uid, const std::string &value )
                   value.c_str() );
 
     m_p_things_model->setValue( uid, "gtd_item_note", value );
-
-    m_p_things_model->persistence_saveLocalModel();
 }
 
 void zmGtdModel::plusOne( const std::string &uid )
@@ -177,8 +286,6 @@ void zmGtdModel::plusOne( const std::string &uid )
     l_importance += 1;
 
     m_p_things_model->setValue( uid, "gtd_importance", boost::lexical_cast<std::string>(l_importance) );
-
-    m_p_things_model->persistence_saveLocalModel();
 }
 
 void zmGtdModel::registerItemAsTask( const std::string &task_item, const std::string &project_item )
@@ -189,8 +296,6 @@ void zmGtdModel::registerItemAsTask( const std::string &task_item, const std::st
     m_p_things_model->disconnect( task_item, m_item_inbox );
     m_p_things_model->connectDirected( task_item, m_item_task );
     m_p_things_model->connectDirected( task_item, project_item );
-
-    m_p_things_model->persistence_saveLocalModel();
 }
 
 void zmGtdModel::setDone( const std::string &task_item )
@@ -202,8 +307,6 @@ void zmGtdModel::setDone( const std::string &task_item )
                 task_item,
                 "gtd_time_done",
                 zm::common::time_stamp_iso_ext() );
-
-    m_p_things_model->persistence_saveLocalModel();
 }
 
 void zmGtdModel::castToProject( const std::string &item )
@@ -212,8 +315,6 @@ void zmGtdModel::castToProject( const std::string &item )
 
     m_p_things_model->disconnect( item, m_item_inbox );
     m_p_things_model->connectDirected( item, m_item_project );
-
-    m_p_things_model->persistence_saveLocalModel();
 }
 
 void zmGtdModel::setNextTask( const std::string &project_item, const std::string &task_item )
@@ -227,28 +328,24 @@ void zmGtdModel::setNextTask( const std::string &project_item, const std::string
         m_p_things_model->disconnect( l_currentNextTask, m_item_next_task );
     }
     m_p_things_model->connectDirected( task_item, m_item_next_task );
-
-    m_p_things_model->persistence_saveLocalModel();
 }
 
-    std::string zmGtdModel::createProject( const std::string &project_name )
+std::string zmGtdModel::createProject( const std::string &project_name )
+{
+    std::string l_item_uid = m_p_things_model->createNewItem( project_name );
+
+    m_p_things_model->connectDirected( project_name, m_item_project );
+
+    return l_item_uid;
+}
+
+int zmGtdModel::getImportance( const std::string &uid ) const
+{
+    if( m_p_things_model->hasValue( uid, "gtd_importance" ) )
     {
-        std::string l_item_uid = m_p_things_model->createNewItem( project_name );
-
-        m_p_things_model->connectDirected( project_name, m_item_project );
-
-        m_p_things_model->persistence_saveLocalModel();
-
-        return l_item_uid;
+        return boost::lexical_cast<int>( m_p_things_model->getValue( uid, "gtd_importance" ) );
     }
 
-    int zmGtdModel::getImportance( const std::string &uid ) const
-    {
-        if( m_p_things_model->hasValue( uid, "gtd_importance" ) )
-        {
-            return boost::lexical_cast<int>( m_p_things_model->getValue( uid, "gtd_importance" ) );
-        }
-
-        return 0;
-    }
+    return 0;
+}
 

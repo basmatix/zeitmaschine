@@ -54,6 +54,11 @@ zm::MindMatterModel::~MindMatterModel()
     delete m_options;
 }
 
+boost::shared_ptr< zm::MindMatterModel > zm::MindMatterModel::base()
+{
+    return boost::shared_ptr< MindMatterModel >(this);
+}
+
 void zm::MindMatterModel::setTraceLevel(int level)
 {
     set_trace_level(level);
@@ -122,7 +127,7 @@ void zm::MindMatterModel::initialize()
     if( !persistence_loadLocalModel() )
     {
         // should only be done on syncing
-        persistance_loadSnapshot();
+        persistence_loadSnapshot();
     }
 
     // this is currently not possible since a pull can not be done
@@ -285,7 +290,7 @@ ChangeSet zm::MindMatterModel::diff(
     return l_return;
 }
 
-void zm::MindMatterModel::setConfigPersistance( bool value )
+void zm::MindMatterModel::setConfigpersistence( bool value )
 {
     m_options->setAutosave( value );
 }

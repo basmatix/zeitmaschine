@@ -115,7 +115,9 @@ namespace zm
 
         static boost::shared_ptr< MindMatterModel > create();
 
-        void setConfigPersistance( bool value );
+        boost::shared_ptr< MindMatterModel > base();
+
+        void setConfigpersistence( bool value );
 
         /// sets the one and only local folder for configuration temorary and
         /// snapshot files
@@ -137,6 +139,7 @@ namespace zm
         /// the given information
         void initialize();
 
+        /// compares the model with another one and returns true if equal
         bool equals( const MindMatterModel &other, bool tell_why = false ) const;
 
         void duplicateModelTo(MindMatterModel &other) const;
@@ -146,17 +149,35 @@ namespace zm
         /// will write a recent model file without affecting the journals
         void persistence_saveLocalModel();
 
-        /// loads
+        /// loads a serialized representation from fs
         bool persistence_loadLocalModel();
 
-        bool persistance_loadSnapshot();
-        bool persistance_createSnapshot();
+        /// load a recent snapshot
+        bool persistence_loadSnapshot();
+
+        /// load a new snapshot from current model
+        bool persistence_createSnapshot();
 
         /// make a full model sync.
         /// first load and apply new journal files in the sync folders. Then
         /// write the local model files and make the temporary journal file
         /// available to the sync folders and
         bool persistence_sync();
+
+        /// for convenience: see persistence_saveLocalModel()
+        void saveLocal();
+
+        /// for convenience: see persistence_loadLocalModel()
+        bool loadLocal();
+
+        /// for convenience: see persistence_loadSnapshot()
+        bool loadSnapshot();
+
+        /// for convenience: see persistence_createSnapshot()
+        bool createSnapshot();
+
+        /// for convenience: see persistence_sync()
+        bool sync();
 
         void applyChangeSet( const ChangeSet &changeSet );
 
@@ -192,13 +213,10 @@ namespace zm
         std::string createJournalListFileName() const;
         std::string createSnapshotFileName() const;
 
-//        const std::set< std::string > & getHandledJournalFilenames();
-//        void appendHandledJournalFilename(const std::string &filename);
-
         static void yamlToThingsMap(
                 const YAML::Node  &yamlNode,
-                ModelData         &thingsMap,
-                bool               checkHashes);
+                      ModelData   &thingsMap,
+                      bool         checkHashes);
 
         // todo - refactor name
         static void _saveModel(
@@ -206,17 +224,17 @@ namespace zm
                 const std::string &filename);
 
         static void deepCopy(
-                const ModelData &source,
-                      ModelData &dest);
+                const ModelData   &source,
+                      ModelData   &dest);
 
         static ChangeSet diff(
-                const ModelData &model_from,
-                const ModelData &model_to);
+                const ModelData   &model_from,
+                const ModelData   &model_to);
 
         static bool equals(
-                const ModelData &a_first,
-                const ModelData &a_second,
-                bool tell_why);
+                const ModelData   &a_first,
+                const ModelData   &a_second,
+                      bool         tell_why);
 
         ChangeSet persistence_pullJournal();
 
@@ -237,39 +255,39 @@ namespace zm
         uid_lst_t getItems() const;
 
         uid_lst_t getFolderChildren( 
-                const uid_t &folder_item ) const;
+                const uid_t       &folder_item ) const;
 
         std::time_t getCreationTime(
-                const std::string &uid ) const;
+                const zm::uid_t   &uid ) const;
 
         bool hasItem(
-                const std::string &uid ) const;
+                const zm::uid_t   &uid ) const;
 
         std::string getValue(
-                const std::string &uid,
+                const zm::uid_t   &uid,
                 const std::string &name ) const;
 
         const std::string & getCaption(
-                const std::string &uid ) const;
+                const zm::uid_t   &uid ) const;
 
         bool hasTag(
-                const std::string &uid,
+                const zm::uid_t   &uid,
                 const std::string &tag_name ) const;
 
         bool hasValue(
-                const std::string &uid,
+                const zm::uid_t   &uid,
                 const std::string &name ) const;
 
         bool itemContentMatchesString(
-                const std::string &uid,
+                const zm::uid_t   &uid,
                 const std::string &searchString ) const;
 
         bool isConnected(
-                const std::string &node1_uid,
-                const std::string &node2_uid ) const;
+                const zm::uid_t   &node1_uid,
+                const zm::uid_t   &node2_uid ) const;
 
         uid_lst_t getNeighbours(
-                const std::string &node_uid ) const;
+                const zm::uid_t   &node_uid ) const;
 
     private: // const
         bool _isConnected(
@@ -279,58 +297,58 @@ namespace zm
     /// write relevant interface
     public:
 
-        std::string createNewItem(
+        zm::uid_t createNewItem(
                 const std::string &caption,
-                const std::string &uid = "" );
+                const zm::uid_t   &uid = "" );
 
         void eraseItem(
-                const std::string &uid );
+                const zm::uid_t   &uid );
 
         void addTag(
-                const std::string &uid,
+                const zm::uid_t   &uid,
                 const std::string &tag_name );
 
         void becomeFolder(
-                const uid_t &item );
+                const uid_t       &item );
 
         void putIntoFolder(
-                const uid_t &item,
-                const uid_t &folder);
+                const zm::uid_t   &item,
+                const zm::uid_t   &folder);
 
         bool removeTag(
-                const std::string &uid,
+                const zm::uid_t   &uid,
                 const std::string &tag_name );
 
         void setValue(
-                const std::string &uid,
+                const zm::uid_t   &uid,
                 const std::string &name,
                 const std::string &value );
 
         void setCaption(
-                const std::string &uid,
+                const zm::uid_t   &uid,
                 const std::string &caption );
 
         void connectDirected(
-                const std::string &node1_uid,
-                const std::string &node2_uid );
+                const zm::uid_t   &node1_uid,
+                const zm::uid_t   &node2_uid );
 
         void disconnect(
-                const std::string &node1_uid,
-                const std::string &node2_uid );
+                const zm::uid_t   &node1_uid,
+                const zm::uid_t   &node2_uid );
 
-        std::string findOrCreateTagItem(
+        zm::uid_t findOrCreateTagItem(
                 const std::string &name );
 
     private: // rw
 
-        static std::string _createNewItem(
-                ModelData    &model,
+        static zm::uid_t _createNewItem(
+                      ModelData   &model,
                 const std::string &caption,
-                const std::string &uid = "" );
+                const zm::uid_t   &uid = "" );
 
         static void _createNewItem(
-                ModelData    &model,
-                const std::string &uid,
+                      ModelData   &model,
+                const zm::uid_t   &uid,
                 const std::string &caption,
                 const std::string &time );
 
@@ -338,7 +356,7 @@ namespace zm
                 ModelData::left_iterator &item );
 
         static void _addTag(
-                ModelData                &model,
+                ModelData         &model,
                 ModelData::left_iterator &item,
                 const std::string &tag_name );
 
@@ -358,26 +376,27 @@ namespace zm
         static void _connectDuplex(
                 ModelData::left_iterator &item1,
                 ModelData::left_iterator &item2,
-                ConnectionType type);
+                ConnectionType     type);
 
         static void _connectSingle(
                 ModelData::left_iterator &item1,
                 ModelData::left_iterator &item2,
-                int type);
+                int                type);
 
         static void _disconnect(
                 ModelData::left_iterator &item1,
                 ModelData::left_iterator &item2 );
 
         // returns 16x8 bit
-        static std::string generateUid();
+        static zm::uid_t generateUid();
 
-        static void clear( ModelData &thingsMap );
+        static void clear(
+                      ModelData     &thingsMap );
 
         static bool loadModelFromFile(
                 const std::string   &input_file,
-                ModelData           &rw_thingsMap,
-                bool                 checkHashes);
+                      ModelData     &rw_thingsMap,
+                      bool           checkHashes);
     };
 }
 

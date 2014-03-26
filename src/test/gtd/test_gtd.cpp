@@ -35,9 +35,9 @@ bool gtd_basic_workflow()
     zmGtdModel l_m1(zm::MindMatterModel::create());
 
     boost::filesystem::remove_all( "./test-localfolder" );
-    l_m1.setLocalFolder( "./test-localfolder" );
-    l_m1.setUsedUsername( "test-user" );
-    l_m1.setUsedHostname( "test-machine" );
+    l_m1.base()->setLocalFolder( "./test-localfolder" );
+    l_m1.base()->setUsedUsername( "test-user" );
+    l_m1.base()->setUsedHostname( "test-machine" );
     l_m1.initialize();
 
     test_assert( l_m1.empty(),

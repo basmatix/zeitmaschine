@@ -177,7 +177,7 @@ zm::uid_lst_t zm::MindMatterModel::getNeighbours(
     return l_result;
 }
 
-std::string zm::MindMatterModel::findOrCreateTagItem( const std::string &tag_name )
+zm::uid_t zm::MindMatterModel::findOrCreateTagItem( const std::string &tag_name )
 {
     ModelData::left_iterator l_item_it( m_things.left.find( tag_name ) );
 
@@ -197,20 +197,20 @@ std::string zm::MindMatterModel::findOrCreateTagItem( const std::string &tag_nam
 ///
 /// write relevant interface
 ///
-std::string zm::MindMatterModel::createNewItem(
-        const std::string &caption,
-        const std::string &uid )
+zm::uid_t zm::MindMatterModel::createNewItem(
+        const std::string   &caption,
+        const zm::uid_t     &uid )
 {
     return _createNewItem(m_things, caption, uid);
 }
 
-std::string zm::MindMatterModel::_createNewItem(
+zm::uid_t zm::MindMatterModel::_createNewItem(
         ModelData    &model,
-        const std::string &caption,
-        const std::string &uid )
+        const std::string   &caption,
+        const zm::uid_t     &uid )
 {
     std::string l_time = zm::common::time_stamp_iso_ext();
-    std::string l_new_key( uid );
+    zm::uid_t   l_new_key( uid );
 
     if( uid == "" )
     {
@@ -225,20 +225,20 @@ std::string zm::MindMatterModel::_createNewItem(
 }
 
 void zm::MindMatterModel::_createNewItem(
-        ModelData    &model,
-        const std::string &a_uid,
-        const std::string &a_caption,
-        const std::string &a_time )
+        ModelData           &a_model,
+        const zm::uid_t     &a_uid,
+        const std::string   &a_caption,
+        const std::string   &a_time )
 {
     MindMatter *l_new_thing = new MindMatter( a_caption );
     if( a_uid != a_caption )
     {
         l_new_thing->addValue( "global_time_created", a_time );
     }
-    model.insert( ModelData::value_type(a_uid,l_new_thing) );
+    a_model.insert( ModelData::value_type(a_uid,l_new_thing) );
 }
 
-void zm::MindMatterModel::eraseItem( const std::string &uid )
+void zm::MindMatterModel::eraseItem( const zm::uid_t &uid )
 {
     ModelData::left_iterator l_item_it( m_things.left.find( uid ) );
 
@@ -256,8 +256,8 @@ void zm::MindMatterModel::_eraseItem( ModelData::left_iterator &item )
 }
 
 void zm::MindMatterModel::addTag(
-        const std::string &uid,
-        const std::string &tag_name )
+        const zm::uid_t     &uid,
+        const std::string   &tag_name )
 {
     ModelData::left_iterator l_item_it( m_things.left.find( uid ) );
 
@@ -269,7 +269,7 @@ void zm::MindMatterModel::addTag(
 void zm::MindMatterModel::_addTag(
         ModelData                  &model,
         ModelData::left_iterator   &item,
-        const std::string               &tag_name )
+        const std::string          &tag_name )
 {
     ModelData::left_iterator l_tag_it( model.left.find( tag_name ) );
 
