@@ -16,7 +16,6 @@ if(ANDROID)
     include_directories("${ANDROID_NDK_TOOLCHAIN_ROOT}/include/c++/4.8/arm-linux-androideabi")
     #link_directories( "${ANDROID_NDK_TOOLCHAIN_ROOT}/sysroot/usr/lib/" )
 
-    set( YAML_CPP_BUILD_TOOLS OFF)
     set( Boost_USE_STATIC_LIBS   ON )  # shared boost libs -otherwise we would have to recompile boost with -fPIC
     #add_definitions( -DBOOST_ALL_NO_LIB -DBOOST_ALL_DYN_LINK )
     #set( Boost_USE_MULTITHREADED     ON  )  # better it is..
@@ -67,6 +66,9 @@ else()
       )
 
 endif()
+
+set( YAML_CPP_BUILD_TOOLS OFF)
+set( YAML_CPP_BUILD_CONTRIB OFF)
 
 link_directories( ${Boost_LIBRARY_DIRS} )
 
