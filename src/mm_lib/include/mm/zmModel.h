@@ -257,9 +257,6 @@ namespace zm
     /// const interface
     public:
 
-        // should be deprecated
-        const ModelData & things() const;
-
         size_t getItemCount() const;
 
         uid_lst_t query(

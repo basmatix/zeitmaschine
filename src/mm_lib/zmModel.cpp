@@ -231,7 +231,7 @@ bool zm::MindMatterModel::operator!=( const zm::MindMatterModel &other ) const
 
 ChangeSet zm::MindMatterModel::diffTo( const MindMatterModel &a_other ) const
 {
-    return diff(m_things, a_other.things());
+    return diff(m_things, a_other.m_things);
 }
 
 ChangeSet zm::MindMatterModel::diff(
@@ -395,11 +395,6 @@ std::string zm::MindMatterModel::createJournalListFileName() const
     return l_ssFileName.str();
 }
 
-const zm::MindMatterModel::ModelData & zm::MindMatterModel::things() const
-{
-    return m_things;
-}
-
 size_t zm::MindMatterModel::getItemCount() const
 {
     return m_things.size();
@@ -528,6 +523,77 @@ void zm::MindMatterModel::debug_dump() const
 
 uid_lst_t zm::MindMatterModel::query(const std::string &query_str) const
 {
+    // maybe we should be working with
+    // http://www.boost.org/doc/libs/1_55_0/libs/iterator/doc/filter_iterator.html
+
     uid_lst_t l_result;
+/*
+    if(query_str startswith "interim_inbox_items")
+    {
+        for(const zm::MindMatterModel::ModelData::value_type& i: m_things)
+        {
+            if( isInboxItem( i.left )
+                && (includeDoneItems       || !isDone(  i.left ) ) )
+            {
+                l_return.push_back( i.left );
+            }
+        }
+    }
+*/
+    /*
+    boost::str(boost::format("interim_task_items %s %s")
+               % (includeStandaloneTasks ? "+standalone":"")
+               % (includeDoneItems ? "+done":"")));
+    zm::uid_lst_t l_return;
+
+    for(const zm::MindMatterModel::ModelData::value_type& i:
+                  m_p_things_model->things() )
+    {
+        if( isTaskItem( i.left, includeStandaloneTasks )
+                && (includeDoneItems       || !isDone(  i.left ) ) )
+        {
+            l_return.push_back( i.left );
+        }
+    }
+
+    return l_return;
+    */
+
+    /*
+    m_p_things_model->query(
+                boost::str(boost::format("interim_project_items %s %s")
+                           % (includeStandaloneTasks ? "+standalone":"")
+                           % (includeDoneItems ? "+done":"")));
+    zm::uid_lst_t l_return;
+
+    for(const zm::MindMatterModel::ModelData::value_type& i:
+                  m_p_things_model->things() )
+    {
+        if( isProjectItem( i.left, includeStandaloneTasks )
+                && (includeDoneItems       || !isDone(  i.left ) ) )
+        {
+            l_return.push_back( i.left );
+        }
+    }
+
+    return l_return;
+    */
+
+    /*
+    m_p_things_model->query("interim_done_items");
+    zm::uid_lst_t l_return;
+
+    for(const zm::MindMatterModel::ModelData::value_type& i:
+                  m_p_things_model->things() )
+    {
+        if( isDone( i.left ) )
+        {
+            l_return.push_back( i.left );
+        }
+    }
+
+    return l_return;
+    */
+
     return l_result;
 }

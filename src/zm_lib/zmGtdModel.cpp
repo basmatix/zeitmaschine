@@ -10,6 +10,7 @@
 #include <mm/zmTrace.h>
 
 #include <boost/lexical_cast.hpp>
+#include <boost/format.hpp>
 
 zmGtdModel::zmGtdModel()
     : m_p_things_model  ()
@@ -79,73 +80,37 @@ std::string zmGtdModel::getNote( const std::string &uid ) const
     }
 }
 
-zm::uid_lst_t zmGtdModel::getInboxItems( bool includeDoneItems ) const
+zm::uid_lst_t zmGtdModel::getInboxItems(
+        bool includeDoneItems ) const
 {
-    // maybe should be done using http://www.boost.org/doc/libs/1_55_0/libs/iterator/doc/filter_iterator.html
-
-    zm::uid_lst_t l_return;
-
-    for(const zm::MindMatterModel::ModelData::value_type& i:
-                  m_p_things_model->things() )
-    {
-        if( isInboxItem( i.left )
-            && (includeDoneItems       || !isDone(  i.left ) ) )
-        {
-            l_return.push_back( i.left );
-        }
-    }
-
-    return l_return;
+    return m_p_things_model->query(
+                boost::str(boost::format("interim_inbox_items %s")
+                           % (includeDoneItems          ? "+done":"")));
 }
 
-zm::uid_lst_t zmGtdModel::getTaskItems( bool includeStandaloneTasks, bool includeDoneItems ) const
+zm::uid_lst_t zmGtdModel::getTaskItems(
+        bool includeStandaloneTasks,
+        bool includeDoneItems ) const
 {
-    zm::uid_lst_t l_return;
-
-    for(const zm::MindMatterModel::ModelData::value_type& i:
-                  m_p_things_model->things() )
-    {
-        if( isTaskItem( i.left, includeStandaloneTasks )
-                && (includeDoneItems       || !isDone(  i.left ) ) )
-        {
-            l_return.push_back( i.left );
-        }
-    }
-
-    return l_return;
+    return m_p_things_model->query(
+                boost::str(boost::format("interim_task_items %s %s")
+                           % (includeStandaloneTasks    ? "+standalone":"")
+                           % (includeDoneItems          ? "+done":"")));
 }
 
-zm::uid_lst_t zmGtdModel::getProjectItems( bool includeStandaloneTasks, bool includeDoneItems ) const
+zm::uid_lst_t zmGtdModel::getProjectItems(
+        bool includeStandaloneTasks,
+        bool includeDoneItems ) const
 {
-    zm::uid_lst_t l_return;
-
-    for(const zm::MindMatterModel::ModelData::value_type& i:
-                  m_p_things_model->things() )
-    {
-        if( isProjectItem( i.left, includeStandaloneTasks )
-                && (includeDoneItems       || !isDone(  i.left ) ) )
-        {
-            l_return.push_back( i.left );
-        }
-    }
-
-    return l_return;
+    return m_p_things_model->query(
+                boost::str(boost::format("interim_project_items %s %s")
+                           % (includeStandaloneTasks    ? "+standalone":"")
+                           % (includeDoneItems          ? "+done":"")));
 }
 
 zm::uid_lst_t zmGtdModel::getDoneItems() const
 {
-    zm::uid_lst_t l_return;
-
-    for(const zm::MindMatterModel::ModelData::value_type& i:
-                  m_p_things_model->things() )
-    {
-        if( isDone( i.left ) )
-        {
-            l_return.push_back( i.left );
-        }
-    }
-
-    return l_return;
+    return m_p_things_model->query("interim_done_items");
 }
 
 bool zmGtdModel::isTaskItem(
