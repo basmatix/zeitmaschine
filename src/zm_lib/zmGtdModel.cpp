@@ -10,7 +10,6 @@
 #include <mm/zmTrace.h>
 
 #include <boost/lexical_cast.hpp>
-#include <boost/foreach.hpp>
 
 zmGtdModel::zmGtdModel()
     : m_p_things_model  ()
@@ -86,7 +85,7 @@ zm::uid_lst_t zmGtdModel::getInboxItems( bool includeDoneItems ) const
 
     zm::uid_lst_t l_return;
 
-    BOOST_FOREACH(const zm::MindMatterModel::ModelData::value_type& i,
+    for(const zm::MindMatterModel::ModelData::value_type& i:
                   m_p_things_model->things() )
     {
         if( isInboxItem( i.left )
@@ -103,7 +102,7 @@ zm::uid_lst_t zmGtdModel::getTaskItems( bool includeStandaloneTasks, bool includ
 {
     zm::uid_lst_t l_return;
 
-    BOOST_FOREACH(const zm::MindMatterModel::ModelData::value_type& i,
+    for(const zm::MindMatterModel::ModelData::value_type& i:
                   m_p_things_model->things() )
     {
         if( isTaskItem( i.left, includeStandaloneTasks )
@@ -120,7 +119,7 @@ zm::uid_lst_t zmGtdModel::getProjectItems( bool includeStandaloneTasks, bool inc
 {
     zm::uid_lst_t l_return;
 
-    BOOST_FOREACH(const zm::MindMatterModel::ModelData::value_type& i,
+    for(const zm::MindMatterModel::ModelData::value_type& i:
                   m_p_things_model->things() )
     {
         if( isProjectItem( i.left, includeStandaloneTasks )
@@ -137,7 +136,7 @@ zm::uid_lst_t zmGtdModel::getDoneItems() const
 {
     zm::uid_lst_t l_return;
 
-    BOOST_FOREACH(const zm::MindMatterModel::ModelData::value_type& i,
+    for(const zm::MindMatterModel::ModelData::value_type& i:
                   m_p_things_model->things() )
     {
         if( isDone( i.left ) )
@@ -246,7 +245,7 @@ void zmGtdModel::print_statistics() const
     trace_i( " gtd inbox items:... %d", l_inbox_items );
 
     trace_i( " gtd project items:. %d", l_project_items );
-    BOOST_FOREACH( std::string s, l_projects )
+    for( std::string s: l_projects )
     {
         trace_i( "    %s: '%s'", s.c_str(), m_p_things_model->getCaption( s ).c_str() );
     }

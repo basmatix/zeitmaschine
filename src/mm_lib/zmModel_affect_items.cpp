@@ -10,7 +10,6 @@
 #include "zmThing.h"
 
 #include <mm/zmTrace.h>
-#include <boost/foreach.hpp>
 
 using namespace zm;
 

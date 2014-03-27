@@ -15,7 +15,6 @@
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
 #include <boost/filesystem.hpp>
-#include <boost/foreach.hpp>
 
 namespace boost_ptree = boost::property_tree;
 
@@ -89,7 +88,7 @@ public:
         std::vector< std::string > l_return;
         l_return.reserve( l_existing_child.get().size() );
 
-        BOOST_FOREACH( const boost_ptree::ptree::value_type &v, l_existing_child.get())
+        for( const boost_ptree::ptree::value_type &v: l_existing_child.get())
         {
             l_return.push_back( v.second.data() );
         }

@@ -111,7 +111,7 @@ int sync_folders(
         bool l_match = false;
 
         /// match against all provided patterns
-        BOOST_FOREACH(const std::string&l_pattern, l_patternlist)
+        for(const std::string&l_pattern: l_patternlist)
         {
             printf("'%s' '%s'",
                    l_pattern.c_str(),

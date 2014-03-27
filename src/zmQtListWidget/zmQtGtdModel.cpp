@@ -5,15 +5,10 @@
 /// Copyright (C) 2013 Frans Fuerst
 ///
 
-/// this is a workaround for a qt based bug
-/// http://stackoverflow.com/questions/15191361/boostq-foreach-has-not-been-declared
-#include <boost/foreach.hpp>
-
 #include "zmQtGtdModel.h"
 #include "zmWidgetItemMap.h"
 #include "zmQTreeWidget.h"
 
-#include <boost/foreach.hpp>
 #include <QtGui/QTreeWidgetItem>
 
 zmQtGtdModel::zmQtGtdModel()
@@ -120,22 +115,22 @@ void zmQtGtdModel::populate()
 {
     /// enforce list filling order by now..
 
-    BOOST_FOREACH( const std::string& p, getProjectItems( false, false ) )
+    for( const std::string& p: getProjectItems( false, false ) )
     {
         addListItem( p );
     }
 
-    BOOST_FOREACH( const std::string& t, getTaskItems( true, false ) )
+    for( const std::string& t: getTaskItems( true, false ) )
     {
         addListItem( t );
     }
 
-    BOOST_FOREACH( const std::string& i, getInboxItems( false ) )
+    for( const std::string& i: getInboxItems( false ) )
     {
         addListItem( i );
     }
 
-    BOOST_FOREACH( const std::string& i, getDoneItems() )
+    for( const std::string& i: getDoneItems() )
     {
         addListItem( i );
     }

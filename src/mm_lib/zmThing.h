@@ -71,7 +71,6 @@ namespace zm
 
 #include <algorithm>
 #include <boost/functional/hash.hpp>
-#include <boost/foreach.hpp>
 
 #include <mm/zmTrace.h>
 

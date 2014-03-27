@@ -27,11 +27,6 @@
 #include <QtGui/QMessageBox>
 #include <QtGui/QInputDialog>
 
-//#include <iostream>
-//#include <assert.h>
-
-#include <boost/foreach.hpp>
-
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow          ( parent )
     , m_ui                 ( new Ui_window )

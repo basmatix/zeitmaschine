@@ -16,7 +16,6 @@
 #include <string>
 #include <yaml-cpp/yaml.h>
 
-#include <boost/foreach.hpp>
 #include <boost/filesystem.hpp>
 
 // info regarding string encoding:
@@ -108,6 +107,7 @@ bool zm::ChangeSet::write( const std::string &journalFileName )
     return true;
 }
 
+/// just for convenience
 inline std::string str(const YAML::Node &n)
 {
     return n.as< std::string >();
@@ -197,13 +197,7 @@ void zm::ChangeSet::load( const std::string &journalFileName )
 }
 
 void zm::ChangeSet::clear()
-{   /*
-    BOOST_FOREACH( JournalItem *i, m_journal )
-    {
-        delete i;
-    }
-    */
-
+{
     m_journal.clear();
 }
 
@@ -213,7 +207,7 @@ void zm::ChangeSet::append(journal_item_vec_t a_changes)
     /// m_journal.insert(m_journal.end(), changes.begin(), changes.end());
     /// but ensures that CreateItem events are located at the beginning
 
-    BOOST_FOREACH(journal_item_vec_t::value_type &l_change, a_changes)
+    for(journal_item_vec_t::value_type &l_change: a_changes)
     {
         if( l_change->type == JournalItem::CreateItem )
         {
@@ -228,7 +222,7 @@ void zm::ChangeSet::append(journal_item_vec_t a_changes)
 
 void zm::ChangeSet::debug_dump() const
 {
-    BOOST_FOREACH( const journal_item_vec_t::value_type &l_change, m_journal)
+    for( const journal_item_vec_t::value_type &l_change: m_journal)
     {
         trace_i("  on %s: (t:%s, k:%s, v:%s)",
                      l_change->item_uid.c_str(),

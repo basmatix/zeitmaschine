@@ -18,7 +18,6 @@
 #include <yaml-cpp/yaml.h>
 
 #include <algorithm>
-#include <boost/foreach.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/thread.hpp>
 
@@ -247,7 +246,7 @@ ChangeSet zm::MindMatterModel::diff(
     std::set< std::string > l_done_items;
 
     /// go through all elements of m_things
-    BOOST_FOREACH( const ModelData::value_type& i, model_from )
+    for( const ModelData::value_type& i: model_from )
     {
         const std::string &l_this_item_id(i.left);
 
@@ -419,7 +418,7 @@ uid_lst_t zm::MindMatterModel::getItems() const
 
 void zm::MindMatterModel::clear( ModelData &thingsMap )
 {
-    BOOST_FOREACH(const ModelData::value_type& i, thingsMap)
+    for(const ModelData::value_type& i: thingsMap)
     {
         delete i.right;
     }
@@ -443,8 +442,7 @@ std::string zm::MindMatterModel::createHash( bool verbose) const
 {
     size_t l_hash(0);
 
-    BOOST_FOREACH(const zm::MindMatterModel::ModelData::value_type &i,
-                  m_things)
+    for(const zm::MindMatterModel::ModelData::value_type &i: m_things)
     {
         boost::hash_combine(l_hash, i.left);
         boost::hash_combine(l_hash, i.right->createHash());
@@ -530,5 +528,6 @@ void zm::MindMatterModel::debug_dump() const
 
 uid_lst_t zm::MindMatterModel::query(const std::string &query_str) const
 {
-
+    uid_lst_t l_result;
+    return l_result;
 }

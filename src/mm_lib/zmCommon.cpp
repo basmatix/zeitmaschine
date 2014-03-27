@@ -9,7 +9,6 @@
 
 #include <boost/date_time.hpp>
 #include <boost/regex.hpp>
-#include <boost/foreach.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>
 
@@ -152,8 +151,7 @@ std::set< std::string > zm::common::get_files_in_dir(
         bool l_match = false;
 
         /// match against all provided patterns
-        BOOST_FOREACH(const std::string&l_pattern,
-                      zm::common::split(a_wildcardPattern, ";"))
+        for(const std::string&l_pattern: zm::common::split(a_wildcardPattern, ";"))
         {
             if( zm::common::matchesWildcards(
                         l_fs_itr->path().filename().string(),
