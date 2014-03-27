@@ -4,7 +4,7 @@ zeitmaschine - GTD inspired home for thoughts
 :icons:
 :numbered:
 :website: http://www.scitics.de
-//=-~^+
+
 
 next steps
 ----------
@@ -21,6 +21,17 @@ steps in development are listed here, too.
   - have "children" properties (requires lists)
 
 
+stories
+-------
+
+* tracking
+** KPIs
+** average duration / number of tasks / day
+
+* stacking
+** stack for every work-thread
+** schedule clear work threads for the day
+
 
 requirements
 ------------
@@ -28,18 +39,20 @@ requirements
 top level features
 ~~~~~~~~~~~~~~~~~~
 
+
 .*F.00 - _GTD_*
-****************************************************
+********************************************************************************
 Provide GTD-like self-management capabilities
-****************************************************
+********************************************************************************
+
 
 .*F.01 - _note taking_*
-****************************************************
+********************************************************************************
 * plain text
 * file links
 * context links
 * brain stack
-****************************************************
+********************************************************************************
 
 
 .*F.02 - _multi client_*
