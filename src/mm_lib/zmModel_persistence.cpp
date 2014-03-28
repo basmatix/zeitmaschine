@@ -493,7 +493,7 @@ void zm::MindMatterModel::yamlToThingsMap(
                     || l_uid == l_new_thing->m_caption );
 
             a_thingsMap.insert(
-                        zm::MindMatterModel::ModelData::value_type(
+                        zm::ModelData::value_type(
                             l_uid, l_new_thing ) );
         }
         else if(n["read"])
@@ -506,7 +506,7 @@ void zm::MindMatterModel::yamlToThingsMap(
     /// since we could not fully process all items yet - connections
     /// could not be established due to incomplete list of items, we
     /// postprocess them now and check there hash values
-    for(const zm::MindMatterModel::ModelData::value_type &i: a_thingsMap)
+    for(const zm::ModelData::value_type &i: a_thingsMap)
     {
         const std::string &l_uid( i.left );
         zm::MindMatter *l_item( i.right );
@@ -521,7 +521,7 @@ void zm::MindMatterModel::yamlToThingsMap(
         {
             for( const neighbour_t &other_uid: l_connections_it->second)
             {
-                zm::MindMatterModel::ModelData::left_iterator
+                zm::ModelData::left_iterator
                         l_other_it( a_thingsMap.left.find( other_uid.first ) );
 
                 assert(l_other_it != a_thingsMap.left.end());

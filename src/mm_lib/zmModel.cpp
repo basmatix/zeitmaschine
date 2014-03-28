@@ -25,7 +25,7 @@
 using namespace zm;
 
 //static void _debug_dump(
-//        const zm::MindMatterModel::ModelData &thingsMap);
+//        const zm::ModelData &thingsMap);
 
 boost::shared_ptr< zm::MindMatterModel > zm::MindMatterModel::create()
 {
@@ -437,7 +437,7 @@ std::string zm::MindMatterModel::createHash( bool verbose) const
 {
     size_t l_hash(0);
 
-    for(const zm::MindMatterModel::ModelData::value_type &i: m_things)
+    for(const zm::ModelData::value_type &i: m_things)
     {
         boost::hash_combine(l_hash, i.left);
         boost::hash_combine(l_hash, i.right->createHash());
@@ -455,17 +455,17 @@ void zm::MindMatterModel::deepCopy(
 {
     clear(a_dest);
 
-    for(const zm::MindMatterModel::ModelData::value_type &i: a_source)
+    for(const zm::ModelData::value_type &i: a_source)
     {
         MindMatter *l_new_thing = new MindMatter(i.right->m_caption);
         l_new_thing->m_string_values = i.right->m_string_values;
 
         a_dest.insert(
-                    zm::MindMatterModel::ModelData::value_type(
+                    zm::ModelData::value_type(
                         i.left, l_new_thing ) );
     }
 
-    for(const zm::MindMatterModel::ModelData::value_type &i: a_source)
+    for(const zm::ModelData::value_type &i: a_source)
     {
         ModelData::left_iterator l_dest_first_item_it(
                     a_dest.left.find( i.left ) );
@@ -494,11 +494,11 @@ void zm::MindMatterModel::duplicateModelTo(MindMatterModel &other) const
     deepCopy(m_things, other.m_things_synced);
 }
 
-void zm::MindMatterModel::ModelData::debug_dump() const
+void zm::ModelData::debug_dump() const
 {
     trace_i(">> dump");
 
-    for(const zm::MindMatterModel::ModelData::value_type& i: m_data)
+    for(const zm::ModelData::value_type& i: m_data)
     {
         std::ostringstream l_neighbours;
         l_neighbours << "(";
@@ -530,7 +530,7 @@ uid_lst_t zm::MindMatterModel::query(const std::string &query_str) const
 /*
     if(query_str startswith "interim_inbox_items")
     {
-        for(const zm::MindMatterModel::ModelData::value_type& i: m_things)
+        for(const zm::ModelData::value_type& i: m_things)
         {
             if( isInboxItem( i.left )
                 && (includeDoneItems       || !isDone(  i.left ) ) )
@@ -546,7 +546,7 @@ uid_lst_t zm::MindMatterModel::query(const std::string &query_str) const
                % (includeDoneItems ? "+done":"")));
     zm::uid_lst_t l_return;
 
-    for(const zm::MindMatterModel::ModelData::value_type& i:
+    for(const zm::ModelData::value_type& i:
                   m_p_things_model->things() )
     {
         if( isTaskItem( i.left, includeStandaloneTasks )
@@ -566,7 +566,7 @@ uid_lst_t zm::MindMatterModel::query(const std::string &query_str) const
                            % (includeDoneItems ? "+done":"")));
     zm::uid_lst_t l_return;
 
-    for(const zm::MindMatterModel::ModelData::value_type& i:
+    for(const zm::ModelData::value_type& i:
                   m_p_things_model->things() )
     {
         if( isProjectItem( i.left, includeStandaloneTasks )
@@ -583,7 +583,7 @@ uid_lst_t zm::MindMatterModel::query(const std::string &query_str) const
     m_p_things_model->query("interim_done_items");
     zm::uid_lst_t l_return;
 
-    for(const zm::MindMatterModel::ModelData::value_type& i:
+    for(const zm::ModelData::value_type& i:
                   m_p_things_model->things() )
     {
         if( isDone( i.left ) )
