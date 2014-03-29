@@ -20,6 +20,7 @@
 #include <algorithm>
 #include <boost/filesystem.hpp>
 #include <boost/thread.hpp>
+#include <boost/algorithm/string.hpp>
 
 #include <stdlib.h>
 using namespace zm;
@@ -521,25 +522,56 @@ void zm::MindMatterModel::debug_dump() const
     m_things.debug_dump();
 }
 
-uid_lst_t zm::MindMatterModel::query(const std::string &query_str) const
+uid_lst_t zm::MindMatterModel::query(const std::string &a_query_str) const
 {
     // maybe we should be working with
     // http://www.boost.org/doc/libs/1_55_0/libs/iterator/doc/filter_iterator.html
 
     uid_lst_t l_result;
-/*
-    if(query_str startswith "interim_inbox_items")
+
+    std::vector< std::string > l_tokens;
+    boost::split(l_tokens, a_query_str, boost::is_any_of(" "));
+
+    if(l_tokens.empty())
     {
-        for(const zm::ModelData::value_type& i: m_things)
+        return l_result;
+    }
+
+    if(boost::starts_with(l_tokens[0], "interim"))
+    {
+        // interim crap
+        //
+
+        std::map< std::string, bool > l_tags;
+
+        for(const std::string &l_token: l_tokens)
         {
-            if( isInboxItem( i.left )
-                && (includeDoneItems       || !isDone(  i.left ) ) )
+            if(boost::starts_with(l_token, "+"))
             {
-                l_return.push_back( i.left );
+                l_tags[l_token.substr(1)] = true;
+            }
+            if(boost::starts_with(l_token, "-"))
+            {
+                l_tags[l_token.substr(1)] = false;
             }
         }
-    }
-*/
+
+        if(l_tokens[0] == "interim_filter_tags")
+        {
+            for(const zm::ModelData::value_type& i: m_things)
+            {
+                // +gtd_inbox  [-gtd_done]
+                for(const std::pair< std::string, bool > &l_tag: l_tags)
+                {
+                    if(hasTag(i.left, l_tag.first) != l_tag.second)
+                    {
+                        continue;
+                    }
+                    l_result.push_back( i.left );
+                }
+            }
+        }
+
     /*
     boost::str(boost::format("interim_task_items %s %s")
                % (includeStandaloneTasks ? "+standalone":"")
@@ -594,6 +626,7 @@ uid_lst_t zm::MindMatterModel::query(const std::string &query_str) const
 
     return l_return;
     */
+    }
 
     return l_result;
 }

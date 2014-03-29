@@ -35,7 +35,7 @@ public:
 
     zmGtdModel(boost::shared_ptr< zm::MindMatterModel > model);
 
-    const boost::shared_ptr< zm::MindMatterModel > base() const;
+    const boost::shared_ptr< zm::MindMatterModel > const_base() const;
 
     boost::shared_ptr< zm::MindMatterModel > base();
 

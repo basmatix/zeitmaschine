@@ -39,12 +39,12 @@ public:
 
     bool hasUsedUsername() const
     {
-        return m_gtd_model.base()->hasUsedUsername();
+        return m_gtd_model.const_base()->hasUsedUsername();
     }
 
     bool hasUsedHostname() const
     {
-        return m_gtd_model.base()->hasUsedHostname();
+        return m_gtd_model.const_base()->hasUsedHostname();
     }
 
     void setUsedUsername( const QString &username )
@@ -103,7 +103,7 @@ public:
 
     std::time_t getCreationTime( const std::string &uid ) const
     {
-        return m_gtd_model.base()->getCreationTime( uid );
+        return m_gtd_model.const_base()->getCreationTime( uid );
     }
 
     int getImportance( const std::string &uid ) const
@@ -168,7 +168,7 @@ public:
 
     const QString getCaption( const std::string &uid ) const
     {
-        return QString::fromUtf8( m_gtd_model.base()->getCaption( uid ).c_str() );
+        return QString::fromUtf8( m_gtd_model.const_base()->getCaption( uid ).c_str() );
     }
 
     bool itemContentMatchesString( const std::string &uid, const QString &searchString ) const

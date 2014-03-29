@@ -39,7 +39,9 @@ bool zm::MindMatterModel::hasItem( const std::string &uid ) const
     return l_item_it != m_things.left.end();
 }
 
-std::string zm::MindMatterModel::getValue( const std::string &uid, const std::string &name ) const
+std::string zm::MindMatterModel::getValue(
+        const std::string &uid,
+        const std::string &name ) const
 {
     ModelData::left_const_iterator l_item_it( m_things.left.find( uid ) );
 
@@ -48,7 +50,8 @@ std::string zm::MindMatterModel::getValue( const std::string &uid, const std::st
     return l_item_it->second->getValue( name );
 }
 
-const std::string & zm::MindMatterModel::getCaption( const std::string &uid ) const
+const std::string & zm::MindMatterModel::getCaption(
+        const std::string &uid ) const
 {
     ModelData::left_const_iterator l_item_it( m_things.left.find( uid ) );
 
@@ -78,7 +81,9 @@ bool zm::MindMatterModel::hasTag(
     return _isConnected( l_item_it, l_tag_it );
 }
 
-bool zm::MindMatterModel::hasValue( const std::string &uid, const std::string &name ) const
+bool zm::MindMatterModel::hasValue(
+        const std::string &uid,
+        const std::string &name ) const
 {
     ModelData::left_const_iterator l_item_it( m_things.left.find( uid ) );
 
@@ -176,7 +181,8 @@ zm::uid_lst_t zm::MindMatterModel::getNeighbours(
     return l_result;
 }
 
-zm::uid_t zm::MindMatterModel::findOrCreateTagItem( const std::string &tag_name )
+zm::uid_t zm::MindMatterModel::findOrCreateTagItem(
+        const std::string &tag_name )
 {
     ModelData::left_iterator l_item_it( m_things.left.find( tag_name ) );
 

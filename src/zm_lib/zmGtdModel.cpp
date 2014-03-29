@@ -40,10 +40,12 @@ zmGtdModel::zmGtdModel(
     , m_item_person     ()
 {}
 
-const boost::shared_ptr< zm::MindMatterModel > zmGtdModel::base() const
+
+const boost::shared_ptr< zm::MindMatterModel > zmGtdModel::const_base() const
 {
     return m_p_things_model;
 }
+
 
 boost::shared_ptr< zm::MindMatterModel > zmGtdModel::base()
 {
@@ -54,14 +56,14 @@ void zmGtdModel::initialize()
 {
     m_p_things_model->initialize();
 
-    m_item_inbox =      m_p_things_model->findOrCreateTagItem( "gtd_inbox" );
-    m_item_task =       m_p_things_model->findOrCreateTagItem( "gtd_task" );
-    m_item_next_task =  m_p_things_model->findOrCreateTagItem( "gtd_next_task" );
-    m_item_project =    m_p_things_model->findOrCreateTagItem( "gtd_project" );
-    m_item_group =      m_p_things_model->findOrCreateTagItem( "gtd_group" );
-    m_item_done =       m_p_things_model->findOrCreateTagItem( "gtd_done" );
-    m_item_knowledge =  m_p_things_model->findOrCreateTagItem( "knowledge" );
-    m_item_person =     m_p_things_model->findOrCreateTagItem( "person" );
+    m_item_inbox =     m_p_things_model->findOrCreateTagItem( "gtd_inbox" );
+    m_item_task =      m_p_things_model->findOrCreateTagItem( "gtd_task" );
+    m_item_next_task = m_p_things_model->findOrCreateTagItem( "gtd_next_task" );
+    m_item_project =   m_p_things_model->findOrCreateTagItem( "gtd_project" );
+    m_item_group =     m_p_things_model->findOrCreateTagItem( "gtd_group" );
+    m_item_done =      m_p_things_model->findOrCreateTagItem( "gtd_done" );
+    m_item_knowledge = m_p_things_model->findOrCreateTagItem( "knowledge" );
+    m_item_person =    m_p_things_model->findOrCreateTagItem( "person" );
 
     print_statistics();
 }
@@ -83,41 +85,78 @@ std::string zmGtdModel::getNote( const std::string &uid ) const
 zm::uid_lst_t zmGtdModel::getInboxItems(
         bool includeDoneItems ) const
 {
+    // this may look nice but it's crap - future query strings won't look
+    // like this
+
+    // query syntax is "interim_filter_tags +gtd_inbox [-gtd_done]"
+    std::string l_tag_inbox   = std::string("+") + m_item_inbox;
+    std::string l_tag_no_done = std::string("-") + m_item_done;
+
     return m_p_things_model->query(
-                boost::str(boost::format("interim_inbox_items %s")
-                           % (includeDoneItems          ? "+done":"")));
+                boost::str(boost::format("interim_filter_tags %s %s")
+                           % l_tag_inbox
+                           % (includeDoneItems ? "":l_tag_no_done)));
 }
 
 zm::uid_lst_t zmGtdModel::getTaskItems(
         bool includeStandaloneTasks,
         bool includeDoneItems ) const
 {
+    // this may look nice but it's crap - future query strings won't look
+    // like this
+
+    // query syntax is "interim_filter_tags +gtd_task [-gtd_done] [-gtd_project]"
+
+    std::string l_tag_task       = std::string("+") + m_item_task;
+    std::string l_tag_no_done    = std::string("-") + m_item_done;
+    std::string l_tag_no_project = std::string("-") + m_item_project;
+
     return m_p_things_model->query(
-                boost::str(boost::format("interim_task_items %s %s")
-                           % (includeStandaloneTasks    ? "+standalone":"")
-                           % (includeDoneItems          ? "+done":"")));
+                boost::str(boost::format("interim_filter_tags %s %s %s")
+                           % l_tag_task
+                           % (includeDoneItems       ? "":l_tag_no_done)
+                           % (includeStandaloneTasks ? "":l_tag_no_project)));
 }
 
 zm::uid_lst_t zmGtdModel::getProjectItems(
         bool includeStandaloneTasks,
         bool includeDoneItems ) const
 {
+    // this may look nice but it's crap - future query strings won't look
+    // like this
+
+    // query syntax is "interim_filter_tags +gtd_project [-gtd_done] [-gtd_task]"
+
+    std::string l_tag_project = std::string("+") + m_item_project;
+    std::string l_tag_no_done = std::string("-") + m_item_done;
+    std::string l_tag_no_task = std::string("-") + m_item_task;
+
     return m_p_things_model->query(
-                boost::str(boost::format("interim_project_items %s %s")
-                           % (includeStandaloneTasks    ? "+standalone":"")
-                           % (includeDoneItems          ? "+done":"")));
+                boost::str(boost::format("interim_filter_tags %s %s %s")
+                           % l_tag_project
+                           % (includeDoneItems       ? "":l_tag_no_done)
+                           % (includeStandaloneTasks ? "":l_tag_no_task)));
 }
 
 zm::uid_lst_t zmGtdModel::getDoneItems() const
 {
-    return m_p_things_model->query("interim_done_items");
+    // this may look nice but it's crap - future query strings won't look
+    // like this
+
+    // query syntax is "interim_filter_tags +gtd_done"
+
+    std::string l_tag_done = std::string("+") + m_item_done;
+
+    return m_p_things_model->query(
+                boost::str(boost::format("interim_filter_tags %s")
+                           % l_tag_done));
 }
 
 bool zmGtdModel::isTaskItem(
         const std::string &item,
         bool includeStandaloneTasks ) const
 {
-    if( !includeStandaloneTasks && m_p_things_model->hasTag( item, "gtd_project" ) )
+    if( !includeStandaloneTasks && m_p_things_model->hasTag( item, m_item_project ) )
     {
         return false;
     }
@@ -185,7 +224,9 @@ std::string zmGtdModel::orderATask() const
     return *it;
 }
 
-bool zmGtdModel::itemContentMatchesString( const std::string &uid, const std::string &searchString ) const
+bool zmGtdModel::itemContentMatchesString(
+        const std::string &uid,
+        const std::string &searchString ) const
 {
     return m_p_things_model->itemContentMatchesString( uid, searchString );
 }
