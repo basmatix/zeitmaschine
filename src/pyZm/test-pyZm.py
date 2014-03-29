@@ -26,12 +26,18 @@ def list_all(model):
 #        print i[:6], yield_n(model.getCaption(i), 30)
     print     ("ID    TYPE   CAPTION" )
     print     ("----  -----  ----" )
+
     for i in model.getInboxItems(False):
-        print(colorama.Fore.RED + "%s  [INB]  %s" % (i[:4], yield_n(model.getCaption(i), 80, ' ')))
+        print(colorama.Fore.RED   + "%s  [INB]  %s" %
+                (i[:4], yield_n(model.base().getCaption(i), 80, ' ')))
+
     for i in model.getTaskItems(True, False):
-        print (colorama.Fore.BLUE + "%s  [TASK] %s" % (i[:4], yield_n(model.getCaption(i), 80, '.')))
+        print (colorama.Fore.BLUE + "%s  [TASK] %s" %
+                (i[:4], yield_n(model.base().getCaption(i), 80, '.')))
+
     for i in model.getProjectItems(True, False):
-        print ("%s  [PROJ] %s" % (i[:4], yield_n(model.base().getCaption(i), 80, '.')))
+        print ("%s  [PROJ] %s" %
+                (i[:4], yield_n(model.base().getCaption(i), 80, '.')))
 
 
 def operate(gtd_model, args):
@@ -83,11 +89,11 @@ def main():
 
     if options.root:
         #print options.root
-        gtd_model.setLocalFolder(options.root)
+        gtd_model.base().setLocalFolder(options.root)
     if options.no_check_hash:
-        gtd_model.disableHashChecking()
+        gtd_model.base().disableHashChecking()
     if options.verbose:
-        gtd_model.setTraceLevel(4)
+        gtd_model.base().setTraceLevel(4)
         logging.getLogger().setLevel(logging.DEBUG)
 
     if args is not []:
