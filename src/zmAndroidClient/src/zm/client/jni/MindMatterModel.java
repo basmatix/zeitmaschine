@@ -39,18 +39,18 @@ public class MindMatterModel {
     this(javaZmJNI.new_MindMatterModel(), true);
   }
 
-  public static MindMatterModel create_new() {
-    long cPtr = javaZmJNI.MindMatterModel_create_new();
-    return (cPtr == 0) ? null : new MindMatterModel(cPtr, true);
-  }
-
   public static MindMatterModel create() {
     long cPtr = javaZmJNI.MindMatterModel_create();
     return (cPtr == 0) ? null : new MindMatterModel(cPtr, true);
   }
 
-  public void setConfigPersistance(boolean value) {
-    javaZmJNI.MindMatterModel_setConfigPersistance(swigCPtr, this, value);
+  public MindMatterModel base() {
+    long cPtr = javaZmJNI.MindMatterModel_base(swigCPtr, this);
+    return (cPtr == 0) ? null : new MindMatterModel(cPtr, true);
+  }
+
+  public void setConfigpersistence(boolean value) {
+    javaZmJNI.MindMatterModel_setConfigpersistence(swigCPtr, this, value);
   }
 
   public void setLocalFolder(String path) {
@@ -105,16 +105,36 @@ public class MindMatterModel {
     return javaZmJNI.MindMatterModel_persistence_loadLocalModel(swigCPtr, this);
   }
 
-  public boolean persistance_loadSnapshot() {
-    return javaZmJNI.MindMatterModel_persistance_loadSnapshot(swigCPtr, this);
+  public boolean persistence_loadSnapshot() {
+    return javaZmJNI.MindMatterModel_persistence_loadSnapshot(swigCPtr, this);
   }
 
-  public boolean persistance_createSnapshot() {
-    return javaZmJNI.MindMatterModel_persistance_createSnapshot(swigCPtr, this);
+  public boolean persistence_createSnapshot() {
+    return javaZmJNI.MindMatterModel_persistence_createSnapshot(swigCPtr, this);
   }
 
   public boolean persistence_sync() {
     return javaZmJNI.MindMatterModel_persistence_sync(swigCPtr, this);
+  }
+
+  public void saveLocal() {
+    javaZmJNI.MindMatterModel_saveLocal(swigCPtr, this);
+  }
+
+  public boolean loadLocal() {
+    return javaZmJNI.MindMatterModel_loadLocal(swigCPtr, this);
+  }
+
+  public boolean loadSnapshot() {
+    return javaZmJNI.MindMatterModel_loadSnapshot(swigCPtr, this);
+  }
+
+  public boolean createSnapshot() {
+    return javaZmJNI.MindMatterModel_createSnapshot(swigCPtr, this);
+  }
+
+  public boolean sync() {
+    return javaZmJNI.MindMatterModel_sync(swigCPtr, this);
   }
 
   public void applyChangeSet(ChangeSet changeSet) {
@@ -145,12 +165,12 @@ public class MindMatterModel {
     javaZmJNI.MindMatterModel_debug_dump(swigCPtr, this);
   }
 
-  public SWIGTYPE_p_zm__MindMatterModel__ModelData things() {
-    return new SWIGTYPE_p_zm__MindMatterModel__ModelData(javaZmJNI.MindMatterModel_things(swigCPtr, this), false);
-  }
-
   public long getItemCount() {
     return javaZmJNI.MindMatterModel_getItemCount(swigCPtr, this);
+  }
+
+  public SWIGTYPE_p_std__vectorT_std__string_t query(String query_str) {
+    return new SWIGTYPE_p_std__vectorT_std__string_t(javaZmJNI.MindMatterModel_query(swigCPtr, this, query_str), true);
   }
 
   public SWIGTYPE_p_std__vectorT_std__string_t getItems() {

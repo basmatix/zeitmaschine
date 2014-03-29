@@ -43,68 +43,18 @@ public class zmGtdModel {
     this(javaZmJNI.new_zmGtdModel__SWIG_1(MindMatterModel.getCPtr(model), model), true);
   }
 
-  public void disableHashChecking() {
-    javaZmJNI.zmGtdModel_disableHashChecking(swigCPtr, this);
+  public MindMatterModel const_base() {
+    long cPtr = javaZmJNI.zmGtdModel_const_base(swigCPtr, this);
+    return (cPtr == 0) ? null : new MindMatterModel(cPtr, true);
   }
 
-  public void setTraceLevel(int level) {
-    javaZmJNI.zmGtdModel_setTraceLevel(swigCPtr, this, level);
-  }
-
-  public boolean hasUsedUsername() {
-    return javaZmJNI.zmGtdModel_hasUsedUsername(swigCPtr, this);
-  }
-
-  public boolean hasUsedHostname() {
-    return javaZmJNI.zmGtdModel_hasUsedHostname(swigCPtr, this);
-  }
-
-  public void setUsedUsername(String username) {
-    javaZmJNI.zmGtdModel_setUsedUsername(swigCPtr, this, username);
-  }
-
-  public void setUsedHostname(String hostname) {
-    javaZmJNI.zmGtdModel_setUsedHostname(swigCPtr, this, hostname);
-  }
-
-  public void setConfigPersistance(boolean value) {
-    javaZmJNI.zmGtdModel_setConfigPersistance(swigCPtr, this, value);
-  }
-
-  public void setLocalFolder(String path) {
-    javaZmJNI.zmGtdModel_setLocalFolder(swigCPtr, this, path);
-  }
-
-  public void addDomainSyncFolder(String domainName, String path) {
-    javaZmJNI.zmGtdModel_addDomainSyncFolder(swigCPtr, this, domainName, path);
+  public MindMatterModel base() {
+    long cPtr = javaZmJNI.zmGtdModel_base(swigCPtr, this);
+    return (cPtr == 0) ? null : new MindMatterModel(cPtr, true);
   }
 
   public void initialize() {
     javaZmJNI.zmGtdModel_initialize(swigCPtr, this);
-  }
-
-  public void sync() {
-    javaZmJNI.zmGtdModel_sync(swigCPtr, this);
-  }
-
-  public void createSnapshot() {
-    javaZmJNI.zmGtdModel_createSnapshot(swigCPtr, this);
-  }
-
-  public void localSave(String filename) {
-    javaZmJNI.zmGtdModel_localSave__SWIG_0(swigCPtr, this, filename);
-  }
-
-  public void localSave() {
-    javaZmJNI.zmGtdModel_localSave__SWIG_1(swigCPtr, this);
-  }
-
-  public long getItemCount() {
-    return javaZmJNI.zmGtdModel_getItemCount(swigCPtr, this);
-  }
-
-  public SWIGTYPE_p_std__vectorT_std__string_t getItems() {
-    return new SWIGTYPE_p_std__vectorT_std__string_t(javaZmJNI.zmGtdModel_getItems(swigCPtr, this), true);
   }
 
   public String getNote(String uid) {
@@ -201,22 +151,6 @@ public class zmGtdModel {
 
   public String createProject(String project_name) {
     return javaZmJNI.zmGtdModel_createProject(swigCPtr, this, project_name);
-  }
-
-  public SWIGTYPE_p_std__time_t getCreationTime(String uid) {
-    return new SWIGTYPE_p_std__time_t(javaZmJNI.zmGtdModel_getCreationTime(swigCPtr, this, uid), true);
-  }
-
-  public String getCaption(String uid) {
-    return javaZmJNI.zmGtdModel_getCaption(swigCPtr, this, uid);
-  }
-
-  public void setCaption(String uid, String caption) {
-    javaZmJNI.zmGtdModel_setCaption(swigCPtr, this, uid, caption);
-  }
-
-  public void eraseItem(String uid) {
-    javaZmJNI.zmGtdModel_eraseItem(swigCPtr, this, uid);
   }
 
 }
