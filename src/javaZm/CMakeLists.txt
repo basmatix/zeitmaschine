@@ -75,12 +75,22 @@ if( CONFIG_BUILD_JAVAZM )
         )
     endif()
 
-    # important: add _ to swig generated python modules
-    #set_target_properties( _${PYTHON_ZM_LIBRARY_NAME} PROPERTIES COMPILE_DEFINITIONS "${YSBOX_COMPILE_FLAGS}" )
-
     swig_link_libraries( ${JAVA_ZM_LIBRARY_NAME}
         zm_s mm_s yaml-cpp
         ${common_libraries}
+    )
+
+    get_target_property(TARGET_LOCATION ${JAVA_ZM_LIBRARY_NAME} LOCATION)
+
+    # strip generated binaries
+    # todo - copy all java files or set the output path and make sure
+    #        files not generated any more are deleted
+    add_custom_command( TARGET ${JAVA_ZM_LIBRARY_NAME} POST_BUILD
+        COMMENT "use ${CMAKE_STRIP} to strip ${TARGET_LOCATION}"
+        COMMAND ${CMAKE_STRIP} ${TARGET_LOCATION}
+        #COMMAND ${CMAKE_COMMAND} -E copy
+        #   ${CMAKE_CURRENT_BINARY_DIR}/${outdir}/${MODULE_NAME}.java
+        #   ${CMAKE_SOURCE_DIR}/eclipse_plugin/ysbox.eclipse.plugin/src/ysbox/clientlib/jni/
     )
 
 endif()
