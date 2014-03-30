@@ -11,10 +11,11 @@
 
 #include <zm/zmGtdModel.h>
 
+#include <testing/testing.h>
+#include <testing/common.h>
+
 #include <iostream>
 #include <fstream>
-
-#include "../testing.h"
 
 #include <boost/filesystem/operations.hpp>
 

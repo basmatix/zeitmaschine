@@ -5,8 +5,8 @@
 /// Copyright (C) 2013 Frans Fuerst
 ///
 
-
-#include "../testing.h"
+#include <testing/testing.h>
+#include <testing/common.h>
 
 #include <mm/zmOptions.h>
 

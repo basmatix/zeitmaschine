@@ -6,6 +6,8 @@
 
 #include <mm/zmModel.h>
 
+#include <testing/testing.h>
+
 #include <yaml-cpp/yaml.h>
 
 #include <iostream>
@@ -13,7 +15,6 @@
 
 #include <boost/filesystem/operations.hpp>
 
-#include "../testing.h"
 
 bool mm_change_while_open       ();
 bool mm_empty_db_on_load        ();
