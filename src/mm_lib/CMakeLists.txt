@@ -25,10 +25,13 @@ file( GLOB ${PROJECT_NAME}_files
     include/*/*.h
 )
 
+include_directories(SYSTEM
+    "${CMAKE_CURRENT_SOURCE_DIR}/include"
+)
+
 # generated and external headers made system so
 # we don't have to deal with their warnings
 include_directories(SYSTEM
-    "${CMAKE_CURRENT_SOURCE_DIR}/include"
     "${YAML_CPP_INCLUDE_DIR}"
     "${Boost_INCLUDE_DIR}"
 )
