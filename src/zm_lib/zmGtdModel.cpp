@@ -68,7 +68,8 @@ void zmGtdModel::initialize()
     print_statistics();
 }
 
-std::string zmGtdModel::getNote( const std::string &uid ) const
+std::string zmGtdModel::getNote(
+        const std::string &uid ) const
 {
     if( uid == "" ) return "";
 
@@ -87,15 +88,20 @@ zm::uid_lst_t zmGtdModel::getInboxItems(
 {
     // this may look nice but it's crap - future query strings won't look
     // like this
+    std::string l_query("interim_filter_tags +gtd_inbox");
 
-    // query syntax is "interim_filter_tags +gtd_inbox [-gtd_done]"
-    std::string l_tag_inbox   = std::string("+") + m_item_inbox;
-    std::string l_tag_no_done = std::string("-") + m_item_done;
+//    // query syntax is "interim_filter_tags +gtd_inbox [-gtd_done]"
+//    std::string l_tag_inbox   = std::string("+") + m_item_inbox;
+//    std::string l_tag_no_done = std::string("-") + m_item_done;
 
-    return m_p_things_model->query(
-                boost::str(boost::format("interim_filter_tags %s %s")
-                           % l_tag_inbox
-                           % (includeDoneItems ? "":l_tag_no_done)));
+//    std::string l_query(
+//                boost::str(boost::format("interim_filter_tags %s %s")
+//                           % l_tag_inbox
+//                           % (includeDoneItems ? "":l_tag_no_done)));
+
+    trace_i("trigger query '%s'", l_query.c_str());
+
+    return m_p_things_model->query(l_query);
 }
 
 zm::uid_lst_t zmGtdModel::getTaskItems(
@@ -111,11 +117,15 @@ zm::uid_lst_t zmGtdModel::getTaskItems(
     std::string l_tag_no_done    = std::string("-") + m_item_done;
     std::string l_tag_no_project = std::string("-") + m_item_project;
 
-    return m_p_things_model->query(
+    std::string l_query(
                 boost::str(boost::format("interim_filter_tags %s %s %s")
                            % l_tag_task
                            % (includeDoneItems       ? "":l_tag_no_done)
                            % (includeStandaloneTasks ? "":l_tag_no_project)));
+
+    trace_i("trigger query '%s'", l_query.c_str());
+
+    return m_p_things_model->query(l_query);
 }
 
 zm::uid_lst_t zmGtdModel::getProjectItems(
@@ -131,11 +141,15 @@ zm::uid_lst_t zmGtdModel::getProjectItems(
     std::string l_tag_no_done = std::string("-") + m_item_done;
     std::string l_tag_no_task = std::string("-") + m_item_task;
 
-    return m_p_things_model->query(
+    std::string l_query(
                 boost::str(boost::format("interim_filter_tags %s %s %s")
                            % l_tag_project
                            % (includeDoneItems       ? "":l_tag_no_done)
                            % (includeStandaloneTasks ? "":l_tag_no_task)));
+
+    trace_i("trigger query '%s'", l_query.c_str());
+
+    return m_p_things_model->query(l_query);
 }
 
 zm::uid_lst_t zmGtdModel::getDoneItems() const
@@ -147,9 +161,13 @@ zm::uid_lst_t zmGtdModel::getDoneItems() const
 
     std::string l_tag_done = std::string("+") + m_item_done;
 
-    return m_p_things_model->query(
+    std::string l_query(
                 boost::str(boost::format("interim_filter_tags %s")
                            % l_tag_done));
+
+    trace_i("trigger query '%s'", l_query.c_str());
+
+    return m_p_things_model->query(l_query);
 }
 
 bool zmGtdModel::isTaskItem(
@@ -197,7 +215,8 @@ zm::uid_t zmGtdModel::getParentProject(
     return m_p_things_model->getValue( task_item, "gtd_parent_project" );
 }
 
-zm::uid_t zmGtdModel::getNextTask( const std::string &task_item ) const
+zm::uid_t zmGtdModel::getNextTask(
+        const std::string &task_item ) const
 {
     assert( isProjectItem( task_item, false ) );
     if( !m_p_things_model->hasValue( task_item, "gtd_next_task" ) )
@@ -259,7 +278,8 @@ void zmGtdModel::print_statistics() const
     trace_i( " gtd items done:     %d", l_done_items );
 }
 
-std::string zmGtdModel::createNewInboxItem( const std::string &caption )
+std::string zmGtdModel::createNewInboxItem(
+        const std::string &caption )
 {
     std::string l_item_uid = m_p_things_model->createNewItem( caption );
     trace_i( "GTD: new inbox item %s: '%s'",
@@ -271,7 +291,8 @@ std::string zmGtdModel::createNewInboxItem( const std::string &caption )
     return l_item_uid;
 }
 
-void zmGtdModel::setNote( const std::string &uid, const std::string &value )
+void zmGtdModel::setNote(
+        const std::string &uid, const std::string &value )
 {
     trace_i( "GTD: setting note for item %s (%s): '%s'",
                   uid.c_str(),
@@ -281,19 +302,25 @@ void zmGtdModel::setNote( const std::string &uid, const std::string &value )
     m_p_things_model->setValue( uid, "gtd_item_note", value );
 }
 
-void zmGtdModel::plusOne( const std::string &uid )
+void zmGtdModel::plusOne(
+        const std::string &uid )
 {
     int l_importance = 0;
     if( m_p_things_model->hasValue( uid, "gtd_importance" ) )
     {
-        l_importance = boost::lexical_cast<int>( m_p_things_model->getValue( uid, "gtd_importance" ) );
+        l_importance = boost::lexical_cast<int>(
+                    m_p_things_model->getValue( uid, "gtd_importance" ) );
     }
     l_importance += 1;
 
-    m_p_things_model->setValue( uid, "gtd_importance", boost::lexical_cast<std::string>(l_importance) );
+    m_p_things_model->setValue( uid,
+                                "gtd_importance",
+                                boost::lexical_cast<std::string>(l_importance) );
 }
 
-void zmGtdModel::registerItemAsTask( const std::string &task_item, const std::string &project_item )
+void zmGtdModel::registerItemAsTask(
+        const std::string &task_item,
+        const std::string &project_item )
 {
     assert( isInboxItem( task_item ) );
     assert( isProjectItem( project_item, false ) );
@@ -303,7 +330,8 @@ void zmGtdModel::registerItemAsTask( const std::string &task_item, const std::st
     m_p_things_model->connectDirected( task_item, project_item );
 }
 
-void zmGtdModel::setDone( const std::string &task_item )
+void zmGtdModel::setDone(
+        const std::string &task_item )
 {
     m_p_things_model->disconnect( task_item, m_item_inbox );
     m_p_things_model->connectDirected( task_item, m_item_done );
@@ -314,7 +342,8 @@ void zmGtdModel::setDone( const std::string &task_item )
                 zm::common::time_stamp_iso_ext() );
 }
 
-void zmGtdModel::castToProject( const std::string &item )
+void zmGtdModel::castToProject(
+        const std::string &item )
 {
     assert( isInboxItem( item ) );
 
@@ -322,7 +351,9 @@ void zmGtdModel::castToProject( const std::string &item )
     m_p_things_model->connectDirected( item, m_item_project );
 }
 
-void zmGtdModel::setNextTask( const std::string &project_item, const std::string &task_item )
+void zmGtdModel::setNextTask(
+        const std::string &project_item,
+        const std::string &task_item )
 {
     assert( isProjectItem( project_item, false ) );
     assert( isTaskItem( task_item, false ) );
@@ -335,7 +366,8 @@ void zmGtdModel::setNextTask( const std::string &project_item, const std::string
     m_p_things_model->connectDirected( task_item, m_item_next_task );
 }
 
-std::string zmGtdModel::createProject( const std::string &project_name )
+std::string zmGtdModel::createProject(
+        const std::string &project_name )
 {
     std::string l_item_uid = m_p_things_model->createNewItem( project_name );
 
@@ -344,11 +376,13 @@ std::string zmGtdModel::createProject( const std::string &project_name )
     return l_item_uid;
 }
 
-int zmGtdModel::getImportance( const std::string &uid ) const
+int zmGtdModel::getImportance(
+        const std::string &uid ) const
 {
     if( m_p_things_model->hasValue( uid, "gtd_importance" ) )
     {
-        return boost::lexical_cast<int>( m_p_things_model->getValue( uid, "gtd_importance" ) );
+        return boost::lexical_cast<int>(
+                    m_p_things_model->getValue( uid, "gtd_importance" ) );
     }
 
     return 0;

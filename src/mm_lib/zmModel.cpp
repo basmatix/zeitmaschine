@@ -522,7 +522,8 @@ void zm::MindMatterModel::debug_dump() const
     m_things.debug_dump();
 }
 
-uid_lst_t zm::MindMatterModel::query(const std::string &a_query_str) const
+uid_lst_t zm::MindMatterModel::query(
+        const std::string &a_query_str) const
 {
     // maybe we should be working with
     // http://www.boost.org/doc/libs/1_55_0/libs/iterator/doc/filter_iterator.html
@@ -531,6 +532,8 @@ uid_lst_t zm::MindMatterModel::query(const std::string &a_query_str) const
 
     std::vector< std::string > l_tokens;
     boost::split(l_tokens, a_query_str, boost::is_any_of(" "));
+
+    trace_i("answer query for '%s'", a_query_str.c_str());
 
     if(l_tokens.empty())
     {
