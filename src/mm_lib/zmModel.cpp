@@ -563,13 +563,18 @@ uid_lst_t zm::MindMatterModel::query(
         {
             for(const zm::ModelData::value_type& i: m_things)
             {
+                bool l_filter_passed = true;
                 // +gtd_inbox  [-gtd_done]
                 for(const std::pair< std::string, bool > &l_tag: l_tags)
                 {
                     if(hasTag(i.left, l_tag.first) != l_tag.second)
                     {
-                        continue;
+                        l_filter_passed = false;
+                        break;
                     }
+                }
+                if(l_filter_passed)
+                {
                     l_result.push_back( i.left );
                 }
             }
