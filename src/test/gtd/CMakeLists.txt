@@ -35,4 +35,5 @@ target_link_libraries( test_gtd
 set( test_executable "${CMAKE_CURRENT_BINARY_DIR}/test_gtd" )
 
 add_test( gtd_basic_workflow    ${test_executable} gtd_basic_workflow )
+add_test( gtd_filter_tags       ${test_executable} gtd_filter_tags )
 
