@@ -1,6 +1,7 @@
 #!/bin/sh
 
 ANDROID_NDK_TOOLCHAIN_ROOT=~/android-toolchain/ cmake \
+-DCMAKE_BUILD_TYPE=Release \
 -DBOOST_ROOT=~/boost-1.55.0-armeabi-v7a \
 -DCMAKE_TOOLCHAIN_FILE=../src/zmAndroidClient/android.toolchain.cmake \
 -DSWIG_EXECUTABLE=/usr/bin/swig \
