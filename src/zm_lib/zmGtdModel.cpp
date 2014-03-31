@@ -88,16 +88,15 @@ zm::uid_lst_t zmGtdModel::getInboxItems(
 {
     // this may look nice but it's crap - future query strings won't look
     // like this
-    std::string l_query("interim_filter_tags +gtd_inbox");
 
-//    // query syntax is "interim_filter_tags +gtd_inbox [-gtd_done]"
-//    std::string l_tag_inbox   = std::string("+") + m_item_inbox;
-//    std::string l_tag_no_done = std::string("-") + m_item_done;
+    // query syntax is "interim_filter_tags +gtd_inbox [-gtd_done]"
+    std::string l_tag_inbox   = std::string("+") + m_item_inbox;
+    std::string l_tag_no_done = std::string("-") + m_item_done;
 
-//    std::string l_query(
-//                boost::str(boost::format("interim_filter_tags %s %s")
-//                           % l_tag_inbox
-//                           % (includeDoneItems ? "":l_tag_no_done)));
+    std::string l_query(
+                boost::str(boost::format("interim_filter_tags %s %s")
+                           % l_tag_inbox
+                           % (includeDoneItems ? "":l_tag_no_done)));
 
     trace_i("trigger query '%s'", l_query.c_str());
 
