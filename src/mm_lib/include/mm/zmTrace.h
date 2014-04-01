@@ -19,6 +19,8 @@
 void set_trace_level( int level );
 
 void trace_i( const char * a_format, ... );
+void trace_d( const char * a_format, ... );
 void trace_e( const char * a_format, ... );
+void trace_w( const char * a_format, ... );
 
 #endif
