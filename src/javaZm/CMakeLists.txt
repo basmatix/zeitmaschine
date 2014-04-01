@@ -82,15 +82,21 @@ if( CONFIG_BUILD_JAVAZM )
 
     get_target_property(TARGET_LOCATION ${JAVA_ZM_LIBRARY_NAME} LOCATION)
 
+    file( GLOB java_files "${CMAKE_CURRENT_BINARY_DIR}/*.java")
+
+    foreach(file_name ${java_files})
+        add_custom_command( TARGET ${JAVA_ZM_LIBRARY_NAME} POST_BUILD
+            COMMENT "copy generated file ${file_name}"
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different "${file_name}" "${CMAKE_BINARY_DIR}"
+        )
+    endforeach()
+
     # strip generated binaries
     # todo - copy all java files or set the output path and make sure
     #        files not generated any more are deleted
     add_custom_command( TARGET ${JAVA_ZM_LIBRARY_NAME} POST_BUILD
         COMMENT "use ${CMAKE_STRIP} to strip ${TARGET_LOCATION}"
         COMMAND ${CMAKE_STRIP} ${TARGET_LOCATION}
-        #COMMAND ${CMAKE_COMMAND} -E copy
-        #   ${CMAKE_CURRENT_BINARY_DIR}/${outdir}/${MODULE_NAME}.java
-        #   ${CMAKE_SOURCE_DIR}/eclipse_plugin/ysbox.eclipse.plugin/src/ysbox/clientlib/jni/
     )
 
 endif()
