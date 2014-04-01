@@ -46,21 +46,31 @@ def operate(gtd_model, args):
         add task
     """
 
+    modifications_done = False
+
     if not args == []:
 
         if args[0] == "add":
             text = " ".join(args[1:])
             new_item = gtd_model.createNewItem(text)
             logging.info("created new item %s with caption '%s'", new_item, text )
+            modifications_done = True
 
         if args[0] == "task":
             text = " ".join(args[1:])
             new_item = gtd_model.createNewInboxItem(text)
             logging.info("created new item %s with caption '%s'", new_item, text)
+            modifications_done = True
+
+        if args[0] == "sync":
+            logging.info("trigger sync")
+            gtd_model.base().sync()
+            #modifications_done = True
 
     list_all(gtd_model)
 
-    gtd_model.base().saveLocal()
+    if modifications_done:
+        gtd_model.base().saveLocal()
 
 
 def main():
@@ -100,6 +110,9 @@ def main():
         logging.debug("positional args: %s", args)
 
     gtd_model.initialize()
+
+    if gtd_model.empty():
+        print("there are no loaded items. if that feels strange try to sync.")
 
     logging.debug("use root folder '%s'",model_basic.getLocalFolder())
 
