@@ -110,7 +110,9 @@ void zm::MindMatterModel::initialize()
         setUsedHostname(zm::osal::getHostName());
     }
 
-    srand( time( NULL ) * rand()  );
+    int l_seed = time( NULL ) * rand();
+    trace_d("seeding randomizer with: %d", l_seed);
+    srand( l_seed );
 
     /// find the name for the local model file - should be equal
     /// across sessions and unique for each client

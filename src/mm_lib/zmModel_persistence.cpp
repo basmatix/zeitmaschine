@@ -224,14 +224,14 @@ void zm::MindMatterModel::applyChangeSet( const ChangeSet &changeSet )
 
         if( j->type == JournalItem::CreateItem && l_item_it != m_things.left.end() )
         {
-            trace_i( "WARNING: tried to create already existant item '%s'",
+            trace_w( "WARNING: tried to create already existent item '%s'",
                           j->item_uid.c_str() );
             continue;
         }
 
         if( j->type != JournalItem::CreateItem && l_item_it == m_things.left.end() )
         {
-            trace_i( "WARNING: trying to modify item non existent item '%s'",
+            trace_w( "WARNING: trying to modify existent item '%s'",
                           j->item_uid.c_str() );
             assert( j->type == JournalItem::CreateItem || l_item_it != m_things.left.end() );
         }

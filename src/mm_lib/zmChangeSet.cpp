@@ -188,7 +188,7 @@ void zm::ChangeSet::load( const std::string &journalFileName )
         }
         else
         {
-            trace_i("type = '%s'", l_type.c_str());
+            trace_e("type = '%s'", l_type.c_str());
             assert( false && "type is not being handled" );
         }
         l_newItem->time = str(n["time"]);
