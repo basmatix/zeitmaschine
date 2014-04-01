@@ -5,14 +5,13 @@
 /// Copyright (C) 2013 Frans Fuerst
 ///
 
-#ifndef FLOWMODEL_H
-#define FLOWMODEL_H
+#ifndef ZMMODEL_H
+#define ZMMODEL_H
 
 // MindMatter creates ChangeSet instances
 #include "zmChangeSet.h"
 #include "zmModelData.h"
 
-#include <boost/bimap.hpp>
 #include <string>
 #include <list>
 
