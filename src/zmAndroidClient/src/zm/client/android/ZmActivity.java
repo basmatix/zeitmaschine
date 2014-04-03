@@ -22,7 +22,8 @@ import android.view.View;
 import android.view.View.OnKeyListener;
 import android.widget.ArrayAdapter;
 import android.util.Log;
-
+import android.widget.Button;
+import android.view.View.OnClickListener;
 import zm.client.jni.*;
 /// sources:
 /// http://www.mikeplate.com/2010/01/21/show-a-context-menu-for-long-clicks-in-an-android-listview/
@@ -57,7 +58,13 @@ public class ZmActivity
 	
     */
 	List<String> m_returnValues = new ArrayList<String>();
+	
 	ArrayAdapter<String> m_adapter;
+	
+	zmGtdModel m_gtdModel;
+	
+	Button button;
+	
 	/// Called when the activity is first created.
 	@Override
 	public void onCreate(Bundle savedInstanceState)
@@ -86,27 +93,43 @@ public class ZmActivity
 
 		setListContent( "" );
 		
-		MindMatterModel theModel;
-		
+	
 	    try {
-	    	Log.w("myApp", "no network");
+	    	Log.w("zm", "create model");
+	        System.out.println("test");
 	    	
 			//theModel = MindMatterModel.create_new();
-			theModel = MindMatterModel.create();
-			theModel.setTraceLevel(4);
-			theModel.initialize();
+	        m_gtdModel = new zmGtdModel(MindMatterModel.create());
+	        //m_baseModel = MindMatterModel.create();
+	        m_gtdModel.base().setTraceLevel(4);
+	        m_gtdModel.initialize();
 
+	    	Log.i("zm", "found " + m_gtdModel.base().getItemCount() + " items");
+
+			/*
 			theModel.createNewItem("Get milk!");
 			//MindMatterModel theModel = new MindMatterModel();
 						
 			theModel.createNewItem("test");
-			
+			*/
 	    } catch (Exception e) {
 	        // gib die Fehlermeldung aus
 	        System.out.println("ERROR: "+e.getMessage());
 	    }		
 		
-		
+	    button = (Button) findViewById(R.id.btSync);
+	    
+		button.setOnClickListener(new OnClickListener() {
+ 
+			@Override
+			public void onClick(View arg0) {
+ 
+		    	Log.w("zm", "click");
+		    	m_gtdModel.base().sync();
+
+			}
+ 
+		});		
 	}
 	
 	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) 
@@ -146,18 +169,35 @@ public class ZmActivity
 
 	public void onTextChanged(CharSequence s, int start, int before, int count) 
 	{		
-		//helloLog("onTextChanged");
+    	Log.i("zm", "onTextChanged");
 		setListContent( s.toString() );
 	}
 	
 	private void setListContent(String s) 
-	{		
+	{
+		if(m_gtdModel == null)
+		{
+			return;
+		}    	
+		
+		Log.i("zm", "setListContent");
 		//zmSetMetaString( s );
 		
 		//m_returnValues = Arrays.asList( zmGetMatchingItems() );
 		
+    	StringVec a = m_gtdModel.getInboxItems(false);
+
+    	m_returnValues = new ArrayList<String>();
+
+    	for(int i = 0; i < a.size(); ++i)
+    	{	
+    		String es = a.get(i);
+    		m_returnValues.add(m_gtdModel.base().getCaption(es));
+    	}
+    	
+
 		// frans: todo: muss vmtl nicht sein..
-		m_adapter = new ArrayAdapter<String>( this, R.layout.flow_list_item, m_returnValues );
+    	m_adapter = new ArrayAdapter<String>( this, R.layout.flow_list_item, m_returnValues);
 		
 		setListAdapter(m_adapter);
 	}
