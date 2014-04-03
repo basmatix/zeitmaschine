@@ -65,7 +65,20 @@ def operate(gtd_model, args):
         if args[0] == "sync":
             logging.info("trigger sync")
             gtd_model.base().sync()
-            #modifications_done = True
+            modifications_done = True
+
+        if args[0] == "snapshot":
+            print gtd_model.base().getLoadedJournalFiles()
+            if len(args) < 2:
+                pass
+            elif args[1] == 'save':
+                print "save"
+                gtd_model.base().createSnapshot()
+                pass
+            elif args[1] == 'load':
+                print "load"
+                gtd_model.base().loadSnapshot()
+                pass
 
     list_all(gtd_model)
 
