@@ -17,6 +17,7 @@
 //%array_class(int, intArray);
 //%array_class(double, doubleArray);
 //%array_class(char, charArray);
+//%array_class(char, charArray);
 
 %shared_ptr(zm::MindMatterModel)
 
@@ -28,7 +29,8 @@
 #include <mm/zmChangeSet.h>
 %}
 
-%template()         std::vector<std::string>;
+//%template()         std::vector<std::string>;
+%template(StringVec) std::vector<std::string>;
 //%template()         std::list<std::string>;
 
 // Parse the header file to generate wrappers
