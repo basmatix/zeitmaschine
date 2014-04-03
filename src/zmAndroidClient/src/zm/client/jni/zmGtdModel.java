@@ -65,20 +65,20 @@ public class zmGtdModel {
     return javaZmJNI.zmGtdModel_getImportance(swigCPtr, this, uid);
   }
 
-  public SWIGTYPE_p_std__vectorT_std__string_t getInboxItems(boolean includeDoneItems) {
-    return new SWIGTYPE_p_std__vectorT_std__string_t(javaZmJNI.zmGtdModel_getInboxItems(swigCPtr, this, includeDoneItems), true);
+  public StringVec getInboxItems(boolean includeDoneItems) {
+    return new StringVec(javaZmJNI.zmGtdModel_getInboxItems(swigCPtr, this, includeDoneItems), true);
   }
 
-  public SWIGTYPE_p_std__vectorT_std__string_t getTaskItems(boolean includeStandaloneTasks, boolean includeDoneItems) {
-    return new SWIGTYPE_p_std__vectorT_std__string_t(javaZmJNI.zmGtdModel_getTaskItems(swigCPtr, this, includeStandaloneTasks, includeDoneItems), true);
+  public StringVec getTaskItems(boolean includeStandaloneTasks, boolean includeDoneItems) {
+    return new StringVec(javaZmJNI.zmGtdModel_getTaskItems(swigCPtr, this, includeStandaloneTasks, includeDoneItems), true);
   }
 
-  public SWIGTYPE_p_std__vectorT_std__string_t getProjectItems(boolean includeStandaloneTasks, boolean includeDoneItems) {
-    return new SWIGTYPE_p_std__vectorT_std__string_t(javaZmJNI.zmGtdModel_getProjectItems(swigCPtr, this, includeStandaloneTasks, includeDoneItems), true);
+  public StringVec getProjectItems(boolean includeStandaloneTasks, boolean includeDoneItems) {
+    return new StringVec(javaZmJNI.zmGtdModel_getProjectItems(swigCPtr, this, includeStandaloneTasks, includeDoneItems), true);
   }
 
-  public SWIGTYPE_p_std__vectorT_std__string_t getDoneItems() {
-    return new SWIGTYPE_p_std__vectorT_std__string_t(javaZmJNI.zmGtdModel_getDoneItems(swigCPtr, this), true);
+  public StringVec getDoneItems() {
+    return new StringVec(javaZmJNI.zmGtdModel_getDoneItems(swigCPtr, this), true);
   }
 
   public boolean isTaskItem(String item, boolean includeStandaloneTasks) {

@@ -169,16 +169,16 @@ public class MindMatterModel {
     return javaZmJNI.MindMatterModel_getItemCount(swigCPtr, this);
   }
 
-  public SWIGTYPE_p_std__vectorT_std__string_t query(String query_str) {
-    return new SWIGTYPE_p_std__vectorT_std__string_t(javaZmJNI.MindMatterModel_query(swigCPtr, this, query_str), true);
+  public StringVec query(String query_str) {
+    return new StringVec(javaZmJNI.MindMatterModel_query(swigCPtr, this, query_str), true);
   }
 
-  public SWIGTYPE_p_std__vectorT_std__string_t getItems() {
-    return new SWIGTYPE_p_std__vectorT_std__string_t(javaZmJNI.MindMatterModel_getItems(swigCPtr, this), true);
+  public StringVec getItems() {
+    return new StringVec(javaZmJNI.MindMatterModel_getItems(swigCPtr, this), true);
   }
 
-  public SWIGTYPE_p_std__vectorT_std__string_t getFolderChildren(String folder_item) {
-    return new SWIGTYPE_p_std__vectorT_std__string_t(javaZmJNI.MindMatterModel_getFolderChildren(swigCPtr, this, folder_item), true);
+  public StringVec getFolderChildren(String folder_item) {
+    return new StringVec(javaZmJNI.MindMatterModel_getFolderChildren(swigCPtr, this, folder_item), true);
   }
 
   public SWIGTYPE_p_std__time_t getCreationTime(String uid) {
@@ -213,8 +213,12 @@ public class MindMatterModel {
     return javaZmJNI.MindMatterModel_isConnected(swigCPtr, this, node1_uid, node2_uid);
   }
 
-  public SWIGTYPE_p_std__vectorT_std__string_t getNeighbours(String node_uid) {
-    return new SWIGTYPE_p_std__vectorT_std__string_t(javaZmJNI.MindMatterModel_getNeighbours(swigCPtr, this, node_uid), true);
+  public StringVec getNeighbours(String node_uid) {
+    return new StringVec(javaZmJNI.MindMatterModel_getNeighbours(swigCPtr, this, node_uid), true);
+  }
+
+  public StringVec getLoadedJournalFiles() {
+    return new StringVec(javaZmJNI.MindMatterModel_getLoadedJournalFiles(swigCPtr, this), true);
   }
 
   public String createNewItem(String caption, String uid) {

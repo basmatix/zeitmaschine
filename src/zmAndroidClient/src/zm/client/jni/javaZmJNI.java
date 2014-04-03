@@ -9,6 +9,17 @@
 package zm.client.jni;
 
 public class javaZmJNI {
+  public final static native long new_StringVec__SWIG_0();
+  public final static native long new_StringVec__SWIG_1(long jarg1);
+  public final static native long StringVec_size(long jarg1, StringVec jarg1_);
+  public final static native long StringVec_capacity(long jarg1, StringVec jarg1_);
+  public final static native void StringVec_reserve(long jarg1, StringVec jarg1_, long jarg2);
+  public final static native boolean StringVec_isEmpty(long jarg1, StringVec jarg1_);
+  public final static native void StringVec_clear(long jarg1, StringVec jarg1_);
+  public final static native void StringVec_add(long jarg1, StringVec jarg1_, String jarg2);
+  public final static native String StringVec_get(long jarg1, StringVec jarg1_, int jarg2);
+  public final static native void StringVec_set(long jarg1, StringVec jarg1_, int jarg2, String jarg3);
+  public final static native void delete_StringVec(long jarg1);
   public final static native long new_zmGtdModel__SWIG_0();
   public final static native long new_zmGtdModel__SWIG_1(long jarg1, MindMatterModel jarg1_);
   public final static native long zmGtdModel_const_base(long jarg1, zmGtdModel jarg1_);
@@ -88,6 +99,7 @@ public class javaZmJNI {
   public final static native boolean MindMatterModel_itemContentMatchesString(long jarg1, MindMatterModel jarg1_, String jarg2, String jarg3);
   public final static native boolean MindMatterModel_isConnected(long jarg1, MindMatterModel jarg1_, String jarg2, String jarg3);
   public final static native long MindMatterModel_getNeighbours(long jarg1, MindMatterModel jarg1_, String jarg2);
+  public final static native long MindMatterModel_getLoadedJournalFiles(long jarg1, MindMatterModel jarg1_);
   public final static native String MindMatterModel_createNewItem__SWIG_0(long jarg1, MindMatterModel jarg1_, String jarg2, String jarg3);
   public final static native String MindMatterModel_createNewItem__SWIG_1(long jarg1, MindMatterModel jarg1_, String jarg2);
   public final static native void MindMatterModel_eraseItem(long jarg1, MindMatterModel jarg1_, String jarg2);
