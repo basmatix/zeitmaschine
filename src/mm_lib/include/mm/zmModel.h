@@ -257,6 +257,8 @@ namespace zm
         uid_lst_t getNeighbours(
                 const zm::uid_t   &node_uid ) const;
 
+        std::vector< std::string > getLoadedJournalFiles() const;
+
     private: // const
         bool _isConnected(
                 ModelData::left_const_iterator item_it1,

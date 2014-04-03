@@ -91,9 +91,9 @@ void zm::MindMatterModel::disableHashChecking()
 
 void zm::MindMatterModel::initialize()
 {
-    trace_i("hostname: %s", zm::osal::getHostName().c_str());
-    trace_i("username: %s", zm::osal::getUserName().c_str());
-    trace_i("homepath: %s", zm::osal::getHomePath().c_str());
+    trace_d("hostname: %s", zm::osal::getHostName().c_str());
+    trace_d("username: %s", zm::osal::getUserName().c_str());
+    trace_d("homepath: %s", zm::osal::getHomePath().c_str());
 
     /// setLocalFolder() has not been called yet. use the default folder
     if(m_localFolderRoot == "")
@@ -128,6 +128,7 @@ void zm::MindMatterModel::initialize()
 
     if( !persistence_loadLocalModel() )
     {
+        trace_i("no model file could be loaded - try to find a snapshot");
         // should only be done on syncing
         persistence_loadSnapshot();
     }
@@ -640,3 +641,13 @@ uid_lst_t zm::MindMatterModel::query(
 
     return l_result;
 }
+
+std::vector< std::string > zm::MindMatterModel::getLoadedJournalFiles() const
+{
+    std::vector< std::string > l_return;
+    std::copy(m_things.m_read_journals.begin(),
+              m_things.m_read_journals.end(),
+              std::back_inserter(l_return));
+    return l_return;
+}
+
