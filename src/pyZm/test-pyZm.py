@@ -52,22 +52,28 @@ def operate(gtd_model, args):
 
         if args[0] == "add":
             text = " ".join(args[1:])
+            print("create a generic item with caption '%s'" % text)
             new_item = gtd_model.createNewItem(text)
             logging.info("created new item %s with caption '%s'", new_item, text )
             modifications_done = True
 
-        if args[0] == "task":
+        elif args[0] == "task":
             text = " ".join(args[1:])
+            print("create task with caption '%s'" % text)
             new_item = gtd_model.createNewInboxItem(text)
             logging.info("created new item %s with caption '%s'", new_item, text)
             modifications_done = True
 
-        if args[0] == "sync":
+        elif 'done' in args:
+            while 'done' in args: args.remove('done')
+            print("set items %s to done" % args)
+
+        elif args[0] == "sync":
             logging.info("trigger sync")
             gtd_model.base().sync()
             modifications_done = True
 
-        if args[0] == "snapshot":
+        elif args[0] == "snapshot":
             print gtd_model.base().getLoadedJournalFiles()
             if len(args) < 2:
                 pass
@@ -84,7 +90,7 @@ def operate(gtd_model, args):
 
     if modifications_done:
         gtd_model.base().saveLocal()
-
+        pass
 
 def main():
 
