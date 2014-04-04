@@ -1,0 +1,28 @@
+
+
+realist example usecase
+=======================
+
+
+This document describes the realist API using a bunch of example use cases.
+
+Realist aims at being the network based representation for everything you
+think about and you want to keep in mind.
+
+Realist follows the GTD approach to organize your thaughts and to get things
+done and thus there should be only one medium for everything - for your 
+ideas as well as tasks you have to keep in mind and get handled.
+
+First thing we want to do is write down everything that comes to mind and
+organize it later.
+
+
+* I have lots of ongoing projects
+
+* realist
+
+* a file system analyzer
+
+* my business project - the YSbox
+
+ 
