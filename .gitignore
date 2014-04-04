@@ -29,7 +29,9 @@ build/zm_lib
 build/pyZm
 build/zm_tool
 build/zmQt
+build/zmQtListWidget/
 build/DartConfiguration.tcl
 build/documentation/
 build/callgrind*
 build/javaZm
+build/tooling
