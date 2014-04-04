@@ -178,9 +178,10 @@ if(NOT ANDROID)
 
     add_subdirectory( pyZm )
 
+    add_subdirectory( test )
 endif()
 
-add_subdirectory( test )
+add_subdirectory( test/header_dependency_check )
 
 if(CONFIG_BUILD_PYZM)
     option(CONFIG_HAVE_ASCIITEST "let asciidoc with asciitest create docs and tests" ON)
