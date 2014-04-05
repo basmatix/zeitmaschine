@@ -35,35 +35,15 @@ public class ZmActivity
 {
 	static { System.loadLibrary("javaZm"); }
 
-	///
-	/// native methods
-	///
-	/*
-	private native void helloLog(String logThis);
-	
-	/// will startup a zm instance and load the graph
-	private native void zmStartup( String localDirectory, String externalDirectory );
-	
-	/// will save the graph and destroy the zm instance
-	private native void zmShutdown();
-	
-	/// sends a meta string to the zm instance
-	private native void zmSetMetaString( String logThis );
-	
-	/// gets a list of matching items in the zm graph
-	private native String[] zmGetMatchingItems();
-	
-	/// executes a previously set meta string
-	private native void zmCommitMetaString();
-	
-    */
 	List<String> m_returnValues = new ArrayList<String>();
 	
 	ArrayAdapter<String> m_adapter;
 	
 	zmGtdModel m_gtdModel;
 	
-	Button button;
+	Button m_btSync;
+	Button m_btAdd;
+	EditText m_edittext;
 	
 	/// Called when the activity is first created.
 	@Override
@@ -73,7 +53,7 @@ public class ZmActivity
 		setContentView(R.layout.main);
 		
 		final ListView l_list = (ListView)findViewById(android.R.id.list);
-		final EditText l_edittext = (EditText)findViewById(R.id.editText1);
+		m_edittext = (EditText)findViewById(R.id.editText1);
 		
 		registerForContextMenu( l_list );
 		
@@ -82,17 +62,16 @@ public class ZmActivity
 		setListAdapter(m_adapter);
 		
 		
-		l_edittext.setOnKeyListener( this );
+		m_edittext.setOnKeyListener( this );
 
-		l_edittext.addTextChangedListener( this );
+		m_edittext.addTextChangedListener( this );
 		
 		//helloLog("onCreate");
 
 		//zmStartup( this.getApplicationContext().getFilesDir().toString(),
 		//			 Environment.getExternalStorageDirectory().toString());
 
-		setListContent( "" );
-		
+	
 	
 	    try {
 	    	Log.w("zm", "create model");
@@ -117,19 +96,38 @@ public class ZmActivity
 	        System.out.println("ERROR: "+e.getMessage());
 	    }		
 		
-	    button = (Button) findViewById(R.id.btSync);
+	    m_btSync = (Button) findViewById(R.id.btSync);
+	    m_btAdd = (Button) findViewById(R.id.btAdd);
 	    
-		button.setOnClickListener(new OnClickListener() {
- 
+		m_btSync.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View arg0) {
  
-		    	Log.w("zm", "click");
+		    	Log.w("zm", "sync");
 		    	m_gtdModel.base().sync();
-
 			}
- 
+		});
+		
+		m_btAdd.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View arg0) {
+				if(m_gtdModel == null)
+				{
+					return;
+				}    			
+				String l_text = m_edittext.getText().toString();
+				if(l_text.trim().equals(""))
+				{
+					return;
+				}
+		    	Log.w("zm", "add " + l_text);
+		    	m_gtdModel.createNewInboxItem(l_text);
+		    	m_gtdModel.base().saveLocal();
+		    	m_edittext.setText("");
+			}
 		});		
+		
+		setListContent( "" );
 	}
 	
 	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) 
@@ -184,8 +182,16 @@ public class ZmActivity
 		//zmSetMetaString( s );
 		
 		//m_returnValues = Arrays.asList( zmGetMatchingItems() );
+		StringVec a;
 		
-    	StringVec a = m_gtdModel.getInboxItems(false);
+		if(s.trim().equals(""))
+		{
+	    	a = m_gtdModel.getInboxItems(false);
+		}
+		else
+		{
+	    	a = m_gtdModel.find(s);
+		}
 
     	m_returnValues = new ArrayList<String>();
 

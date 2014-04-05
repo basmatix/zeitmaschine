@@ -7,13 +7,13 @@
     <EditText
         android:id="@+id/editText1"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" 
- 		android:layout_alignParentBottom="true"
- 		android:singleLine="true" 
- 		android:minHeight="50dp" 
-  		android:imeOptions="actionGo"
-  		android:inputType="textNoSuggestions"
-  		/>
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_toLeftOf="@+id/btAdd"
+        android:imeOptions="actionGo"
+        android:inputType="textNoSuggestions"
+        android:minHeight="50dp"
+        android:singleLine="true" />
     
     <ListView
         android:id="@android:id/list"
@@ -28,5 +28,13 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
         android:text="Sync" />
+
+    <Button
+        android:id="@+id/btAdd"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:text="add" />
     
 </RelativeLayout>
