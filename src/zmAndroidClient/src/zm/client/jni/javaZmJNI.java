@@ -31,6 +31,7 @@ public class javaZmJNI {
   public final static native long zmGtdModel_getTaskItems(long jarg1, zmGtdModel jarg1_, boolean jarg2, boolean jarg3);
   public final static native long zmGtdModel_getProjectItems(long jarg1, zmGtdModel jarg1_, boolean jarg2, boolean jarg3);
   public final static native long zmGtdModel_getDoneItems(long jarg1, zmGtdModel jarg1_);
+  public final static native long zmGtdModel_find(long jarg1, zmGtdModel jarg1_, String jarg2);
   public final static native boolean zmGtdModel_isTaskItem(long jarg1, zmGtdModel jarg1_, String jarg2, boolean jarg3);
   public final static native boolean zmGtdModel_isInboxItem(long jarg1, zmGtdModel jarg1_, String jarg2);
   public final static native boolean zmGtdModel_isProjectItem(long jarg1, zmGtdModel jarg1_, String jarg2, boolean jarg3);

@@ -81,6 +81,10 @@ public class zmGtdModel {
     return new StringVec(javaZmJNI.zmGtdModel_getDoneItems(swigCPtr, this), true);
   }
 
+  public StringVec find(String pattern) {
+    return new StringVec(javaZmJNI.zmGtdModel_find(swigCPtr, this, pattern), true);
+  }
+
   public boolean isTaskItem(String item, boolean includeStandaloneTasks) {
     return javaZmJNI.zmGtdModel_isTaskItem(swigCPtr, this, item, includeStandaloneTasks);
   }
