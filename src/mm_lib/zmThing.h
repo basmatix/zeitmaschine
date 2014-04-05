@@ -107,22 +107,25 @@ std::string zm::MindMatter::getValue( const std::string &name ) const
 }
 
 // todo: should be visitor stuff
-bool zm::MindMatter::stringFind(const std::string &bigString, const std::string &pattern  )
+bool zm::MindMatter::stringFind(
+        const std::string &a_text,
+        const std::string &a_pattern_lower )
 {
-    std::string l_tmpBigString(bigString);
+    std::string l_tmpBigString(a_text);
 
     std::transform(
                 l_tmpBigString.begin(),
                 l_tmpBigString.end(),
                 l_tmpBigString.begin(), ::tolower );
 
-    return l_tmpBigString.find(pattern) != std::string::npos;
+    return l_tmpBigString.find(a_pattern_lower) != std::string::npos;
 }
 
 // todo: should be visitor stuff
-bool zm::MindMatter::contentMatchesString( const std::string &searchString ) const
+bool zm::MindMatter::contentMatchesString(
+        const std::string &a_pattern_lower ) const
 {
-    if( stringFind( m_caption, searchString ) )
+    if( stringFind( m_caption, a_pattern_lower ) )
     {
         return true;
     }
@@ -130,7 +133,7 @@ bool zm::MindMatter::contentMatchesString( const std::string &searchString ) con
          i  = m_string_values.begin();
          i != m_string_values.end(); ++i )
     {
-        if( stringFind( i->second, searchString ) )
+        if( stringFind( i->second, a_pattern_lower ) )
         {
             return true;
         }

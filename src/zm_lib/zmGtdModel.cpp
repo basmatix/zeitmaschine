@@ -169,6 +169,17 @@ zm::uid_lst_t zmGtdModel::getDoneItems() const
     return m_p_things_model->query(l_query);
 }
 
+zm::uid_lst_t zmGtdModel::find(
+        const std::string &a_pattern) const
+{
+    std::string l_query(
+                boost::str(boost::format("interim_search %s")
+                           % a_pattern));
+
+    return m_p_things_model->query(l_query);
+}
+
+
 bool zmGtdModel::isTaskItem(
         const std::string &item,
         bool includeStandaloneTasks ) const

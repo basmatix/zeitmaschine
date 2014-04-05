@@ -65,6 +65,9 @@ public:
 
     zm::uid_lst_t getDoneItems() const;
 
+    zm::uid_lst_t find(
+            const std::string &pattern) const;
+
     bool isTaskItem(
             const zm::uid_t &item,
             bool includeStandaloneTasks ) const;

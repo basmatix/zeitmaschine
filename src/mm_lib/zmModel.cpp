@@ -531,6 +531,8 @@ uid_lst_t zm::MindMatterModel::query(
     // maybe we should be working with
     // http://www.boost.org/doc/libs/1_55_0/libs/iterator/doc/filter_iterator.html
 
+    // "interim_filter_tags +gtd_inbox -gtd_done"
+
     uid_lst_t l_result;
 
     std::vector< std::string > l_tokens;
@@ -582,61 +584,29 @@ uid_lst_t zm::MindMatterModel::query(
                 }
             }
         }
-
-    /*
-    boost::str(boost::format("interim_task_items %s %s")
-               % (includeStandaloneTasks ? "+standalone":"")
-               % (includeDoneItems ? "+done":"")));
-    zm::uid_lst_t l_return;
-
-    for(const zm::ModelData::value_type& i:
-                  m_p_things_model->things() )
-    {
-        if( isTaskItem( i.left, includeStandaloneTasks )
-                && (includeDoneItems       || !isDone(  i.left ) ) )
+        if(l_tokens[0] == "interim_search")
         {
-            l_return.push_back( i.left );
+            if(l_tokens.size() < 2 )
+            {
+                return l_result;
+            }
+
+            std::string l_pattern(l_tokens[1]);
+
+            std::transform(
+                        l_pattern.begin(),
+                        l_pattern.end(),
+                        l_pattern.begin(), ::tolower );
+
+            for(const zm::ModelData::value_type& i: m_things)
+            {
+                zm::MindMatter &l_item = *i.right;
+                if(l_item.contentMatchesString(l_pattern))
+                {
+                    l_result.push_back( i.left );
+                }
+            }
         }
-    }
-
-    return l_return;
-    */
-
-    /*
-    m_p_things_model->query(
-                boost::str(boost::format("interim_project_items %s %s")
-                           % (includeStandaloneTasks ? "+standalone":"")
-                           % (includeDoneItems ? "+done":"")));
-    zm::uid_lst_t l_return;
-
-    for(const zm::ModelData::value_type& i:
-                  m_p_things_model->things() )
-    {
-        if( isProjectItem( i.left, includeStandaloneTasks )
-                && (includeDoneItems       || !isDone(  i.left ) ) )
-        {
-            l_return.push_back( i.left );
-        }
-    }
-
-    return l_return;
-    */
-
-    /*
-    m_p_things_model->query("interim_done_items");
-    zm::uid_lst_t l_return;
-
-    for(const zm::ModelData::value_type& i:
-                  m_p_things_model->things() )
-    {
-        if( isDone( i.left ) )
-        {
-            l_return.push_back( i.left );
-        }
-    }
-
-    return l_return;
-    */
     }
 
     return l_result;
