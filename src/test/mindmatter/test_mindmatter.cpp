@@ -9,6 +9,7 @@
 #include <testing/testing.h>
 
 #include <mm/zmModel.h>
+#include <mm/zmTrace.h>
 
 #include <yaml-cpp/yaml.h>
 
@@ -29,6 +30,8 @@ bool mm_subfolders              ();
 int main( int arg_n, char **arg_v )
 {
     named_function_container l_tests;
+
+    set_trace_level(4);
 
     // l_tests["mm_change_while_open"] =       mm_change_while_open;
     l_tests["mm_equality"] =                mm_equality;
@@ -104,6 +107,11 @@ bool mm_journaled_sync()
     l_m2.initialize();
 
     std::string node1 = l_m1.createNewItem( "node1" );
+
+    /// save and re-initialize. this addresses a bug which leads to
+    /// unability to sync after altering a (new) model and restarting
+    l_m1.saveLocal();
+    l_m1.initialize();
 
     l_synced = l_m1.persistence_sync();
     l_files_copied = sync_folders(fc1, fc2);
