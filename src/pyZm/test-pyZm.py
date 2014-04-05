@@ -6,6 +6,7 @@
 # Copyright (C) 2014 Frans Fuerst
 
 from optparse import OptionParser
+import os
 import sys
 import logging
 import colorama
@@ -127,6 +128,9 @@ def main():
     if options.root:
         #print options.root
         gtd_model.base().setLocalFolder(options.root)
+    elif os.path.exists("./zm-local"):
+        gtd_model.base().setLocalFolder(os.path.abspath("./zm-local"))
+
     if options.no_check_hash:
         gtd_model.base().disableHashChecking()
     if options.verbose:
