@@ -91,6 +91,10 @@ MainWindow::MainWindow(QWidget *parent)
 
         m_model.setUsedHostname( l_defaultHostName );
     }
+    if( QCoreApplication::arguments().contains("-d") )
+    {
+        m_model.base()->disableHashChecking();
+    }
 
     m_model.initialize( m_ui->twTask->invisibleRootItem() );
 
