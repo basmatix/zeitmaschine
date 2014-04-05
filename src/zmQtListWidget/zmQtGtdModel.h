@@ -35,7 +35,10 @@ public:
     QTreeWidgetItem *m_liDone;
 
     zmQtGtdModel();
+
     virtual ~zmQtGtdModel();
+
+    boost::shared_ptr< zm::MindMatterModel > base();
 
     bool hasUsedUsername() const
     {

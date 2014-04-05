@@ -140,3 +140,8 @@ zmQtGtdModel::~zmQtGtdModel()
 {
     delete m_wi_map;
 }
+
+boost::shared_ptr< zm::MindMatterModel > zmQtGtdModel::base()
+{
+    return m_gtd_model.base();
+}
