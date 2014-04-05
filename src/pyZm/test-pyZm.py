@@ -75,16 +75,24 @@ def operate(gtd_model, args):
 
         elif args[0] == "snapshot":
             print gtd_model.base().getLoadedJournalFiles()
-            if len(args) < 2:
-                pass
-            elif args[1] == 'save':
-                print "save"
-                gtd_model.base().createSnapshot()
-                pass
-            elif args[1] == 'load':
-                print "load"
-                gtd_model.base().loadSnapshot()
-                pass
+            if len(args) >= 2:
+                if args[1] == 'save':
+                    print "save"
+                    gtd_model.base().createSnapshot()
+                    pass
+                elif args[1] == 'load':
+                    print "load"
+                    gtd_model.base().loadSnapshot()
+                    pass
+
+        elif args[0] == "search":
+            if len(args) >= 2:
+                print "find '%s'" % args[1]
+                items = gtd_model.find(args[1])
+                for i in items:
+                    print gtd_model.base().getCaption(i)
+
+
 
     list_all(gtd_model)
 
