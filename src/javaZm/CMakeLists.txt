@@ -82,19 +82,24 @@ if( CONFIG_BUILD_JAVAZM )
 
     get_target_property(TARGET_LOCATION ${JAVA_ZM_LIBRARY_NAME} LOCATION)
 
-    file( GLOB java_files "${CMAKE_CURRENT_BINARY_DIR}/*.java")
+    if(GENERATED_JAVA_FILES_PATH)
 
-    foreach(full_file_name ${java_files})
-        get_filename_component( java_file_name ${full_file_name} NAME )
         get_filename_component( jni_dir "${GENERATED_JAVA_FILES_PATH}" ABSOLUTE)
 
-        # won't work! why??
-        add_custom_command( TARGET ${JAVA_ZM_LIBRARY_NAME} POST_BUILD
-            COMMENT "copy generated file ${java_file_name}"
-            COMMAND ${CMAKE_COMMAND} -E copy_if_different "${full_file_name}" "${jni_dir}/${java_file_name}"
-            #COMMAND ${CMAKE_COMMAND} -E copy "${full_file_name}" "${jni_dir}/${java_file_name}"
-        )
-    endforeach()
+        message(STATUS "deploy SWIG generated java files")
+        message(STATUS "target directory is ${jni_dir}")
+
+        file( GLOB java_files "${CMAKE_CURRENT_BINARY_DIR}/*.java")
+
+        foreach(full_file_name ${java_files})
+            get_filename_component( java_file_name ${full_file_name} NAME )
+
+            add_custom_command( TARGET ${JAVA_ZM_LIBRARY_NAME} POST_BUILD
+                COMMAND ${CMAKE_COMMAND} -E copy_if_different "${full_file_name}" "${jni_dir}/${java_file_name}"
+            )
+        endforeach()
+
+    endif()
 
     # strip generated binaries
     # todo - copy all java files or set the output path and make sure

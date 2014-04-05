@@ -8,6 +8,6 @@ ANDROID_NDK_TOOLCHAIN_ROOT=~/android-toolchain/ cmake \
 -DSWIG_DIR=/usr/share/swig/2.0.11 \
 -DLIBRARY_OUTPUT_PATH_ROOT=../src/zmAndroidClient/ \
 -DEXECUTABLE_OUTPUT_PATH=../src/zmAndroidClient/bin \
--DGENERATED_JAVA_FILES_PATH=../src/zmAndroidClient/src/zm/client/jni \
+-DGENERATED_JAVA_FILES_PATH=../zmAndroidClient/src/zm/client/jni \
 ../src
 
