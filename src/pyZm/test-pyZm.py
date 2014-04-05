@@ -40,6 +40,12 @@ def list_all(model):
         print ("%s  [PROJ] %s" %
                 (i[:4], yield_n(model.base().getCaption(i), 80, '.')))
 
+def list_matching(gtd_model, pattern):
+    print     ("ID    CAPTION" )
+    print     ("----  ----" )
+    for i in gtd_model.find(pattern):
+        print("%s  %s" %
+                (i[:4], yield_n(gtd_model.base().getCaption(i), 80, ' ')))
 
 def operate(gtd_model, args):
 
@@ -48,6 +54,7 @@ def operate(gtd_model, args):
     """
 
     modifications_done = False
+    show_list = True
 
     if not args == []:
 
@@ -87,19 +94,18 @@ def operate(gtd_model, args):
                     pass
 
         elif args[0] == "search":
+            show_list = False
             if len(args) >= 2:
-                print "find '%s'" % args[1]
-                items = gtd_model.find(args[1])
-                for i in items:
-                    print gtd_model.base().getCaption(i)
+                list_matching(gtd_model, args[1])
+            else:
+                print "missing pattern"
 
 
-
-    list_all(gtd_model)
+    if show_list:
+        list_all(gtd_model)
 
     if modifications_done:
         gtd_model.base().saveLocal()
-        pass
 
 def main():
 
@@ -133,6 +139,7 @@ def main():
 
     if options.no_check_hash:
         gtd_model.base().disableHashChecking()
+
     if options.verbose:
         gtd_model.base().setTraceLevel(4)
         logging.getLogger().setLevel(logging.DEBUG)
