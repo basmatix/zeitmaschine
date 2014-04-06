@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    >
-    
+    android:layout_height="fill_parent" >
+
     <EditText
         android:id="@+id/editText1"
         android:layout_width="match_parent"
@@ -14,7 +14,7 @@
         android:inputType="textNoSuggestions"
         android:minHeight="50dp"
         android:singleLine="true" />
-    
+
     <ListView
         android:id="@android:id/list"
         android:layout_width="match_parent"
@@ -36,5 +36,5 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:text="add" />
-    
+
 </RelativeLayout>
