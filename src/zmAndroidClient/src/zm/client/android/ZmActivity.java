@@ -1,25 +1,26 @@
 package zm.client.android;
 
-//import android.app.Activity;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
+import android.app.Activity;
 import android.app.ListActivity;
+import android.content.Context;
 import android.os.Bundle;
-import android.os.Debug;
-import android.os.Environment;
-import android.widget.AdapterView;
+import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnKeyListener;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.util.Log;
 import android.widget.Button;
@@ -31,20 +32,80 @@ import zm.client.jni.*;
 
 public class ZmActivity 
 	extends ListActivity 
-	implements TextWatcher, OnKeyListener 
+	implements TextWatcher, OnKeyListener
 {
 	static { System.loadLibrary("javaZm"); }
 
-	List<String> m_returnValues = new ArrayList<String>();
+	//List<String> m_returnValues = new ArrayList<String>();
+	List<ZmItem> m_returnValues = new ArrayList<ZmItem>();
 	
-	ArrayAdapter<String> m_adapter;
+	//ArrayAdapter<String> m_adapter;
+	ZmItemArrayAdapter m_adapter;
 	
 	zmGtdModel m_gtdModel;
 	
 	Button m_btSync;
 	Button m_btAdd;
 	EditText m_edittext;
+	ListView m_listView;
 	
+	public class ZmItem {
+
+	    public String m_uid;
+	    public String m_caption;
+	    // color
+	    //
+	    
+	    // constructor
+	    public ZmItem(String uid, String caption) {
+	        this.m_uid = uid;
+	        this.m_caption = caption;
+	    }
+	}
+	
+	public class ZmItemArrayAdapter extends ArrayAdapter<ZmItem> {
+
+	    Context mContext;
+	    int layoutResourceId;
+	    List<ZmItem> data = null;
+
+	    public ZmItemArrayAdapter(Context mContext, int layoutResourceId, List<ZmItem> data) {
+
+	        super(mContext, layoutResourceId, data);
+
+	        this.layoutResourceId = layoutResourceId;
+	        this.mContext = mContext;
+	        this.data = data;
+	    }
+
+		@Override
+	    public View getView(int position, View convertView, ViewGroup parent) {
+
+	        /*
+	         * The convertView argument is essentially a "ScrapView" as described is Lucas post 
+	         * http://lucasr.org/2012/04/05/performance-tips-for-androids-listview/
+	         * It will have a non-null value when ListView is asking you recycle the row layout. 
+	         * So, when convertView is not null, you should simply update its contents instead of inflating a new row layout.
+	         */
+	        if(convertView==null){
+	            // inflate the layout
+	            LayoutInflater inflater = ((Activity) mContext).getLayoutInflater();
+	            convertView = inflater.inflate(layoutResourceId, parent, false);
+	        }
+
+	        // object item based on the position
+	        ZmItem objectItem = data.get(position);
+
+	        // get the TextView and then set the text (item name) and tag (item ID) values
+	        TextView textViewItem = (TextView) convertView.findViewById(R.id.textViewItem);
+	        textViewItem.setText(objectItem.m_caption);
+	        //textViewItem.setTag(objectItem.itemId);
+
+	        return convertView;
+
+	    }
+
+	}
 	/// Called when the activity is first created.
 	@Override
 	public void onCreate(Bundle savedInstanceState)
@@ -52,12 +113,13 @@ public class ZmActivity
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 		
-		final ListView l_list = (ListView)findViewById(android.R.id.list);
+		m_listView = (ListView)findViewById(android.R.id.list);
 		m_edittext = (EditText)findViewById(R.id.editText1);
 		
-		registerForContextMenu( l_list );
+		registerForContextMenu( m_listView );
 		
-		m_adapter = new ArrayAdapter<String>( this, R.layout.flow_list_item, m_returnValues );
+		//m_adapter = new ArrayAdapter<String>( this, R.layout.flow_list_item, m_returnValues );
+		m_adapter = new ZmItemArrayAdapter( this, R.layout.flow_list_item, m_returnValues );
 		
 		setListAdapter(m_adapter);
 		
@@ -126,7 +188,6 @@ public class ZmActivity
 		    	m_edittext.setText("");
 			}
 		});		
-		
 		setListContent( "" );
 	}
 	
@@ -193,17 +254,17 @@ public class ZmActivity
 	    	a = m_gtdModel.find(s);
 		}
 
-    	m_returnValues = new ArrayList<String>();
+    	m_returnValues = new ArrayList<ZmItem>();
 
     	for(int i = 0; i < a.size(); ++i)
     	{	
-    		String es = a.get(i);
-    		m_returnValues.add(m_gtdModel.base().getCaption(es));
+    		String l_uid = a.get(i);
+    		m_returnValues.add(new ZmItem(l_uid, m_gtdModel.base().getCaption(l_uid)));
     	}
-    	
+   	
 
 		// frans: todo: muss vmtl nicht sein..
-    	m_adapter = new ArrayAdapter<String>( this, R.layout.flow_list_item, m_returnValues);
+    	m_adapter = new ZmItemArrayAdapter( this, R.layout.flow_list_item, m_returnValues);
 		
 		setListAdapter(m_adapter);
 	}
@@ -211,6 +272,9 @@ public class ZmActivity
 	@Override
 	protected void onListItemClick(ListView l, View v, int position, long id)
 	{
+		ZmItem l_item = (ZmItem)getListAdapter().getItem(position);
+		Log.i("zm", "clicked on '" + l_item.m_caption + "'");
+		
 		//String item = (String) getListAdapter().getItem(position);
 		//helloLog("onListItemClick");
 	}
