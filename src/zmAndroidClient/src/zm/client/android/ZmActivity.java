@@ -7,7 +7,6 @@ import android.app.Activity;
 import android.app.ListActivity;
 import android.content.Context;
 import android.os.Bundle;
-import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -36,10 +35,8 @@ public class ZmActivity
 {
 	static { System.loadLibrary("javaZm"); }
 
-	//List<String> m_returnValues = new ArrayList<String>();
 	List<ZmItem> m_returnValues = new ArrayList<ZmItem>();
 	
-	//ArrayAdapter<String> m_adapter;
 	ZmItemArrayAdapter m_adapter;
 	
 	zmGtdModel m_gtdModel;
@@ -65,17 +62,17 @@ public class ZmActivity
 	
 	public class ZmItemArrayAdapter extends ArrayAdapter<ZmItem> {
 
-	    Context mContext;
-	    int layoutResourceId;
-	    List<ZmItem> data = null;
+	    Context m_context;
+	    int 	m_layoutResourceId;
+	    List<ZmItem> m_data = null;
 
 	    public ZmItemArrayAdapter(Context mContext, int layoutResourceId, List<ZmItem> data) {
 
 	        super(mContext, layoutResourceId, data);
 
-	        this.layoutResourceId = layoutResourceId;
-	        this.mContext = mContext;
-	        this.data = data;
+	        this.m_layoutResourceId = layoutResourceId;
+	        this.m_context = mContext;
+	        this.m_data = data;
 	    }
 
 		@Override
@@ -89,12 +86,12 @@ public class ZmActivity
 	         */
 	        if(convertView==null){
 	            // inflate the layout
-	            LayoutInflater inflater = ((Activity) mContext).getLayoutInflater();
-	            convertView = inflater.inflate(layoutResourceId, parent, false);
+	            LayoutInflater inflater = ((Activity) m_context).getLayoutInflater();
+	            convertView = inflater.inflate(m_layoutResourceId, parent, false);
 	        }
 
 	        // object item based on the position
-	        ZmItem objectItem = data.get(position);
+	        ZmItem objectItem = m_data.get(position);
 
 	        // get the TextView and then set the text (item name) and tag (item ID) values
 	        TextView textViewItem = (TextView) convertView.findViewById(R.id.textViewItem);
@@ -128,13 +125,6 @@ public class ZmActivity
 
 		m_edittext.addTextChangedListener( this );
 		
-		//helloLog("onCreate");
-
-		//zmStartup( this.getApplicationContext().getFilesDir().toString(),
-		//			 Environment.getExternalStorageDirectory().toString());
-
-	
-	
 	    try {
 	    	Log.w("zm", "create model");
 	        System.out.println("test");
@@ -147,12 +137,6 @@ public class ZmActivity
 
 	    	Log.i("zm", "found " + m_gtdModel.base().getItemCount() + " items");
 
-			/*
-			theModel.createNewItem("Get milk!");
-			//MindMatterModel theModel = new MindMatterModel();
-						
-			theModel.createNewItem("test");
-			*/
 	    } catch (Exception e) {
 	        // gib die Fehlermeldung aus
 	        System.out.println("ERROR: "+e.getMessage());
@@ -206,7 +190,6 @@ public class ZmActivity
     {
         if( (event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) 
         {
-			//zmCommitMetaString();
 			setListContent( "" );
 			return true;
         }
@@ -240,9 +223,7 @@ public class ZmActivity
 		}    	
 		
 		Log.i("zm", "setListContent");
-		//zmSetMetaString( s );
 		
-		//m_returnValues = Arrays.asList( zmGetMatchingItems() );
 		StringVec a;
 		
 		if(s.trim().equals(""))
@@ -261,7 +242,6 @@ public class ZmActivity
     		String l_uid = a.get(i);
     		m_returnValues.add(new ZmItem(l_uid, m_gtdModel.base().getCaption(l_uid)));
     	}
-   	
 
 		// frans: todo: muss vmtl nicht sein..
     	m_adapter = new ZmItemArrayAdapter( this, R.layout.flow_list_item, m_returnValues);
@@ -274,9 +254,6 @@ public class ZmActivity
 	{
 		ZmItem l_item = (ZmItem)getListAdapter().getItem(position);
 		Log.i("zm", "clicked on '" + l_item.m_caption + "'");
-		
-		//String item = (String) getListAdapter().getItem(position);
-		//helloLog("onListItemClick");
 	}
 /*
 	public void onStart()   { super.onStart();   helloLog("onStart"); }
