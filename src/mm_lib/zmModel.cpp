@@ -49,8 +49,7 @@ zm::MindMatterModel::MindMatterModel()
 
 zm::MindMatterModel::~MindMatterModel()
 {
-    clear(m_things_synced);
-    clear(m_things);
+    _reset();
     delete m_options;
 }
 
@@ -89,11 +88,19 @@ void zm::MindMatterModel::disableHashChecking()
     m_checkHashes = false;
 }
 
+void zm::MindMatterModel::_reset()
+{
+    clear(m_things_synced);
+    clear(m_things);
+}
+
 void zm::MindMatterModel::initialize()
 {
     trace_d("hostname: %s", zm::osal::getHostName().c_str());
     trace_d("username: %s", zm::osal::getUserName().c_str());
     trace_d("homepath: %s", zm::osal::getHomePath().c_str());
+
+    _reset();
 
     /// setLocalFolder() has not been called yet. use the default folder
     if(m_localFolderRoot == "")

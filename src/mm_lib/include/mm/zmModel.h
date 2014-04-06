@@ -175,6 +175,8 @@ namespace zm
 
     private:
 
+        void _reset();
+
         std::string createJournalFileName() const;
         std::string createModelFileNameNew() const;
         std::string createModelFileNameOld() const;

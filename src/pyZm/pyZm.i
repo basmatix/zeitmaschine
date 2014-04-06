@@ -10,10 +10,10 @@
 
 %include "std_string.i"
 %include "std_vector.i"
-//%include "std_list.i"
 %include "std_map.i"
 %include "std_pair.i"
 %include "boost_shared_ptr.i"
+%include "exception.i"
 
 //%array_class(int, intArray);
 //%array_class(double, doubleArray);

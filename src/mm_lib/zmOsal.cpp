@@ -1,5 +1,9 @@
-/// copyright (C) 2013 Frans Fürst
 /// -*- coding: utf-8 -*-
+///
+/// file: zmOsal.cpp
+///
+/// Copyright (C) 2014 Frans Fuerst
+///
 
 #include <mm/zmOsal.h>
 
