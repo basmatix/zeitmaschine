@@ -1,5 +1,3 @@
-
-
 realist example usecase
 =======================
 
@@ -25,4 +23,13 @@ organize it later.
 
 * my business project - the YSbox
 
- 
+
+
+--- every day use
+
+* tabula rasa mode
+* adding birth dates
+* following brain stacks
+* taking notes
+* shuffle-a-task
+

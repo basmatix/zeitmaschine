@@ -14,23 +14,23 @@ will be accessed by Debug builds automatically.
 However until most important scheduling features are available, the next
 steps in development are listed here, too.
 
-* Create a "snapshot model" if none exists
+* Build a native Qt5 application
+* search
+* Android: add items
 * Find a way to model subfolder relations, e.g.
   - have directed connections
   - have a "parent" property   (bad, since object resides in just one folder)
   - have "children" properties (requires lists)
 
 
+names
+-----
+flow zeitmaschine realist tea-time-machine heap hm
+
 stories
 -------
 
-* tracking
-** KPIs
-** average duration / number of tasks / day
-
-* stacking
-** stack for every work-thread
-** schedule clear work threads for the day
+see DOC-story_test.txt
 
 
 requirements
