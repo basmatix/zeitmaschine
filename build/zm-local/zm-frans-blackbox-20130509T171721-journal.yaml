@@ -1,0 +1,13 @@
+- update: dbe5498989562daa
+  time: 2013-05-09T17:17:16.445454
+  type: CreateItem
+  caption: journal sync reihenfolge verifizieren
+- update: dbe5498989562daa
+  time: 2013-05-09T17:17:16.445579
+  type: AddAttribute
+  name: gtd_item_unhandled
+- update: dbe5498989562daa
+  time: 2013-05-09T17:17:16.593690
+  type: SetStringValue
+  name: gtd_item_note
+  value: vorgänger-journal in jedem journal-file abspeichern
