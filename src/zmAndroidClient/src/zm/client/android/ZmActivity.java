@@ -3,24 +3,18 @@ package zm.client.android;
 import java.util.ArrayList;
 import java.util.List;
 
-import android.app.Activity;
 import android.app.ListActivity;
-import android.content.Context;
 import android.os.Bundle;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnKeyListener;
-import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.util.Log;
 import android.widget.Button;
 import android.view.View.OnClickListener;
@@ -46,63 +40,6 @@ public class ZmActivity
 	EditText m_edittext;
 	ListView m_listView;
 	
-	public class ZmItem {
-
-	    public String m_uid;
-	    public String m_caption;
-	    // color
-	    //
-	    
-	    // constructor
-	    public ZmItem(String uid, String caption) {
-	        this.m_uid = uid;
-	        this.m_caption = caption;
-	    }
-	}
-	
-	public class ZmItemArrayAdapter extends ArrayAdapter<ZmItem> {
-
-	    Context m_context;
-	    int 	m_layoutResourceId;
-	    List<ZmItem> m_data = null;
-
-	    public ZmItemArrayAdapter(Context mContext, int layoutResourceId, List<ZmItem> data) {
-
-	        super(mContext, layoutResourceId, data);
-
-	        this.m_layoutResourceId = layoutResourceId;
-	        this.m_context = mContext;
-	        this.m_data = data;
-	    }
-
-		@Override
-	    public View getView(int position, View convertView, ViewGroup parent) {
-
-	        /*
-	         * The convertView argument is essentially a "ScrapView" as described is Lucas post 
-	         * http://lucasr.org/2012/04/05/performance-tips-for-androids-listview/
-	         * It will have a non-null value when ListView is asking you recycle the row layout. 
-	         * So, when convertView is not null, you should simply update its contents instead of inflating a new row layout.
-	         */
-	        if(convertView==null){
-	            // inflate the layout
-	            LayoutInflater inflater = ((Activity) m_context).getLayoutInflater();
-	            convertView = inflater.inflate(m_layoutResourceId, parent, false);
-	        }
-
-	        // object item based on the position
-	        ZmItem objectItem = m_data.get(position);
-
-	        // get the TextView and then set the text (item name) and tag (item ID) values
-	        TextView textViewItem = (TextView) convertView.findViewById(R.id.textViewItem);
-	        textViewItem.setText(objectItem.m_caption);
-	        //textViewItem.setTag(objectItem.itemId);
-
-	        return convertView;
-
-	    }
-
-	}
 	/// Called when the activity is first created.
 	@Override
 	public void onCreate(Bundle savedInstanceState)
