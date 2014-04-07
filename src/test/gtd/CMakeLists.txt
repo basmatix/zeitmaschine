@@ -2,12 +2,7 @@
 #
 # file: CMakeLists.txt (zeitmaschine-unit_tests-gtd)
 #
-# Copyright 2011 - 2013 scitics GmbH
-#
-# Information  contained  herein  is  subject  to change  without  notice.
-# scitics GmbH  retains ownership and  all other rights  in this software.
-# Any reproduction of the software or components thereof without the prior
-# written permission of scitics GmbH is prohibited.
+# Copyright 2014 Frans Fuerst
 
 # test specific includes
 #include_directories( "${CMAKE_SOURCE_DIR}/common/include" )

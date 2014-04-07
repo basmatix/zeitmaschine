@@ -2,7 +2,7 @@
 #
 # file: CMakeLists.txt (javaZm)
 #
-# Copyright (C) 2013 Frans Fuerst
+# Copyright (C) 2014 Frans Fuerst
 #
 
 project( javaZm )

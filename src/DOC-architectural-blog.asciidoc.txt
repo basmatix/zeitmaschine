@@ -9,8 +9,8 @@ In this document architectural options and considerations are being discussed
 
 
 
-2014.03.26 - should the distinct model views provide the generic interface?
----------------------------------------------------------------------------
+.*2014.03.26 - should the distinct model views provide the generic interface?.*
+********************************************************************************
 
 Option 1: No - have model and gtdModel and handle them independently
 
@@ -20,22 +20,49 @@ Option 3: Both - let both models provide a base() which returns the
                  generic model
 
 Option 3 sounds promising because it provides all advantages
+********************************************************************************
 
 
-why to use smart_ptr on SWIG interface
---------------------------------------
+
+.*why use smart_ptr on SWIG interface*
+********************************************************************************
 
 TBD, hint: automatic cleanup
+********************************************************************************
 
 
-solve the conflict problem with immutable files
------------------------------------------------
+
+.*solve the conflict problem with immutable files*
+********************************************************************************
 
 stub: use generic file sync tools like dropbox, sparkleshare, git etc.
       without the need to handle conflicts on file system basis
 
+********************************************************************************
 
-automatic save?
----------------
+
+
+.*automatic save*
+********************************************************************************
 
 no
+********************************************************************************
+
+
+
+.*should item connections be part of items rather than stand alone?*
+********************************************************************************
+currently: *yes*
+
+.pro:
+* whole model can be seen as sum of items rather than having additional
+  entities for connections (easy)
+* connections are a property of items as they are "in mind"
+
+.con:
+* connections are directional by default and must be saved twice
+* design flaw: items have to know the concept of UIDs to make items capable
+               of diffing connections from items of another model (with
+               different pointers to equal items)
+********************************************************************************
+
