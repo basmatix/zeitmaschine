@@ -86,8 +86,8 @@ if( CONFIG_BUILD_JAVAZM )
 
         get_filename_component( jni_dir "${GENERATED_JAVA_FILES_PATH}" ABSOLUTE)
 
-        message(STATUS "deploy SWIG generated java files")
-        message(STATUS "target directory is ${jni_dir}")
+        message(STATUS "configure SWIG generated java files to be copied")
+        message(STATUS "target path is ${jni_dir}")
 
         file( GLOB java_files "${CMAKE_CURRENT_BINARY_DIR}/*.java")
 
