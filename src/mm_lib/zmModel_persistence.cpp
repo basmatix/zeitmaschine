@@ -107,20 +107,22 @@ bool zm::MindMatterModel::persistence_loadLocalModel()
         }
         else
         {
-            l_result |=
-                loadModelFromFile(m_localModelFileSynced, m_things, m_checkHashes );
+            deepCopy(m_things_synced, m_things);
         }
     }
     else
     {
         if( boost::filesystem::exists( m_localModelFile ) )
         {
-            boost::filesystem::rename( m_localModelFile, m_localModelFileSynced );
+            /// NOTE: m_things_synced has to be clear if no last-synced-file
+            ///       can be found (rather than done before at this place)
+            ///       Otherwise we implicitly assume that all changes being
+            ///       done have already been synced
 
             l_result |=
-                loadModelFromFile(m_localModelFileSynced, m_things, m_checkHashes );
+                loadModelFromFile(m_localModelFile, m_things, m_checkHashes );
 
-            deepCopy(m_things, m_things_synced);
+            clear( m_things_synced );
         }
     }
     return l_result;
