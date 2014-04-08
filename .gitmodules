@@ -1,9 +1,0 @@
-[submodule "src/submodules/json-cpp"]
-	path = src/submodules/json-cpp
-	url = https://github.com/mrtazz/json-cpp.git
-[submodule "src/submodules/yaml-cpp"]
-	path = src/submodules/yaml-cpp
-	url = git@git.scitics.de:yaml-cpp
-[submodule "src/submodules/asciitest"]
-	path = src/submodules/asciitest
-	url = git@git.scitics.de:asciitest
