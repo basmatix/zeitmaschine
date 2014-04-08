@@ -1,0 +1,6 @@
+[submodule "src/submodules/yaml-cpp"]
+	path = src/submodules/yaml-cpp
+	url = https://github.com/pypp/yaml-cpp
+[submodule "src/submodules/asciitest"]
+	path = src/submodules/asciitest
+	url = https://github.com/scitics/asciitest
