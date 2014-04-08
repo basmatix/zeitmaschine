@@ -3,20 +3,17 @@ zeitmaschine - GTD inspired home for thoughts
 :toc:
 :icons:
 :numbered:
-:website: http://www.scitics.de
 
 
 next steps
 ----------
 
-Most issues will be reported and handled in the local folder which which
+Most issues will be reported and handled in the zm-local folder which which
 will be accessed by Debug builds automatically.
 However until most important scheduling features are available, the next
 steps in development are listed here, too.
 
 * Build a native Qt5 application
-* search
-* Android: add items
 * Find a way to model subfolder relations, e.g.
   - have directed connections
   - have a "parent" property   (bad, since object resides in just one folder)
@@ -25,7 +22,8 @@ steps in development are listed here, too.
 
 names
 -----
-flow zeitmaschine realist tea-time-machine heap hm
+flow zeitmaschine realist tea-time-machine heap hm mind-machine juno (youknow)
+
 
 stories
 -------
@@ -56,70 +54,70 @@ Provide GTD-like self-management capabilities
 
 
 .*F.02 - _multi client_*
-****************************************************
+********************************************************************************
 * syncing
-****************************************************
+********************************************************************************
 
 
 .*F.03 - _search_*
-****************************************************
-****************************************************
+********************************************************************************
+********************************************************************************
 
 
 .*F.04 - _supported platforms_*
-****************************************************
+********************************************************************************
 * windows, linux, android, osx, ios
-****************************************************
+********************************************************************************
 
 
 .*F.05 - _privacy_*
-****************************************************
+********************************************************************************
 * crypting
-****************************************************
+********************************************************************************
 
 
 .*F.06 - _multi user / visibility domains_*
-****************************************************
-****************************************************
+********************************************************************************
+********************************************************************************
 
 
 .*F.07 - _project management_*
-****************************************************
+********************************************************************************
 * time schedule
 * ticket import/export
-****************************************************
+********************************************************************************
 
 
 .*F.08 - _scheduling / priority_*
-****************************************************
+********************************************************************************
 * provide next task
 * priority, due dates, order, dismisses, contexts
-****************************************************
+********************************************************************************
 
 
 .*F.09 - _item groups_*
-****************************************************
-****************************************************
+********************************************************************************
+********************************************************************************
 
 
 .*F.10 - _tagging_*
-****************************************************
-****************************************************
+********************************************************************************
+********************************************************************************
 
 
 .*F.11 - _time tracking_*
-****************************************************
+********************************************************************************
 * keep track of current task -> ask
 * record start/stop
 * provide statistics
-****************************************************
+********************************************************************************
 
 
 .*F.12 - _YSbox connectivity_*
-****************************************************
+********************************************************************************
 * automatically issue searching
 * ticket import/export
-****************************************************
+********************************************************************************
 
 
 GUI / GTD
@@ -202,27 +200,3 @@ gui   ->  gtd                 :   initialize
                     things   ->  things    :   load local journal
                     things   ->  things    :   <color:#aa2222> load new external journals
 --------------------------------------------------------------------------------
-
-
-design considerations
-~~~~~~~~~~~~~~~~~~~~~
-
-.*should item connections be part of items rather than stand alone?*
-****************************************************************************************
-currently: *yes*
-
-.pro:
-* whole model can be seen as sum of items rather than having additional
-  entities for connections (easy)
-* connections are a property of items as they are "in mind"
-
-.con:
-* connections are directional by default and must be saved twice
-* design flaw: items have to know the concept of UIDs to make items capable
-               of diffing connections from items of another model (with
-               different pointers to equal items)
-****************************************************************************************
-
-
-
-

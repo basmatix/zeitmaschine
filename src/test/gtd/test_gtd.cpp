@@ -2,12 +2,8 @@
 ///
 /// file: test_common.cpp
 ///
-/// Copyright 2011 - 2013 scitics GmbH
+/// Copyright 2014 Frans Fuerst
 ///
-/// Information  contained  herein  is  subject  to change  without  notice.
-/// scitics GmbH  retains ownership and  all other rights  in this software.
-/// Any reproduction of the software or components thereof without the prior
-/// written permission of scitics GmbH is prohibited.
 
 #include <zm/zmGtdModel.h>
 
