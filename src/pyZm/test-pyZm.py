@@ -74,7 +74,14 @@ def operate(gtd_model, args):
 
         elif 'done' in args:
             while 'done' in args: args.remove('done')
-            print("set items %s to done" % args)
+            done_items = [gtd_model.base().completeUid(i)
+                            for i in args]
+            done_items = [i for i in done_items if len(i) == 16]
+            if len(set(done_items)) == len(args):
+                print("set items %s to done" % args)
+            else:
+                print("not all given items map to a unique existing one - abort")
+                show_list = False
 
         elif args[0] == "sync":
             logging.info("trigger sync")
