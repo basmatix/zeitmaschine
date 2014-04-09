@@ -411,6 +411,30 @@ size_t zm::MindMatterModel::getItemCount() const
     return m_things.size();
 }
 
+zm::uid_t zm::MindMatterModel::completeUid(
+        const std::string &a_uidPrefix) const
+{
+    uid_t l_result;
+    bool l_found( false );
+    for(const ModelData::value_type &i: m_things)
+    {
+        if(boost::starts_with(i.left, a_uidPrefix))
+        {
+            if(l_found)
+            {
+                return "";
+            }
+            else
+            {
+                l_result = i.left;
+                l_found = true;
+            }
+        }
+    }
+
+    return l_result;
+}
+
 uid_lst_t zm::MindMatterModel::getItems() const
 {
     uid_lst_t l_result;

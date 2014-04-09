@@ -222,6 +222,9 @@ namespace zm
         uid_lst_t query(
                 const std::string &query_str) const;
 
+        uid_t completeUid(
+                const std::string &uidPrefix) const;
+
         uid_lst_t getItems() const;
 
         uid_lst_t getFolderChildren( 
