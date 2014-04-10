@@ -81,6 +81,16 @@ bool zm::MindMatterModel::hasTag(
     return _isConnected( l_item_it, l_tag_it );
 }
 
+bool zm::MindMatterModel::isTag(
+        const zm::uid_t &uid ) const
+{
+    ModelData::left_const_iterator l_item_it( m_things.left.find( uid ) );
+
+    assert( l_item_it != m_things.left.end() );
+
+    return l_item_it->first == l_item_it->second->m_caption;
+}
+
 bool zm::MindMatterModel::hasValue(
         const std::string &uid,
         const std::string &name ) const
@@ -173,9 +183,30 @@ zm::uid_lst_t zm::MindMatterModel::getNeighbours(
 
     for( const item_neighbour_pair_t &m: l_item_it->second->m_neighbours)
     {
-        ModelData::right_const_iterator i = m_things.right.find(m.first);
-        assert( i != m_things.right.end() );
-        l_result.push_back( i->second  );
+        { /// just for checking
+            ModelData::right_const_iterator i = m_things.right.find(m.first);
+            assert( i != m_things.right.end() );
+        }
+        l_result.push_back( m.second.first );
+    }
+
+    return l_result;
+}
+
+zm::uid_lst_t zm::MindMatterModel::getTags(
+        const zm::uid_t   &uid ) const
+{
+    zm::uid_lst_t l_result;
+
+    ModelData::left_const_iterator l_item_it( m_things.left.find( uid ) );
+    assert( l_item_it != m_things.left.end() );
+
+    for( const item_neighbour_pair_t &m: l_item_it->second->m_neighbours )
+    {
+        if( isTag( m.second.first ) )
+        {
+            l_result.push_back( m.second.first );
+        }
     }
 
     return l_result;

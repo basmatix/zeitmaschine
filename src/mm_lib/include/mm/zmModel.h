@@ -243,6 +243,9 @@ namespace zm
         const std::string & getCaption(
                 const zm::uid_t   &uid ) const;
 
+        bool isTag(
+                const std::string &uid ) const;
+
         bool hasTag(
                 const zm::uid_t   &uid,
                 const std::string &tag_name ) const;
@@ -261,6 +264,9 @@ namespace zm
 
         uid_lst_t getNeighbours(
                 const zm::uid_t   &node_uid ) const;
+
+        uid_lst_t getTags(
+                const zm::uid_t   &uid ) const;
 
         std::vector< std::string > getLoadedJournalFiles() const;
 
