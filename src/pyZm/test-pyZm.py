@@ -19,6 +19,15 @@ def yield_n(string, length, padding=' '):
     else:
         return string[:length]
 
+def to_uids(args, model):
+    uid_items = [model.base().completeUid(i)
+                    for i in args]
+    uid_items = [i for i in uid_items if len(i) == 16]
+    if len(set(uid_items)) == len(args):
+        return uid_items
+    return None
+
+
 def list_all(model):
 
     logging.debug("found %d items total", model.base().getItemCount())
@@ -28,9 +37,26 @@ def list_all(model):
     print     ("ID    TYPE   CAPTION" )
     print     ("----  -----  ----" )
 
+    for i in model.base().query("interim_filter_tags"
+                                " -gtd_inbox"
+                                " -gtd_task"
+                                " -gtd_done"
+                                " -gtd_project"
+                                " -gtd_item_done"):
+        tags = model.base().getTags(i)
+#        if model.base().isTag(i): continue
+        print( "%s%s  [NONE] %s %s"  % (
+                colorama.Fore.YELLOW,
+                i[:4],
+                yield_n(model.base().getCaption(i), 80, ' '),
+                tags))
+
     for i in model.getInboxItems(False):
-        print(colorama.Fore.RED   + "%s  [INB]  %s" %
-                (i[:4], yield_n(model.base().getCaption(i), 80, ' ')))
+        tags = model.base().getTags(i)
+        print(colorama.Fore.RED   + "%s  [INB]  %s %s" % (
+                i[:4],
+                yield_n(model.base().getCaption(i), 80, ' '),
+                tags))
 
     for i in model.getTaskItems(True, False):
         print (colorama.Fore.BLUE + "%s  [TASK] %s" %
@@ -61,24 +87,38 @@ def operate(gtd_model, args):
         if args[0] == "add":
             text = " ".join(args[1:])
             print("create a generic item with caption '%s'" % text)
-            new_item = gtd_model.createNewItem(text)
+            new_item = gtd_model.createNewInboxItem(text)
             logging.info("created new item %s with caption '%s'", new_item, text )
             modifications_done = True
+
+        if args[0] == "rm":
+            while 'rm' in args: args.remove('rm')
+            rm_uids = to_uids(args, gtd_model)
+            if rm_uids:
+                print("remove items permanently: %s" % rm_uids)
+                for i in rm_uids:
+                    gtd_model.base().eraseItem(i)
+                modifications_done = True
+            else:
+                print("not all given items map to a unique existing one - abort")
+                show_list = False
 
         elif args[0] == "task":
             text = " ".join(args[1:])
             print("create task with caption '%s'" % text)
             new_item = gtd_model.createNewInboxItem(text)
+            gtd_model.registerItemAsTask(new_item)
             logging.info("created new item %s with caption '%s'", new_item, text)
             modifications_done = True
 
         elif 'done' in args:
             while 'done' in args: args.remove('done')
-            done_items = [gtd_model.base().completeUid(i)
-                            for i in args]
-            done_items = [i for i in done_items if len(i) == 16]
-            if len(set(done_items)) == len(args):
-                print("set items %s to done" % args)
+            done_uids = to_uids(args, gtd_model)
+            if done_uids:
+                print("remove items permanently: %s" % done_uids)
+                for i in done_uids:
+                    gtd_model.setDone(i)
+                modifications_done = True
             else:
                 print("not all given items map to a unique existing one - abort")
                 show_list = False
@@ -112,6 +152,7 @@ def operate(gtd_model, args):
         list_all(gtd_model)
 
     if modifications_done:
+        print("modifications done, save..")
         gtd_model.base().saveLocal()
 
 def main():
