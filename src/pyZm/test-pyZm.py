@@ -53,18 +53,27 @@ def list_all(model):
 
     for i in model.getInboxItems(False):
         tags = model.base().getTags(i)
-        print(colorama.Fore.RED   + "%s  [INB]  %s %s" % (
+        print( "%s%s  [INB]  %s %s" % (
+                colorama.Fore.RED,
                 i[:4],
                 yield_n(model.base().getCaption(i), 80, ' '),
                 tags))
 
     for i in model.getTaskItems(True, False):
-        print (colorama.Fore.BLUE + "%s  [TASK] %s" %
-                (i[:4], yield_n(model.base().getCaption(i), 80, '.')))
+        tags = model.base().getTags(i)
+        print ( "%s%s  [TASK] %s %s" % (
+                colorama.Fore.BLUE,
+                i[:4],
+                yield_n(model.base().getCaption(i), 80, '.'),
+                tags))
 
     for i in model.getProjectItems(True, False):
-        print ("%s  [PROJ] %s" %
-                (i[:4], yield_n(model.base().getCaption(i), 80, '.')))
+        tags = model.base().getTags(i)
+        print ( "%s%s  [PROJ] %s %s" % (
+                colorama.Fore.GREEN,
+                i[:4],
+                yield_n(model.base().getCaption(i), 80, '.'),
+                tags))
 
 def list_matching(gtd_model, pattern):
     print     ("ID    CAPTION" )
