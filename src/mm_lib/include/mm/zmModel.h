@@ -217,6 +217,8 @@ namespace zm
     /// const interface
     public:
 
+        bool isConsistent() const;
+
         size_t getItemCount() const;
 
         uid_lst_t query(

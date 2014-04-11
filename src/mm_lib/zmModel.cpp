@@ -406,6 +406,25 @@ std::string zm::MindMatterModel::createJournalListFileName() const
     return l_ssFileName.str();
 }
 
+bool zm::MindMatterModel::isConsistent() const
+{
+    for(const zm::ModelData::value_type &i: m_things)
+    {
+        for(const auto & l_neighbour: i.right->m_neighbours)
+        {
+            ModelData::left_iterator l_dest_second_item_it(
+                        m_things.left.find( l_neighbour.second.first ) );
+            if(l_dest_second_item_it == m_things.left.end())
+            {
+                trace_w("orphaned neighbour connection %s=>%s",
+                        i.left.c_str(), l_neighbour.second.first.c_str());
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
 size_t zm::MindMatterModel::getItemCount() const
 {
     return m_things.size();
