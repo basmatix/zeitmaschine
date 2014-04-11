@@ -343,7 +343,12 @@ void zmGtdModel::registerItemAsTask(
 void zmGtdModel::setDone(
         const std::string &task_item )
 {
-    m_p_things_model->disconnect( task_item, m_item_inbox );
+    if( m_p_things_model->isConnected(task_item, m_item_inbox))
+    {
+        m_p_things_model->disconnect( task_item, m_item_inbox );
+    }
+
+    // todo: what to do with project items?
     m_p_things_model->connectDirected( task_item, m_item_done );
 
     m_p_things_model->setValue(
