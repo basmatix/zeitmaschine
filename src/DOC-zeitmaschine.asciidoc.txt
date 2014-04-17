@@ -8,10 +8,18 @@ zeitmaschine - GTD inspired home for thoughts
 next steps
 ----------
 
-Most issues will be reported and handled in the zm-local folder which which
-will be accessed by Debug builds automatically.
+Most issues will be reported and handled in the zm-local folder which will be
+accessed by Debug builds automatically.
 However until most important scheduling features are available, the next
 steps in development are listed here, too.
+
+* show local sync status
+* get width of terminal
+* show note
+* show Tags on CLI
+* show PROJECT/task on CLI
+* add/delete tags
+* add item to project
 
 * Build a native Qt5 application
 * Find a way to model subfolder relations, e.g.
