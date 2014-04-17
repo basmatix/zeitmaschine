@@ -285,9 +285,12 @@ void zm::MindMatterModel::eraseItem( const zm::uid_t &uid )
 
 void zm::MindMatterModel::_eraseItem( ModelData::left_iterator &item )
 {
-    //todo: remove references
+    for( const item_neighbour_pair_t &m: item->second->m_neighbours )
+    {
+        //<MindMatter*, <uid_t, int> >
+        _disconnect(item->second, m.first);
+    }
     //todo: delete item
-    //m_things.erase( item );
     m_things.left.erase( item );
 }
 
@@ -432,6 +435,14 @@ void zm::MindMatterModel::_disconnect(
 {
     a_item1->second->m_neighbours.erase( a_item2->second );
     a_item2->second->m_neighbours.erase( a_item1->second );
+}
+
+void zm::MindMatterModel::_disconnect(
+        MindMatter *a_item1,
+        MindMatter *a_item2 )
+{
+    a_item1->m_neighbours.erase( a_item2 );
+    a_item2->m_neighbours.erase( a_item1 );
 }
 
 void zm::MindMatterModel::setValue(

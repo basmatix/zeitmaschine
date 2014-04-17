@@ -370,6 +370,10 @@ namespace zm
                 ModelData::left_iterator &item1,
                 ModelData::left_iterator &item2 );
 
+        static void _disconnect(
+                MindMatter *a_item1,
+                MindMatter *a_item2 );
+
         // returns 16x8 bit
         static zm::uid_t generateUid();
 
