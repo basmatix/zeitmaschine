@@ -107,10 +107,19 @@ def operate(gtd_model, args):
                 print("remove items permanently: %s" % rm_uids)
                 for i in rm_uids:
                     gtd_model.base().eraseItem(i)
-                modifications_done = True
+                if gtd_model.base().isConsistent():
+                    modifications_done = True
+                else:
+                    print "inconsistent model!"
             else:
                 print("not all given items map to a unique existing one - abort")
                 show_list = False
+
+        if args[0] == "rm-tag":
+            if len(args) is not 2:
+                print "invalid number of arguments"
+            else:
+                gtd_model.base().eraseItem(args[1])
 
         elif args[0] == "task":
             text = " ".join(args[1:])
