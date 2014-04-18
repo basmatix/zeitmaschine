@@ -542,6 +542,16 @@ void zm::MindMatterModel::deepCopy(
     a_dest.m_read_journals = a_source.m_read_journals;
 }
 
+bool zm::MindMatterModel::hasLocalChanges() const
+{
+    return equals(m_things, m_things_synced, false);
+}
+
+bool zm::MindMatterModel::hasRemoteChanges() const
+{
+    return ! findNewJournals().empty();
+}
+
 void zm::MindMatterModel::duplicateModelTo(MindMatterModel &other) const
 {
     deepCopy(m_things, other.m_things);

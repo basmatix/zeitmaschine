@@ -155,35 +155,50 @@ bool zm::MindMatterModel::persistence_createSnapshot()
     return true;
 }
 
+std::list <std::string > zm::MindMatterModel::findNewJournals() const
+{
+    std::list <std::string > l_result;
+
+    const std::set< std::string > &l_alreadyImported(m_things.m_read_journals);
+
+    for( const std::string &l_filename: getJournalFiles() )
+    {
+        std::string l_basename(
+                    boost::filesystem::path(
+                        l_filename).filename().string());
+        if( std::find(
+                    l_alreadyImported.begin(),
+                    l_alreadyImported.end(),
+                    l_basename) == l_alreadyImported.end() )
+        {
+            l_result.push_back(l_filename);
+        }
+    }
+
+    return l_result;
+}
+
 ChangeSet zm::MindMatterModel::persistence_pullJournal()
 {
     assert( equals(m_things, m_things_synced, true) );
 
-    ChangeSet l_result;
-    bool l_importedJournals = false;
+    std::list <std::string > l_journalsToImport(findNewJournals());
 
-    std::vector< std::string > l_journalFiles = getJournalFiles();
-    trace_i( "found %d journal files", l_journalFiles.size() );
+    trace_i( "found %d new journal files", l_journalsToImport.size() );
 
-    const std::set< std::string > & l_alreadyImported =
-            m_things.m_read_journals;
-
-    trace_i( "%d journal files already imported",
-                  l_alreadyImported.size() );
-
-    for( const std::string &j: l_journalFiles )
+    for( const std::string &l_filename: l_journalsToImport )
     {
-        std::string l_filename = boost::filesystem::path( j ).filename().string();
-        if( std::find( l_alreadyImported.begin(), l_alreadyImported.end(), l_filename) == l_alreadyImported.end() )
-        {
-            trace_i( "journal '%s' not imported yet", l_filename.c_str() );
-            applyChangeSet( ChangeSet( j ) );
-            m_things.m_read_journals.insert(l_filename);
-            l_importedJournals = true;
-        }
+        std::string l_basename(
+                    boost::filesystem::path(
+                        l_filename).filename().string());
+        trace_i( "journal '%s' not imported yet", l_basename.c_str() );
+        applyChangeSet( ChangeSet( l_filename ) );
+        m_things.m_read_journals.insert(l_basename);
     }
 
-    if( l_importedJournals )
+    ChangeSet l_result;
+
+    if( !l_journalsToImport.empty() )
     {
         l_result = diff( m_things_synced, m_things );
         deepCopy(m_things, m_things_synced);

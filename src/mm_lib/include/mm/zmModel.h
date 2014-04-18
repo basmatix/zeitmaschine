@@ -104,6 +104,10 @@ namespace zm
         bool equals(
                 const MindMatterModel &other, bool tell_why = false ) const;
 
+        bool hasLocalChanges() const;
+
+        bool hasRemoteChanges() const;
+
         void duplicateModelTo(
                       MindMatterModel &other) const;
 
@@ -205,6 +209,8 @@ namespace zm
                 const ModelData   &a_first,
                 const ModelData   &a_second,
                       bool         tell_why);
+
+        std::list< std::string > findNewJournals() const;
 
         ChangeSet persistence_pullJournal();
 
