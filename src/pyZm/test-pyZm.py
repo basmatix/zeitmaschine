@@ -28,6 +28,12 @@ def to_uids(args, model):
     return None
 
 
+def show_status(model):
+    print("local changes:    %s" % "yes" if model.base().hasLocalChanges() else "no")
+    print("remote changes:   %s" % "yes" if model.base().hasRemoteChanges() else "no")
+    print("model consistent: %s" % "yes" if model.base().isConsistent() else "no")
+
+
 def list_all(model):
 
     logging.debug("found %d items total", model.base().getItemCount())
@@ -82,7 +88,7 @@ def list_matching(gtd_model, pattern):
         print("%s  %s" %
                 (i[:4], yield_n(gtd_model.base().getCaption(i), 80, ' ')))
 
-def operate(gtd_model, args):
+def operate(gtd_model, args, auto_save):
 
     """ add
         add task
@@ -107,10 +113,7 @@ def operate(gtd_model, args):
                 print("remove items permanently: %s" % rm_uids)
                 for i in rm_uids:
                     gtd_model.base().eraseItem(i)
-                if gtd_model.base().isConsistent():
-                    modifications_done = True
-                else:
-                    print "inconsistent model!"
+                modifications_done = True
             else:
                 print("not all given items map to a unique existing one - abort")
                 show_list = False
@@ -168,10 +171,17 @@ def operate(gtd_model, args):
 
     if show_list:
         list_all(gtd_model)
+        show_status(gtd_model)
 
     if modifications_done:
-        print("modifications done, save..")
-        gtd_model.base().saveLocal()
+        if auto_save:
+            print("modifications done, save..")
+            if gtd_model.base().isConsistent():
+                gtd_model.base().saveLocal()
+            else:
+                print "inconsistent model! - abort saving"
+        else:
+            print("saving disabled on command line!")
 
 def main():
 
@@ -220,7 +230,7 @@ def main():
 
     logging.debug("use root folder '%s'",model_basic.getLocalFolder())
 
-    operate(gtd_model, args)
+    operate(gtd_model, args, options.auto_save)
     
 if __name__ == "__main__":
     colorama.init(autoreset=True)
