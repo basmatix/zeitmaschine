@@ -29,9 +29,9 @@ def to_uids(args, model):
 
 
 def show_status(model):
-    print("local changes:    %s" % "yes" if model.base().hasLocalChanges() else "no")
-    print("remote changes:   %s" % "yes" if model.base().hasRemoteChanges() else "no")
-    print("model consistent: %s" % "yes" if model.base().isConsistent() else "no")
+    print("local changes:    %s" % ("yes" if model.base().hasLocalChanges() else "no"))
+    print("remote changes:   %s" % ("yes" if model.base().hasRemoteChanges() else "no"))
+    print("model consistent: %s" % ("yes" if model.base().isConsistent() else "no"))
 
 
 def list_all(model):
@@ -123,6 +123,7 @@ def operate(gtd_model, args, auto_save):
                 print "invalid number of arguments"
             else:
                 gtd_model.base().eraseItem(args[1])
+                modifications_done = True
 
         elif args[0] == "task":
             text = " ".join(args[1:])
@@ -136,7 +137,7 @@ def operate(gtd_model, args, auto_save):
             while 'done' in args: args.remove('done')
             done_uids = to_uids(args, gtd_model)
             if done_uids:
-                print("remove items permanently: %s" % done_uids)
+                print("set items to done: %s" % done_uids)
                 for i in done_uids:
                     gtd_model.setDone(i)
                 modifications_done = True
@@ -144,10 +145,19 @@ def operate(gtd_model, args, auto_save):
                 print("not all given items map to a unique existing one - abort")
                 show_list = False
 
-        elif args[0] == "sync":
+        elif args[0] == "sync-pull":
             logging.info("trigger sync")
-            gtd_model.base().sync()
-            modifications_done = True
+            if gtd_model.base().sync_pull():
+                modifications_done = True
+            else:
+                print ("did nothing")
+                show_list = False
+
+        elif args[0] == "sync-push":
+            logging.info("trigger sync")
+            if not gtd_model.base().sync_push():
+                print ("did nothing")
+                show_list = False
 
         elif args[0] == "snapshot":
             print gtd_model.base().getLoadedJournalFiles()
@@ -167,6 +177,10 @@ def operate(gtd_model, args, auto_save):
                 list_matching(gtd_model, args[1])
             else:
                 print "missing pattern"
+
+        else:
+            print ("'%s' not a valid command" % args[0])
+            show_list = False
 
 
     if show_list:
