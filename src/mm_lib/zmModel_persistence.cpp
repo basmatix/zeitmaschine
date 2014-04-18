@@ -15,7 +15,51 @@
 
 using namespace zm;
 
-bool zm::MindMatterModel::persistence_sync()
+bool zm::MindMatterModel::sync_pull()
+{
+    if(findNewJournals().empty())
+    {
+        /// in case there are no new journal files we can stop here
+        return false;
+    }
+
+    // TODO - allow non-persistent run (implies handled journal files to be
+    //        stored in the changeset)
+
+    /// stash local changes (like in git)
+    ChangeSet l_stash( diff( m_things_synced, m_things ) );
+
+    /// sync current with last synced model
+    deepCopy(m_things_synced, m_things);
+
+    /// pull remote changes - after this m_things_synced, m_things are
+    /// equal again
+    ChangeSet l_importedChanges = _persistence_pullJournal();
+
+    //[TODO] -
+    //resolveConflicts(l_stash, l_importedChanges);
+
+    _applyChangeSet(m_things, l_stash);
+
+    persistence_saveLocalModel();
+
+    boost::filesystem::rename( m_localModelFile, m_localModelFileSynced );
+
+    return ! l_importedChanges.isEmpty();
+}
+
+bool zm::MindMatterModel::sync_push()
+{
+    if( ! findNewJournals().empty())
+    {
+        /// in case there are journal files to be imported we abort
+        return false;
+    }
+
+    return ! _persistence_pushJournal().isEmpty();
+}
+
+bool zm::MindMatterModel::_persistence_sync()
 {
     // [TODO] - in case something goes wrong in here we should
     //          do all this in an atomic way
@@ -34,10 +78,10 @@ bool zm::MindMatterModel::persistence_sync()
     persistence_saveLocalModel();
 
     /// write journal from old model to current model
-    ChangeSet l_exportedChanges = persistence_pushJournal();
+    ChangeSet l_exportedChanges = _persistence_pushJournal();
 
     /// load remote journals into current model
-    ChangeSet l_importedChanges = persistence_pullJournal();
+    ChangeSet l_importedChanges = _persistence_pullJournal();
 
     if( l_exportedChanges.isEmpty() && l_importedChanges.isEmpty() )
     {
@@ -176,7 +220,7 @@ std::list <std::string > zm::MindMatterModel::findNewJournals() const
     return l_result;
 }
 
-ChangeSet zm::MindMatterModel::persistence_pullJournal()
+ChangeSet zm::MindMatterModel::_persistence_pullJournal()
 {
     trace_assert_h( equals(m_things, m_things_synced, true) );
 
@@ -190,9 +234,14 @@ ChangeSet zm::MindMatterModel::persistence_pullJournal()
                     boost::filesystem::path(
                         l_filename).filename().string());
         trace_i( "import journal file '%s'", l_basename.c_str() );
-        applyChangeSet( ChangeSet( l_filename ) );
+        _applyChangeSet( m_things, ChangeSet( l_filename ) );
+
+        // todo - should go to ChangeSet
         m_things.m_read_journals.insert(l_basename);
     }
+
+    /// we return the actual changes to make them available for
+    /// conflict solving
 
     ChangeSet l_result;
 
@@ -204,7 +253,7 @@ ChangeSet zm::MindMatterModel::persistence_pullJournal()
     return l_result;
 }
 
-ChangeSet zm::MindMatterModel::persistence_pushJournal()
+ChangeSet zm::MindMatterModel::_persistence_pushJournal()
 {
     ChangeSet l_changeSet( diff( m_things_synced, m_things ) );
 
@@ -231,50 +280,58 @@ ChangeSet zm::MindMatterModel::persistence_pushJournal()
     return l_changeSet;
 }
 
-void zm::MindMatterModel::applyChangeSet( const ChangeSet &changeSet )
+void zm::MindMatterModel::applyChangeSet(
+        const ChangeSet    &changeSet )
 {
-    for( const journal_ptr_t &j: changeSet.getJournal() )
+    _applyChangeSet(m_things, changeSet);
+}
+
+void zm::MindMatterModel::_applyChangeSet(
+        ModelData       &a_thingsMap,
+        const ChangeSet &a_changeSet)
+{
+    for( const journal_ptr_t &j: a_changeSet.getJournal() )
     {
         const zm::uid_t &l_item_uid(j->item_uid);
         const zm::JournalItem::ChangeType &l_change_type(j->type);
 
-        ModelData::left_iterator l_item_it( m_things.left.find( l_item_uid ) );
+        ModelData::left_iterator l_item_it( a_thingsMap.left.find( l_item_uid ) );
 
-        if( l_change_type == JournalItem::CreateItem && l_item_it != m_things.left.end() )
+        if( l_change_type == JournalItem::CreateItem && l_item_it != a_thingsMap.left.end() )
         {
             trace_w( "trying to create already existent item '%s'",
                           l_item_uid.c_str() );
-            trace_assert_s( l_change_type == JournalItem::CreateItem && l_item_it != m_things.left.end() );
+            trace_assert_s( l_change_type == JournalItem::CreateItem && l_item_it != a_thingsMap.left.end() );
             continue;
         }
 
-        if( l_change_type != JournalItem::CreateItem && l_item_it == m_things.left.end() )
+        if( l_change_type != JournalItem::CreateItem && l_item_it == a_thingsMap.left.end() )
         {
             trace_w( "trying to modify non existent item '%s'",
                           l_item_uid.c_str() );
-            trace_assert_s( j->type == JournalItem::CreateItem || l_item_it != m_things.left.end() );
+            trace_assert_s( j->type == JournalItem::CreateItem || l_item_it != a_thingsMap.left.end() );
             continue;
         }
 
         switch( l_change_type )
         {
         case JournalItem::CreateItem:
-            _createNewItem( m_things, j->item_uid, j->value, j->time );
+            _createNewItem(a_thingsMap, j->item_uid, j->value, j->time );
             break;
         case JournalItem::SetStringValue:
             _setValue(l_item_it, j->key, j->value );
             break;
         case JournalItem::EraseItem:
-            _eraseItem( l_item_it );
+            _eraseItem(a_thingsMap, l_item_it );
             break;
         case JournalItem::ChangeCaption:
-            _setCaption( l_item_it, j->value );
+            _setCaption(l_item_it, j->value );
             break;
         case JournalItem::Connect:
         {
             ModelData::left_iterator l_item2_it(
-                        m_things.left.find( j->key ) );
-            trace_assert_h( l_item2_it != m_things.left.end() &&
+                        a_thingsMap.left.find( j->key ) );
+            trace_assert_h( l_item2_it != a_thingsMap.left.end() &&
                     "item to connect must exist");
             //_connectDuplex( l_item_it, l_item2_it, Directed );
             _connectSingle( l_item_it, l_item2_it, atoi(j->value.c_str()));
@@ -282,8 +339,8 @@ void zm::MindMatterModel::applyChangeSet( const ChangeSet &changeSet )
         case JournalItem::Disconnect:
         {
             ModelData::left_iterator l_item2_it(
-                        m_things.left.find( j->value ) );
-            if(l_item2_it != m_things.left.end())
+                        a_thingsMap.left.find( j->value ) );
+            if(l_item2_it != a_thingsMap.left.end())
             {
                 _disconnect( l_item_it, l_item2_it );
             }
@@ -291,13 +348,13 @@ void zm::MindMatterModel::applyChangeSet( const ChangeSet &changeSet )
             {
                 trace_w("trying to disconnect %s from %s",
                         l_item_uid.c_str(), j->value.c_str());
-                trace_assert_s( l_item2_it != m_things.left.end() &&
+                trace_assert_s( l_item2_it != a_thingsMap.left.end() &&
                         "item to disconnect from must exist");
             }
         } break;
         case JournalItem::AddAttribute:
         {
-            _addTag(m_things, l_item_it, j->key);
+            _addTag(a_thingsMap, l_item_it, j->key);
         } break;
         }
     }
@@ -625,8 +682,8 @@ bool zm::MindMatterModel::createSnapshot()
     return persistence_createSnapshot();
 }
 
-/// for convenience: see persistence_sync()
-bool zm::MindMatterModel::sync()
-{
-    return persistence_sync();
-}
+///// for convenience: see persistence_sync()
+//bool zm::MindMatterModel::sync()
+//{
+//    return persistence_sync();
+//}

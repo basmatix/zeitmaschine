@@ -81,9 +81,14 @@ public:
 
     void populate();
 
-    void sync()
+    void sync_pull()
     {
-        m_gtd_model.base()->persistence_sync();
+        m_gtd_model.base()->sync_pull();
+    }
+
+    void sync_push()
+    {
+        m_gtd_model.base()->sync_push();
     }
 
     void createSnapshot()

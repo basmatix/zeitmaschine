@@ -130,7 +130,7 @@ namespace zm
         /// first load and apply new journal files in the sync folders. Then
         /// write the local model files and make the temporary journal file
         /// available to the sync folders and
-        bool persistence_sync();
+        bool _persistence_sync();
 
         /// for convenience: see persistence_saveLocalModel()
         void saveLocal();
@@ -145,10 +145,12 @@ namespace zm
         bool createSnapshot();
 
         /// for convenience: see persistence_sync()
-        bool sync();
+        //bool sync();
+        bool sync_pull();
+        bool sync_push();
 
         void applyChangeSet(
-                const ChangeSet &changeSet );
+                const ChangeSet    &changeSet );
 
         /// returns whether there is a valid username stored
         bool hasUsedUsername() const;
@@ -206,15 +208,19 @@ namespace zm
                 const ModelData   &model_to);
 
         static bool equals(
-                const ModelData   &a_first,
-                const ModelData   &a_second,
+                const ModelData   &first,
+                const ModelData   &second,
                       bool         tell_why);
+
+        static void _applyChangeSet(
+                      ModelData    &thingsMap,
+                const ChangeSet    &changeSet );
 
         std::list< std::string > findNewJournals() const;
 
-        ChangeSet persistence_pullJournal();
+        ChangeSet _persistence_pullJournal();
 
-        ChangeSet persistence_pushJournal();
+        ChangeSet _persistence_pushJournal();
 
         /// returns a sorted list containing names of journal files
         /// located in the sync folder
@@ -341,7 +347,8 @@ namespace zm
                 const std::string &caption,
                 const std::string &time );
 
-        void _eraseItem(
+        static void _eraseItem(
+                ModelData         &model,
                 ModelData::left_iterator &item );
 
         static void _addTag(

@@ -73,7 +73,9 @@ private slots:
 
     void on_pbOrder_clicked();
 
-    void on_pbSync_clicked();
+    void on_pbSyncPull_clicked();
+
+    void on_pbSyncPush_clicked();
 
     void on_pbSnapshot_clicked();
 

@@ -106,32 +106,58 @@ bool mm_journaled_sync()
     l_m2.setUsedHostname( "test-machine" );
     l_m2.initialize();
 
-    std::string node1 = l_m1.createNewItem( "node1" );
+
+    ///
+    /// modify model1
+    ///
+    zm::uid_t node1 = l_m1.createNewItem( "node1" );
 
     /// save and re-initialize. this addresses a bug which leads to
     /// unability to sync after altering a (new) model and restarting
     l_m1.saveLocal();
     l_m1.initialize();
 
-    l_synced = l_m1.persistence_sync();
+
+    ///
+    /// sync 1  (first model1 then model2)
+    ///
+    l_synced = l_m1.sync_push();
     l_files_copied = sync_folders(fc1, fc2);
     test_assert(l_files_copied == 1, "exactly one file should have been copied");
-    l_synced = l_m2.persistence_sync();
 
-    test_assert( l_m2.equals(l_m1), "model2 should not differ from model1");
+    l_synced = l_m2.sync_pull();
+    test_assert(l_m2.equals(l_m1), "model2 should not differ from model1");
 
-    std::string node2 = l_m1.createNewItem( "node2" );
-    std::string node3 = l_m1.createNewItem( "node3" );
+
+    ///
+    /// modify model1
+    ///
+    zm::uid_t node2 = l_m1.createNewItem( "node2" );
+    zm::uid_t node3 = l_m1.createNewItem( "node3" );
     l_m1.connectDirected(node2, node3);
 
-    l_synced = l_m1.persistence_sync();
+
+    ///
+    /// sync 2  (first model1 then model2)
+    ///
+
+    l_synced = l_m1.sync_push();
     test_assert( l_synced, "a sync file should have been generated");
-    l_synced = l_m1.persistence_sync();
+
+    l_synced = l_m1.sync_push();
     test_assert( ! l_synced, "second sync should have no effect");
 
     l_files_copied = sync_folders(fc1, fc2);
     test_assert(l_files_copied == 1, "exactly one file should have been copied")
-    l_m2.persistence_sync();
+
+    l_synced = l_m2.sync_push();
+    test_assert( ! l_synced, "push should not succeed due to remote changes");
+
+    l_synced = l_m2.sync_pull();
+    test_assert( l_synced, "changes should have been pulled");
+
+    l_synced = l_m2.sync_pull();
+    test_assert( ! l_synced, "second pull should have no effect");
 
     test_assert( l_m2.equals(l_m1), "model2 should not differ from model1");
 
@@ -187,7 +213,7 @@ bool mm_persist_and_load()
     l_m3.setUsedUsername( "test-user" );
     l_m3.setUsedHostname( "test-machine" );
     l_m3.initialize();
-    l_m3.persistence_sync();
+    l_m3.sync_pull();
 
     return true;
 }
@@ -386,7 +412,7 @@ bool mm_change_while_open()
     l_m2.persistence_saveLocalModel();
 
     // now the first model decides to dump it's mind
-    l_m1.persistence_sync();
+    l_m1.sync_push();
 
     // client 2 (or a third client) starts again and loads the current db
     zm::MindMatterModel l_m3;
@@ -480,19 +506,19 @@ bool mm_snapshot()
     l_m1.setUsedHostname( "test-machine" );
     l_m1.initialize();
 
-    std::string l_item_inbox = l_m1.findOrCreateTagItem( "huhu" );
-    std::string l_item2 = l_m1.createNewItem( "hallo" );
+    zm::uid_t l_item_inbox = l_m1.findOrCreateTagItem( "huhu" );
+    zm::uid_t l_item2 = l_m1.createNewItem( "hallo" );
 
     bool l_synced;
     bool l_files_copied;
 
-    l_synced = l_m1.persistence_sync();
+    l_synced = l_m1.sync_push();
     test_assert( l_synced, "files should have been synced" );
 
-    std::string l_item3 = l_m1.createNewItem( "du" );
+    zm::uid_t l_item3 = l_m1.createNewItem( "du" );
     l_m1.connectDirected(l_item2, l_item3);
 
-    l_synced = l_m1.persistence_sync();
+    l_synced = l_m1.sync_push();
 
     l_files_copied = sync_folders(fc1, fc2);
     test_assert( l_synced, "files should have been synced" );
@@ -503,7 +529,7 @@ bool mm_snapshot()
     l_m2.setUsedHostname( "test-machine" );
     l_m2.initialize();
 
-    l_synced = l_m2.persistence_sync();
+    l_synced = l_m2.sync_pull();
 
     test_assert( l_m1.equals( l_m2, true), "models should be equal" );
     test_assert( l_m2.equals( l_m1, true), "models should be equal" );

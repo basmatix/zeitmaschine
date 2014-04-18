@@ -280,10 +280,12 @@ void zm::MindMatterModel::eraseItem( const zm::uid_t &uid )
 
     trace_assert_h( l_item_it != m_things.left.end() );
 
-    _eraseItem( l_item_it );
+    _eraseItem(m_things, l_item_it);
 }
 
-void zm::MindMatterModel::_eraseItem( ModelData::left_iterator &item )
+void zm::MindMatterModel::_eraseItem(
+        ModelData           &a_model,
+        ModelData::left_iterator &item )
 {
     for( const item_neighbour_pair_t &m: item->second->m_neighbours )
     {
@@ -291,7 +293,7 @@ void zm::MindMatterModel::_eraseItem( ModelData::left_iterator &item )
         _disconnect(item->second, m.first);
     }
     //todo: delete item
-    m_things.left.erase( item );
+    a_model.left.erase( item );
 }
 
 void zm::MindMatterModel::addTag(

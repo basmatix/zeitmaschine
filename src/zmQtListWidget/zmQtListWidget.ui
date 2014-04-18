@@ -252,12 +252,19 @@
                 </widget>
                </item>
                <item>
-                <widget class="QPushButton" name="pbSync">
+                <widget class="QPushButton" name="pbSyncPull">
                  <property name="toolTip">
                   <string>sync model with public persistence</string>
                  </property>
                  <property name="text">
-                  <string>sync</string>
+                  <string>sync pull</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="pbSyncPush">
+                 <property name="text">
+                  <string>sync push</string>
                  </property>
                 </widget>
                </item>

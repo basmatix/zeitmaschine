@@ -135,11 +135,18 @@ void MainWindow::createInboxItemFromUiElements()
     m_ui->leCommand->setText("");
 }
 
-void MainWindow::on_pbSync_clicked()
+void MainWindow::on_pbSyncPull_clicked()
 {   trace_i( __FUNCTION__ );
     // this method is being called automatically by Qt
 
-    m_model.sync();
+    m_model.sync_pull();
+}
+
+void MainWindow::on_pbSyncPush_clicked()
+{   trace_i( __FUNCTION__ );
+    // this method is being called automatically by Qt
+
+    m_model.sync_push();
 }
 
 void MainWindow::on_pbSnapshot_clicked()
