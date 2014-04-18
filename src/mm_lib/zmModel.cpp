@@ -560,7 +560,7 @@ void zm::MindMatterModel::duplicateModelTo(MindMatterModel &other) const
 
 void zm::ModelData::debug_dump() const
 {
-    trace_i(">> dump");
+    trace_d(">> dump");
 
     for(const zm::ModelData::value_type& i: m_data)
     {
@@ -572,7 +572,7 @@ void zm::ModelData::debug_dump() const
                          << ", ";
         }
         l_neighbours << ")";
-        trace_i("  %s (#%s) %s '%s'",
+        trace_d("  %s (#%s) %s '%s'",
                      i.left.c_str(),
                      i.right->createHash().c_str(),
                      l_neighbours.str().c_str(),

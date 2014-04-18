@@ -309,7 +309,7 @@ std::vector< std::string > zm::MindMatterModel::getJournalFiles() const
     boost::filesystem::directory_iterator end_itr; // Default ctor yields past-the-end
     for( boost::filesystem::directory_iterator i( target_path ); i != end_itr; ++i )
     {
-        trace_i( "%s", i->path().string().c_str() );
+        trace_d( "%s", i->path().string().c_str() );
         // skip if not a file
         if( !boost::filesystem::is_regular_file( i->status() ) )
         {
@@ -458,7 +458,7 @@ void zm::MindMatterModel::yamlToThingsMap(
 
             std::string l_caption = n["caption"].as< std::string >();
 
-            trace_i("caption: '%s'", l_caption.c_str());
+            trace_d("caption: '%s'", l_caption.c_str());
 
             MindMatter *l_new_thing = new MindMatter( l_caption );
 
@@ -474,7 +474,7 @@ void zm::MindMatterModel::yamlToThingsMap(
                     /// fallback to older syntax
                     for( const uid_t &l_conn: n["connections"].as< std::vector< uid_t > >())
                     {
-                        trace_i("%s", l_conn.c_str());
+                        trace_d("%s", l_conn.c_str());
                         l_connections[l_conn] = 0;
                     }
                     l_connection_uids[l_uid] = l_connections;
@@ -498,7 +498,7 @@ void zm::MindMatterModel::yamlToThingsMap(
                 for( const string_value_map_type::value_type &a:
                     l_new_thing->m_string_values )
                 {
-                    trace_i("%s: %d", a.first.c_str(), a.second.c_str());
+                    trace_d("value '%s': '%s'", a.first.c_str(), a.second.c_str());
                 }
             }
 
@@ -578,8 +578,8 @@ void zm::MindMatterModel::yamlToThingsMap(
 
             if(l_hash_it->second != l_item->createHash())
             {
-                trace_i("saved and loaded hashes differ!");
-                trace_i("'%s' != '%s'",
+                trace_e("saved and loaded hashes differ!");
+                trace_e("'%s' != '%s'",
                              l_hash_it->second.c_str(),
                              l_item->createHash(true).c_str());
                 assert(l_hash_it->second == l_item->createHash());

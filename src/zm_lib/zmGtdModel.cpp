@@ -280,9 +280,9 @@ void zmGtdModel::print_statistics() const
     trace_i( " gtd inbox items:... %d", l_inbox_items );
 
     trace_i( " gtd project items:. %d", l_project_items );
-    for( std::string s: l_projects )
+    for(const zm::uid_t &s: l_projects )
     {
-        trace_i( "    %s: '%s'", s.c_str(), m_p_things_model->getCaption( s ).c_str() );
+        trace_d( "    %s: '%s'", s.c_str(), m_p_things_model->getCaption( s ).c_str() );
     }
     trace_i( " gtd task items:.... %d", l_task_items );
     trace_i( " gtd items done:     %d", l_done_items );
