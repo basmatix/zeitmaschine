@@ -219,8 +219,8 @@ bool zmGtdModel::isDone(
 zm::uid_t zmGtdModel::getParentProject(
         const std::string &task_item ) const
 {
-    assert( isTaskItem( task_item, false ) );
-    assert( m_p_things_model->hasValue( task_item, "gtd_parent_project" ) );
+    trace_assert_h( isTaskItem( task_item, false ) );
+    trace_assert_h( m_p_things_model->hasValue( task_item, "gtd_parent_project" ) );
 
     return m_p_things_model->getValue( task_item, "gtd_parent_project" );
 }
@@ -228,7 +228,7 @@ zm::uid_t zmGtdModel::getParentProject(
 zm::uid_t zmGtdModel::getNextTask(
         const std::string &task_item ) const
 {
-    assert( isProjectItem( task_item, false ) );
+    trace_assert_h( isProjectItem( task_item, false ) );
     if( !m_p_things_model->hasValue( task_item, "gtd_next_task" ) )
     {
         return "";
@@ -332,8 +332,8 @@ void zmGtdModel::registerItemAsTask(
         const std::string &task_item,
         const std::string &project_item )
 {
-    assert( isInboxItem( task_item ) );
-    assert( isProjectItem( project_item, false ) );
+    trace_assert_h( isInboxItem( task_item ) );
+    trace_assert_h( isProjectItem( project_item, false ) );
 
     m_p_things_model->disconnect( task_item, m_item_inbox );
     m_p_things_model->connectDirected( task_item, m_item_task );
@@ -360,7 +360,7 @@ void zmGtdModel::setDone(
 void zmGtdModel::castToProject(
         const std::string &item )
 {
-    assert( isInboxItem( item ) );
+    trace_assert_h( isInboxItem( item ) );
 
     m_p_things_model->disconnect( item, m_item_inbox );
     m_p_things_model->connectDirected( item, m_item_project );
@@ -370,8 +370,8 @@ void zmGtdModel::setNextTask(
         const std::string &project_item,
         const std::string &task_item )
 {
-    assert( isProjectItem( project_item, false ) );
-    assert( isTaskItem( task_item, false ) );
+    trace_assert_h( isProjectItem( project_item, false ) );
+    trace_assert_h( isTaskItem( task_item, false ) );
 
     std::string l_currentNextTask = getNextTask( project_item );
     if( l_currentNextTask != "" )

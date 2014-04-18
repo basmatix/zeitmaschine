@@ -10,6 +10,8 @@
 #define ZMOPTIONS_H
 
 #include <mm/zmCommon.h>
+#include <mm/zmTrace.h>
+
 #include <string>
 
 #include <boost/property_tree/ptree.hpp>
@@ -136,13 +138,13 @@ private:
         if( !zm::common::create_base_directory( filename ) )
         {
             // todo: error
-            assert( !"zm::common::create_base_directory( filename )" );
+            trace_assert_h( !"zm::common::create_base_directory( filename )" );
             return;
         }
 
         std::ofstream l_fout( filename.c_str() );
 
-        assert( l_fout.is_open() );
+        trace_assert_h( l_fout.is_open() );
 
         boost::property_tree::json_parser::write_json( m_filename, m_tree );
     }

@@ -32,7 +32,7 @@ bool zm::ChangeSet::write( const std::string &journalFileName )
 
     std::ofstream l_fout( journalFileName.c_str() );
 
-    assert( l_fout.is_open() );
+    trace_assert_h( l_fout.is_open() );
 
     /// NOTE: we do the yaml exporting here semi manually
     ///       because this way we can ensure consistent
@@ -89,7 +89,7 @@ bool zm::ChangeSet::write( const std::string &journalFileName )
             break;
         case JournalItem::AddAttribute:
         default:
-            assert(false && "jounal type must be valid");
+            trace_assert_h(false && "jounal type must be valid");
         }
 
         l_yaml_emitter << YAML::EndMap;
@@ -115,7 +115,7 @@ inline std::string str(const YAML::Node &n)
 
 void zm::ChangeSet::load( const std::string &journalFileName )
 {
-    assert( m_journal.empty() );
+    trace_assert_h( m_journal.empty() );
     if( ! boost::filesystem::exists( journalFileName ) )
     {
         return;
@@ -123,16 +123,16 @@ void zm::ChangeSet::load( const std::string &journalFileName )
     YAML::Node l_import = YAML::LoadFile( journalFileName );
     for( YAML::Node n: l_import )
     {
-        assert( n["update"] );
-        assert( n["type"] );
-        assert( n["time"] );
+        trace_assert_h( n["update"] );
+        trace_assert_h( n["type"] );
+        trace_assert_h( n["time"] );
         std::string l_uid = str(n["update"]);
         std::string l_type = str(n["type"]);
 
         journal_ptr_t l_newItem;
         if( l_type == "CreateItem" )
         {
-            assert( n["caption"] );
+            trace_assert_h( n["caption"] );
             l_newItem = JournalItem::createCreate(
                         l_uid, str(n["caption"]) );
         }
@@ -142,14 +142,14 @@ void zm::ChangeSet::load( const std::string &journalFileName )
         }
         else if( l_type == "ChangeCaption" )
         {
-            assert( n["value"] );
+            trace_assert_h( n["value"] );
             l_newItem = JournalItem::createChangeCaption(l_uid,
                         str(n["value"]));
         }
         else if( l_type == "SetStringValue" )
         {
-            assert( n["name"] );
-            assert( n["value"] );
+            trace_assert_h( n["name"] );
+            trace_assert_h( n["value"] );
             l_newItem = JournalItem::createSetStringValue(
                         l_uid,
                         str(n["name"]),
@@ -157,7 +157,7 @@ void zm::ChangeSet::load( const std::string &journalFileName )
         }
         else if( l_type == "Connect" )
         {
-            assert( n["value"] );
+            trace_assert_h( n["value"] );
             if(n["key"])
             {
                 l_newItem = JournalItem::createConnect(
@@ -174,14 +174,14 @@ void zm::ChangeSet::load( const std::string &journalFileName )
         }
         else if( l_type == "Disconnect" )
         {
-            assert( n["value"] );
+            trace_assert_h( n["value"] );
             l_newItem = JournalItem::createDisconnect(
                         l_uid,
                         str(n["value"]));
         }
         else if( l_type == "AddAttribute" )
         {
-            assert( n["name"] );
+            trace_assert_h( n["name"] );
             l_newItem = JournalItem::createAddAttribute(
                         l_uid,
                         str(n["name"]));
@@ -189,7 +189,7 @@ void zm::ChangeSet::load( const std::string &journalFileName )
         else
         {
             trace_e("type = '%s'", l_type.c_str());
-            assert( false && "type is not being handled" );
+            trace_assert_h( false && "type is not being handled" );
         }
         l_newItem->time = str(n["time"]);
         m_journal.push_back( l_newItem );

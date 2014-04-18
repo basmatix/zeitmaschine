@@ -12,7 +12,6 @@
 
 #include <list>
 
-#include <assert.h>
 #include <boost/shared_ptr.hpp>
 
 class zmGtdModel

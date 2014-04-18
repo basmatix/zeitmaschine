@@ -5,10 +5,8 @@
 /// Copyright (C) 2013 Frans Fuerst
 ///
 
-#include <mm/zmModel.h>
-
 #include "zmThing.h"
-
+#include <mm/zmModel.h>
 #include <mm/zmTrace.h>
 
 #include <yaml-cpp/yaml.h>
@@ -180,7 +178,7 @@ std::list <std::string > zm::MindMatterModel::findNewJournals() const
 
 ChangeSet zm::MindMatterModel::persistence_pullJournal()
 {
-    assert( equals(m_things, m_things_synced, true) );
+    trace_assert_h( equals(m_things, m_things_synced, true) );
 
     std::list <std::string > l_journalsToImport(findNewJournals());
 
@@ -191,7 +189,7 @@ ChangeSet zm::MindMatterModel::persistence_pullJournal()
         std::string l_basename(
                     boost::filesystem::path(
                         l_filename).filename().string());
-        trace_i( "journal '%s' not imported yet", l_basename.c_str() );
+        trace_i( "import journal file '%s'", l_basename.c_str() );
         applyChangeSet( ChangeSet( l_filename ) );
         m_things.m_read_journals.insert(l_basename);
     }
@@ -237,23 +235,28 @@ void zm::MindMatterModel::applyChangeSet( const ChangeSet &changeSet )
 {
     for( const journal_ptr_t &j: changeSet.getJournal() )
     {
-        ModelData::left_iterator l_item_it( m_things.left.find( j->item_uid ) );
+        const zm::uid_t &l_item_uid(j->item_uid);
+        const zm::JournalItem::ChangeType &l_change_type(j->type);
 
-        if( j->type == JournalItem::CreateItem && l_item_it != m_things.left.end() )
+        ModelData::left_iterator l_item_it( m_things.left.find( l_item_uid ) );
+
+        if( l_change_type == JournalItem::CreateItem && l_item_it != m_things.left.end() )
         {
-            trace_w( "WARNING: tried to create already existent item '%s'",
-                          j->item_uid.c_str() );
+            trace_w( "trying to create already existent item '%s'",
+                          l_item_uid.c_str() );
+            trace_assert_s( l_change_type == JournalItem::CreateItem && l_item_it != m_things.left.end() );
             continue;
         }
 
-        if( j->type != JournalItem::CreateItem && l_item_it == m_things.left.end() )
+        if( l_change_type != JournalItem::CreateItem && l_item_it == m_things.left.end() )
         {
-            trace_w( "WARNING: trying to modify existent item '%s'",
-                          j->item_uid.c_str() );
-            assert( j->type == JournalItem::CreateItem || l_item_it != m_things.left.end() );
+            trace_w( "trying to modify non existent item '%s'",
+                          l_item_uid.c_str() );
+            trace_assert_s( j->type == JournalItem::CreateItem || l_item_it != m_things.left.end() );
+            continue;
         }
 
-        switch( j->type )
+        switch( l_change_type )
         {
         case JournalItem::CreateItem:
             _createNewItem( m_things, j->item_uid, j->value, j->time );
@@ -271,7 +274,7 @@ void zm::MindMatterModel::applyChangeSet( const ChangeSet &changeSet )
         {
             ModelData::left_iterator l_item2_it(
                         m_things.left.find( j->key ) );
-            assert( l_item2_it != m_things.left.end() &&
+            trace_assert_h( l_item2_it != m_things.left.end() &&
                     "item to connect must exist");
             //_connectDuplex( l_item_it, l_item2_it, Directed );
             _connectSingle( l_item_it, l_item2_it, atoi(j->value.c_str()));
@@ -280,9 +283,17 @@ void zm::MindMatterModel::applyChangeSet( const ChangeSet &changeSet )
         {
             ModelData::left_iterator l_item2_it(
                         m_things.left.find( j->value ) );
-            assert( l_item2_it != m_things.left.end() &&
-                    "item to disconnect from must exist");
-            _disconnect( l_item_it, l_item2_it );
+            if(l_item2_it != m_things.left.end())
+            {
+                _disconnect( l_item_it, l_item2_it );
+            }
+            else
+            {
+                trace_w("trying to disconnect %s from %s",
+                        l_item_uid.c_str(), j->value.c_str());
+                trace_assert_s( l_item2_it != m_things.left.end() &&
+                        "item to disconnect from must exist");
+            }
         } break;
         case JournalItem::AddAttribute:
         {
@@ -351,7 +362,7 @@ void zm::MindMatterModel::_saveModel(
 
     std::ofstream l_fout( a_filename.c_str() );
 
-    assert( l_fout.is_open() );
+    trace_assert_h( l_fout.is_open() );
 
     if( a_model.empty() )
     {
@@ -441,11 +452,11 @@ void zm::MindMatterModel::yamlToThingsMap(
     for( YAML::Node n: a_yamlNode )
     {
         // means 'uid' in n xor 'read' in n
-        assert( !(n["uid"]) != !(n["read"]) );
+        trace_assert_h( !(n["uid"]) != !(n["read"]) );
 
         if( n["uid"] )
         {
-            assert( n["caption"] );
+            trace_assert_h( n["caption"] );
 
             uid_t l_uid = n.Tag();
 
@@ -454,7 +465,7 @@ void zm::MindMatterModel::yamlToThingsMap(
                 l_uid = n["uid"].as< uid_t >();
             }
 
-            assert( l_uid != "" && l_uid != "?" );
+            trace_assert_h( l_uid != "" && l_uid != "?" );
 
             std::string l_caption = n["caption"].as< std::string >();
 
@@ -506,7 +517,7 @@ void zm::MindMatterModel::yamlToThingsMap(
             {
                 l_hashes[l_uid] = n["hash1"].as< std::string >();
             }
-            assert( l_new_thing->hasValue("global_time_created")
+            trace_assert_h( l_new_thing->hasValue("global_time_created")
                     || l_uid == l_new_thing->m_caption );
 
             a_thingsMap.insert(
@@ -541,7 +552,7 @@ void zm::MindMatterModel::yamlToThingsMap(
                 zm::ModelData::left_iterator
                         l_other_it( a_thingsMap.left.find( other_uid.first ) );
 
-                assert(l_other_it != a_thingsMap.left.end());
+                trace_assert_h(l_other_it != a_thingsMap.left.end());
 
                 l_item->m_neighbours[l_other_it->second] = other_uid;
             }
@@ -574,7 +585,7 @@ void zm::MindMatterModel::yamlToThingsMap(
             std::map< std::string, std::string >::const_iterator
                     l_hash_it = l_hashes.find(l_uid);
 
-            assert(l_hash_it != l_hashes.end());
+            trace_assert_h(l_hash_it != l_hashes.end());
 
             if(l_hash_it->second != l_item->createHash())
             {
@@ -582,7 +593,7 @@ void zm::MindMatterModel::yamlToThingsMap(
                 trace_e("'%s' != '%s'",
                              l_hash_it->second.c_str(),
                              l_item->createHash(true).c_str());
-                assert(l_hash_it->second == l_item->createHash());
+                trace_assert_h(l_hash_it->second == l_item->createHash());
             }
         }
     }

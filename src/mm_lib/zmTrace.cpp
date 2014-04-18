@@ -134,6 +134,32 @@ void trace_e( const char * a_format, ... )
     printf( "%s\n", l_buffer );
     fflush( stdout );
 }
-#endif
+#endif  // Android?
 
+#if defined(DEBUG)
+
+#include <stdlib.h>  // for abort()
+
+void assert_fail_hard(
+        const char *assertion,
+        const char *file,
+        unsigned int line,
+        const char *function)
+{
+    trace_e("in %s:%u: %s:", file,line, function);
+    trace_e("assertion '%s' failed.", assertion);
+    abort();
+}
+
+void assert_fail_soft(
+        const char *assertion,
+        const char *file,
+        unsigned int line,
+        const char *function)
+{
+    trace_e("in %s:%u: %s:", file,line, function);
+    trace_e("assertion '%s' failed.", assertion);
+}
+
+#endif  // Debug?
 

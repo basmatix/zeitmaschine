@@ -524,14 +524,14 @@ void zm::MindMatterModel::deepCopy(
         ModelData::left_iterator l_dest_first_item_it(
                     a_dest.left.find( i.left ) );
 
-        assert( l_dest_first_item_it != a_dest.left.end() );
+        trace_assert_h( l_dest_first_item_it != a_dest.left.end() );
 
         for(const auto & l_neighbour: i.right->m_neighbours)
         {
             ModelData::left_iterator l_dest_second_item_it(
                         a_dest.left.find( l_neighbour.second.first ) );
 
-            assert( l_dest_second_item_it != a_dest.left.end() );
+            trace_assert_h( l_dest_second_item_it != a_dest.left.end() );
 
             _connectSingle(
                         l_dest_first_item_it,
@@ -544,7 +544,7 @@ void zm::MindMatterModel::deepCopy(
 
 bool zm::MindMatterModel::hasLocalChanges() const
 {
-    return equals(m_things, m_things_synced, false);
+    return ! equals(m_things, m_things_synced, false);
 }
 
 bool zm::MindMatterModel::hasRemoteChanges() const

@@ -74,8 +74,6 @@ namespace zm
 
 #include <mm/zmTrace.h>
 
-#include <assert.h>
-
 // info regarding string encoding:
 //    http://code.google.com/p/yaml-cpp/wiki/Strings
 
@@ -101,7 +99,7 @@ std::string zm::MindMatter::getValue( const std::string &name ) const
 {
     string_value_map_type::const_iterator i
             = m_string_values.find( name );
-    assert( i != m_string_values.end() );
+    trace_assert_h( i != m_string_values.end() );
 
     return i->second;
 }
@@ -222,7 +220,7 @@ std::map< zm::uid_t, int > zm::MindMatter::getNeighbours() const
         std::pair< std::map< uid_t, int >::iterator, bool > l_success =
                 l_result.insert(l_neighbour.second);
 
-        assert( l_success.second );
+        trace_assert_h( l_success.second );
     }
     return l_result;
 }
@@ -238,7 +236,7 @@ int zm::MindMatter::getConnectionType(const uid_t &uid) const
             return l_neighbour.second.second;
         }
     }
-    assert(false && "provided uid has been found in neighbours");
+    trace_assert_h(false && "provided uid has been found in neighbours");
     return 0;
 }
 
@@ -251,7 +249,7 @@ std::set< zm::uid_t > zm::MindMatter::getNeighbourUids() const
         std::pair< std::set< uid_t >::iterator, bool > l_success =
                 l_result.insert(l_neighbour.second.first);
 
-        assert( l_success.second );
+        trace_assert_h( l_success.second );
     }
     return l_result;
 }

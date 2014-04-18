@@ -8,9 +8,9 @@
 #ifndef ZMWIDGETITEMMAP_H
 #define ZMWIDGETITEMMAP_H
 
+#include <mm/zmTrace.h>
 #include <QtCore/QMap>
 #include <string>
-#include <assert.h>
 
 class zmQTreeWidgetItem;
 class QTreeWidgetItem;
@@ -41,11 +41,11 @@ public:
                 m_thing_lwitem_map.find( uid );
         QMap< zmQTreeWidgetItem *, std::string >::iterator l_itemToErase =
                 m_lwitem_thing_map.find( (zmQTreeWidgetItem*)item );
-        assert( l_thingToErase != m_thing_lwitem_map.end() );
-        assert( l_itemToErase != m_lwitem_thing_map.end() );
+        trace_assert_h( l_thingToErase != m_thing_lwitem_map.end() );
+        trace_assert_h( l_itemToErase != m_lwitem_thing_map.end() );
 
-        assert( l_thingToErase.value() == (zmQTreeWidgetItem*)item );
-        assert( l_itemToErase.value() == uid );
+        trace_assert_h( l_thingToErase.value() == (zmQTreeWidgetItem*)item );
+        trace_assert_h( l_itemToErase.value() == uid );
 
         m_thing_lwitem_map.erase( l_thingToErase );
 
@@ -66,7 +66,7 @@ public:
     {
         QMap< std::string, zmQTreeWidgetItem * >::iterator l_it =
                 m_thing_lwitem_map.find( uid );
-        assert( l_it != m_thing_lwitem_map.end() );
+        trace_assert_h( l_it != m_thing_lwitem_map.end() );
         return l_it.value();
     }
 
@@ -74,7 +74,7 @@ public:
     {
         QMap< zmQTreeWidgetItem *, std::string >::const_iterator l_it =
                 m_lwitem_thing_map.find( (zmQTreeWidgetItem*)item );
-        assert( l_it != m_lwitem_thing_map.end() );
+        trace_assert_h( l_it != m_lwitem_thing_map.end() );
         return l_it.value();
     }
 
@@ -82,7 +82,7 @@ public:
     {
         QMap< zmQTreeWidgetItem *, std::string >::const_iterator l_it =
                 m_lwitem_thing_map.find( item );
-        assert( l_it != m_lwitem_thing_map.end() );
+        trace_assert_h( l_it != m_lwitem_thing_map.end() );
         return l_it.value();
     }
 

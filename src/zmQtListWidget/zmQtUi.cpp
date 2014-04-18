@@ -171,7 +171,7 @@ void MainWindow::on_twTask_currentItemChanged( QTreeWidgetItem *current, QTreeWi
         /// if there has been selected - save it's note
         std::string l_previous_thing = m_model.m_wi_map->get( previous );
 
-        //assert( l_previous_thing == m_selected_thing );
+        //trace_assert_h( l_previous_thing == m_selected_thing );
         if( previous == m_selected_twItem )
         {
             m_model.setNote( l_previous_thing, m_ui->teNotes->toPlainText() );
@@ -316,11 +316,11 @@ void MainWindow::on_pbMakeProject_clicked()
         if( m_selected_thing == "" )
         {
             // todo: error
-            assert(false);
+            trace_assert_h(!"m_selected_thing == ''");
         }
-        assert( m_model.m_wi_map->get( m_selected_twItem ) == m_selected_thing );
-        assert( m_model.m_wi_map->get( m_selected_thing ) == m_selected_twItem );
-        if( m_model.isInboxItem( m_selected_thing ))
+        trace_assert_h( m_model.m_wi_map->get( m_selected_twItem ) == m_selected_thing );
+        trace_assert_h( m_model.m_wi_map->get( m_selected_thing ) == m_selected_twItem );
+        if(m_model.isInboxItem( m_selected_thing ))
         {
             trace_i( "turn item into project: %s (%s)",
                           m_selected_thing.c_str(),
@@ -342,7 +342,7 @@ void MainWindow::on_pbMakeProject_clicked()
         else
         {
             // todo: error
-            assert(false);
+            trace_assert_h(!"m_model.isInboxItem( m_selected_thing )");
         }
     }
     else
@@ -363,10 +363,10 @@ void MainWindow::on_pbMakeNextAction_clicked()
     if( m_selected_thing == "" )
     {
         // todo: error
-        assert(false);
+        trace_assert_h(!"m_selected_thing == ''");
     }
-    assert( m_model.m_wi_map->get( m_selected_twItem ) == m_selected_thing );
-    assert( m_model.m_wi_map->get( m_selected_thing ) == m_selected_twItem );
+    trace_assert_h( m_model.m_wi_map->get( m_selected_twItem ) == m_selected_thing );
+    trace_assert_h( m_model.m_wi_map->get( m_selected_thing ) == m_selected_twItem );
 
     if( m_model.isTaskItem( m_selected_thing, false ) )
     {
@@ -394,7 +394,7 @@ void MainWindow::on_pbMakeNextAction_clicked()
     else
     {
         // todo: error
-        assert(false);
+        trace_assert_h(false);
     }
 }
 
@@ -409,10 +409,10 @@ void MainWindow::on_pbMakeAction_clicked()
         if( m_selected_thing == "" )
         {
             // todo: error
-            assert(false);
+            trace_assert_h(false);
         }
-        assert( m_model.m_wi_map->get( m_selected_twItem ) == m_selected_thing );
-        assert( m_model.m_wi_map->get( m_selected_thing ) == m_selected_twItem );
+        trace_assert_h( m_model.m_wi_map->get( m_selected_twItem ) == m_selected_thing );
+        trace_assert_h( m_model.m_wi_map->get( m_selected_thing ) == m_selected_twItem );
         if( m_model.isInboxItem( m_selected_thing ))
         {
             trace_i( "turn item into project: %s (%s)",
@@ -435,7 +435,7 @@ void MainWindow::on_pbMakeAction_clicked()
         else
         {
             // todo: error
-            assert(false);
+            trace_assert_h(false);
         }
     }
     else
@@ -482,7 +482,7 @@ void MainWindow::on_leCommand_textChanged ( const QString & text )
     {
         m_model.setNote( m_selected_thing, m_ui->teNotes->toPlainText() );
         m_ui->teNotes->setText( "" );
-        assert( m_selected_twItem == m_model.m_wi_map->get(m_selected_thing) );
+        trace_assert_h( m_selected_twItem == m_model.m_wi_map->get(m_selected_thing) );
     }
     unselect();
 }
