@@ -27,9 +27,9 @@ organize it later.
 
 --- every day use
 
-* tabula rasa mode
+* "tabula rasa" mode for daily scheduling
+* shuffle-a-task
 * adding birth dates
 * following brain stacks
 * taking notes
-* shuffle-a-task
-
+* diary, logging, time tracking
