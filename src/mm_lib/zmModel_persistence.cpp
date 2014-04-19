@@ -15,6 +15,31 @@
 
 using namespace zm;
 
+std::vector< std::string > zm::MindMatterModel::diff() const
+{
+    ChangeSet l_stash( _diff( m_things_synced, m_things ) );
+
+    std::vector< std::string > l_result;
+    for( const journal_ptr_t &j: l_stash.getJournal() )
+    {
+        l_result.push_back(j->item_uid);
+    }
+    return l_result;
+}
+
+std::vector< std::string > zm::MindMatterModel::diffRemote() const
+{
+    std::list <std::string > l_journalsToImport(findNewJournals());
+
+    std::vector< std::string > l_result;
+    for( const std::string &l_filename: l_journalsToImport )
+    {
+        l_result.push_back(l_filename);
+    }
+
+    return l_result;
+}
+
 bool zm::MindMatterModel::sync_pull()
 {
     if(findNewJournals().empty())
@@ -27,7 +52,7 @@ bool zm::MindMatterModel::sync_pull()
     //        stored in the changeset)
 
     /// stash local changes (like in git)
-    ChangeSet l_stash( diff( m_things_synced, m_things ) );
+    ChangeSet l_stash( _diff( m_things_synced, m_things ) );
 
     /// sync current with last synced model
     deepCopy(m_things_synced, m_things);
@@ -41,9 +66,9 @@ bool zm::MindMatterModel::sync_pull()
 
     _applyChangeSet(m_things, l_stash);
 
-    persistence_saveLocalModel();
+    //persistence_saveLocalModel();
 
-    boost::filesystem::rename( m_localModelFile, m_localModelFileSynced );
+    //boost::filesystem::rename( m_localModelFile, m_localModelFileSynced );
 
     return ! l_importedChanges.isEmpty();
 }
@@ -57,45 +82,6 @@ bool zm::MindMatterModel::sync_push()
     }
 
     return ! _persistence_pushJournal().isEmpty();
-}
-
-bool zm::MindMatterModel::_persistence_sync()
-{
-    // [TODO] - in case something goes wrong in here we should
-    //          do all this in an atomic way
-
-    /// NOTE: we have to solve a tricky problem here. in case we want
-    ///       to achieve a 'pull only' approach without the need to
-    ///       write a journal we need to apply the remote journals to
-    ///       both the new and the old model. otherwise on the next journal
-    ///       export we would replicate the journaling information we just
-    ///       imported when.
-    ///       Importing the jounals on both models would be tricky on the
-    ///       other hand because conflict resolving would have to take place
-    ///       twice, too.
-
-    /// save the current model for safety reasons
-    persistence_saveLocalModel();
-
-    /// write journal from old model to current model
-    ChangeSet l_exportedChanges = _persistence_pushJournal();
-
-    /// load remote journals into current model
-    ChangeSet l_importedChanges = _persistence_pullJournal();
-
-    if( l_exportedChanges.isEmpty() && l_importedChanges.isEmpty() )
-    {
-        return false;
-    }
-
-    //[TODO]
-    //resolveConflicts(l_exportedChanges, l_importedChanges);
-
-    persistence_saveLocalModel();
-
-    boost::filesystem::rename( m_localModelFile, m_localModelFileSynced );
-
-    return true;
 }
 
 bool zm::MindMatterModel::loadModelFromFile(
@@ -247,7 +233,7 @@ ChangeSet zm::MindMatterModel::_persistence_pullJournal()
 
     if( !l_journalsToImport.empty() )
     {
-        l_result = diff( m_things_synced, m_things );
+        l_result = _diff( m_things_synced, m_things );
         deepCopy(m_things, m_things_synced);
     }
     return l_result;
@@ -255,7 +241,7 @@ ChangeSet zm::MindMatterModel::_persistence_pullJournal()
 
 ChangeSet zm::MindMatterModel::_persistence_pushJournal()
 {
-    ChangeSet l_changeSet( diff( m_things_synced, m_things ) );
+    ChangeSet l_changeSet( _diff( m_things_synced, m_things ) );
 
     if(l_changeSet.isEmpty())
     {
@@ -276,6 +262,8 @@ ChangeSet zm::MindMatterModel::_persistence_pushJournal()
     m_things.m_read_journals.insert(l_journal_basename);
 
     deepCopy(m_things, m_things_synced);
+
+    /// must save?
 
     return l_changeSet;
 }
@@ -681,9 +669,3 @@ bool zm::MindMatterModel::createSnapshot()
 {
     return persistence_createSnapshot();
 }
-
-///// for convenience: see persistence_sync()
-//bool zm::MindMatterModel::sync()
-//{
-//    return persistence_sync();
-//}

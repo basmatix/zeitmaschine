@@ -242,10 +242,10 @@ bool zm::MindMatterModel::operator!=( const zm::MindMatterModel &other ) const
 
 ChangeSet zm::MindMatterModel::diffTo( const MindMatterModel &a_other ) const
 {
-    return diff(m_things, a_other.m_things);
+    return _diff(m_things, a_other.m_things);
 }
 
-ChangeSet zm::MindMatterModel::diff(
+ChangeSet zm::MindMatterModel::_diff(
         const ModelData &model_from,
         const ModelData &model_to )
 {

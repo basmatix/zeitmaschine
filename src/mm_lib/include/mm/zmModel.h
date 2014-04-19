@@ -126,12 +126,6 @@ namespace zm
         /// load a new snapshot from current model
         bool persistence_createSnapshot();
 
-        /// make a full model sync.
-        /// first load and apply new journal files in the sync folders. Then
-        /// write the local model files and make the temporary journal file
-        /// available to the sync folders and
-        bool _persistence_sync();
-
         /// for convenience: see persistence_saveLocalModel()
         void saveLocal();
 
@@ -144,8 +138,11 @@ namespace zm
         /// for convenience: see persistence_createSnapshot()
         bool createSnapshot();
 
+        /// returns a summarization of local changes
+        std::vector< std::string > diff() const;
+        std::vector< std::string > diffRemote() const;
+
         /// for convenience: see persistence_sync()
-        //bool sync();
         bool sync_pull();
         bool sync_push();
 
@@ -203,7 +200,7 @@ namespace zm
                 const ModelData   &source,
                       ModelData   &dest);
 
-        static ChangeSet diff(
+        static ChangeSet _diff(
                 const ModelData   &model_from,
                 const ModelData   &model_to);
 
