@@ -5,6 +5,10 @@
 #
 # Copyright (C) 2014 Frans Fuerst
 
+""" this script is both - a CLI for zeitmaschine and a reference for
+    other implementations
+"""
+
 from optparse import OptionParser
 import os
 import sys
@@ -29,10 +33,17 @@ def to_uids(args, model):
 
 
 def show_status(model):
-    print("local changes:    %s" % ("yes" if model.base().hasLocalChanges() else "no"))
-    print("remote changes:   %s" % ("yes" if model.base().hasRemoteChanges() else "no"))
-    print("model consistent: %s" % ("yes" if model.base().isConsistent() else "no"))
-
+    block = '\xe2\x96\x88'
+    block = '\xe2\x96\xa0'
+    print("local [%s%s%s] - remote [%s%s%s] - consistent [%s%s%s] - items [%d]" % (
+        colorama.Fore.YELLOW if model.base().hasLocalChanges() else colorama.Fore.GREEN,
+        block, colorama.Fore.RESET,
+        colorama.Fore.YELLOW if model.base().hasRemoteChanges() else colorama.Fore.GREEN,
+        block, colorama.Fore.RESET,
+        colorama.Fore.GREEN if model.base().isConsistent() else colorama.Fore.RED,
+        block, colorama.Fore.RESET,
+        model.base().getItemCount()))
+    #BLACK', 'BLUE', 'CYAN', 'GREEN', 'MAGENTA', 'RED', 'RESET', 'WHITE', 'YELLOW',
 
 def list_all(model):
 
@@ -129,7 +140,7 @@ def operate(gtd_model, args, auto_save):
             text = " ".join(args[1:])
             print("create task with caption '%s'" % text)
             new_item = gtd_model.createNewInboxItem(text)
-            gtd_model.registerItemAsTask(new_item)
+            gtd_model.castToProject(new_item)
             logging.info("created new item %s with caption '%s'", new_item, text)
             modifications_done = True
 
@@ -155,7 +166,9 @@ def operate(gtd_model, args, auto_save):
 
         elif args[0] == "sync-push":
             logging.info("trigger sync")
-            if not gtd_model.base().sync_push():
+            if gtd_model.base().sync_push():
+                modifications_done = True
+            else:
                 print ("did nothing")
                 show_list = False
 
@@ -177,6 +190,16 @@ def operate(gtd_model, args, auto_save):
                 list_matching(gtd_model, args[1])
             else:
                 print "missing pattern"
+
+        elif args[0] == "diff-local":
+            show_list = False
+            for c in gtd_model.base().diff():
+                print c
+
+        elif args[0] == "diff-remote":
+            show_list = False
+            for c in gtd_model.base().diffRemote():
+                print c
 
         else:
             print ("'%s' not a valid command" % args[0])
