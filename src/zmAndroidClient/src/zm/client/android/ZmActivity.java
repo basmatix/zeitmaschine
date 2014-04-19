@@ -4,9 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.app.ListActivity;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.ContextMenu;
@@ -35,10 +37,12 @@ public class ZmActivity
 	
 	zmGtdModel m_gtdModel;
 	
-	Button m_btSync;
+	Button m_btPull;
+	Button m_btPush;
 	Button m_btAdd;
 	EditText m_edittext;
 	ListView m_listView;
+	TextView m_tvItemCount;
 	
 	/// Called when the activity is first created.
 	@Override
@@ -48,7 +52,7 @@ public class ZmActivity
 		setContentView(R.layout.main);
 		
 		m_listView = (ListView)findViewById(android.R.id.list);
-		m_edittext = (EditText)findViewById(R.id.editText1);
+		m_edittext = (EditText)findViewById(R.id.tbMultiText);
 		
 		registerForContextMenu( m_listView );
 		
@@ -79,15 +83,33 @@ public class ZmActivity
 	        System.out.println("ERROR: "+e.getMessage());
 	    }		
 		
-	    m_btSync = (Button) findViewById(R.id.btSync);
+	    m_btPull = (Button) findViewById(R.id.btPull);
+	    m_btPush = (Button) findViewById(R.id.btPush);
 	    m_btAdd = (Button) findViewById(R.id.btAdd);
+	    m_tvItemCount = (TextView) findViewById(R.id.tvItemCount);
+
+	    updateStatus();
 	    
-		m_btSync.setOnClickListener(new OnClickListener() {
+		m_btPull.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View arg0) {
  
-		    	Log.w("zm", "sync");
-		    	m_gtdModel.base().sync();
+		    	Log.w("zm", "sync-pull");
+		    	boolean l_result = m_gtdModel.base().sync_pull();
+		    	Log.w("zm", "returned " + l_result);
+		    	updateStatus();
+		    	m_gtdModel.base().saveLocal();
+			}
+		});
+		m_btPush.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View arg0) {
+ 
+		    	Log.w("zm", "sync-push");
+		    	boolean l_result = m_gtdModel.base().sync_push();
+		    	Log.w("zm", "returned " + l_result);
+		    	updateStatus();
+		    	m_gtdModel.base().saveLocal();
 			}
 		});
 		
@@ -107,9 +129,23 @@ public class ZmActivity
 		    	m_gtdModel.createNewInboxItem(l_text);
 		    	m_gtdModel.base().saveLocal();
 		    	m_edittext.setText("");
+		    	updateStatus();
 			}
 		});		
 		setListContent( "" );
+	}
+	
+	public void updateStatus()
+	{	
+		boolean l_remoteChanges = m_gtdModel.base().hasRemoteChanges();
+		boolean l_localChanges = m_gtdModel.base().hasLocalChanges();
+//		m_btPull.setBackgroundColor(Color.RED);
+//		m_btPush.setBackgroundColor(Color.RED);
+
+	    m_btPull.setEnabled(l_remoteChanges);
+	    m_btPush.setEnabled(l_localChanges && !l_remoteChanges );
+	    
+	    m_tvItemCount.setText(String.valueOf(m_gtdModel.base().getItemCount()));
 	}
 	
 	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) 
