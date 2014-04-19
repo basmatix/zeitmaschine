@@ -85,6 +85,14 @@ public class MindMatterModel {
     return javaZmJNI.MindMatterModel_equals__SWIG_1(swigCPtr, this, MindMatterModel.getCPtr(other), other);
   }
 
+  public boolean hasLocalChanges() {
+    return javaZmJNI.MindMatterModel_hasLocalChanges(swigCPtr, this);
+  }
+
+  public boolean hasRemoteChanges() {
+    return javaZmJNI.MindMatterModel_hasRemoteChanges(swigCPtr, this);
+  }
+
   public void duplicateModelTo(MindMatterModel other) {
     javaZmJNI.MindMatterModel_duplicateModelTo(swigCPtr, this, MindMatterModel.getCPtr(other), other);
   }
@@ -113,10 +121,6 @@ public class MindMatterModel {
     return javaZmJNI.MindMatterModel_persistence_createSnapshot(swigCPtr, this);
   }
 
-  public boolean persistence_sync() {
-    return javaZmJNI.MindMatterModel_persistence_sync(swigCPtr, this);
-  }
-
   public void saveLocal() {
     javaZmJNI.MindMatterModel_saveLocal(swigCPtr, this);
   }
@@ -133,8 +137,20 @@ public class MindMatterModel {
     return javaZmJNI.MindMatterModel_createSnapshot(swigCPtr, this);
   }
 
-  public boolean sync() {
-    return javaZmJNI.MindMatterModel_sync(swigCPtr, this);
+  public StringVec diff() {
+    return new StringVec(javaZmJNI.MindMatterModel_diff(swigCPtr, this), true);
+  }
+
+  public StringVec diffRemote() {
+    return new StringVec(javaZmJNI.MindMatterModel_diffRemote(swigCPtr, this), true);
+  }
+
+  public boolean sync_pull() {
+    return javaZmJNI.MindMatterModel_sync_pull(swigCPtr, this);
+  }
+
+  public boolean sync_push() {
+    return javaZmJNI.MindMatterModel_sync_push(swigCPtr, this);
   }
 
   public void applyChangeSet(ChangeSet changeSet) {
@@ -165,12 +181,20 @@ public class MindMatterModel {
     javaZmJNI.MindMatterModel_debug_dump(swigCPtr, this);
   }
 
+  public boolean isConsistent() {
+    return javaZmJNI.MindMatterModel_isConsistent(swigCPtr, this);
+  }
+
   public long getItemCount() {
     return javaZmJNI.MindMatterModel_getItemCount(swigCPtr, this);
   }
 
   public StringVec query(String query_str) {
     return new StringVec(javaZmJNI.MindMatterModel_query(swigCPtr, this, query_str), true);
+  }
+
+  public String completeUid(String uidPrefix) {
+    return javaZmJNI.MindMatterModel_completeUid(swigCPtr, this, uidPrefix);
   }
 
   public StringVec getItems() {
@@ -197,6 +221,10 @@ public class MindMatterModel {
     return javaZmJNI.MindMatterModel_getCaption(swigCPtr, this, uid);
   }
 
+  public boolean isTag(String uid) {
+    return javaZmJNI.MindMatterModel_isTag(swigCPtr, this, uid);
+  }
+
   public boolean hasTag(String uid, String tag_name) {
     return javaZmJNI.MindMatterModel_hasTag(swigCPtr, this, uid, tag_name);
   }
@@ -215,6 +243,10 @@ public class MindMatterModel {
 
   public StringVec getNeighbours(String node_uid) {
     return new StringVec(javaZmJNI.MindMatterModel_getNeighbours(swigCPtr, this, node_uid), true);
+  }
+
+  public StringVec getTags(String uid) {
+    return new StringVec(javaZmJNI.MindMatterModel_getTags(swigCPtr, this, uid), true);
   }
 
   public StringVec getLoadedJournalFiles() {
