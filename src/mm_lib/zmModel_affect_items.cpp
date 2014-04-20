@@ -50,13 +50,17 @@ std::string zm::MindMatterModel::getValue(
     return l_item_it->second->getValue( name );
 }
 
-const std::string & zm::MindMatterModel::getCaption(
+std::string zm::MindMatterModel::getCaption(
         const std::string &uid ) const
 {
     ModelData::left_const_iterator l_item_it( m_things.left.find( uid ) );
 
-    trace_assert_h( l_item_it != m_things.left.end() );
+    trace_assert_s( l_item_it != m_things.left.end() );
 
+    if(l_item_it == m_things.left.end())
+    {
+        return "";
+    }
     return l_item_it->second->m_caption;
 }
 
