@@ -145,6 +145,7 @@ bool mm_journaled_sync()
     test_assert( l_synced, "a sync file should have been generated");
 
     l_synced = l_m1.sync_push();
+    l_m1.saveLocal();
     test_assert( ! l_synced, "second sync should have no effect");
 
     l_files_copied = sync_folders(fc1, fc2);
@@ -160,6 +161,10 @@ bool mm_journaled_sync()
     test_assert( ! l_synced, "second pull should have no effect");
 
     test_assert( l_m2.equals(l_m1), "model2 should not differ from model1");
+
+    l_m1.initialize();
+
+    test_assert( ! l_m1.hasLocalChanges(), "should have no changes after sync");
 
     return true;
 }
