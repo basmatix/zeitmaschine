@@ -251,7 +251,7 @@ namespace zm
                 const zm::uid_t   &uid,
                 const std::string &name ) const;
 
-        const std::string & getCaption(
+        std::string getCaption(
                 const zm::uid_t   &uid ) const;
 
         bool isTag(

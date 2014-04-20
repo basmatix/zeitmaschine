@@ -12,6 +12,7 @@
 #include <yaml-cpp/yaml.h>
 
 #include <boost/filesystem.hpp>
+#include <boost/format.hpp>
 
 using namespace zm;
 
@@ -22,14 +23,18 @@ std::vector< std::string > zm::MindMatterModel::diff() const
     std::vector< std::string > l_result;
     for( const journal_ptr_t &j: l_stash.getJournal() )
     {
-        l_result.push_back(j->item_uid);
+
+        l_result.push_back( boost::str(
+                                boost::format("%s '%s'")
+                                              % j->item_uid
+                                              % getCaption(j->item_uid)));
     }
     return l_result;
 }
 
 std::vector< std::string > zm::MindMatterModel::diffRemote() const
 {
-    std::list <std::string > l_journalsToImport(findNewJournals());
+    std::list< std::string > l_journalsToImport(findNewJournals());
 
     std::vector< std::string > l_result;
     for( const std::string &l_filename: l_journalsToImport )
@@ -42,6 +47,9 @@ std::vector< std::string > zm::MindMatterModel::diffRemote() const
 
 bool zm::MindMatterModel::sync_pull()
 {
+    /// - current and last synced model may differ
+    /// - after pull two local files may be saved
+
     if(findNewJournals().empty())
     {
         /// in case there are no new journal files we can stop here
@@ -75,6 +83,10 @@ bool zm::MindMatterModel::sync_pull()
 
 bool zm::MindMatterModel::sync_push()
 {
+    /// - remote changes must not exist (to resolve conflicts locally)
+    /// - current and last synced model should differ (otherwise makes no sense)
+    /// - after push only the last synced model file should exist
+
     if( ! findNewJournals().empty())
     {
         /// in case there are journal files to be imported we abort
@@ -263,7 +275,7 @@ ChangeSet zm::MindMatterModel::_persistence_pushJournal()
 
     deepCopy(m_things, m_things_synced);
 
-    /// must save?
+    _saveModel(m_things_synced, m_localModelFileSynced);
 
     return l_changeSet;
 }
