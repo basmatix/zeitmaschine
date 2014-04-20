@@ -45,6 +45,16 @@ def show_status(model):
         model.base().getItemCount()))
     #BLACK', 'BLUE', 'CYAN', 'GREEN', 'MAGENTA', 'RED', 'RESET', 'WHITE', 'YELLOW',
 
+def show_local_diff(model):
+    print( "local changes:" )
+    for c in model.base().diff():
+        print ( "  %s" % c )
+
+def show_remote_diff(model):
+    print( "remote changes:" )
+    for c in model.base().diffRemote():
+        print ( "  %s" % c )
+
 def list_all(model):
 
     logging.debug("found %d items total", model.base().getItemCount())
@@ -191,15 +201,24 @@ def operate(gtd_model, args, auto_save):
             else:
                 print "missing pattern"
 
+        elif args[0] == "diff":
+            show_list = False
+            show_local_diff(gtd_model)
+            show_remote_diff(gtd_model)
+
         elif args[0] == "diff-local":
             show_list = False
-            for c in gtd_model.base().diff():
-                print c
+            show_local_diff(gtd_model)
 
         elif args[0] == "diff-remote":
             show_list = False
-            for c in gtd_model.base().diffRemote():
-                print c
+            show_remote_diff(gtd_model)
+
+        elif args[0] == "status":
+            show_status(gtd_model)
+            show_list = False
+            show_local_diff(gtd_model)
+            show_remote_diff(gtd_model)
 
         else:
             print ("'%s' not a valid command" % args[0])
