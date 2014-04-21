@@ -4,10 +4,11 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent" >
 
-    <LinearLayout
+    <RelativeLayout
         android:id="@+id/statusLayout"
-        android:layout_width="wrap_content"
-        android:layout_height="40dp" >
+        android:layout_width="fill_parent"
+        android:layout_height="40dp"
+        android:gravity="center_vertical" >
 
         <Button
             android:id="@+id/btPull"
@@ -19,14 +20,28 @@
             android:id="@+id/btPush"
             android:layout_width="60dp"
             android:layout_height="wrap_content"
+        	android:layout_toRightOf="@+id/btPull"
             android:text="push" />
 
         <TextView
             android:id="@+id/tvItemCount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@+id/btPush"
+            android:paddingLeft="10dp"
+            android:textSize="21sp"
             android:text="666" />
-    </LinearLayout>
+
+        <Button
+            android:id="@+id/btChoose"
+            android:layout_width="wrap_content"
+            android:layout_height="60dp"
+			android:layout_alignParentRight="true"
+            android:text="choose!" />
+
+    </RelativeLayout>
+
 
     <EditText
         android:id="@+id/tbMultiText"
@@ -48,10 +63,11 @@
 
     <Button
         android:id="@+id/btAdd"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="55dp"
+        android:layout_height="55dp"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
-        android:text="add" />
+        android:textSize="21sp"
+        android:text="+" />
 
 </RelativeLayout>
