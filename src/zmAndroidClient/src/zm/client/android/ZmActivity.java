@@ -141,6 +141,21 @@ public class ZmActivity
 		boolean l_localChanges = m_gtdModel.base().hasLocalChanges();
 //		m_btPull.setBackgroundColor(Color.RED);
 //		m_btPush.setBackgroundColor(Color.RED);
+		
+		StringVec l_diffLocal = m_gtdModel.base().diff();
+		StringVec l_diffRemote = m_gtdModel.base().diffRemote();
+    	
+		Log.w("zm", "diffs local: " + l_localChanges + " " + l_diffLocal.size());
+    	for(int i = 0; i < l_diffLocal.size(); ++i)
+    	{
+	    	Log.w("zm", "  -" + l_diffLocal.get(i));
+    	}
+    	
+    	Log.w("zm", "diffs remote: " + l_remoteChanges + " " + l_diffRemote.size());
+    	for(int i = 0; i < l_diffRemote.size(); ++i)
+    	{			
+	    	Log.w("zm", "  -" + l_diffRemote.get(i));
+    	}
 
 	    m_btPull.setEnabled(l_remoteChanges);
 	    m_btPush.setEnabled(l_localChanges && !l_remoteChanges );
