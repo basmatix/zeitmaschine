@@ -69,6 +69,10 @@ bool zm::MindMatterModel::sync_pull()
     /// equal again
     ChangeSet l_importedChanges = _persistence_pullJournal();
 
+    deepCopy(m_things, m_things_synced);
+
+    _saveModel(m_things_synced, m_localModelFileSynced);
+
     //[TODO] -
     //resolveConflicts(l_stash, l_importedChanges);
 
