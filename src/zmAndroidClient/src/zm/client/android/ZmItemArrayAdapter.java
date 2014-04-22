@@ -4,6 +4,7 @@ import java.util.List;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -46,6 +47,21 @@ public class ZmItemArrayAdapter extends ArrayAdapter<ZmItem> {
         // get the TextView and then set the text (item name) and tag (item ID) values
         TextView textViewItem = (TextView) convertView.findViewById(R.id.textViewItem);
         textViewItem.setText(objectItem.m_caption);
+        switch(objectItem.m_type)
+        {
+        case 0:
+        	textViewItem.setTextColor(Color.RED);
+        	break;
+        case 1:
+        	textViewItem.setTextColor(Color.BLUE);
+        	break;
+        case 2:
+        	textViewItem.setTextColor(Color.GREEN);
+        	break;
+        case 3:
+        	textViewItem.setTextColor(Color.GRAY);
+        	break;
+        }
         //textViewItem.setTag(objectItem.itemId);
 
         return convertView;

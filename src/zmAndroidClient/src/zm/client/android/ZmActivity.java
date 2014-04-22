@@ -62,11 +62,9 @@ public class ZmActivity
 		
 		registerForContextMenu( m_listView );
 		
-		//m_adapter = new ArrayAdapter<String>( this, R.layout.flow_list_item, m_returnValues );
 		m_adapter = new ZmItemArrayAdapter( this, R.layout.flow_list_item, m_returnValues );
 		
 		setListAdapter(m_adapter);
-		
 		
 		m_edittext.setOnKeyListener( this );
 
@@ -277,6 +275,15 @@ public class ZmActivity
 		setListContent( s.toString() );
 	}
 	
+	private void addViewItems(StringVec uids, int type)
+	{
+    	for(int i = 0; i < uids.size(); ++i)
+    	{	
+    		String l_uid = uids.get(i);
+    		m_returnValues.add(new ZmItem(l_uid, m_gtdModel.base().getCaption(l_uid), type));
+    	}
+	}
+	
 	private void setListContent(String s) 
 	{
 		if(m_gtdModel == null)
@@ -285,25 +292,19 @@ public class ZmActivity
 		}    	
 		
 		Log.i("zm", "setListContent");
-		
-		StringVec a;
+
+    	m_returnValues = new ArrayList<ZmItem>();
 		
 		if(s.trim().equals(""))
 		{
-	    	a = m_gtdModel.getInboxItems(false);
+	    	addViewItems(m_gtdModel.getInboxItems(false),0);
+	    	addViewItems(m_gtdModel.getTaskItems(true,false),1);
+	    	addViewItems(m_gtdModel.getProjectItems(false,false),2);
 		}
 		else
 		{
-	    	a = m_gtdModel.find(s);
+	    	addViewItems(m_gtdModel.find(s), 3);
 		}
-
-    	m_returnValues = new ArrayList<ZmItem>();
-
-    	for(int i = 0; i < a.size(); ++i)
-    	{	
-    		String l_uid = a.get(i);
-    		m_returnValues.add(new ZmItem(l_uid, m_gtdModel.base().getCaption(l_uid)));
-    	}
 
 		// frans: todo: muss vmtl nicht sein..
     	m_adapter = new ZmItemArrayAdapter( this, R.layout.flow_list_item, m_returnValues);
