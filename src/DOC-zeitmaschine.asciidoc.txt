@@ -13,13 +13,29 @@ accessed by Debug builds automatically.
 However until most important scheduling features are available, the next
 steps in development are listed here, too.
 
-* show local sync status
-* get width of terminal
-* show note
-* show Tags on CLI
-* show PROJECT/task on CLI
-* add/delete tags
-* add item to project
+    * PRO rename (catch)
+    * DOC Syntax-Beispiele aufschreiben
+
+    * CLI: choose!
+    * APP: choose!
+    * CLI: tsk tags
+    * CLI: Composite-Elemente darstellen:
+            * get width of terminal
+        - I! Inbox[/text][tags]
+        - T  Stand-Alone Tasks [/text][tags]
+        - P  Project/Next-Task [/text][tags]
+        - P! Project/ (no task) [/text][tags]
+        - K  Knowlege [/text][tags]
+        - P  Person [/text][tags]
+    * APP: Composite-Elemente darstellen:
+    * CLI: Add/Remove Tags
+    * App: set done
+    * App: set knowledge
+    * CLI: Show Note (tsk info)
+    * App: click on item: show Note
+    * CLI: rename
+    * APP: rename
+    * CLI: tsk assign [uid] <project-uid>
 
 * Build a native Qt5 application
 * Find a way to model subfolder relations, e.g.
