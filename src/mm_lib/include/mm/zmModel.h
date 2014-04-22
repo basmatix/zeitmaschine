@@ -66,6 +66,8 @@ namespace zm
         bool operator==( const MindMatterModel &other ) const;
         bool operator!=( const MindMatterModel &other ) const;
 
+        static boost::shared_ptr<MindMatterModel> s_instance;
+
     public:
 
         MindMatterModel();

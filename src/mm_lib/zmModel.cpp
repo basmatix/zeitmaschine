@@ -25,13 +25,21 @@
 #include <stdlib.h>
 using namespace zm;
 
-//static void _debug_dump(
-//        const zm::ModelData &thingsMap);
+boost::shared_ptr<MindMatterModel> zm::MindMatterModel::s_instance = NULL;
 
 boost::shared_ptr< zm::MindMatterModel > zm::MindMatterModel::create()
 {
-    return boost::shared_ptr<MindMatterModel>(
-                new MindMatterModel() );
+    if(!s_instance)
+    {
+        trace_i("s_instance does not exist - create");
+        s_instance = boost::shared_ptr<MindMatterModel>(
+                    new MindMatterModel() );
+    }
+    else
+    {
+        trace_w("s_instance exists!");
+    }
+    return s_instance;
 }
 
 zm::MindMatterModel::MindMatterModel()
@@ -96,6 +104,8 @@ void zm::MindMatterModel::_reset()
 
 void zm::MindMatterModel::initialize()
 {
+    trace_i("initialize zm, build time='%s'", __TIME__);
+
     trace_d("hostname: %s", zm::osal::getHostName().c_str());
     trace_d("username: %s", zm::osal::getUserName().c_str());
     trace_d("homepath: %s", zm::osal::getHomePath().c_str());
