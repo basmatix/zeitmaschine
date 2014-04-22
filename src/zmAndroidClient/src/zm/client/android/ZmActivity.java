@@ -3,8 +3,10 @@ package zm.client.android;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -15,8 +17,11 @@ import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.KeyEvent;
 import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnKeyListener;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.widget.Button;
 import android.view.View.OnClickListener;
@@ -40,6 +45,7 @@ public class ZmActivity
 	Button m_btPull;
 	Button m_btPush;
 	Button m_btAdd;
+	Button m_btChoose;
 	EditText m_edittext;
 	ListView m_listView;
 	TextView m_tvItemCount;
@@ -86,6 +92,7 @@ public class ZmActivity
 	    m_btPull = (Button) findViewById(R.id.btPull);
 	    m_btPush = (Button) findViewById(R.id.btPush);
 	    m_btAdd = (Button) findViewById(R.id.btAdd);
+	    m_btChoose = (Button) findViewById(R.id.btChoose);
 	    m_tvItemCount = (TextView) findViewById(R.id.tvItemCount);
 
 	    updateStatus();
@@ -131,8 +138,75 @@ public class ZmActivity
 		    	m_edittext.setText("");
 		    	updateStatus();
 			}
-		});		
+		});
+
+		m_btChoose.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View arg0) {
+
+			}
+		});
+		
 		setListContent( "" );
+	}
+
+	public boolean onCreateOptionsMenu(Menu menu) {
+        
+	    MenuInflater inflater = getMenuInflater();
+	    inflater.inflate(R.menu.main_menu, menu);
+	    return true;
+	}
+	
+	public boolean onOptionsItemSelected(MenuItem item) 
+	{
+		switch (item.getItemId()){		     
+	    case R.id.sync_status:
+	    {
+			StringVec l_diffLocal = m_gtdModel.base().diffLocal();
+			StringVec l_diffRemote = m_gtdModel.base().diffRemote();
+			
+			String l_statusString = "";
+			
+			l_statusString += "local (changes you would push):\n  ";
+	    	
+	    	for(int i = 0; i < l_diffLocal.size(); ++i)
+	    	{
+				l_statusString += l_diffLocal.get(i) + "\n  ";
+	    	}
+
+	    	l_statusString += "\nremote (changes you would pull):\n  ";
+	    	
+	    	for(int i = 0; i < l_diffRemote.size(); ++i)
+	    	{			
+				l_statusString += l_diffRemote.get(i) + "\n  ";
+	    	}
+	    	
+    	
+			// 1. Instantiate an AlertDialog.Builder with its constructor
+			AlertDialog.Builder builder = new AlertDialog.Builder(ZmActivity.this);
+			
+			// 2. Chain together various setter methods to set the dialog characteristics
+			builder.setTitle("to sync or not to sync?")
+			       .setMessage(l_statusString);
+			// 3. Get the AlertDialog from create()
+			AlertDialog dialog = builder.create();
+			DisplayMetrics metrics = new DisplayMetrics();
+			getWindowManager().getDefaultDisplay().getMetrics(metrics);
+			
+	    	dialog.show();	    
+			
+	    	TextView textView = (TextView) dialog.findViewById(android.R.id.message);
+	    	textView.setTypeface(Typeface.MONOSPACE);
+	    	textView.setTextSize(8);
+	    	dialog.getWindow().setLayout(metrics.widthPixels, metrics.heightPixels);
+	    	
+			return true;
+	    }
+	    case R.id.about:
+	    return true;
+	    default:
+	    return super.onOptionsItemSelected(item);	
+		}
 	}
 	
 	public void updateStatus()
@@ -142,7 +216,7 @@ public class ZmActivity
 //		m_btPull.setBackgroundColor(Color.RED);
 //		m_btPush.setBackgroundColor(Color.RED);
 		
-		StringVec l_diffLocal = m_gtdModel.base().diff();
+		StringVec l_diffLocal = m_gtdModel.base().diffLocal();
 		StringVec l_diffRemote = m_gtdModel.base().diffRemote();
     	
 		Log.w("zm", "diffs local: " + l_localChanges + " " + l_diffLocal.size());
