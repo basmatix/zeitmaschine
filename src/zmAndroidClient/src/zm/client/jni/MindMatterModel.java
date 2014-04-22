@@ -137,8 +137,8 @@ public class MindMatterModel {
     return javaZmJNI.MindMatterModel_createSnapshot(swigCPtr, this);
   }
 
-  public StringVec diff() {
-    return new StringVec(javaZmJNI.MindMatterModel_diff(swigCPtr, this), true);
+  public StringVec diffLocal() {
+    return new StringVec(javaZmJNI.MindMatterModel_diffLocal(swigCPtr, this), true);
   }
 
   public StringVec diffRemote() {

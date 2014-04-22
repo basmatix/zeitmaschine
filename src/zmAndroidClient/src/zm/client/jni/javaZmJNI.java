@@ -80,7 +80,7 @@ public class javaZmJNI {
   public final static native boolean MindMatterModel_loadLocal(long jarg1, MindMatterModel jarg1_);
   public final static native boolean MindMatterModel_loadSnapshot(long jarg1, MindMatterModel jarg1_);
   public final static native boolean MindMatterModel_createSnapshot(long jarg1, MindMatterModel jarg1_);
-  public final static native long MindMatterModel_diff(long jarg1, MindMatterModel jarg1_);
+  public final static native long MindMatterModel_diffLocal(long jarg1, MindMatterModel jarg1_);
   public final static native long MindMatterModel_diffRemote(long jarg1, MindMatterModel jarg1_);
   public final static native boolean MindMatterModel_sync_pull(long jarg1, MindMatterModel jarg1_);
   public final static native boolean MindMatterModel_sync_push(long jarg1, MindMatterModel jarg1_);
