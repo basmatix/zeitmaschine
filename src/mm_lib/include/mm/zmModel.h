@@ -139,7 +139,7 @@ namespace zm
         bool createSnapshot();
 
         /// returns a summarization of local changes
-        std::vector< std::string > diff() const;
+        std::vector< std::string > diffLocal() const;
         std::vector< std::string > diffRemote() const;
 
         /// for convenience: see persistence_sync()
@@ -190,6 +190,10 @@ namespace zm
                 const YAML::Node  &yamlNode,
                       ModelData   &thingsMap,
                       bool         checkHashes);
+
+        void _toChangeMap(
+                      std::map< zm::uid_t, std::string > &changeMap,
+                const zm::ChangeSet &changes) const;
 
         // todo - refactor name
         static void _saveModel(

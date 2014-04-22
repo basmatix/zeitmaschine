@@ -47,7 +47,7 @@ def show_status(model):
 
 def show_local_diff(model):
     print( "local changes:" )
-    for c in model.base().diff():
+    for c in model.base().diffLocal():
         print ( "  %s" % c )
 
 def show_remote_diff(model):
