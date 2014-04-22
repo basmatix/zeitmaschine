@@ -17,38 +17,40 @@
 using namespace zm;
 
 void zm::MindMatterModel::_toChangeMap(
-              std::map< zm::uid_t, std::string > &a_changeMap,
+              std::map< zm::uid_t, std::pair< std::string, std::string > > &a_changeMap,
         const zm::ChangeSet &a_changes) const
 {
+    // a_changeMap: {uid,{caption, changes}}
+
     for( const journal_ptr_t &j: a_changes.getJournal() )
     {
         auto l_diff_item( a_changeMap.find(j->item_uid) );
 
         if(l_diff_item == a_changeMap.end())
         {
-            l_diff_item = a_changeMap.insert({
-                            j->item_uid,
-                            boost::str( boost::format("%.5s '%.20s'")
-                                   % j->item_uid
-                                   % getCaption(j->item_uid))}).first; // todo: should really local model be used?
+            l_diff_item = a_changeMap.insert({j->item_uid, {"", ""}}).first;
+            ModelData::left_const_iterator l_item_it( m_things.left.find( j->item_uid ) );
+            l_diff_item->second.first = _getCaption(l_item_it);
         }
         switch(j->type)
         {
         case JournalItem::CreateItem:
-            l_diff_item->second += " (cre)";
+            l_diff_item->second.second += " (cre)";
+            l_diff_item->second.first = j->value;
             break;
         case JournalItem::EraseItem:
-            l_diff_item->second += " (del)";
+            l_diff_item->second.second += " (del)";
             break;
         case JournalItem::SetStringValue:
-            l_diff_item->second += " (val)";
+            l_diff_item->second.second += " (val)";
             break;
         case JournalItem::ChangeCaption:
-            l_diff_item->second += " (cap)";
+            l_diff_item->second.second += " (cap)";
+            l_diff_item->second.first = j->value;
             break;
         case JournalItem::Connect:
         case JournalItem::Disconnect:
-            l_diff_item->second += " (con)";
+            l_diff_item->second.second += " (con)";
             break;
         default: break;
         }
@@ -57,14 +59,17 @@ void zm::MindMatterModel::_toChangeMap(
 
 std::vector< std::string > zm::MindMatterModel::diffLocal() const
 {
-    std::map< zm::uid_t, std::string > l_diff_map;
+    std::map< zm::uid_t, std::pair< std::string, std::string > > l_diff_map;
 
     _toChangeMap(l_diff_map, _diff( m_things_synced, m_things ));
 
     std::vector< std::string > l_result;
     for( const auto &i : l_diff_map )
     {
-        l_result.push_back(i.second);
+        l_result.push_back(boost::str( boost::format("%.5s '%.20s' %s")
+                                       % i.first
+                                       % i.second.first
+                                       % i.second.second));
     }
     return l_result;
 }
@@ -73,7 +78,7 @@ std::vector< std::string > zm::MindMatterModel::diffRemote() const
 {
     std::list< std::string > l_journalsToImport(findNewJournals());
     std::vector< std::string > l_result;
-    std::map< zm::uid_t, std::string > l_diff_map;
+    std::map< zm::uid_t, std::pair< std::string, std::string > > l_diff_map;
 
     for( const std::string &l_filename: l_journalsToImport )
     {
@@ -86,7 +91,10 @@ std::vector< std::string > zm::MindMatterModel::diffRemote() const
 
     for( const auto &i : l_diff_map )
     {
-        l_result.push_back(i.second);
+        l_result.push_back(boost::str( boost::format("%.5s '%.20s' %s")
+                                       % i.first
+                                       % i.second.first
+                                       % i.second.second));
     }
 
     return l_result;

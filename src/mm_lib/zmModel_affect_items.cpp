@@ -64,6 +64,16 @@ std::string zm::MindMatterModel::getCaption(
     return l_item_it->second->m_caption;
 }
 
+std::string zm::MindMatterModel::_getCaption(
+        ModelData::left_const_iterator &a_item ) const
+{
+    if(a_item == m_things.left.end())
+    {
+        return "";
+    }
+    return a_item->second->m_caption;
+}
+
 bool zm::MindMatterModel::hasTag(
         const std::string &uid,
         const std::string &tag_name ) const
@@ -275,7 +285,7 @@ void zm::MindMatterModel::_createNewItem(
     {
         l_new_thing->addValue( "global_time_created", a_time );
     }
-    a_model.insert( ModelData::value_type(a_uid,l_new_thing) );
+    a_model.insert( ModelData::value_type(a_uid, l_new_thing) );
 }
 
 void zm::MindMatterModel::eraseItem( const zm::uid_t &uid )

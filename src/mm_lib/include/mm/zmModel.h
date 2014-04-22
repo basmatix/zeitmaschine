@@ -192,7 +192,7 @@ namespace zm
                       bool         checkHashes);
 
         void _toChangeMap(
-                      std::map< zm::uid_t, std::string > &changeMap,
+                      std::map< zm::uid_t, std::pair< std::string, std::string > > &changeMap,
                 const zm::ChangeSet &changes) const;
 
         // todo - refactor name
@@ -387,6 +387,9 @@ namespace zm
         static void _disconnect(
                 MindMatter *a_item1,
                 MindMatter *a_item2 );
+
+        std::string _getCaption(
+                ModelData::left_const_iterator &a_item ) const;
 
         // returns 16x8 bit
         static zm::uid_t generateUid();
