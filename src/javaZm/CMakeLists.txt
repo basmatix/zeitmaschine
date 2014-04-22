@@ -108,5 +108,11 @@ if( CONFIG_BUILD_JAVAZM )
         COMMENT "use ${CMAKE_STRIP} to strip ${TARGET_LOCATION}"
         COMMAND ${CMAKE_STRIP} ${TARGET_LOCATION}
     )
+    if( ANDROID )
+        add_custom_command( TARGET ${JAVA_ZM_LIBRARY_NAME} POST_BUILD
+            COMMENT "touch zmModel.cpp to rebuild time stamp next time"
+            COMMAND ${CMAKE_COMMAND} -E touch "${CMAKE_SOURCE_DIR}/mm_lib/zmModel.cpp"
+        )
+    endif()
 
 endif()
