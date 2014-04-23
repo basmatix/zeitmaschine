@@ -33,14 +33,17 @@ file( GLOB ${PROJECT_NAME}_files
     zmQtGtdModel.cpp
 )
 
+include_directories(
+    "${MM_INCLUDE_DIR}"
+    "${ZM_INCLUDE_DIR}"
+)
+
 # generated and external headers made system so
 # we don't have to deal with their warnings
 include_directories(SYSTEM
     "${Boost_INCLUDE_DIR}"
     "${CMAKE_CURRENT_BINARY_DIR}"
     "${CMAKE_CURRENT_SOURCE_DIR}"
-    "${MM_INCLUDE_DIR}"
-    "${ZM_INCLUDE_DIR}"
 )
 
 link_directories( ${Boost_LIBRARY_DIRS} )
