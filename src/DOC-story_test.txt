@@ -1,13 +1,13 @@
-realist example usecase
+zeitmschine example usecase
 =======================
 
 
-This document describes the realist API using a bunch of example use cases.
+This document will describe the zeitmschine API using a bunch of example use cases.
 
-Realist aims at being the network based representation for everything you
+Zeitmschine aims at being the network based representation for everything you
 think about and you want to keep in mind.
 
-Realist follows the GTD approach to organize your thaughts and to get things
+Zeitmschine follows the GTD approach to organize your thaughts and to get things
 done and thus there should be only one medium for everything - for your 
 ideas as well as tasks you have to keep in mind and get handled.
 
@@ -17,28 +17,25 @@ organize it later.
 
 * I have lots of ongoing projects
 
-* realist
+* zeitmschine
 
 * a file system analyzer
 
 * my business project - the YSbox
 
 
-
 --- every day use
 
 * "tabula rasa" mode for daily scheduling
+* schedule a task
 * shuffle-a-task
-* adding birth dates
+* adding birth dates '+birthday'
 * following brain stacks
-* taking notes
+* taking notes and links
+* plan to buy '+buy'
+* plan to watch '+movie'
+* plan to checkout music '+music'
+* manage a restaurant list '+restaurant'
+* manage a club list '+go-out'
 * diary, logging, time tracking
 
---- tags
-
-* '+geburtstag'
-* '+kaufen'
-* '+film'
-* '+weggehen'
-* '+musik'
-* '+restaurant'

@@ -42,3 +42,33 @@ TEST( cond1, "node1 and node2 should be connected after connection" )
 #_EST( not model.isConnected(node1, node3), "node1 and node2 should be connected after connection" )
 ----
 
+2 - CLI
+
+---
+tsk add <caption text> [note: <note text>] [link: <url>] [when: <date>]
+
+tsk add Kuchen backen
+tsk add Einkaufen
+tsk task
+tsk rm
+tsk rm-tag
+tsk done
+tsk info [uid*]
+tsk con uid1 -> uid2
+
+(add date)
+tsk search
+
+tsk tags
+tsk tag [uid*] [[+|-]tag1 *]
+
+tsk sync-pull
+tsk sync-push
+tsk snapshot
+
+tsk diff
+tsk diff-local
+tsk diff-remote
+tsk status
+tsk choose
+---
