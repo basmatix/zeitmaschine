@@ -179,7 +179,6 @@ zm::uid_lst_t zmGtdModel::find(
     return m_p_things_model->query(l_query);
 }
 
-
 bool zmGtdModel::isTaskItem(
         const std::string &item,
         bool includeStandaloneTasks ) const
@@ -360,10 +359,30 @@ void zmGtdModel::setDone(
 void zmGtdModel::castToProject(
         const std::string &item )
 {
-    trace_assert_h( isInboxItem( item ) );
+    trace_assert_s( isInboxItem( item ) );
 
     m_p_things_model->disconnect( item, m_item_inbox );
     m_p_things_model->connectDirected( item, m_item_project );
+}
+
+void zmGtdModel::castToStandaloneProject(
+        const zm::uid_t &item )
+{
+    trace_assert_s( isInboxItem( item ) );
+
+    m_p_things_model->disconnect( item, m_item_inbox );
+    m_p_things_model->connectDirected( item, m_item_project );
+    m_p_things_model->connectDirected( item, m_item_task );
+}
+
+void zmGtdModel::castToTaggedItem(
+        const zm::uid_t   &a_item,
+        const std::string &a_tag)
+{
+    trace_assert_s( isInboxItem( a_item ) );
+
+    m_p_things_model->disconnect( a_item, m_item_inbox );
+    m_p_things_model->addTag(a_item, a_tag);
 }
 
 void zmGtdModel::setNextTask(

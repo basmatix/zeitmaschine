@@ -124,6 +124,13 @@ public:
     void castToProject(
             const zm::uid_t &item );
 
+    void castToStandaloneProject(
+            const zm::uid_t &item );
+
+    void castToTaggedItem(
+            const zm::uid_t   &item,
+            const std::string &tag);
+
     void setNextTask(
             const zm::uid_t &project_item,
             const zm::uid_t &task_item );
