@@ -8,6 +8,7 @@ import android.app.ListActivity;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -72,7 +73,6 @@ public class ZmActivity
 		
 	    try {
 	    	Log.w("zm", "create model");
-	        System.out.println("test");
 	    	
 			//theModel = MindMatterModel.create_new();
 	        m_gtdModel = new zmGtdModel(MindMatterModel.create());
@@ -117,6 +117,18 @@ public class ZmActivity
 		    	m_gtdModel.base().saveLocal();
 			}
 		});
+
+		m_btChoose.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View arg0) {
+				ZmItem l_todo = m_returnValues.get((int)(Math.random() * m_returnValues.size()));
+				new AlertDialog.Builder(ZmActivity.this)
+				       .setTitle("jetzt:")
+				       .setMessage(l_todo.m_caption)
+					   .create()
+		    	       .show();
+			}
+		});
 		
 		m_btAdd.setOnClickListener(new OnClickListener() {
 			@Override
@@ -137,14 +149,7 @@ public class ZmActivity
 		    	updateStatus();
 			}
 		});
-
-		m_btChoose.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View arg0) {
-
-			}
-		});
-		
+	
 		setListContent( "" );
 	}
 
@@ -234,18 +239,65 @@ public class ZmActivity
 	    
 	    m_tvItemCount.setText(String.valueOf(m_gtdModel.base().getItemCount()));
 	}
-	
+
 	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) 
 	{
+		super.onCreateContextMenu(menu, v, menuInfo);  	
 		if (v.getId()==android.R.id.list) 
 		{
+			AdapterContextMenuInfo info = (AdapterContextMenuInfo) menuInfo;
+			ZmItem l_todo = m_returnValues.get(info.position);
+		        
 		    //AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)menuInfo;
-		    menu.setHeaderTitle("title");
-		    menu.add(Menu.NONE, 0, 0, "eins");
-		    menu.add(Menu.NONE, 1, 1, "zwei");
+		    menu.setHeaderTitle(l_todo.m_caption);
+		    menu.add(Menu.NONE, info.position, 0, "set done");
+		    menu.add(Menu.NONE, info.position, 1, "connect..");
+		    menu.add(Menu.NONE, info.position, 2, "to: task");
+		    menu.add(Menu.NONE, info.position, 3, "to: project");
+		    menu.add(Menu.NONE, info.position, 4, "to: knowledge");
+		    menu.add(Menu.NONE, info.position, 5, "to: kaufen");
+		    menu.add(Menu.NONE, info.position, 6, "to: film");
 		}
 	}
 	
+   @Override  
+   public boolean onContextItemSelected(MenuItem item)
+   {
+		ZmItem l_todo = m_returnValues.get(item.getItemId());
+	   	String l_title = (String) item.getTitle() + " " + item.getOrder() + " " + item.getItemId() + "\n" + l_todo.m_caption;
+	   	switch(item.getOrder())
+	   	{
+	   	case 0: // done
+	   		m_gtdModel.setDone(l_todo.m_uid);
+			new AlertDialog.Builder(ZmActivity.this)
+		       .setTitle("set to done:")
+		       .setMessage(l_title).create().show();
+	   		break;
+	   	case 1: // connect
+	   		break;
+	   	case 2: // task
+	   		break;
+	   	case 3: // project
+	   		m_gtdModel.castToProject(l_todo.m_uid);
+			new AlertDialog.Builder(ZmActivity.this)
+		       .setTitle("cast to project:")
+		       .setMessage(l_title).create().show();
+	   		break;
+	   	case 4: // knowledge
+	   		break;
+	   	case 5: // kaufen
+	   		break;
+	   	case 6: // film
+	   		break;
+	   	}
+
+	   	m_gtdModel.base().saveLocal();
+	   	setListContent(m_edittext.getText().toString());
+		
+		return true;
+   }
+	
+	//public void on
     public boolean onKey(View v, int keyCode, KeyEvent event) 
     {
         if( (event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) 
@@ -307,7 +359,7 @@ public class ZmActivity
 		}
 
 		// frans: todo: muss vmtl nicht sein..
-    	m_adapter = new ZmItemArrayAdapter( this, R.layout.flow_list_item, m_returnValues);
+    	m_adapter = new ZmItemArrayAdapter(this, R.layout.flow_list_item, m_returnValues);
 		
 		setListAdapter(m_adapter);
 	}
@@ -317,6 +369,22 @@ public class ZmActivity
 	{
 		ZmItem l_item = (ZmItem)getListAdapter().getItem(position);
 		Log.i("zm", "clicked on '" + l_item.m_caption + "'");
+		
+		AlertDialog.Builder builder = new AlertDialog.Builder(ZmActivity.this);
+		
+		builder.setTitle(l_item.m_caption)
+		       .setMessage(m_gtdModel.getNote(l_item.m_uid));
+
+		AlertDialog dialog = builder.create();
+		DisplayMetrics metrics = new DisplayMetrics();
+		getWindowManager().getDefaultDisplay().getMetrics(metrics);
+		
+    	dialog.show();	    
+		
+    	TextView textView = (TextView) dialog.findViewById(android.R.id.message);
+    	textView.setTypeface(Typeface.MONOSPACE);
+    	textView.setTextSize(8);
+    	dialog.getWindow().setLayout(metrics.widthPixels, metrics.heightPixels);		
 	}
 /*
 	public void onStart()   { super.onStart();   helloLog("onStart"); }

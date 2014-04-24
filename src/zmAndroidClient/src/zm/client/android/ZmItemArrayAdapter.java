@@ -50,16 +50,16 @@ public class ZmItemArrayAdapter extends ArrayAdapter<ZmItem> {
         switch(objectItem.m_type)
         {
         case 0:
-        	textViewItem.setTextColor(Color.RED);
+        	textViewItem.setTextColor(0xffff88bb); // redish
         	break;
         case 1:
-        	textViewItem.setTextColor(Color.BLUE);
+        	textViewItem.setTextColor(0xffaaaaff);
         	break;
         case 2:
-        	textViewItem.setTextColor(Color.GREEN);
+        	textViewItem.setTextColor(0xffaaffaa);
         	break;
         case 3:
-        	textViewItem.setTextColor(Color.GRAY);
+        	textViewItem.setTextColor(0xffcccccc);
         	break;
         }
         //textViewItem.setTag(objectItem.itemId);
