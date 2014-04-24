@@ -149,6 +149,14 @@ public class zmGtdModel {
     javaZmJNI.zmGtdModel_castToProject(swigCPtr, this, item);
   }
 
+  public void castToStandaloneProject(String item) {
+    javaZmJNI.zmGtdModel_castToStandaloneProject(swigCPtr, this, item);
+  }
+
+  public void castToTaggedItem(String item, String tag) {
+    javaZmJNI.zmGtdModel_castToTaggedItem(swigCPtr, this, item, tag);
+  }
+
   public void setNextTask(String project_item, String task_item) {
     javaZmJNI.zmGtdModel_setNextTask(swigCPtr, this, project_item, task_item);
   }

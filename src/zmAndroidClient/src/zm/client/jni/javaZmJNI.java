@@ -48,6 +48,8 @@ public class javaZmJNI {
   public final static native void zmGtdModel_registerItemAsTask(long jarg1, zmGtdModel jarg1_, String jarg2, String jarg3);
   public final static native void zmGtdModel_setDone(long jarg1, zmGtdModel jarg1_, String jarg2);
   public final static native void zmGtdModel_castToProject(long jarg1, zmGtdModel jarg1_, String jarg2);
+  public final static native void zmGtdModel_castToStandaloneProject(long jarg1, zmGtdModel jarg1_, String jarg2);
+  public final static native void zmGtdModel_castToTaggedItem(long jarg1, zmGtdModel jarg1_, String jarg2, String jarg3);
   public final static native void zmGtdModel_setNextTask(long jarg1, zmGtdModel jarg1_, String jarg2, String jarg3);
   public final static native String zmGtdModel_createProject(long jarg1, zmGtdModel jarg1_, String jarg2);
   public final static native void delete_zmGtdModel(long jarg1);
