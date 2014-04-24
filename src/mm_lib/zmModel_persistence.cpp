@@ -66,7 +66,15 @@ std::vector< std::string > zm::MindMatterModel::diffLocal() const
     std::vector< std::string > l_result;
     for( const auto &i : l_diff_map )
     {
-        l_result.push_back(boost::str( boost::format("%.5s '%.20s' %s")
+        int l_umlaut_count(0);
+        for( char c : i.second.first )
+        {
+            if(c == -61) ++l_umlaut_count;
+        }
+        std::stringstream l_format;
+        l_format << "%.5s '%." << 20 + l_umlaut_count << "s' %s";
+
+        l_result.push_back(boost::str( boost::format(l_format.str())
                                        % i.first
                                        % i.second.first
                                        % i.second.second));
@@ -91,7 +99,15 @@ std::vector< std::string > zm::MindMatterModel::diffRemote() const
 
     for( const auto &i : l_diff_map )
     {
-        l_result.push_back(boost::str( boost::format("%.5s '%.20s' %s")
+        int l_umlaut_count(0);
+        for( char c : i.second.first )
+        {
+            if(c == -61) ++l_umlaut_count;
+        }
+        std::stringstream l_format;
+        l_format << "%.5s '%." << 20 + l_umlaut_count << "s' %s";
+
+        l_result.push_back(boost::str( boost::format(l_format.str())
                                        % i.first
                                        % i.second.first
                                        % i.second.second));
