@@ -166,6 +166,16 @@ def operate(gtd_model, args, auto_save):
                 print("not all given items map to a unique existing one - abort")
                 show_list = False
 
+        if args[0] == "info":
+            info_uids = to_uids(args[1:], gtd_model)
+            if info_uids:
+                for i in info_uids:
+                    caption = gtd_model.base().getCaption(i)
+                    print("'%s'(%d)" % (caption, len(caption)))
+            else:
+                print("not all given items map to a unique existing one - abort")
+            show_list = False
+
         elif args[0] == "sync-pull":
             logging.info("trigger sync")
             if gtd_model.base().sync_pull():
