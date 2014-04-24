@@ -8,6 +8,20 @@ zeitmaschine - architectural blog
 In this document architectural options and considerations are being discussed
 
 
+.*2014.04.24 - should the distinct model views provide the generic interface?.*
+********************************************************************************
+
+invalid
+
+inbox-item +inbox
+
+standalone-task +task +project
+
+task-item +task (->project)
+
+project-item  +project (->task)*
+********************************************************************************
+
 
 .*2014.03.26 - should the distinct model views provide the generic interface?.*
 ********************************************************************************
