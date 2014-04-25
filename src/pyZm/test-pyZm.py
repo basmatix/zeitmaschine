@@ -14,8 +14,18 @@ import os
 import sys
 import logging
 import colorama
-
 import pyZm
+
+import os
+TERM_ROWS, TERM_COLUMS = (int(x) for x in os.popen('stty size', 'r').read().split())
+
+
+def enum(*sequential, **named):
+    enums = dict(zip(sequential, range(len(sequential))), **named)
+    return type('Enum', (), enums)
+    
+DisplayType = enum('NONE', 'INBOX', 'TASK', 'TASK_STANDALONE', 'TASK_INVALID', 
+                   'PROJECT', 'PROJECT_INVALID', 'TAG', 'REST')
 
 def yield_n(string, length, padding=' '):
     length = int(length)
@@ -23,6 +33,95 @@ def yield_n(string, length, padding=' '):
         return string + padding * (length - len(string.decode('utf-8')))
     else:
         return string[:length]
+
+def print_line(uid, gtd_model, display_type=None):
+    # NONE
+    # INBOX
+    # ! TASK-w/o Project
+    # TASK-Standalone
+    # Project/no-first-task
+    # Project/First-Task
+
+    caption_width = int(TERM_COLUMS) - 16
+    show_tags = False
+    spacer = ' '
+    
+    if not display_type:
+        if gtd_model.base().isTag(uid):
+            display_type = DisplayType.TAG
+        elif gtd_model.isTaskItem(uid, True):
+            done = gtd_model.isDone(uid)
+            if gtd_model.isProjectItem(uid, True):
+                display_type = DisplayType.TASK_STANDALONE
+            else:
+                project_uid = gtd_model.getParentProject(uid)
+                if len(project_uid) == 16:
+                    display_type = DisplayType.TASK
+                else:
+                    display_type = DisplayType.TASK_INVALID
+
+        elif gtd_model.isProjectItem(uid, False):
+            done = gtd_model.isDone(uid)
+            next_task_uid = gtd_model.getNextTask(uid)
+            if len(next_task_uid) == 16:
+                display_type = DisplayType.PROJECT
+            else:
+                display_type = DisplayType.PROJECT_INVALID
+                    
+        elif gtd_model.isInboxItem(uid):
+            display_type = DisplayType.INBOX
+            
+        elif gtd_model.base().hasTag(uid, 'knowledge'):
+            display_type = DisplayType.REST
+            
+        else:
+            display_type = DisplayType.NONE
+
+
+    #available
+    #BLACK', 'BLUE', 'CYAN', 'GREEN', 'MAGENTA', 'RED', 'RESET', 'WHITE', 'YELLOW',
+    
+    if display_type == DisplayType.NONE:
+        type_str = '  [NONE]'
+        color_str = colorama.Fore.RED
+        display_str = gtd_model.base().getCaption(uid)
+    elif display_type == DisplayType.TAG:
+        type_str = '  [TAG] '
+        color_str = colorama.Fore.MAGENTA
+        display_str = gtd_model.base().getCaption(uid)
+    elif display_type == DisplayType.REST:
+        type_str = '  [REST]'
+        color_str = colorama.Fore.WHITE
+        display_str = gtd_model.base().getCaption(uid)
+    elif display_type == DisplayType.INBOX:
+        type_str = '  [INB] '
+        color_str = colorama.Fore.YELLOW
+        display_str = gtd_model.base().getCaption(uid)
+    elif display_type == DisplayType. TASK:
+        type_str = '  [TASK]'
+        color_str = colorama.Fore.BLUE
+        display_str = gtd_model.base().getCaption(project_uid) + " / " + gtd_model.base().getCaption(uid)
+    elif display_type == DisplayType.TASK_STANDALONE:
+        type_str = '  [TASK]'
+        color_str = colorama.Fore.BLUE
+        display_str = gtd_model.base().getCaption(uid)
+    elif display_type == DisplayType.PROJECT:
+        type_str = '  [PROJ]'
+        color_str = colorama.Fore.GREEN
+        display_str = gtd_model.base().getCaption(uid) + " / " + gtd_model.base().getCaption(next_task_uid)
+    elif display_type == DisplayType.PROJECT_INVALID:
+        type_str = ' ![PROJ]'
+        color_str = colorama.Fore.RED
+        display_str = gtd_model.base().getCaption(uid)
+    else:
+        print("unhandled: %s" % display_type)
+    
+    print( "%s%s%s %s %s"  % (
+            color_str,
+            uid[:4],
+            type_str,
+            yield_n(display_str, caption_width, spacer),
+            tags if show_tags else "|"))
 
 def to_uids(args, model):
     uid_items = [model.base().completeUid(i)
@@ -44,7 +143,6 @@ def show_status(model):
         colorama.Fore.GREEN if model.base().isConsistent() else colorama.Fore.RED,
         block, colorama.Fore.RESET,
         model.base().getItemCount()))
-    #BLACK', 'BLUE', 'CYAN', 'GREEN', 'MAGENTA', 'RED', 'RESET', 'WHITE', 'YELLOW',
 
 def show_local_diff(model):
     print( "local changes:" )
@@ -59,9 +157,7 @@ def show_remote_diff(model):
 def list_all(model):
 
     logging.debug("found %d items total", model.base().getItemCount())
-    import os
-    rows, columns = os.popen('stty size', 'r').read().split()
-    caption_width = int(columns) - 16
+    caption_width = int(TERM_COLUMS) - 16
     spacer = ' '
     show_tags = False
 
@@ -79,42 +175,31 @@ def list_all(model):
                                 " -knowledge"):
         tags = model.base().getTags(i)
         if model.base().isTag(i): continue
-        print( "%s%s  [NONE] %s %s"  % (
-                colorama.Fore.YELLOW,
-                i[:4],
-                yield_n(model.base().getCaption(i), caption_width, spacer),
-                tags if show_tags else "|"))
+        
+        print_line(i, model)
 
     for i in model.getInboxItems(False):
         tags = model.base().getTags(i)
-        print( "%s%s  [INB]  %s %s" % (
-                colorama.Fore.RED,
-                i[:4],
-                yield_n(model.base().getCaption(i), caption_width, spacer),
-                tags if show_tags else "|"))
+        print_line(i, model)
 
-    for i in model.getTaskItems(True, False):
+    # get not done yet standalone task items
+    for i in model.getStandaloneTaskItems( False):
         tags = model.base().getTags(i)
-        print ( "%s%s  [TASK] %s %s" % (
-                colorama.Fore.BLUE,
-                i[:4],
-                yield_n(model.base().getCaption(i), caption_width, spacer),
-                tags if show_tags else "|"))
+        print_line(i, model)
 
-    for i in model.getProjectItems(True, False):
+    # get not done yet non-standalone-project items
+    for i in model.getProjectItems(False, False):
         tags = model.base().getTags(i)
-        print ( "%s%s  [PROJ] %s %s" % (
-                colorama.Fore.GREEN,
-                i[:4],
-                yield_n(model.base().getCaption(i), caption_width, spacer),
-                tags if show_tags else "|"))
+        print_line(i, model)
 
 def list_matching(gtd_model, pattern):
     print     ("ID    CAPTION" )
     print     ("----  ----" )
     for i in gtd_model.find(pattern):
-        print("%s  %s" %
-                (i[:4], yield_n(gtd_model.base().getCaption(i), caption_width, ' ')))
+        print_line(i, gtd_model)
+        if gtd_model.base().isTag(i):
+            for j in gtd_model.base().getNeighbours(i):
+                print_line(j, gtd_model)
 
 def operate(gtd_model, args, auto_save):
 
@@ -194,7 +279,18 @@ def operate(gtd_model, args, auto_save):
                 gtd_model.base().setCaption(uid, caption)
                 modifications_done = True
 
-        elif args[0] == "cast:project":
+        elif args[0] in ("cast:standalone-task", "cast:st"):
+            uids = to_uids(args[1:], gtd_model)
+            if uids:
+                print("cast to standalone task: %s" % uids)
+                for i in uids:
+                    gtd_model.castToStandaloneProject(i)
+                modifications_done = True
+            else:
+                print("not all given items map to a unique existing one - abort")
+                show_list = False
+
+        elif args[0] in ("cast:project", "cast:p"):
             uids = to_uids(args[1:], gtd_model)
             if uids:
                 print("cast to project: %s" % uids)
@@ -205,7 +301,7 @@ def operate(gtd_model, args, auto_save):
                 print("not all given items map to a unique existing one - abort")
                 show_list = False
 
-        elif args[0] == "cast:note":
+        elif args[0] in ("cast:note", "cast:n"):
             uids = to_uids(args[1:], gtd_model)
             if uids:
                 print("cast to note: %s" % uids)
@@ -288,9 +384,10 @@ def operate(gtd_model, args, auto_save):
             print("done")
             print("dismiss")
             print("rename")
-            print("cast:task")
-            print("cast:project")
-            print("cast:note")
+            print("cast:task|t")
+            print("cast:standalone-task|st")
+            print("cast:project|p")
+            print("cast:note|n")
             print("info")
             print("sync-pull|pull")
             print("sync-push|push")
@@ -308,11 +405,12 @@ def operate(gtd_model, args, auto_save):
             print ("'%s' not a valid command" % args[0])
             show_list = False
 
-
     if show_list:
         list_all(gtd_model)
         show_status(gtd_model)
 
+    # we save after showing the list since errors hold us back from
+    # saving an insane model
     if modifications_done:
         if auto_save:
             print("modifications done, save..")
