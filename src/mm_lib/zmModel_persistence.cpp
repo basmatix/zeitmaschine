@@ -49,8 +49,14 @@ void zm::MindMatterModel::_toChangeMap(
             l_diff_item->second.first = j->value;
             break;
         case JournalItem::Connect:
+            l_diff_item->second.second += " (+";
+            l_diff_item->second.second += j->key;
+            l_diff_item->second.second += ")";
+            break;
         case JournalItem::Disconnect:
-            l_diff_item->second.second += " (con)";
+            l_diff_item->second.second += " (-";
+            l_diff_item->second.second += j->value;
+            l_diff_item->second.second += ")";
             break;
         default: break;
         }

@@ -24,6 +24,7 @@ class zmGtdModel
     zm::uid_t m_item_project;
     zm::uid_t m_item_group;
     zm::uid_t m_item_done;
+    zm::uid_t m_item_dismissed;
     zm::uid_t m_item_knowledge;
     zm::uid_t m_item_person;
 
@@ -119,6 +120,9 @@ public:
             const zm::uid_t &project_item );
 
     void setDone(
+            const zm::uid_t &task_item );
+
+    void setDismissed(
             const zm::uid_t &task_item );
 
     void castToProject(

@@ -20,6 +20,7 @@ zmGtdModel::zmGtdModel()
     , m_item_project    ()
     , m_item_group      ()
     , m_item_done       ()
+    , m_item_dismissed  ()
     , m_item_knowledge  ()
     , m_item_person     ()
 {
@@ -36,6 +37,7 @@ zmGtdModel::zmGtdModel(
     , m_item_project    ()
     , m_item_group      ()
     , m_item_done       ()
+    , m_item_dismissed  ()
     , m_item_knowledge  ()
     , m_item_person     ()
 {}
@@ -62,6 +64,7 @@ void zmGtdModel::initialize()
     m_item_project =   m_p_things_model->findOrCreateTagItem( "gtd_project" );
     m_item_group =     m_p_things_model->findOrCreateTagItem( "gtd_group" );
     m_item_done =      m_p_things_model->findOrCreateTagItem( "gtd_done" );
+    m_item_dismissed = m_p_things_model->findOrCreateTagItem( "gtd_dismissed" );
     m_item_knowledge = m_p_things_model->findOrCreateTagItem( "knowledge" );
     m_item_person =    m_p_things_model->findOrCreateTagItem( "person" );
 
@@ -349,6 +352,23 @@ void zmGtdModel::setDone(
 
     // todo: what to do with project items?
     m_p_things_model->connectDirected( task_item, m_item_done );
+
+    m_p_things_model->setValue(
+                task_item,
+                "gtd_time_done",
+                zm::common::time_stamp_iso_ext() );
+}
+void zmGtdModel::setDismissed(
+        const std::string &task_item )
+{
+    if( m_p_things_model->isConnected(task_item, m_item_inbox))
+    {
+        m_p_things_model->disconnect( task_item, m_item_inbox );
+    }
+
+    // todo: what to do with project items?
+    m_p_things_model->connectDirected( task_item, m_item_done );
+    m_p_things_model->connectDirected( task_item, m_item_dismissed );
 
     m_p_things_model->setValue(
                 task_item,
