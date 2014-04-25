@@ -106,6 +106,29 @@ zm::uid_lst_t zmGtdModel::getInboxItems(
     return m_p_things_model->query(l_query);
 }
 
+zm::uid_lst_t zmGtdModel::getStandaloneTaskItems(
+        bool includeDoneItems ) const
+{
+    // this may look nice but it's crap - future query strings won't look
+    // like this
+
+    // query syntax is "interim_filter_tags +gtd_task [-gtd_done] [-gtd_project]"
+
+    std::string l_tag_task       = std::string("+") + m_item_task;
+    std::string l_tag_no_done    = std::string("-") + m_item_done;
+    std::string l_tag_no_project = std::string("+") + m_item_project;
+
+    std::string l_query(
+                boost::str(boost::format("interim_filter_tags %s %s %s")
+                           % l_tag_task
+                           % l_tag_no_project
+                           % (includeDoneItems       ? "":l_tag_no_done) ));
+
+    trace_i("trigger query '%s'", l_query.c_str());
+
+    return m_p_things_model->query(l_query);
+}
+
 zm::uid_lst_t zmGtdModel::getTaskItems(
         bool includeStandaloneTasks,
         bool includeDoneItems ) const

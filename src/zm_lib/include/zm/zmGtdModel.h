@@ -53,6 +53,9 @@ public:
     zm::uid_lst_t getInboxItems(
             bool includeDoneItems ) const;
 
+    zm::uid_lst_t getStandaloneTaskItems(
+            bool includeDoneItems ) const;
+
     /// returns a list of UIDs pointing to GTD-Tasks. StandaloneTasks are
     /// included by default, done items are excluded by default
     zm::uid_lst_t getTaskItems(
