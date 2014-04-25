@@ -59,6 +59,9 @@ def list_all(model):
 
     logging.debug("found %d items total", model.base().getItemCount())
 
+    spacer = ' '
+    show_tags = False
+
 #    for i in model.getItems():
 #        print i[:6], yield_n(model.getCaption(i), 30)
     print     ("ID    TYPE   CAPTION" )
@@ -69,38 +72,39 @@ def list_all(model):
                                 " -gtd_task"
                                 " -gtd_done"
                                 " -gtd_project"
-                                " -gtd_item_done"):
+                                " -gtd_item_done"
+                                " -knowledge"):
         tags = model.base().getTags(i)
-#        if model.base().isTag(i): continue
+        if model.base().isTag(i): continue
         print( "%s%s  [NONE] %s %s"  % (
                 colorama.Fore.YELLOW,
                 i[:4],
-                yield_n(model.base().getCaption(i), 80, ' '),
-                tags))
+                yield_n(model.base().getCaption(i), 80, spacer),
+                tags if show_tags else "|"))
 
     for i in model.getInboxItems(False):
         tags = model.base().getTags(i)
         print( "%s%s  [INB]  %s %s" % (
                 colorama.Fore.RED,
                 i[:4],
-                yield_n(model.base().getCaption(i), 80, ' '),
-                tags))
+                yield_n(model.base().getCaption(i), 80, spacer),
+                tags if show_tags else "|"))
 
     for i in model.getTaskItems(True, False):
         tags = model.base().getTags(i)
         print ( "%s%s  [TASK] %s %s" % (
                 colorama.Fore.BLUE,
                 i[:4],
-                yield_n(model.base().getCaption(i), 80, '.'),
-                tags))
+                yield_n(model.base().getCaption(i), 80, spacer),
+                tags if show_tags else "|"))
 
     for i in model.getProjectItems(True, False):
         tags = model.base().getTags(i)
         print ( "%s%s  [PROJ] %s %s" % (
                 colorama.Fore.GREEN,
                 i[:4],
-                yield_n(model.base().getCaption(i), 80, '.'),
-                tags))
+                yield_n(model.base().getCaption(i), 80, spacer),
+                tags if show_tags else "|"))
 
 def list_matching(gtd_model, pattern):
     print     ("ID    CAPTION" )
@@ -127,7 +131,7 @@ def operate(gtd_model, args, auto_save):
             logging.info("created new item %s with caption '%s'", new_item, text )
             modifications_done = True
 
-        if args[0] == "rm":
+        elif args[0] == "rm":
             while 'rm' in args: args.remove('rm')
             rm_uids = to_uids(args, gtd_model)
             if rm_uids:
@@ -139,7 +143,7 @@ def operate(gtd_model, args, auto_save):
                 print("not all given items map to a unique existing one - abort")
                 show_list = False
 
-        if args[0] == "rm-tag":
+        elif args[0] == "rm-tag":
             if len(args) is not 2:
                 print "invalid number of arguments"
             else:
@@ -154,9 +158,8 @@ def operate(gtd_model, args, auto_save):
             logging.info("created new item %s with caption '%s'", new_item, text)
             modifications_done = True
 
-        elif 'done' in args:
-            while 'done' in args: args.remove('done')
-            done_uids = to_uids(args, gtd_model)
+        elif args[0] == "done":
+            done_uids = to_uids(args[1:], gtd_model)
             if done_uids:
                 print("set items to done: %s" % done_uids)
                 for i in done_uids:
@@ -166,17 +169,63 @@ def operate(gtd_model, args, auto_save):
                 print("not all given items map to a unique existing one - abort")
                 show_list = False
 
-        if args[0] == "info":
+        elif args[0] == "dismiss":
+            dismiss_uids = to_uids(args[1:], gtd_model)
+            if dismiss_uids:
+                print("dismiss items: %s" % dismiss_uids)
+                for i in dismiss_uids:
+                    gtd_model.setDismissed(i)
+                modifications_done = True
+            else:
+                print("not all given items map to a unique existing one - abort")
+                show_list = False
+
+        elif args[0] == "rename":
+            show_list = False
+            if len(args) < 3:
+                print('too few args')
+            else:
+                uid = gtd_model.base().completeUid(args[1])
+                caption = " ".join(args[2:])
+                print("rename '%s' to '%s'" % (uid, caption))
+                gtd_model.base().setCaption(uid, caption)
+                modifications_done = True
+
+        elif args[0] == "cast:project":
+            uids = to_uids(args[1:], gtd_model)
+            if uids:
+                print("cast to project: %s" % uids)
+                for i in uids:
+                    gtd_model.castToProject(i)
+                modifications_done = True
+            else:
+                print("not all given items map to a unique existing one - abort")
+                show_list = False
+
+        elif args[0] == "cast:note":
+            uids = to_uids(args[1:], gtd_model)
+            if uids:
+                print("cast to note: %s" % uids)
+                for i in uids:
+                    gtd_model.castToTaggedItem(i, "knowledge")
+                modifications_done = True
+            else:
+                print("not all given items map to a unique existing one - abort")
+                show_list = False
+
+        elif args[0] == "info":
             info_uids = to_uids(args[1:], gtd_model)
             if info_uids:
                 for i in info_uids:
                     caption = gtd_model.base().getCaption(i)
+                    print("%s:" % (i,))
                     print("'%s'(%d)" % (caption, len(caption)))
+                    print("tags: %s " % gtd_model.base().getTags(i))
             else:
                 print("not all given items map to a unique existing one - abort")
             show_list = False
 
-        elif args[0] == "sync-pull":
+        elif args[0] in ("sync-pull", "pull"):
             logging.info("trigger sync")
             if gtd_model.base().sync_pull():
                 modifications_done = True
@@ -184,13 +233,13 @@ def operate(gtd_model, args, auto_save):
                 print ("did nothing")
                 show_list = False
 
-        elif args[0] == "sync-push":
-            logging.info("trigger sync")
+        elif args[0] in ("sync-push", "push"):
+            show_list = False
+            print("push changes to sync folder - you have to distribute them yourself!")
             if gtd_model.base().sync_push():
                 modifications_done = True
             else:
                 print ("did nothing")
-                show_list = False
 
         elif args[0] == "snapshot":
             print gtd_model.base().getLoadedJournalFiles()
@@ -204,7 +253,7 @@ def operate(gtd_model, args, auto_save):
                     gtd_model.base().loadSnapshot()
                     pass
 
-        elif args[0] == "search":
+        elif args[0] in ("search", "find"):
             show_list = False
             if len(args) >= 2:
                 list_matching(gtd_model, args[1])
@@ -229,6 +278,28 @@ def operate(gtd_model, args, auto_save):
             show_list = False
             show_local_diff(gtd_model)
             show_remote_diff(gtd_model)
+
+        elif args[0] == 'help':
+            print("add")
+            print("task")
+            print("done")
+            print("dismiss")
+            print("rename")
+            print("cast:task")
+            print("cast:project")
+            print("cast:note")
+            print("info")
+            print("sync-pull|pull")
+            print("sync-push|push")
+            print("snapshot")
+            print("search|find")
+            print("diff")
+            print("diff-local")
+            print("diff-remote")
+            print("status")
+            print("rm")
+            print("rm-tag")
+            show_list = False
 
         else:
             print ("'%s' not a valid command" % args[0])
