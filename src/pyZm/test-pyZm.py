@@ -18,6 +18,7 @@ import colorama
 import pyZm
 
 def yield_n(string, length, padding=' '):
+    length = int(length)
     if len(string) <= length:
         return string + padding * (length - len(string.decode('utf-8')))
     else:
@@ -58,7 +59,9 @@ def show_remote_diff(model):
 def list_all(model):
 
     logging.debug("found %d items total", model.base().getItemCount())
-
+    import os
+    rows, columns = os.popen('stty size', 'r').read().split()
+    caption_width = int(columns) - 16
     spacer = ' '
     show_tags = False
 
@@ -79,7 +82,7 @@ def list_all(model):
         print( "%s%s  [NONE] %s %s"  % (
                 colorama.Fore.YELLOW,
                 i[:4],
-                yield_n(model.base().getCaption(i), 80, spacer),
+                yield_n(model.base().getCaption(i), caption_width, spacer),
                 tags if show_tags else "|"))
 
     for i in model.getInboxItems(False):
@@ -87,7 +90,7 @@ def list_all(model):
         print( "%s%s  [INB]  %s %s" % (
                 colorama.Fore.RED,
                 i[:4],
-                yield_n(model.base().getCaption(i), 80, spacer),
+                yield_n(model.base().getCaption(i), caption_width, spacer),
                 tags if show_tags else "|"))
 
     for i in model.getTaskItems(True, False):
@@ -95,7 +98,7 @@ def list_all(model):
         print ( "%s%s  [TASK] %s %s" % (
                 colorama.Fore.BLUE,
                 i[:4],
-                yield_n(model.base().getCaption(i), 80, spacer),
+                yield_n(model.base().getCaption(i), caption_width, spacer),
                 tags if show_tags else "|"))
 
     for i in model.getProjectItems(True, False):
@@ -103,7 +106,7 @@ def list_all(model):
         print ( "%s%s  [PROJ] %s %s" % (
                 colorama.Fore.GREEN,
                 i[:4],
-                yield_n(model.base().getCaption(i), 80, spacer),
+                yield_n(model.base().getCaption(i), caption_width, spacer),
                 tags if show_tags else "|"))
 
 def list_matching(gtd_model, pattern):
@@ -111,7 +114,7 @@ def list_matching(gtd_model, pattern):
     print     ("----  ----" )
     for i in gtd_model.find(pattern):
         print("%s  %s" %
-                (i[:4], yield_n(gtd_model.base().getCaption(i), 80, ' ')))
+                (i[:4], yield_n(gtd_model.base().getCaption(i), caption_width, ' ')))
 
 def operate(gtd_model, args, auto_save):
 
