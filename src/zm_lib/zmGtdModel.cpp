@@ -408,7 +408,7 @@ void zmGtdModel::castToProject(
     m_p_things_model->connectDirected( item, m_item_project );
 }
 
-void zmGtdModel::castToStandaloneProject(
+void zmGtdModel::castToStandaloneTask(
         const zm::uid_t &item )
 {
     trace_assert_s( isInboxItem( item ) );
