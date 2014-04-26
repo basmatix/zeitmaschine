@@ -93,8 +93,6 @@ public class ZmActivity
 	    m_btChoose = (Button) findViewById(R.id.btChoose);
 	    m_tvItemCount = (TextView) findViewById(R.id.tvItemCount);
 
-	    updateStatus();
-	    
 		m_btPull.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View arg0) {
@@ -104,6 +102,7 @@ public class ZmActivity
 		    	Log.w("zm", "returned " + l_result);
 		    	updateStatus();
 		    	m_gtdModel.base().saveLocal();
+		    	m_edittext.setText("");
 			}
 		});
 		m_btPush.setOnClickListener(new OnClickListener() {
@@ -150,6 +149,7 @@ public class ZmActivity
 			}
 		});
 	
+	    updateStatus();
 		setListContent( "" );
 	}
 
@@ -257,11 +257,11 @@ public class ZmActivity
 		    menu.setHeaderTitle(l_todo.m_caption);
 		    menu.add(Menu.NONE, info.position, 0, "set done");
 		    menu.add(Menu.NONE, info.position, 1, "connect..");
-		    menu.add(Menu.NONE, info.position, 2, "to: task");
+		    menu.add(Menu.NONE, info.position, 2, "to: task (standalone)");
 		    menu.add(Menu.NONE, info.position, 3, "to: project");
-		    menu.add(Menu.NONE, info.position, 4, "to: knowledge");
-		    menu.add(Menu.NONE, info.position, 5, "to: kaufen");
-		    menu.add(Menu.NONE, info.position, 6, "to: film");
+		    menu.add(Menu.NONE, info.position, 4, "to: note");
+		    menu.add(Menu.NONE, info.position, 5, "to: purchase");
+		    menu.add(Menu.NONE, info.position, 6, "to: movie");
 		}
 	}
 	
@@ -279,8 +279,15 @@ public class ZmActivity
 		       .setMessage(l_title).create().show();
 	   		break;
 	   	case 1: // connect
+			new AlertDialog.Builder(ZmActivity.this)
+		       .setTitle("not implemented!:")
+		       .setMessage("(sorry)").create().show();
 	   		break;
 	   	case 2: // task
+	   		m_gtdModel.castToStandaloneTask(l_todo.m_uid);
+			new AlertDialog.Builder(ZmActivity.this)
+		       .setTitle("cast to standalone task:")
+		       .setMessage(l_title).create().show();
 	   		break;
 	   	case 3: // project
 	   		m_gtdModel.castToProject(l_todo.m_uid);
@@ -288,11 +295,22 @@ public class ZmActivity
 		       .setTitle("cast to project:")
 		       .setMessage(l_title).create().show();
 	   		break;
-	   	case 4: // knowledge
+	   	case 4: // note
+	   		m_gtdModel.castToTaggedItem(l_todo.m_uid, "knowledge");
+			new AlertDialog.Builder(ZmActivity.this)
+		       .setTitle("cast to note:")
+		       .setMessage(l_title).create().show();
 	   		break;
 	   	case 5: // kaufen
+	   		m_gtdModel.castToTaggedItem(l_todo.m_uid, "purchase");
+			new AlertDialog.Builder(ZmActivity.this)
+		       .setTitle("cast to purchase:")
+		       .setMessage(l_title).create().show();
 	   		break;
 	   	case 6: // film
+			new AlertDialog.Builder(ZmActivity.this)
+		       .setTitle("not implemented!:")
+		       .setMessage("(sorry)").create().show();
 	   		break;
 	   	}
 
@@ -332,12 +350,24 @@ public class ZmActivity
 		setListContent( s.toString() );
 	}
 	
-	private void addViewItems(StringVec uids, int type)
+	private void addViewItems(StringVec uids, int type, boolean expandTags)
 	{
     	for(int i = 0; i < uids.size(); ++i)
     	{	
     		String l_uid = uids.get(i);
     		m_returnValues.add(new ZmItem(l_uid, m_gtdModel.base().getCaption(l_uid), type));
+    		if(expandTags)
+    		{
+    			if(m_gtdModel.base().isTag(l_uid))
+    			{
+    				StringVec l_neighbours = m_gtdModel.base().getNeighbours(l_uid);
+    		    	for(int j = 0; j < l_neighbours.size(); ++j)
+    		    	{
+    		    		String l_neighbour_uid = l_neighbours.get(j);
+    		    		m_returnValues.add(new ZmItem(l_neighbour_uid, m_gtdModel.base().getCaption(l_neighbour_uid), type));
+    		    	}
+    			}
+    		}
     	}
 	}
 	
@@ -354,13 +384,13 @@ public class ZmActivity
 		
 		if(s.trim().equals(""))
 		{
-	    	addViewItems(m_gtdModel.getInboxItems(false),0);
-	    	addViewItems(m_gtdModel.getTaskItems(true,false),1);
-	    	addViewItems(m_gtdModel.getProjectItems(false,false),2);
+	    	addViewItems(m_gtdModel.getInboxItems(false), 0, false);
+	    	addViewItems(m_gtdModel.getStandaloneTaskItems(false), 1, false);
+	    	addViewItems(m_gtdModel.getProjectItems(false,false), 2, false);
 		}
 		else
 		{
-	    	addViewItems(m_gtdModel.find(s), 3);
+	    	addViewItems(m_gtdModel.find(s), 3, true);
 		}
 
 		// frans: todo: muss vmtl nicht sein..
