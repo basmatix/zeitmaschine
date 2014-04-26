@@ -4,7 +4,6 @@ import java.util.List;
 
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -50,7 +49,7 @@ public class ZmItemArrayAdapter extends ArrayAdapter<ZmItem> {
         switch(objectItem.m_type)
         {
         case 0:
-        	textViewItem.setTextColor(0xffff88bb); // redish
+        	textViewItem.setTextColor(0xffffbb00); // redish
         	break;
         case 1:
         	textViewItem.setTextColor(0xffaaaaff);
