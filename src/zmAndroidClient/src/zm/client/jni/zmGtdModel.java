@@ -69,6 +69,10 @@ public class zmGtdModel {
     return new StringVec(javaZmJNI.zmGtdModel_getInboxItems(swigCPtr, this, includeDoneItems), true);
   }
 
+  public StringVec getStandaloneTaskItems(boolean includeDoneItems) {
+    return new StringVec(javaZmJNI.zmGtdModel_getStandaloneTaskItems(swigCPtr, this, includeDoneItems), true);
+  }
+
   public StringVec getTaskItems(boolean includeStandaloneTasks, boolean includeDoneItems) {
     return new StringVec(javaZmJNI.zmGtdModel_getTaskItems(swigCPtr, this, includeStandaloneTasks, includeDoneItems), true);
   }
@@ -145,12 +149,16 @@ public class zmGtdModel {
     javaZmJNI.zmGtdModel_setDone(swigCPtr, this, task_item);
   }
 
+  public void setDismissed(String task_item) {
+    javaZmJNI.zmGtdModel_setDismissed(swigCPtr, this, task_item);
+  }
+
   public void castToProject(String item) {
     javaZmJNI.zmGtdModel_castToProject(swigCPtr, this, item);
   }
 
-  public void castToStandaloneProject(String item) {
-    javaZmJNI.zmGtdModel_castToStandaloneProject(swigCPtr, this, item);
+  public void castToStandaloneTask(String item) {
+    javaZmJNI.zmGtdModel_castToStandaloneTask(swigCPtr, this, item);
   }
 
   public void castToTaggedItem(String item, String tag) {

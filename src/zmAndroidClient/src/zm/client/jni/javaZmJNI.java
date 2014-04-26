@@ -28,6 +28,7 @@ public class javaZmJNI {
   public final static native String zmGtdModel_getNote(long jarg1, zmGtdModel jarg1_, String jarg2);
   public final static native int zmGtdModel_getImportance(long jarg1, zmGtdModel jarg1_, String jarg2);
   public final static native long zmGtdModel_getInboxItems(long jarg1, zmGtdModel jarg1_, boolean jarg2);
+  public final static native long zmGtdModel_getStandaloneTaskItems(long jarg1, zmGtdModel jarg1_, boolean jarg2);
   public final static native long zmGtdModel_getTaskItems(long jarg1, zmGtdModel jarg1_, boolean jarg2, boolean jarg3);
   public final static native long zmGtdModel_getProjectItems(long jarg1, zmGtdModel jarg1_, boolean jarg2, boolean jarg3);
   public final static native long zmGtdModel_getDoneItems(long jarg1, zmGtdModel jarg1_);
@@ -47,8 +48,9 @@ public class javaZmJNI {
   public final static native void zmGtdModel_plusOne(long jarg1, zmGtdModel jarg1_, String jarg2);
   public final static native void zmGtdModel_registerItemAsTask(long jarg1, zmGtdModel jarg1_, String jarg2, String jarg3);
   public final static native void zmGtdModel_setDone(long jarg1, zmGtdModel jarg1_, String jarg2);
+  public final static native void zmGtdModel_setDismissed(long jarg1, zmGtdModel jarg1_, String jarg2);
   public final static native void zmGtdModel_castToProject(long jarg1, zmGtdModel jarg1_, String jarg2);
-  public final static native void zmGtdModel_castToStandaloneProject(long jarg1, zmGtdModel jarg1_, String jarg2);
+  public final static native void zmGtdModel_castToStandaloneTask(long jarg1, zmGtdModel jarg1_, String jarg2);
   public final static native void zmGtdModel_castToTaggedItem(long jarg1, zmGtdModel jarg1_, String jarg2, String jarg3);
   public final static native void zmGtdModel_setNextTask(long jarg1, zmGtdModel jarg1_, String jarg2, String jarg3);
   public final static native String zmGtdModel_createProject(long jarg1, zmGtdModel jarg1_, String jarg2);
