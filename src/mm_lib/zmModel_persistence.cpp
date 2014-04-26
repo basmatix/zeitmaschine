@@ -73,12 +73,13 @@ std::vector< std::string > zm::MindMatterModel::diffLocal() const
     for( const auto &i : l_diff_map )
     {
         int l_umlaut_count(0);
-        for( char c : i.second.first )
+        int l_desired_len(20);
+        for(int c = 0; c < l_desired_len + l_umlaut_count; ++c)
         {
-            if(c == -61) ++l_umlaut_count;
+            if(i.second.first[c] == -61) ++l_umlaut_count;
         }
         std::stringstream l_format;
-        l_format << "%.5s '%." << 20 + l_umlaut_count << "s' %s";
+        l_format << "%.5s '%." << l_desired_len + l_umlaut_count << "s' %s";
 
         l_result.push_back(boost::str( boost::format(l_format.str())
                                        % i.first
@@ -106,12 +107,13 @@ std::vector< std::string > zm::MindMatterModel::diffRemote() const
     for( const auto &i : l_diff_map )
     {
         int l_umlaut_count(0);
-        for( char c : i.second.first )
+        int l_desired_len(20);
+        for(int c = 0; c < l_desired_len + l_umlaut_count; ++c)
         {
-            if(c == -61) ++l_umlaut_count;
+            if(i.second.first[c] == -61) ++l_umlaut_count;
         }
         std::stringstream l_format;
-        l_format << "%.5s '%." << 20 + l_umlaut_count << "s' %s";
+        l_format << "%.5s '%." << l_desired_len + l_umlaut_count << "s' %s";
 
         l_result.push_back(boost::str( boost::format(l_format.str())
                                        % i.first
