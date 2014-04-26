@@ -13,13 +13,15 @@
 
 using namespace zm;
 
-zm::uid_lst_t zm::MindMatterModel::getFolderChildren( const zm::uid_t &folder_item ) const
+zm::uid_lst_t zm::MindMatterModel::getFolderChildren(
+        const zm::uid_t &folder_item ) const
 {
     uid_lst_t l_result;
     return l_result;
 }
 
-std::time_t zm::MindMatterModel::getCreationTime( const std::string &uid ) const
+std::time_t zm::MindMatterModel::getCreationTime(
+        const std::string &uid ) const
 {
     ModelData::left_const_iterator l_item_it( m_things.left.find( uid ) );
 
@@ -32,7 +34,8 @@ std::time_t zm::MindMatterModel::getCreationTime( const std::string &uid ) const
     return zm::common::seconds_from_epoch( l_timeStr, "%Y-%m-%dT%H:%M:%S" );
 }
 
-bool zm::MindMatterModel::hasItem( const std::string &uid ) const
+bool zm::MindMatterModel::hasItem(
+        const std::string &uid ) const
 {
     ModelData::left_const_iterator l_item_it( m_things.left.find( uid ) );
 
@@ -255,7 +258,7 @@ zm::uid_t zm::MindMatterModel::createNewItem(
 }
 
 zm::uid_t zm::MindMatterModel::_createNewItem(
-        ModelData    &model,
+              ModelData     &model,
         const std::string   &caption,
         const zm::uid_t     &uid )
 {
@@ -275,7 +278,7 @@ zm::uid_t zm::MindMatterModel::_createNewItem(
 }
 
 void zm::MindMatterModel::_createNewItem(
-        ModelData           &a_model,
+              ModelData     &a_model,
         const zm::uid_t     &a_uid,
         const std::string   &a_caption,
         const std::string   &a_time )
@@ -369,7 +372,7 @@ bool zm::MindMatterModel::removeTag(
 }
 
 bool zm::MindMatterModel::_removeTag(
-        ModelData::left_iterator   &a_item_it,
+              ModelData::left_iterator  &a_item_it,
         const std::string               &tag_name )
 {
     ModelData::left_iterator l_tag_it( m_things.left.find( tag_name ) );
@@ -389,7 +392,9 @@ bool zm::MindMatterModel::_removeTag(
     return false;
 }
 
-void zm::MindMatterModel::disconnect( const std::string &node1_uid, const std::string &node2_uid )
+void zm::MindMatterModel::disconnect(
+        const std::string &node1_uid,
+        const std::string &node2_uid )
 {
     ModelData::left_iterator l_item1_it( m_things.left.find( node1_uid ) );
     ModelData::left_iterator l_item2_it( m_things.left.find( node2_uid ) );
@@ -397,7 +402,7 @@ void zm::MindMatterModel::disconnect( const std::string &node1_uid, const std::s
     trace_assert_h( l_item1_it != m_things.left.end() );
     trace_assert_h( l_item2_it != m_things.left.end() );
 
-    trace_assert_h( _isConnected( l_item1_it, l_item2_it ) );
+    trace_assert_s( _isConnected( l_item1_it, l_item2_it ) );
 
     _disconnect(l_item2_it, l_item1_it);
 }
@@ -427,10 +432,12 @@ void zm::MindMatterModel::_connectDuplex(
     trace_assert_h(type == Directed);
 
     // assert changes: eighter there is no connection yet or the types differ
-    trace_assert_h(item1->second->m_neighbours.find(item2->second) == item1->second->m_neighbours.end()
+    trace_assert_s(
+              item1->second->m_neighbours.find(item2->second) == item1->second->m_neighbours.end()
            || item1->second->m_neighbours[item2->second].second != 2);
 
-    trace_assert_h(item2->second->m_neighbours.find(item1->second) == item2->second->m_neighbours.end()
+    trace_assert_s(
+              item2->second->m_neighbours.find(item1->second) == item2->second->m_neighbours.end()
            || item2->second->m_neighbours[item1->second].second != 1);
 
     item1->second->m_neighbours[item2->second] = zm::neighbour_t(item2->first, 2);
@@ -474,9 +481,9 @@ void zm::MindMatterModel::setValue(
 }
 
 bool zm::MindMatterModel::_setValue(
-        ModelData::left_iterator   &item,
-        const std::string                       &name,
-        const std::string                       &value )
+              ModelData::left_iterator  &item,
+        const std::string               &name,
+        const std::string               &value )
 {
     if( item->second->hasValue( name )
      && item->second->getValue( name ) == value ) return false;
@@ -484,7 +491,9 @@ bool zm::MindMatterModel::_setValue(
     return true;
 }
 
-void zm::MindMatterModel::setCaption( const std::string &uid, const std::string &caption )
+void zm::MindMatterModel::setCaption(
+        const std::string &uid,
+        const std::string &caption )
 {
     ModelData::left_iterator l_item_it( m_things.left.find( uid ) );
 
@@ -493,7 +502,9 @@ void zm::MindMatterModel::setCaption( const std::string &uid, const std::string 
     if( !_setCaption( l_item_it, caption ) ) return;
 }
 
-bool zm::MindMatterModel::_setCaption( ModelData::left_iterator &item, const std::string &caption )
+bool zm::MindMatterModel::_setCaption(
+              ModelData::left_iterator &item,
+        const std::string &caption )
 {
     if( item->second->m_caption == caption ) return false;
     item->second->m_caption = caption;
